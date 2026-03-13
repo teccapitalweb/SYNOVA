@@ -244,3 +244,38 @@ img { max-width: 100%; display: block; }
   .hero-card { padding: 12px; border-radius: 24px; }
   .cta-box { border-radius: 26px; }
 }
+
+
+.quick-grid,.preview-grid,.catalog-grid,.contact-grid,.testimonials-grid,.related-grid{
+  display:grid; gap:22px;
+}
+.quick-grid,.preview-grid{grid-template-columns:repeat(3,1fr);}
+.preview-card,.quick-card,.catalog-card,.contact-card,.detail-card,.related-item{
+  background:#fff; border:1px solid var(--border); border-radius:28px; box-shadow:0 18px 35px rgba(16,48,75,.08);
+}
+.quick-card,.preview-card,.contact-card,.detail-card{padding:28px;}
+.preview-card h3,.quick-card h3,.contact-card h3,.detail-card h2,.detail-card h3{margin-top:0;}
+.preview-section{background:linear-gradient(180deg, rgba(196,218,250,.18), rgba(252,255,255,0));}
+.text-link{display:inline-flex; align-items:center; gap:8px; color:var(--primary); font-weight:700;}
+.narrow{max-width:860px;}
+.compact-hero{padding-top:150px; padding-bottom:70px; background:linear-gradient(180deg, rgba(0,81,135,.08), rgba(77,130,188,.04));}
+.catalog-grid{grid-template-columns:repeat(3,1fr);}
+.catalog-card img{width:100%; height:240px; object-fit:cover; border-radius:28px 28px 0 0;}
+.catalog-body{padding:24px;}
+.catalog-body .btn{margin-top:10px;}
+.contact-grid{grid-template-columns:repeat(3,1fr);}
+.testimonials-grid{grid-template-columns:repeat(4,1fr);}
+.course-detail-grid,.detail-layout{display:grid; grid-template-columns:1.1fr .9fr; gap:30px; align-items:start;}
+.course-hero .detail-image img{width:100%; border-radius:28px; box-shadow:var(--shadow);}
+.detail-list{padding-left:18px; color:var(--muted); line-height:1.8;}
+.related-grid{grid-template-columns:repeat(3,1fr);}
+.related-item{display:flex; gap:14px; padding:12px; color:var(--text); align-items:center;}
+.related-item img{width:110px; height:92px; object-fit:cover; border-radius:18px;}
+.related-item span{display:block; color:var(--primary); font-size:.85rem; font-weight:700; margin-bottom:6px;}
+@media (max-width:1080px){
+  .quick-grid,.preview-grid,.catalog-grid,.contact-grid,.testimonials-grid,.related-grid,.course-detail-grid,.detail-layout{grid-template-columns:repeat(2,1fr);} 
+}
+@media (max-width:820px){
+  .quick-grid,.preview-grid,.catalog-grid,.contact-grid,.testimonials-grid,.related-grid,.course-detail-grid,.detail-layout{grid-template-columns:1fr;} 
+  .compact-hero{padding-top:130px;} 
+}
