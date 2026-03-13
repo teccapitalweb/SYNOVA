@@ -68,4 +68,12 @@ function initMenu() {
   toggle.addEventListener('click', () => nav.classList.toggle('open'));
   nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => nav.classList.remove('open')));
 }
-initCounters(); initReveal(); initLightbox(); initMenu();
+initCounters(); initReveal(); initLightbox(); initMenu(); initHeaderScroll();
+
+function initHeaderScroll() {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const update = () => header.classList.toggle('scrolled', window.scrollY > 8);
+  update();
+  window.addEventListener('scroll', update, { passive: true });
+}
