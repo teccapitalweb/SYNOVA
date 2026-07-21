@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="night">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B121F">
+<meta name="description" content="SYNOVA México · Inicia sesión o crea tu cuenta">
+<title>SYNOVA · Acceso</title>
+<link rel="icon" type="image/png" href="assets/img/synova-favicon.png">
+<link rel="apple-touch-icon" href="assets/img/synova-apple-touch.png">
+<!-- ─── PWA · instalable como app ─── -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SYNOVA VIP">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none;cursor:pointer}
+img{display:block;max-width:100%}
+svg{flex-shrink:0}
+input{font:inherit;color:inherit}
+::selection{background:var(--primary);color:#fff}
+
+/* ══ Paleta SYNOVA · azul marino + cian, tomada del index (synovamexico.com) ══ */
+:root[data-theme="night"]{
+  --bg:#0B121F;--bg-deep:#070B12;
+  --surface:#101A2C;--surface-2:#16223A;--surface-3:#223353;
+  --border:rgba(140,190,230,0.08);--border-2:rgba(140,190,230,0.15);--border-strong:rgba(140,190,230,0.24);
+  --text:#EAF2FA;--text-2:#A9BBD1;--text-3:#7C8FA8;
+  --primary:#1C6FB0;--primary-soft:#5FB6E0;--primary-deep:#0B4A7C;
+  --primary-glow:rgba(28,111,176,0.42);--highlight:#2FD1C6;
+  --success:#34D399;--danger:#F87171;
+  --shadow-card:0 20px 60px rgba(0,0,0,0.55);
+}
+:root[data-theme="day"]{
+  --bg:#EEF5FC;--bg-deep:#DCEAF7;
+  --surface:#FFFFFF;--surface-2:#F3F9FE;--surface-3:#E3EFF9;
+  --border:rgba(11,58,102,0.08);--border-2:rgba(11,58,102,0.14);--border-strong:rgba(11,58,102,0.24);
+  --text:#0B2A4A;--text-2:#3E5975;--text-3:#7891A8;
+  --primary:#0D5FA0;--primary-soft:#3D8FCB;--primary-deep:#0A3E68;
+  --primary-glow:rgba(13,95,160,0.28);--highlight:#159E92;
+  --success:#0F9D58;--danger:#DC2D3F;
+  --shadow-card:0 16px 50px rgba(11,58,102,0.14);
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  font-size:14px;line-height:1.5;
+  color:var(--text);background:var(--bg);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  min-height:100vh;
+  position:relative;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;
+  background:radial-gradient(circle at 25% 30%,var(--primary-glow),transparent 50%),radial-gradient(circle at 75% 70%,color-mix(in srgb,var(--highlight) 18%,transparent),transparent 50%);
+  filter:blur(60px);
+  pointer-events:none;
+  animation:aurora 24s ease-in-out infinite alternate;
+}
+body::after{
+  content:"";position:fixed;inset:0;
+  background-image:linear-gradient(to right,rgba(140,190,230,.045) 1px,transparent 1px),linear-gradient(to bottom,rgba(140,190,230,.045) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);
+  mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);
+  pointer-events:none;
+}
+:root[data-theme="day"] body::after{background-image:linear-gradient(to right,rgba(11,58,102,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(11,58,102,.05) 1px,transparent 1px)}
+@keyframes aurora{0%{transform:translate(0,0) scale(1)}50%{transform:translate(2%,-2%) scale(1.05)}100%{transform:translate(-1%,1%) scale(1)}}
+@keyframes pulseDotSmall{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.4}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.wrap{width:100%;max-width:440px;padding:24px;position:relative;z-index:1;animation:fadeUp .5s cubic-bezier(.2,.8,.25,1)}
+.brand{text-align:center;margin-bottom:24px}
+.brand__logo{
+  width:60px;height:60px;border-radius:16px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-deep));
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-bottom:14px;box-shadow:0 12px 32px rgba(0,0,0,.35);position:relative;
+}
+.brand__logo::before{
+  content:"";position:absolute;inset:-2px;border-radius:18px;
+  background:linear-gradient(135deg,var(--primary),var(--highlight),var(--primary));
+  background-size:200% 100%;z-index:-1;
+  animation:shimmerBar 4s ease-in-out infinite;filter:blur(8px);opacity:.4;
+}
+@keyframes shimmerBar{0%,100%{background-position:0 0}50%{background-position:200% 0}}
+.brand__logo svg{width:34px;height:34px}
+.brand__name{
+  font-family:'Plus Jakarta Sans','Inter',sans-serif;
+  font-size:22px;font-weight:800;letter-spacing:-.6px;
+  background:linear-gradient(135deg,var(--text),color-mix(in srgb,var(--text) 55%,transparent));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.brand__sub{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text-3);margin-top:4px;
+}
+
+.card{background:var(--surface);border:1px solid var(--border-2);border-radius:22px;padding:28px 28px 24px;box-shadow:var(--shadow-card);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--highlight),var(--primary));background-size:200% 100%;animation:shimmerBar 3.5s ease-in-out infinite;border-radius:22px 22px 0 0}
+
+.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:100px;margin-bottom:20px}
+.tab{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;letter-spacing:.5px;padding:10px 14px;border-radius:100px;color:var(--text-3);cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.25,1)}
+.tab:hover{color:var(--text)}
+.tab.is-active{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;box-shadow:0 4px 14px var(--primary-glow),inset 0 1px 0 rgba(255,255,255,.18)}
+
+.pane{display:none;animation:fadeUp .35s ease}
+.pane.is-active{display:block}
+
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--text-3)}
+.input-wrap{position:relative}
+.input-wrap svg.lead{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-3);width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.input{width:100%;padding:13px 16px 13px 40px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:12px;font-size:13.5px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-glow)}
+.input::placeholder{color:var(--text-3)}
+.input.is-error{border-color:var(--danger);box-shadow:0 0 0 4px color-mix(in srgb,var(--danger) 15%,transparent)}
+
+.toggle-pass{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;color:var(--text-3);display:flex;align-items:center;justify-content:center;transition:color .15s}
+.toggle-pass:hover{color:var(--text)}
+.toggle-pass svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.forgot{text-align:right;margin:-4px 0 14px}
+.forgot a{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.4px;color:var(--text-3);transition:color .15s}
+.forgot a:hover{color:var(--primary)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 22px;border-radius:100px;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.25,1);border:1px solid transparent;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;box-shadow:0 10px 28px var(--primary-glow),inset 0 1px 0 rgba(255,255,255,.18)}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 14px 36px var(--primary-glow),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn .spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite}
+
+.alert{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;font-size:12.5px;line-height:1.5;margin-bottom:14px;border:1px solid}
+.alert--error{background:color-mix(in srgb,var(--danger) 8%,transparent);color:var(--danger);border-color:color-mix(in srgb,var(--danger) 28%,transparent)}
+.alert--success{background:color-mix(in srgb,var(--success) 8%,transparent);color:var(--success);border-color:color-mix(in srgb,var(--success) 28%,transparent)}
+.alert svg{width:16px;height:16px;flex-shrink:0;margin-top:1px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.alert__msg strong{font-weight:700}
+
+.divider,.auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3)}
+.divider::before,.divider::after,.auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--border)}
+
+.foot{text-align:center;margin-top:18px;font-size:12px;color:var(--text-2)}
+.foot a{color:var(--primary);font-weight:600}
+
+.helper-text{font-size:11px;color:var(--text-3);margin-top:6px;line-height:1.45}
+.helper-text strong{color:var(--text-2);font-weight:600}
+
+.checkbox-row{display:flex;align-items:flex-start;gap:9px;margin-bottom:14px;font-size:12.5px;color:var(--text-2);line-height:1.5;cursor:pointer}
+.checkbox-row input{margin-top:2px;flex-shrink:0;accent-color:var(--primary)}
+.checkbox-row a{color:var(--primary);font-weight:600}
+
+.legal{text-align:center;margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:500;letter-spacing:.7px;color:var(--text-3)}
+
+.theme-toggle{position:absolute;top:calc(16px + env(safe-area-inset-top));right:16px;z-index:10;width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--border-2);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.theme-toggle:hover{color:var(--text);border-color:var(--border-strong)}
+.theme-toggle svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+@media (max-width:420px){.wrap{padding:18px}.card{padding:24px 22px 22px}.brand__logo{width:54px;height:54px}.brand__name{font-size:20px}}
+
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px 16px;border-radius:12px;background:#fff;color:#1f1f1f;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;border:1px solid #dadce0;cursor:pointer;transition:box-shadow .15s ease,transform .08s ease}
+.btn-google:hover{box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.btn-google:active{transform:translateY(1px)}
+.btn-google:disabled{opacity:.6;cursor:default}
+.btn-google svg{width:18px;height:18px;flex-shrink:0}
+
+/* ═══ Layout split · hero (izq) + formulario (der) ═══ */
+body{display:block}
+.auth-shell{min-height:100vh;min-height:100dvh;width:100%;display:grid;grid-template-columns:1.05fr .95fr;position:relative;z-index:1}
+.auth-main{display:flex;align-items:center;justify-content:center;padding:24px}
+.auth-main .wrap{padding:0}
+
+.auth-hero{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:32px;padding:52px 56px;overflow:hidden;background:linear-gradient(157deg,#0E1826 0%,#0B121F 55%,#070B12 100%);border-right:1px solid var(--border-2)}
+.auth-hero::before{content:"";position:absolute;top:-20%;left:-10%;width:70%;height:70%;background:radial-gradient(circle,var(--primary-glow),transparent 60%);filter:blur(70px);pointer-events:none}
+.auth-hero::after{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,rgba(140,190,230,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(140,190,230,.05) 1px,transparent 1px);background-size:46px 46px;-webkit-mask-image:radial-gradient(ellipse at 30% 40%,#000,transparent 75%);mask-image:radial-gradient(ellipse at 30% 40%,#000,transparent 75%);pointer-events:none}
+.auth-hero > *{position:relative;z-index:1}
+.brand--hero{text-align:left;margin:0;display:flex;align-items:center;gap:14px}
+.brand--hero .brand__logo{margin-bottom:0;width:52px;height:52px}
+.brand--hero .brand__name{font-size:20px}
+.brand--hero .brand__sub{margin-top:2px}
+.auth-hero__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:clamp(34px,3.4vw,50px);font-weight:800;line-height:1.05;letter-spacing:-1.4px;color:var(--text);max-width:15ch}
+.auth-hero__title em{font-style:normal;background:linear-gradient(120deg,var(--primary),var(--highlight));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.auth-hero__desc{margin-top:20px;font-size:15px;line-height:1.7;color:var(--text-2);max-width:42ch}
+.auth-hero__stats{display:flex;gap:40px}
+.auth-stat__num{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--primary)}
+.auth-stat__lbl{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3)}
+
+:root[data-theme="day"] .auth-hero{background:linear-gradient(157deg,#F4FAFF 0%,#EEF5FC 55%,#DCEAF7 100%)}
+:root[data-theme="day"] .auth-hero::after{background-image:linear-gradient(to right,rgba(11,58,102,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(11,58,102,.05) 1px,transparent 1px)}
+
+.pane-head{margin-bottom:18px}
+.pane-head h2{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:23px;font-weight:800;letter-spacing:-.6px;color:var(--text);line-height:1.15}
+.pane-head p{font-size:13.5px;color:var(--text-2);margin-top:5px;line-height:1.5}
+
+.wrap .brand{display:none}
+@media (max-width:920px){
+  .auth-shell{grid-template-columns:1fr}
+  .auth-hero{display:none}
+  .auth-main{padding:max(54px, calc(env(safe-area-inset-top) + 20px)) 18px 24px}
+  .theme-toggle{top:max(46px, calc(env(safe-area-inset-top) + 16px))}
+  .wrap .brand{display:block}
+}
+
+/* ═══ Modo noche · glow SYNOVA ═══ */
+:root[data-theme="night"]{ --primary-glow:rgba(28,111,176,0.55); }
+:root[data-theme="night"] .btn{box-shadow:0 0 26px rgba(28,111,176,0.5),0 10px 30px rgba(28,111,176,0.38),inset 0 1px 0 rgba(255,255,255,.18)}
+:root[data-theme="night"] .btn:hover:not(:disabled){box-shadow:0 0 40px rgba(28,111,176,0.72),0 16px 42px rgba(28,111,176,0.48),inset 0 1px 0 rgba(255,255,255,.22)}
+:root[data-theme="night"] .brand__logo{border:1px solid rgba(47,209,198,0.4);box-shadow:0 0 30px rgba(28,111,176,0.5),0 12px 32px rgba(0,0,0,.35)}
+:root[data-theme="night"] .brand__logo::before{opacity:.7;filter:blur(12px)}
+:root[data-theme="night"] .tab.is-active{box-shadow:0 0 22px rgba(28,111,176,0.5),0 4px 14px rgba(28,111,176,0.38),inset 0 1px 0 rgba(255,255,255,.18)}
+:root[data-theme="night"] .input:focus{box-shadow:0 0 0 4px var(--primary-glow),0 0 24px rgba(28,111,176,0.38)}
+:root[data-theme="night"] .card{border-color:rgba(28,111,176,0.2);box-shadow:0 0 70px rgba(28,111,176,0.12),var(--shadow-card)}
+
+/* ═══ Panel que vende ═══ */
+.hero-hook{margin-top:6px;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:clamp(1.15rem,1.8vw,1.45rem);font-weight:800;letter-spacing:-.5px;color:var(--text);margin:0 0 16px}
+.hero-hook b{background:linear-gradient(120deg,var(--primary-soft),var(--highlight));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+:root[data-theme="day"] .hero-hook b{background:linear-gradient(120deg,var(--primary-deep),var(--primary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-benefits{list-style:none;display:grid;gap:11px;margin:0 0 26px;padding:0;max-width:430px}
+.hero-benefits li{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;color:var(--text-2);line-height:1.45}
+.hero-benefits li b{color:var(--text)}
+.hero-benefits svg{width:18px;height:18px;flex:none;margin-top:1px;stroke:#071018;background:var(--primary-soft);border-radius:50%;padding:3.5px;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+.hero-price{display:grid;gap:10px;max-width:400px;margin-bottom:24px}
+.hero-price .opt{display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--border-2);border-radius:13px;padding:10px 16px}
+.hero-price .opt b{font-size:1.35rem;font-weight:800;color:var(--text);letter-spacing:-.5px;white-space:nowrap}
+.hero-price .opt small{display:block;color:var(--text-2);font-size:.75rem;line-height:1.45}
+.hero-price .opt--star{background:linear-gradient(135deg,rgba(28,111,176,.16),var(--surface));border:1.5px solid var(--primary);position:relative}
+.hero-price .opt--star b{color:var(--primary-soft)}
+:root[data-theme="day"] .hero-price .opt--star b{color:var(--primary-deep)}
+.hero-price .opt--star .badge{position:absolute;top:-10px;right:12px;background:var(--primary);color:#fff;font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px}
+.hero-price .tachado{text-decoration:line-through;opacity:.5;margin-right:4px}
+.hero-price-note{font-size:10px;color:var(--text-3);margin:-16px 0 22px;font-family:'JetBrains Mono',monospace;letter-spacing:.4px}
+
+/* Marquee de cursos (texto, sin imágenes — se agregan miniaturas reales después) */
+.hero-marquee{margin:26px 0 24px;max-width:100%;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);overflow:hidden}
+.hero-marquee .track{display:flex;gap:10px;width:max-content;animation:synovaSlide 46s linear infinite}
+.hero-marquee:hover .track{animation-play-state:paused}
+@keyframes synovaSlide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.hero-marquee .pill{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--border-2);font-size:.72rem;font-weight:600;color:var(--text-2);white-space:nowrap;flex:none}
+.hero-marquee .pill svg{width:13px;height:13px;stroke:var(--highlight);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.hero-refs-title{font-size:10.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--primary-soft);margin:0 0 14px;font-weight:700}
+:root[data-theme="day"] .hero-refs-title{color:var(--primary-deep)}
+.hero-refs{display:grid;gap:14px;max-width:430px;margin-bottom:24px}
+.hero-ref{display:flex;gap:9px;align-items:flex-start}
+.hero-ref .avi{width:32px;height:32px;border-radius:50%;flex:none;margin-top:2px;display:grid;place-items:center;font-size:.64rem;font-weight:800;color:#071018;background:linear-gradient(135deg,var(--primary-soft),var(--primary))}
+.hero-ref .bub{position:relative;background:var(--surface);border:1px solid var(--border-2);border-radius:4px 14px 14px 14px;padding:.5rem .85rem .55rem}
+.hero-ref .bub b{display:block;font-size:.72rem;color:var(--text)}
+.hero-ref .bub b small{font-weight:400;color:var(--text-3);margin-left:4px;font-size:.66rem}
+.hero-ref .bub p{margin:2px 0 0;font-size:.78rem;line-height:1.45;color:var(--text-2)}
+.hero-ref .meta{display:flex;gap:.8rem;margin:.25rem 0 0 .8rem;font-size:.6rem;color:var(--text-3)}
+.hero-ref .meta b{font-weight:700}
+.hero-trust{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--text-3)}
+
+@media (max-width:920px){
+  .auth-shell{grid-template-columns:1fr;overflow-x:hidden}
+  .auth-shell > *{min-width:0;max-width:100%}
+  .auth-main{padding:24px 18px}
+  .wrap .brand{display:block}
+  .auth-hero{display:flex !important;flex-direction:column;align-items:center;text-align:center;justify-content:flex-start !important;gap:14px !important;padding:24px 18px 20px !important;min-height:0 !important;min-width:0;max-width:100vw;border-right:0;border-bottom:1px solid var(--border-2)}
+  .auth-hero > div{min-width:0;width:100%;max-width:100%}
+  .brand--hero{justify-content:center}
+  .auth-hero__title{font-size:1.3rem !important;line-height:1.22;max-width:100% !important}
+  .auth-hero__desc{display:none}
+  .auth-hero__stats{display:none}
+  .hero-marquee{width:100%;margin:16px 0 18px;max-width:100%}
+  .hero-hook{font-size:1.12rem;margin-bottom:14px}
+  .hero-benefits{margin:0 auto 20px;max-width:340px;text-align:left;gap:9px}
+  .hero-benefits li{font-size:.78rem}
+  .hero-price{margin:0 auto 6px;max-width:340px;text-align:left}
+  .hero-price .opt{padding:8px 13px}
+  .hero-price .opt b{font-size:1.15rem}
+  .hero-price-note{text-align:center;margin:0 auto 18px;max-width:340px}
+  .hero-refs{margin:0 auto 18px;max-width:340px;text-align:left;gap:12px}
+  .hero-refs-title{text-align:center}
+  .hero-ref .bub p{font-size:.74rem}
+  .hero-ref .avi{width:28px;height:28px;font-size:.58rem}
+  .hero-trust{text-align:center;letter-spacing:1px;font-size:8.5px;white-space:normal;padding:0 8px}
+}
+
+@media (max-width: 860px){.brand--hero{padding-right:64px}}
+
+/* ═══ Gate de sesión ═══ */
+body:not(.auth-ready) .auth-shell{display:none !important}
+body.auth-ready .auth-gate{display:none !important}
+.auth-gate{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:32px 20px;text-align:center;background:linear-gradient(157deg,#0E1826 0%,#0B121F 55%,#070B12 100%)}
+:root[data-theme="day"] .auth-gate{background:linear-gradient(157deg,#F4FAFF 0%,#EEF5FC 55%,#DCEAF7 100%)}
+.auth-gate::before{content:"";position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:min(560px,90vw);height:min(560px,55vh);background:radial-gradient(circle,var(--primary-glow),transparent 62%);filter:blur(70px);pointer-events:none;opacity:.7}
+.auth-gate > *{position:relative;z-index:1}
+.ag-logo{width:76px;height:76px;border-radius:20px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary-deep));border:1px solid var(--border-2);box-shadow:var(--shadow-card);animation:agPulse 2.4s ease-in-out infinite}
+.ag-logo svg{width:42px;height:42px}
+.ag-name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.6px;color:var(--text)}
+.ag-row{display:flex;align-items:center;gap:10px}
+.ag-spinner{width:16px;height:16px;flex-shrink:0;border-radius:50%;border:2px solid var(--border-strong);border-top-color:var(--primary);animation:spin .7s linear infinite}
+.ag-text{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3)}
+@keyframes agPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.78;transform:scale(.965)}}
+@media (max-width:420px){.auth-gate::before{opacity:.5}.auth-gate{gap:18px}.ag-logo{width:64px;height:64px;border-radius:17px}.ag-name{font-size:19px}.ag-text{font-size:9.5px;letter-spacing:1.1px}}
+@media (prefers-reduced-motion:reduce){.ag-logo{animation:none}.ag-spinner{animation-duration:1.6s}}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="theme-toggle" aria-label="Tema">
+  <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/></svg>
+</button>
+
+<!-- Gate de sesión -->
+<div class="auth-gate" id="auth-gate" role="status" aria-live="polite">
+  <div class="ag-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg>
+  </div>
+  <div class="ag-name">SYNOVA</div>
+  <div class="ag-row">
+    <div class="ag-spinner" aria-hidden="true"></div>
+    <span class="ag-text">Verificando tu sesión…</span>
+  </div>
+</div>
+<script>
+setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classList.add('auth-ready'); }, 5000);
+</script>
+
+<div class="auth-shell">
+  <aside class="auth-hero">
+    <div class="brand brand--hero">
+      <div class="brand__logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg>
+      </div>
+      <div>
+        <div class="brand__name">SYNOVA</div>
+        <div class="brand__sub">Consultoría · Capacitación Clínica en Salud</div>
+      </div>
+    </div>
+    <div>
+      <h1 class="auth-hero__title">Procesos, normas y calidad de atención que tu equipo <em>necesita dominar</em>.</h1>
+      <p class="auth-hero__desc">Cursos clínicos especializados, sesiones en vivo con expertos y certificados con folio verificable para elevar el nivel de tu práctica en salud.</p>
+      <div class="hero-marquee" aria-hidden="true"><div class="track">
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Accesos vasculares</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Código Mater</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Manejo de heridas</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Hemodiálisis</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Pie diabético</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Triage hospitalario</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Cuidados pediátricos</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Esterilización</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Accesos vasculares</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Código Mater</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Manejo de heridas</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Hemodiálisis</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Pie diabético</span>
+        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Triage hospitalario</span>
+      </div></div>
+      <p class="hero-hook">Todo esto por <b>menos de $7 al día</b>:</p>
+      <ul class="hero-benefits">
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><b>Biblioteca completa</b> de cursos clínicos y de gestión de la calidad en salud</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><b>Clases en vivo</b> con especialistas del sector salud</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><b>Material descargable premium</b> listo para aplicar en tu institución</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><b>Certificados con folio oficial</b> verificables</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span><b>Asesoría personalizada</b> y canal VIP · sin permanencia</span></li>
+      </ul>
+      <div class="hero-price">
+        <div class="opt" data-precio-opt-mes>
+          <b data-precio-mes-full>$199</b>
+          <small>MXN al mes · menos de $7 al día<br>Cancela cuando quieras</small>
+        </div>
+        <div class="opt opt--star" data-precio-opt-ano>
+          <span class="badge" data-precio-ahorro-badge>Ahorras $489</span>
+          <b data-precio-ano-full>$1,899</b>
+          <small>MXN al año · sale en <span class="tachado" data-precio-mes-full-2>$199</span><strong style="color:var(--primary-soft);" data-precio-ano-equiv>$158/mes</strong><br>Acceso completo los 365 días</small>
+        </div>
+      </div>
+      <p class="hero-price-note">Precio vigente al momento de suscribirte · sujeto a cambios anunciados por SYNOVA</p>
+      <p class="hero-refs-title">Referencias</p>
+      <div class="hero-refs">
+        <div class="hero-ref">
+          <span class="avi">RM</span>
+          <div style="flex:1;">
+            <div class="bub">
+              <b>Enf. Renata Mendoza <small>· Jefa de Enfermería</small></b>
+              <p>El curso de manejo de heridas nos ayudó a estandarizar el protocolo en todo el piso. El certificado con folio lo validamos sin problema en la institución.</p>
+            </div>
+            <div class="meta"><b>Me gusta</b><b>Responder</b><span>2 sem</span></div>
+          </div>
+        </div>
+        <div class="hero-ref">
+          <span class="avi">JL</span>
+          <div style="flex:1;">
+            <div class="bub">
+              <b>Dr. José Luis Ortega <small>· Coordinador de calidad</small></b>
+              <p>Con SYNOVA ordenamos nuestros procesos de cumplimiento normativo. Las sesiones en vivo resuelven dudas reales del equipo, no solo teoría.</p>
+            </div>
+            <div class="meta"><b>Me gusta</b><b>Responder</b><span>1 mes</span></div>
+          </div>
+        </div>
+      </div>
+      <p class="hero-trust">Pago seguro con Stripe · Acceso inmediato · Sin permanencia</p>
+    </div>
+    <div class="auth-hero__stats">
+      <div class="auth-stat"><span class="auth-stat__num">24/7</span><span class="auth-stat__lbl">acceso</span></div>
+      <div class="auth-stat"><span class="auth-stat__num">100%</span><span class="auth-stat__lbl">certificable</span></div>
+      <div class="auth-stat"><span class="auth-stat__num">Pro</span><span class="auth-stat__lbl">herramientas</span></div>
+    </div>
+  </aside>
+
+  <main class="auth-main">
+<div class="wrap">
+  <div class="brand">
+    <div class="brand__logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg>
+    </div>
+    <div class="brand__name">SYNOVA</div>
+    <div class="brand__sub">Consultoría · Capacitación Clínica en Salud</div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab" data-tab="login">Iniciar sesión</button>
+      <button class="tab is-active" data-tab="register">Crear cuenta</button>
+    </div>
+
+    <div id="alert-zone"></div>
+
+    <!-- LOGIN -->
+    <div class="pane" id="pane-login">
+      <div class="pane-head">
+        <h2 id="login-title">Hola de nuevo</h2>
+        <p id="login-sub">Ingresa tus datos para entrar al club.</p>
+      </div>
+      <div class="field">
+        <label class="label" for="li-email">Correo electrónico</label>
+        <div class="input-wrap">
+          <svg class="lead" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+          <input type="email" class="input" id="li-email" placeholder="tu@email.com" autocomplete="email">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" for="li-pass">Contraseña</label>
+        <div class="input-wrap">
+          <svg class="lead" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" class="input" id="li-pass" placeholder="••••••••" autocomplete="current-password">
+          <button type="button" class="toggle-pass" data-target="li-pass" aria-label="Mostrar contraseña">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8s11 8 11 8s-4 8-11 8s-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="forgot"><a href="#" id="forgot-link">¿Olvidaste tu contraseña?</a></div>
+      <button class="btn" id="btn-login">
+        <span class="btn-label">Iniciar sesión</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <div class="auth-divider">o</div>
+      <button type="button" class="btn-google" data-google="1">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continuar con Google
+      </button>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="pane is-active" id="pane-register">
+      <div class="pane-head">
+        <h2>Crea tu cuenta</h2>
+        <p>Únete al club VIP de SYNOVA en 30 segundos.</p>
+      </div>
+      <div class="field">
+        <label class="label" for="re-name">Nombre completo</label>
+        <div class="input-wrap">
+          <svg class="lead" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" class="input" id="re-name" placeholder="Tu nombre" autocomplete="name">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" for="re-email">Correo electrónico</label>
+        <div class="input-wrap">
+          <svg class="lead" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+          <input type="email" class="input" id="re-email" placeholder="tu@email.com" autocomplete="email">
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" for="re-pass">Contraseña</label>
+        <div class="input-wrap">
+          <svg class="lead" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" class="input" id="re-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          <button type="button" class="toggle-pass" data-target="re-pass" aria-label="Mostrar contraseña">
+            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8s11 8 11 8s-4 8-11 8s-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="helper-text">Usa al menos <strong>6 caracteres</strong> con letras y números.</div>
+      </div>
+      <label class="checkbox-row">
+        <input type="checkbox" id="re-terms">
+        <span>Acepto los <a href="#" target="_blank">Términos y condiciones</a> y la <a href="#" target="_blank">Política de privacidad</a> de SYNOVA.</span>
+      </label>
+      <button class="btn" id="btn-register">
+        <span class="btn-label">Crear cuenta</span>
+        <svg class="btn-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+      <div class="helper-text" style="margin-top:10px;text-align:center;">Al crearla, te llevamos al checkout para activar tu membresía VIP.</div>
+      <div class="auth-divider">o</div>
+      <button type="button" class="btn-google" data-google="1">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Registrarte con Google
+      </button>
+    </div>
+  </div>
+
+  <div class="legal">SYNOVA México · Consultoría en Salud<br>© 2026 · Todos los derechos reservados</div>
+</div>
+  </main>
+</div>
+
+<!-- UI independiente de Firebase (tabs, theme, toggle password) -->
+<script>
+const Theme = {
+  init() {
+    const s = localStorage.getItem('synova-auth:theme') || 'night';
+    document.documentElement.dataset.theme = s;
+    this.updateIcon();
+  },
+  toggle() {
+    const c = document.documentElement.dataset.theme;
+    const n = c === 'night' ? 'day' : 'night';
+    document.documentElement.dataset.theme = n;
+    localStorage.setItem('synova-auth:theme', n);
+    this.updateIcon();
+  },
+  updateIcon() {
+    const isDay = document.documentElement.dataset.theme === 'day';
+    const btn = document.getElementById('theme-toggle');
+    btn.setAttribute('aria-label', isDay ? 'Cambiar a modo noche' : 'Cambiar a modo día');
+    btn.title = isDay ? 'Modo noche' : 'Modo día';
+    btn.innerHTML = !isDay
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/></svg>';
+  }
+};
+Theme.init();
+document.getElementById('theme-toggle').addEventListener('click', () => Theme.toggle());
+
+document.querySelectorAll('[data-tab]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('is-active'));
+    b.classList.add('is-active');
+    document.querySelectorAll('.pane').forEach(p => p.classList.remove('is-active'));
+    document.getElementById('pane-' + b.dataset.tab).classList.add('is-active');
+    document.getElementById('alert-zone').innerHTML = '';
+  });
+});
+
+(function () {
+  try {
+    const t = new URLSearchParams(location.search).get('tab');
+    if (t === 'register' || t === 'login') {
+      const b = document.querySelector('[data-tab="' + t + '"]');
+      if (b) b.click();
+    }
+  } catch (e) {}
+})();
+
+document.querySelectorAll('.toggle-pass').forEach(b => {
+  b.addEventListener('click', () => {
+    const i = document.getElementById(b.dataset.target);
+    i.type = i.type === 'password' ? 'text' : 'password';
+  });
+});
+
+const ICON_ERR = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+const ICON_OK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+window.showAlert = function(type, title, msg) {
+  const z = document.getElementById('alert-zone');
+  z.innerHTML = `<div class="alert alert--${type}">${type==='error'?ICON_ERR:ICON_OK}<div class="alert__msg"><strong>${title}</strong>${msg?'<br>'+msg:''}</div></div>`;
+};
+window.clearAlert = function() { document.getElementById('alert-zone').innerHTML = ''; };
+
+window.setLoading = function(btn, isLoading, originalLabel) {
+  btn.disabled = isLoading;
+  const label = btn.querySelector('.btn-label');
+  const arrow = btn.querySelector('.btn-arrow');
+  if (isLoading) {
+    label.textContent = 'Procesando…';
+    if (arrow) arrow.style.display = 'none';
+    if (!btn.querySelector('.spinner')) btn.appendChild(Object.assign(document.createElement('span'), {className:'spinner'}));
+  } else {
+    label.textContent = originalLabel;
+    if (arrow) arrow.style.display = '';
+    btn.querySelector('.spinner')?.remove();
+  }
+};
+
+(function(){
+  try {
+    const last = JSON.parse(localStorage.getItem('synova_last_user') || 'null');
+    if (last && last.email) {
+      const em = document.getElementById('li-email');
+      if (em && !em.value) em.value = last.email;
+      const first = (last.nombre || '').trim().split(' ')[0];
+      const t = document.getElementById('login-title');
+      const s = document.getElementById('login-sub');
+      if (first && t) t.textContent = 'Hola de nuevo, ' + first;
+      if (s) s.textContent = 'Tu acceso al club te está esperando.';
+      const urlTab = new URLSearchParams(location.search).get('tab');
+      if (urlTab !== 'register') {
+        document.querySelector('[data-tab="login"]')?.click();
+        const pass = document.getElementById('li-pass');
+        if (em && em.value && pass) setTimeout(() => pass.focus(), 200);
+      }
+    }
+  } catch(e){}
+})();
+</script>
+
+<!-- Firebase Auth (módulo) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  sendPasswordResetEmail, updateProfile, setPersistence, browserLocalPersistence,
+  onAuthStateChanged, GoogleAuthProvider, signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, setDoc, getDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* =========================================================
+   CONFIG · Firebase SYNOVA
+   ⚠️ PLACEHOLDER — reemplaza con el config real del proyecto
+   Firebase que crees para SYNOVA (Firebase Console → Project
+   Settings → General → SDK setup). Mismo config va en
+   vip-panel.html y vip-admin.html.
+   ========================================================= */
+const firebaseConfig = {
+  apiKey: "TODO_API_KEY_SYNOVA",
+  authDomain: "club-synova.firebaseapp.com",
+  projectId: "club-synova",
+  storageBucket: "club-synova.firebasestorage.app",
+  messagingSenderId: "TODO_SENDER_ID",
+  appId: "TODO_APP_ID"
+};
+
+/* Admins · emails con acceso al panel admin de SYNOVA */
+const ADMINS = [
+  "teccapitalweb@gmail.com",
+  "synovamexico@gmail.com"
+];
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+setPersistence(auth, browserLocalPersistence);
+window.__synAuthBooted = true;
+
+/* ══ Precio en vivo del hero · lee config/club y actualiza los data-precio-* ══
+   Mismo patrón que VisionPecuaria (editable en admin, reflejado en todos lados) */
+async function actualizarPrecioHero(){
+  try {
+    const snap = await getDoc(doc(db, 'config', 'club'));
+    const c = snap.exists() ? snap.data() : {};
+    const mes = Number(c.precioMes) || 199;
+    const ano = Number(c.precioAno) || 1899;
+    const equivMes = Math.round(ano / 12);
+    const ahorro = Math.max(0, (mes * 12) - ano);
+    const fmt = n => '$' + Number(n).toLocaleString('es-MX');
+    document.querySelectorAll('[data-precio-mes-full]').forEach(el => el.textContent = fmt(mes));
+    document.querySelectorAll('[data-precio-mes-full-2]').forEach(el => el.textContent = fmt(mes));
+    document.querySelectorAll('[data-precio-ano-full]').forEach(el => el.textContent = fmt(ano));
+    document.querySelectorAll('[data-precio-ano-equiv]').forEach(el => el.textContent = fmt(equivMes) + '/mes');
+    document.querySelectorAll('[data-precio-ahorro-badge]').forEach(el => el.textContent = 'Ahorras ' + fmt(ahorro));
+  } catch (e) { console.warn('[SYNOVA] No se pudo leer config/club, se usan precios por defecto:', e.message); }
+}
+actualizarPrecioHero();
+
+async function ensureMiembroDoc(user, displayName, origen) {
+  if (!user || !user.uid) return { ok: false, reason: 'no-user' };
+  try {
+    const ref = doc(db, 'miembros', user.uid);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (data.activa !== true && displayName && !data.nombre) {
+        await setDoc(ref, { nombre: displayName, displayName: displayName, lastUpdatedAt: serverTimestamp() }, { merge: true });
+      }
+      return { ok: true, action: 'exists', uid: user.uid };
+    }
+    await setDoc(ref, {
+      uid: user.uid,
+      email: (user.email || '').toLowerCase(),
+      nombre: displayName || user.displayName || (user.email || '').split('@')[0] || 'Sin nombre',
+      displayName: displayName || user.displayName || '',
+      activa: false,
+      plan: null,
+      fechaRegistro: serverTimestamp(),
+      createdAt: serverTimestamp(),
+      lastUpdatedAt: serverTimestamp(),
+      origen: origen || 'login-web'
+    });
+    return { ok: true, action: 'created', uid: user.uid };
+  } catch (e) {
+    console.error('[ensureMiembroDoc] Error:', e.code, e.message);
+    return { ok: false, reason: e.code || e.message };
+  }
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await ensureMiembroDoc(user, user.displayName, 'login-web');
+    try { localStorage.setItem('synova_last_user', JSON.stringify({ email:user.email||'', nombre:user.displayName||'' })); } catch(e){}
+    const isAdmin = ADMINS.includes((user.email || "").toLowerCase());
+    window.location.href = isAdmin ? "vip-admin.html" : "vip-panel.html";
+  } else {
+    revealAuthShell();
+  }
+});
+
+function revealAuthShell() { document.body.classList.add('auth-ready'); }
+setTimeout(() => { if (auth.currentUser) return; revealAuthShell(); }, 2500);
+
+function translateError(code) {
+  const map = {
+    'auth/invalid-email': 'El correo no es válido.',
+    'auth/user-disabled': 'Esta cuenta está deshabilitada. Contacta soporte.',
+    'auth/user-not-found': 'No existe una cuenta con ese correo.',
+    'auth/wrong-password': 'Contraseña incorrecta.',
+    'auth/invalid-credential': 'Correo o contraseña incorrectos.',
+    'auth/email-already-in-use': 'Ya existe una cuenta con ese correo. Inicia sesión.',
+    'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+    'auth/too-many-requests': 'Demasiados intentos. Espera unos minutos.',
+    'auth/network-request-failed': 'Sin conexión. Revisa tu internet.',
+    'auth/missing-password': 'Escribe una contraseña.',
+    'auth/missing-email': 'Escribe tu correo electrónico.',
+    'auth/popup-blocked': 'El navegador bloqueó la ventana de Google. Permite las ventanas emergentes e intenta de nuevo.',
+    'auth/popup-closed-by-user': 'Cerraste la ventana de Google antes de terminar.',
+    'auth/account-exists-with-different-credential': 'Ya tienes una cuenta con ese correo usando contraseña. Inicia sesión con tu correo.',
+    'auth/unauthorized-domain': 'Este dominio no está autorizado para Google. El admin debe agregarlo en Firebase.'
+  };
+  return map[code] || 'Algo salió mal. Intenta de nuevo.';
+}
+
+document.getElementById('btn-login').addEventListener('click', async () => {
+  clearAlert();
+  const email = document.getElementById('li-email').value.trim().toLowerCase();
+  const pass = document.getElementById('li-pass').value;
+  if (!email || !pass) { showAlert('error', 'Faltan datos', 'Llena ambos campos.'); return; }
+  const btn = document.getElementById('btn-login');
+  setLoading(btn, true);
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    const isAdmin = ADMINS.includes(email);
+    showAlert('success', '¡Bienvenido!', 'Redirigiendo…');
+    setTimeout(() => { window.location.href = isAdmin ? 'vip-admin.html' : 'vip-panel.html'; }, 600);
+  } catch (e) {
+    setLoading(btn, false, 'Iniciar sesión');
+    showAlert('error', 'No pudimos iniciar sesión', translateError(e.code));
+  }
+});
+
+document.getElementById('btn-register').addEventListener('click', async () => {
+  clearAlert();
+  const name = document.getElementById('re-name').value.trim();
+  const email = document.getElementById('re-email').value.trim().toLowerCase();
+  const pass = document.getElementById('re-pass').value;
+  const terms = document.getElementById('re-terms').checked;
+  if (!name) { showAlert('error', 'Falta tu nombre'); return; }
+  if (!email || !pass) { showAlert('error', 'Faltan datos', 'Correo y contraseña son obligatorios.'); return; }
+  if (pass.length < 6) { showAlert('error', 'Contraseña muy corta', 'Mínimo 6 caracteres.'); return; }
+  if (!terms) { showAlert('error', 'Debes aceptar los términos'); return; }
+  const btn = document.getElementById('btn-register');
+  setLoading(btn, true);
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, { displayName: name });
+    const docResult = await ensureMiembroDoc(cred.user, name, 'registro-web');
+    const isAdmin = ADMINS.includes(email);
+    if (docResult && docResult.ok === false) {
+      const motivo = docResult.reason || 'desconocido';
+      if (motivo === 'permission-denied') {
+        showAlert('error', '⚠️ Cuenta creada pero falta actualizar reglas Firestore',
+          'Tu cuenta SÍ se creó en Auth, pero no se pudo guardar en Firestore (permission-denied). El admin debe actualizar las reglas. Continúa al checkout para activar tu VIP.');
+      } else {
+        showAlert('error', '⚠️ Cuenta creada · advertencia',
+          `Tu cuenta se creó pero hubo un problema al guardar tu perfil (${motivo}). Continúa al checkout.`);
+      }
+      setTimeout(() => { window.location.href = isAdmin ? 'vip-admin.html' : 'vip-panel.html'; }, 4500);
+      return;
+    }
+    showAlert('success', '¡Cuenta creada!',
+      isAdmin ? 'Redirigiendo al panel admin…' : '✅ Perfil guardado · redirigiendo al checkout…');
+    setTimeout(() => { window.location.href = isAdmin ? 'vip-admin.html' : 'vip-panel.html'; }, 900);
+  } catch (e) {
+    setLoading(btn, false, 'Crear cuenta');
+    showAlert('error', 'No pudimos crear tu cuenta', translateError(e.code));
+  }
+});
+
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+document.querySelectorAll('[data-google]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    clearAlert();
+    btn.disabled = true;
+    try {
+      await signInWithPopup(auth, googleProvider);
+      showAlert('success', '¡Listo!', 'Entrando con Google…');
+    } catch (e) {
+      btn.disabled = false;
+      if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return;
+      showAlert('error', 'No pudimos entrar con Google', translateError(e.code));
+    }
+  });
+});
+
+document.getElementById('forgot-link').addEventListener('click', async (e) => {
+  e.preventDefault();
+  clearAlert();
+  const email = document.getElementById('li-email').value.trim().toLowerCase();
+  if (!email) {
+    showAlert('error', 'Escribe tu correo primero', 'Para enviarte el enlace de recuperación.');
+    document.getElementById('li-email').focus();
+    return;
+  }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    showAlert('success', 'Enlace enviado', 'Revisa tu bandeja de entrada (y la carpeta de spam).');
+  } catch (e) {
+    showAlert('error', 'No pudimos enviar el correo', translateError(e.code));
+  }
+});
+
+['li-email','li-pass'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-login').click(); });
+});
+['re-name','re-email','re-pass'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-register').click(); });
+});
+</script>
+
+<!-- Service Worker (opcional, para instalar como app) -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){ /* silencioso: la app funciona igual sin SW */ });
+    });
+  }
+</script>
+</body>
+</html>

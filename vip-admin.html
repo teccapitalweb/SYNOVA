@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="night">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B121F">
+<title>SYNOVA · Panel Admin</title>
+<link rel="icon" type="image/png" href="assets/img/synova-favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none;cursor:pointer}
+img{display:block;max-width:100%}
+input,textarea,select{font:inherit;color:inherit}
+::selection{background:var(--primary);color:#fff}
+
+:root[data-theme="night"]{
+  --bg:#0B121F;--bg-deep:#070B12;--surface:#101A2C;--surface-2:#16223A;--surface-3:#223353;
+  --border:rgba(140,190,230,0.08);--border-2:rgba(140,190,230,0.15);--border-strong:rgba(140,190,230,0.24);
+  --text:#EAF2FA;--text-2:#A9BBD1;--text-3:#7C8FA8;
+  --primary:#1C6FB0;--primary-soft:#5FB6E0;--primary-deep:#0B4A7C;--primary-glow:rgba(28,111,176,0.42);--highlight:#2FD1C6;
+  --success:#34D399;--warn:#FBBF24;--danger:#F87171;--shadow-card:0 20px 60px rgba(0,0,0,0.5);
+}
+:root[data-theme="day"]{
+  --bg:#EEF5FC;--bg-deep:#DCEAF7;--surface:#FFFFFF;--surface-2:#F3F9FE;--surface-3:#E3EFF9;
+  --border:rgba(11,58,102,0.08);--border-2:rgba(11,58,102,0.14);--border-strong:rgba(11,58,102,0.24);
+  --text:#0B2A4A;--text-2:#3E5975;--text-3:#7891A8;
+  --primary:#0D5FA0;--primary-soft:#3D8FCB;--primary-deep:#0A3E68;--primary-glow:rgba(13,95,160,0.24);--highlight:#159E92;
+  --success:#0F9D58;--warn:#B45309;--danger:#DC2D3F;--shadow-card:0 16px 50px rgba(11,58,102,0.12);
+}
+body{font-family:'Inter',sans-serif;font-size:14px;color:var(--text);background:var(--bg);min-height:100vh}
+h1,h2,h3{font-family:'Plus Jakarta Sans','Inter',sans-serif}
+.mono{font-family:'JetBrains Mono',monospace}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+body:not(.auth-ready) .app-shell{display:none !important}
+body.auth-ready .auth-gate{display:none !important}
+.auth-gate{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(157deg,#0E1826 0%,#0B121F 55%,#070B12 100%)}
+:root[data-theme="day"] .auth-gate{background:linear-gradient(157deg,#F4FAFF 0%,#EEF5FC 55%,#DCEAF7 100%)}
+.ag-logo{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary-deep));box-shadow:var(--shadow-card);animation:agPulse 2.2s ease-in-out infinite}
+.ag-logo svg{width:36px;height:36px}
+@keyframes agPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(.96)}}
+.ag-row{display:flex;align-items:center;gap:10px}
+.ag-spinner{width:14px;height:14px;border-radius:50%;border:2px solid var(--border-strong);border-top-color:var(--primary);animation:spin .7s linear infinite}
+.ag-text{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--text-3)}
+
+.app-shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.sidebar{background:var(--surface);border-right:1px solid var(--border-2);display:flex;flex-direction:column;padding:20px 14px;gap:6px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
+.sb-brand__logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));display:grid;place-items:center;flex:none}
+.sb-brand__logo svg{width:20px;height:20px}
+.sb-brand__name{font-weight:800;font-size:15px}
+.sb-brand__sub{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;font-size:13px;font-weight:600;color:var(--text-2);transition:all .15s;margin-bottom:2px}
+.sb-item:hover{background:var(--surface-2);color:var(--text)}
+.sb-item.is-active{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff}
+.sb-item svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9}
+.sb-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary-soft),var(--primary));display:grid;place-items:center;font-weight:800;font-size:11px;color:#071018;flex:none}
+.sb-user{flex:1;min-width:0}
+.sb-user__name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:32px;height:32px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border-2);display:grid;place-items:center;color:var(--text-2);flex:none}
+.icon-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9}
+
+.main{display:flex;flex-direction:column;min-height:100vh}
+.topbar{display:none;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border-2);background:var(--surface);position:sticky;top:0;z-index:20}
+.content{flex:1;padding:26px 32px 60px;max-width:1180px;width:100%;margin:0 auto}
+.page-head{margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px}
+.page-head h1{font-size:21px;font-weight:800}
+.page-head p{color:var(--text-2);font-size:12.5px;margin-top:3px}
+
+.card{background:var(--surface);border:1px solid var(--border-2);border-radius:16px;padding:18px}
+.grid{display:grid;gap:14px}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:960px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
+
+.kpi .lbl{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
+.kpi .val{font-size:24px;font-weight:800;margin-top:6px}
+.kpi .sub{font-size:11px;color:var(--text-3);margin-top:3px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:100px;font-weight:700;font-size:13px;cursor:pointer;border:1px solid transparent}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff}
+.btn-outline{background:var(--surface-2);border-color:var(--border-2);color:var(--text)}
+.btn-danger{background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger);border-color:color-mix(in srgb,var(--danger) 30%,transparent)}
+.btn-sm{padding:7px 13px;font-size:11.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;font-family:'JetBrains Mono',monospace}
+.field input,.field textarea,.field select{width:100%;padding:11px 14px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:10px;font-size:13.5px}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--primary)}
+
+.table-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.table-row:last-child{border-bottom:none}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:700}
+.pill.ok{background:color-mix(in srgb,var(--success) 15%,transparent);color:var(--success)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
+.pill.off{background:var(--surface-2);color:var(--text-3)}
+.pill.gift{background:color-mix(in srgb,var(--highlight) 15%,transparent);color:var(--highlight)}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filters select,.filters input{padding:8px 12px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:10px;font-size:12.5px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--text-3)}
+.empty svg{width:32px;height:32px;stroke:var(--text-3);fill:none;stroke-width:1.6;margin:0 auto 12px}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(4,8,14,.6);z-index:9990;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.is-open{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;padding:26px;max-width:440px;width:100%;box-shadow:var(--shadow-card);animation:fadeUp .25s ease;max-height:85vh;overflow-y:auto}
+.modal-box h3{font-size:16px;margin-bottom:10px}
+.modal-box p{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:14px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+
+.toast-zone{position:fixed;bottom:20px;right:20px;z-index:9995;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:12px 16px;font-size:12.5px;box-shadow:var(--shadow-card);animation:fadeUp .25s ease}
+.toast.ok{border-color:color-mix(in srgb,var(--success) 40%,transparent)}
+.toast.err{border-color:color-mix(in srgb,var(--danger) 40%,transparent)}
+
+@media(max-width:960px){
+  .app-shell{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .topbar{display:flex}
+  .content{padding:18px 16px 60px}
+}
+</style>
+</head>
+<body>
+
+<div class="auth-gate" id="auth-gate">
+  <div class="ag-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg></div>
+  <div class="ag-row"><div class="ag-spinner"></div><span class="ag-text">Verificando acceso de administrador…</span></div>
+</div>
+<script>setTimeout(function(){ if (window.__synAdminBooted) return; window.location.href = 'vip-auth.html'; }, 7000);</script>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand__logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/></svg></div>
+      <div><div class="sb-brand__name">SYNOVA</div><div class="sb-brand__sub">Panel Admin</div></div>
+    </div>
+    <nav>
+      <a class="sb-item" data-page="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</a>
+      <a class="sb-item" data-page="miembros"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Miembros VIP</a>
+      <a class="sb-item" data-page="cursos"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Cursos</a>
+      <a class="sb-item" data-page="webinars"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="12" rx="2"/><path d="M22 8l-5 3 5 3z"/></svg>Clases en vivo</a>
+      <a class="sb-item" data-page="materiales"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDFs y material</a>
+      <a class="sb-item" data-page="notificaciones"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Notificaciones</a>
+      <a class="sb-item" data-page="foro"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Foro (moderar)</a>
+      <a class="sb-item" data-page="config"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</a>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-avatar" id="sb-avatar">··</div>
+      <div class="sb-user"><div class="sb-user__name" id="sb-user-name">Admin</div></div>
+      <button class="icon-btn" id="btn-theme-toggle" title="Tema"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/></svg></button>
+      <button class="icon-btn" id="btn-logout" title="Salir"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <b>SYNOVA · Admin</b>
+      <button class="icon-btn" style="margin-left:auto" id="btn-logout-m"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </header>
+    <main class="content" id="content">
+      <div class="empty"><div class="ag-spinner" style="margin:0 auto"></div></div>
+    </main>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay"><div class="modal-box" id="modal-box"></div></div>
+<div class="toast-zone" id="toast-zone"></div>
+
+<script>
+const Theme = {
+  init(){ document.documentElement.dataset.theme = localStorage.getItem('synova-admin:theme') || 'night'; },
+  toggle(){ const n = document.documentElement.dataset.theme === 'night' ? 'day' : 'night'; document.documentElement.dataset.theme = n; localStorage.setItem('synova-admin:theme', n); }
+};
+Theme.init();
+document.getElementById('btn-theme-toggle').addEventListener('click', () => Theme.toggle());
+
+function toast(msg, type){
+  const z = document.getElementById('toast-zone');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type === 'error' ? 'err' : 'ok');
+  el.textContent = msg;
+  z.appendChild(el);
+  setTimeout(() => el.remove(), 4200);
+}
+function abrirModal(html){ document.getElementById('modal-box').innerHTML = html; document.getElementById('modal-overlay').classList.add('is-open'); }
+function cerrarModal(){ document.getElementById('modal-overlay').classList.remove('is-open'); }
+window.cerrarModal = cerrarModal;
+window.escHtml = function(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); };
+document.getElementById('modal-overlay').addEventListener('click', (e) => { if (e.target.id === 'modal-overlay') cerrarModal(); });
+document.addEventListener('click', (e) => { const item = e.target.closest('[data-page]'); if (item) navigateTo(item.dataset.page); });
+function marcarActivo(page){ document.querySelectorAll('[data-page]').forEach(el => el.classList.toggle('is-active', el.dataset.page === page)); }
+</script>
+
+<!-- ══════════ FIREBASE + AUTH GUARD ══════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc,
+  query, orderBy, limit, where, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* ⚠️ PLACEHOLDER — mismo config que vip-auth.html / vip-panel.html */
+const firebaseConfig = {
+  apiKey: "TODO_API_KEY_SYNOVA",
+  authDomain: "club-synova.firebaseapp.com",
+  projectId: "club-synova",
+  storageBucket: "club-synova.firebasestorage.app",
+  messagingSenderId: "TODO_SENDER_ID",
+  appId: "TODO_APP_ID"
+};
+const ADMINS = ["teccapitalweb@gmail.com", "synovamexico@gmail.com"];
+window.__WEBHOOK_URL = "https://TODO-synova-webhook.up.railway.app";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+window.__fs = { doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc, query, orderBy, limit, where, onSnapshot, serverTimestamp, db };
+window.__auth = auth;
+window.__synAdminBooted = true;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'vip-auth.html'; return; }
+  const email = (user.email || '').toLowerCase();
+  if (!ADMINS.includes(email)) { window.location.href = 'vip-panel.html'; return; }
+  window.AdminUser = { uid: user.uid, email, nombre: user.displayName || email.split('@')[0] };
+  document.getElementById('sb-avatar').textContent = (window.AdminUser.nombre || '??').slice(0,2).toUpperCase();
+  document.getElementById('sb-user-name').textContent = window.AdminUser.nombre;
+  document.body.classList.add('auth-ready');
+  navigateTo('dashboard');
+});
+async function cerrarSesion(){ await signOut(auth); window.location.href = 'vip-auth.html'; }
+document.getElementById('btn-logout').addEventListener('click', cerrarSesion);
+document.getElementById('btn-logout-m').addEventListener('click', cerrarSesion);
+
+async function tokenAdmin(){ return window.__auth.currentUser ? await window.__auth.currentUser.getIdToken() : null; }
+window.__tokenAdmin = tokenAdmin;
+</script>
+
+<!-- ══════════ PÁGINAS DEL ADMIN ══════════ -->
+<script>
+const PAGES = {};
+window.navigateTo = function(page){
+  marcarActivo(page);
+  document.getElementById('content').innerHTML = '<div class="empty"><div class="ag-spinner" style="margin:0 auto"></div></div>';
+  (PAGES[page] || PAGES.dashboard)();
+};
+
+/* ── DASHBOARD ── */
+PAGES.dashboard = async function(){
+  document.getElementById('content').innerHTML = `
+    <div class="page-head"><h1>Dashboard</h1><p>Resumen general de SYNOVA VIP.</p></div>
+    <div class="grid grid-4" id="dash-kpis">
+      <div class="card kpi"><div class="lbl">Miembros activos</div><div class="val">—</div></div>
+      <div class="card kpi"><div class="lbl">Registrados sin pagar</div><div class="val">—</div></div>
+      <div class="card kpi"><div class="lbl">Plan mensual</div><div class="val">—</div></div>
+      <div class="card kpi"><div class="lbl">Plan anual</div><div class="val">—</div></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3 style="font-size:14px;margin-bottom:8px">Próximos pasos</h3>
+      <p style="font-size:12.5px;color:var(--text-2);line-height:1.7">1) Conecta el Firebase real de SYNOVA en los 3 archivos (auth/panel/admin).<br>2) Despliega el webhook en Railway con las variables de Stripe.<br>3) Ajusta el precio en <b>Configuración</b> — se refleja automáticamente en el panel de miembros.<br>4) Carga los cursos de SYNOVA en la sección Cursos.</p>
+    </div>`;
+  try {
+    const { collection, getDocs, db } = window.__fs;
+    const snap = await getDocs(collection(db, 'miembros'));
+    let activos = 0, sinPagar = 0, mensual = 0, anual = 0;
+    snap.forEach(d => {
+      const m = d.data();
+      const esActivo = m.activa === true || m.activo === true;
+      if (esActivo) { activos++; if (m.plan === 'anual') anual++; else if (m.plan === 'mensual') mensual++; }
+      else sinPagar++;
+    });
+    const kpis = document.querySelectorAll('#dash-kpis .kpi .val');
+    if (kpis[0]) kpis[0].textContent = activos;
+    if (kpis[1]) kpis[1].textContent = sinPagar;
+    if (kpis[2]) kpis[2].textContent = mensual;
+    if (kpis[3]) kpis[3].textContent = anual;
+  } catch (e) { console.warn('[SYNOVA admin] dashboard KPIs:', e.message); }
+};
+
+/* ── MIEMBROS VIP ── */
+PAGES.miembros = async function(){
+  document.getElementById('content').innerHTML = `
+    <div class="page-head"><h1>Miembros VIP</h1><p>Gestiona membresías, activaciones manuales y cancelaciones.</p></div>
+    <div class="filters">
+      <input type="text" id="mb-buscar" placeholder="Buscar por nombre o email…">
+      <select id="mb-filtro-plan"><option value="">Todos los planes</option><option value="mensual">Mensual</option><option value="anual">Anual</option><option value="regalo">Regalo</option><option value="sin-pagar">Sin pagar</option></select>
+    </div>
+    <div class="card"><div id="mb-list"></div></div>`;
+  document.getElementById('mb-buscar').addEventListener('input', pintarMiembros);
+  document.getElementById('mb-filtro-plan').addEventListener('change', pintarMiembros);
+  await cargarMiembros();
+};
+let __miembrosCache = [];
+async function cargarMiembros(){
+  try {
+    const { collection, getDocs, db } = window.__fs;
+    const snap = await getDocs(collection(db, 'miembros'));
+    __miembrosCache = [];
+    snap.forEach(d => __miembrosCache.push({ id: d.id, ...d.data() }));
+    pintarMiembros();
+  } catch (e) { document.getElementById('mb-list').innerHTML = `<div class="empty"><h3>No se pudo leer la colección "miembros"</h3><p>${escHtml(e.message)}</p></div>`; }
+}
+function pintarMiembros(){
+  const q = (document.getElementById('mb-buscar')?.value || '').toLowerCase();
+  const filtroPlan = document.getElementById('mb-filtro-plan')?.value || '';
+  let lista = __miembrosCache.filter(m => {
+    const texto = (m.nombre || '' ) + ' ' + (m.email || '');
+    if (q && !texto.toLowerCase().includes(q)) return false;
+    const esActivo = m.activa === true || m.activo === true;
+    if (filtroPlan === 'sin-pagar' && esActivo) return false;
+    if (filtroPlan && filtroPlan !== 'sin-pagar' && m.plan !== filtroPlan) return false;
+    return true;
+  });
+  const el = document.getElementById('mb-list');
+  if (!lista.length) { el.innerHTML = `<div class="empty"><h3>Sin resultados</h3><p>No hay miembros que coincidan con el filtro.</p></div>`; return; }
+  el.innerHTML = lista.map(m => {
+    const esActivo = m.activa === true || m.activo === true;
+    const pillClass = esActivo ? (m.esRegalo ? 'gift' : 'ok') : 'off';
+    const pillTxt = esActivo ? (m.esRegalo ? 'REGALO' : (m.plan === 'anual' ? 'ANUAL' : 'MENSUAL')) : 'SIN PAGAR';
+    return `<div class="table-row">
+      <div>
+        <div style="font-weight:700;font-size:13px">${escHtml(m.nombre || m.email || m.id)}</div>
+        <div style="font-size:11.5px;color:var(--text-3)">${escHtml(m.email || '')}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="pill ${pillClass}">${pillTxt}</span>
+        <button class="btn btn-outline btn-sm" onclick="abrirActivarManual('${m.id}')">Activar/Regalar</button>
+        ${esActivo ? `<button class="btn btn-danger btn-sm" onclick="abrirCancelarMiembro('${m.id}')">Cancelar</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.abrirActivarManual = function(uid){
+  abrirModal(`<h3>Activar / regalar membresía</h3><p>Activa manualmente sin pasar por Stripe (cortesía, regalo, prueba).</p>
+    <div class="field"><label>Plan</label><select id="am-plan"><option value="mensual">Mensual</option><option value="anual">Anual</option></select></div>
+    <div class="field"><label>Días de acceso</label><input type="number" id="am-dias" value="30"></div>
+    <div class="modal-actions"><button class="btn btn-outline btn-sm" onclick="cerrarModal()">Cancelar</button><button class="btn btn-primary btn-sm" onclick="confirmarActivarManual('${uid}')">Activar</button></div>`);
+};
+window.confirmarActivarManual = async function(uid){
+  const plan = document.getElementById('am-plan').value;
+  const dias = parseInt(document.getElementById('am-dias').value) || 30;
+  try {
+    const { doc, updateDoc, db, serverTimestamp } = window.__fs;
+    const expira = new Date(Date.now() + dias * 86400000);
+    await updateDoc(doc(db, 'miembros', uid), {
+      activa: true, activo: true, plan, esRegalo: true, estado: 'activa',
+      expiraEn: expira.toISOString(), cancelacionProgramada: false,
+      activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp()
+    });
+    cerrarModal(); toast('Membresía activada', 'ok'); cargarMiembros();
+  } catch (e) { toast('Error al activar: ' + e.message, 'error'); }
+};
+window.abrirCancelarMiembro = function(uid){
+  abrirModal(`<h3>Cancelar suscripción del miembro</h3><p>¿Cancelar al finalizar el periodo actual, o de inmediato?</p>
+    <div class="modal-actions"><button class="btn btn-outline btn-sm" onclick="cerrarModal()">Cerrar</button><button class="btn btn-outline btn-sm" onclick="ejecutarCancelarMiembro('${uid}', true)">Al finalizar periodo</button><button class="btn btn-danger btn-sm" onclick="ejecutarCancelarMiembro('${uid}', false)">Cancelar ya</button></div>`);
+};
+window.ejecutarCancelarMiembro = async function(uid, atPeriodEnd){
+  try {
+    const token = await window.__tokenAdmin();
+    const r = await fetch(window.__WEBHOOK_URL + '/admin/cancelar-suscripcion', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ uid, atPeriodEnd })
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error);
+    cerrarModal(); toast('Suscripción cancelada', 'ok'); cargarMiembros();
+  } catch (e) { toast('No se pudo cancelar (revisa que el webhook esté desplegado): ' + e.message, 'error'); }
+};
+
+/* ── CURSOS (CRUD simple) ── */
+PAGES.cursos = async function(){
+  document.getElementById('content').innerHTML = `
+    <div class="page-head"><h1>Cursos</h1><p>Catálogo de cursos clínicos de SYNOVA.</p><button class="btn btn-primary btn-sm" onclick="abrirNuevoCurso()">+ Nuevo curso</button></div>
+    <div class="card"><div id="cursos-admin-list"></div></div>`;
+  await cargarColeccionSimple('cursos', 'cursos-admin-list', (c) => `
+    <div class="table-row"><div><div style="font-weight:700;font-size:13px">${escHtml(c.nombre||'')}</div><div style="font-size:11.5px;color:var(--text-3)">${escHtml(c.area||'')}</div></div>
+    <button class="btn btn-danger btn-sm" onclick="borrarDoc('cursos','${c.id}','cursos-admin-list')">Eliminar</button></div>`);
+};
+window.abrirNuevoCurso = function(){
+  abrirModal(`<h3>Nuevo curso</h3>
+    <div class="field"><label>Nombre</label><input id="nc-nombre" placeholder="Ej. Manejo de heridas"></div>
+    <div class="field"><label>Área</label><input id="nc-area" placeholder="Ej. Atención avanzada"></div>
+    <div class="modal-actions"><button class="btn btn-outline btn-sm" onclick="cerrarModal()">Cancelar</button><button class="btn btn-primary btn-sm" onclick="guardarNuevoCurso()">Guardar</button></div>`);
+};
+window.guardarNuevoCurso = async function(){
+  const nombre = document.getElementById('nc-nombre').value.trim();
+  const area = document.getElementById('nc-area').value.trim();
+  if (!nombre) { toast('Falta el nombre del curso', 'error'); return; }
+  try {
+    const { collection, addDoc, db, serverTimestamp } = window.__fs;
+    await addDoc(collection(db, 'cursos'), { nombre, area, createdAt: serverTimestamp() });
+    cerrarModal(); toast('Curso agregado', 'ok'); PAGES.cursos();
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+};
+
+/* ── WEBINARS / MATERIALES (listas simples) ── */
+PAGES.webinars = async function(){
+  document.getElementById('content').innerHTML = `<div class="page-head"><h1>Clases en vivo</h1><p>Programa sesiones en vivo con especialistas.</p></div><div class="card"><div id="web-admin-list"></div></div>`;
+  await cargarColeccionSimple('webinars', 'web-admin-list', (w) => `<div class="table-row"><div style="font-weight:700;font-size:13px">${escHtml(w.titulo||'')}</div><button class="btn btn-danger btn-sm" onclick="borrarDoc('webinars','${w.id}','web-admin-list')">Eliminar</button></div>`);
+};
+PAGES.materiales = async function(){
+  document.getElementById('content').innerHTML = `<div class="page-head"><h1>PDFs y material</h1><p>Material descargable para miembros VIP.</p></div><div class="card"><div id="mat-admin-list"></div></div>`;
+  await cargarColeccionSimple('materiales', 'mat-admin-list', (m) => `<div class="table-row"><div style="font-weight:700;font-size:13px">${escHtml(m.titulo||'')}</div><button class="btn btn-danger btn-sm" onclick="borrarDoc('materiales','${m.id}','mat-admin-list')">Eliminar</button></div>`);
+};
+
+/* ── NOTIFICACIONES (crear) ── */
+PAGES.notificaciones = async function(){
+  document.getElementById('content').innerHTML = `
+    <div class="page-head"><h1>Notificaciones</h1><p>Envía un aviso a todos los miembros VIP.</p></div>
+    <div class="card" style="max-width:480px">
+      <div class="field"><label>Título</label><input id="nt-titulo" placeholder="Ej. Nueva clase en vivo esta semana"></div>
+      <div class="field"><label>Descripción</label><textarea id="nt-desc" rows="3" placeholder="Detalle del aviso"></textarea></div>
+      <button class="btn btn-primary btn-sm" onclick="enviarNotificacion()">Enviar notificación</button>
+    </div>
+    <div class="card" style="margin-top:16px"><div id="nt-list"></div></div>`;
+  await cargarColeccionSimple('notificaciones', 'nt-list', (n) => `<div class="table-row"><div><div style="font-weight:700;font-size:13px">${escHtml(n.titulo||'')}</div><div style="font-size:11.5px;color:var(--text-3)">${escHtml(n.descripcion||'')}</div></div><button class="btn btn-danger btn-sm" onclick="borrarDoc('notificaciones','${n.id}','nt-list')">Eliminar</button></div>`);
+};
+window.enviarNotificacion = async function(){
+  const titulo = document.getElementById('nt-titulo').value.trim();
+  const descripcion = document.getElementById('nt-desc').value.trim();
+  if (!titulo) { toast('Falta el título', 'error'); return; }
+  try {
+    const { collection, addDoc, db, serverTimestamp } = window.__fs;
+    await addDoc(collection(db, 'notificaciones'), { titulo, descripcion, tipo: 'general', creadoPor: window.AdminUser.email, createdAt: serverTimestamp() });
+    toast('Notificación enviada', 'ok'); PAGES.notificaciones();
+  } catch (e) { toast('Error: ' + e.message, 'error'); }
+};
+
+/* ── FORO (moderación simple) ── */
+PAGES.foro = async function(){
+  document.getElementById('content').innerHTML = `<div class="page-head"><h1>Foro (moderar)</h1><p>Publicaciones de la comunidad SYNOVA.</p></div><div class="card"><div id="foro-admin-list"></div></div>`;
+  await cargarColeccionSimple('posts', 'foro-admin-list', (p) => `<div class="table-row"><div><div style="font-weight:700;font-size:13px">${escHtml(p.nombre||'')}</div><div style="font-size:11.5px;color:var(--text-3)">${escHtml((p.texto||'').slice(0,80))}</div></div><button class="btn btn-danger btn-sm" onclick="borrarDoc('posts','${p.id}','foro-admin-list')">Eliminar</button></div>`);
+};
+
+/* ── CONFIGURACIÓN · precios editables (el corazón del pedido de hoy) ── */
+PAGES.config = async function(){
+  document.getElementById('content').innerHTML = `
+    <div class="page-head"><h1>Configuración</h1><p>Ajustes generales de SYNOVA · el precio se refleja en vivo en el panel de miembros.</p></div>
+    <div class="card" style="max-width:480px">
+      <h3 style="font-size:14px;margin-bottom:14px">Precios de la membresía VIP</h3>
+      <div class="field"><label>Precio mensual (MXN)</label><input type="number" id="cfg-precio-mes" value="199"></div>
+      <div class="field"><label>Precio anual (MXN)</label><input type="number" id="cfg-precio-ano" value="1899"></div>
+      <p style="font-size:11.5px;color:var(--text-3);line-height:1.6;margin-bottom:14px">Al guardar, este es el precio que se muestra en el panel VIP y con el que se arma el cobro en Stripe (checkout dinámico) — no requiere crear un nuevo producto en Stripe cada vez que cambie.</p>
+      <button class="btn btn-primary" onclick="guardarConfig()">Guardar configuración</button>
+    </div>`;
+  try {
+    const { doc, getDoc, db } = window.__fs;
+    const snap = await getDoc(doc(db, 'config', 'club'));
+    const c = snap.exists() ? snap.data() : {};
+    document.getElementById('cfg-precio-mes').value = c.precioMes || 199;
+    document.getElementById('cfg-precio-ano').value = c.precioAno || 1899;
+  } catch (e) { console.warn('[SYNOVA admin] config:', e.message); }
+};
+window.guardarConfig = async function(){
+  try {
+    const { doc, setDoc, db, serverTimestamp } = window.__fs;
+    const precioMes = parseInt(document.getElementById('cfg-precio-mes').value) || 199;
+    const precioAno = parseInt(document.getElementById('cfg-precio-ano').value) || 1899;
+    await setDoc(doc(db, 'config', 'club'), { precioMes, precioAno, actualizadoPor: window.AdminUser.email, actualizadoEn: serverTimestamp() }, { merge: true });
+    toast('Configuración guardada — ya se refleja en el panel VIP', 'ok');
+  } catch (e) { toast('Error al guardar: ' + e.message, 'error'); }
+};
+
+/* ── Helpers genéricos ── */
+async function cargarColeccionSimple(nombreCol, targetId, tarjeta){
+  try {
+    const { collection, getDocs, db } = window.__fs;
+    const snap = await getDocs(collection(db, nombreCol));
+    const el = document.getElementById(targetId);
+    if (snap.empty) { el.innerHTML = `<div class="empty"><h3>Sin registros aún</h3></div>`; return; }
+    let items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+    el.innerHTML = items.map(tarjeta).join('');
+  } catch (e) {
+    const el = document.getElementById(targetId);
+    if (el) el.innerHTML = `<div class="empty"><h3>No se pudo cargar "${nombreCol}"</h3><p>${escHtml(e.message)}</p></div>`;
+  }
+}
+window.borrarDoc = async function(coleccion, id, targetId){
+  try {
+    const { doc, deleteDoc, db } = window.__fs;
+    await deleteDoc(doc(db, coleccion, id));
+    toast('Eliminado', 'ok');
+    navigateTo(document.querySelector('.sb-item.is-active')?.dataset.page || 'dashboard');
+  } catch (e) { toast('Error al eliminar: ' + e.message, 'error'); }
+};
+</script>
+</body>
+</html>
