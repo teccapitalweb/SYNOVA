@@ -52,8 +52,8 @@ body:not(.auth-ready) .app-shell{display:none !important}
 body.auth-ready .auth-gate{display:none !important}
 .auth-gate{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(157deg,#0E1826 0%,#0B121F 55%,#070B12 100%)}
 :root[data-theme="day"] .auth-gate{background:linear-gradient(157deg,#F4FAFF 0%,#EEF5FC 55%,#DCEAF7 100%)}
-.ag-logo{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,var(--primary),var(--primary-deep));box-shadow:var(--shadow-card);animation:agPulse 2.2s ease-in-out infinite}
-.ag-logo svg{width:36px;height:36px}
+.ag-logo{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:#fff;padding:10px;box-shadow:var(--shadow-card);animation:agPulse 2.2s ease-in-out infinite}
+.ag-logo img{width:100%;height:100%;object-fit:contain;display:block}
 @keyframes agPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(.96)}}
 .ag-row{display:flex;align-items:center;gap:10px}
 .ag-spinner{width:14px;height:14px;border-radius:50%;border:2px solid var(--border-strong);border-top-color:var(--primary);animation:spin .7s linear infinite}
@@ -63,8 +63,8 @@ body.auth-ready .auth-gate{display:none !important}
 .app-shell{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
 .sidebar{background:var(--surface);border-right:1px solid var(--border-2);display:flex;flex-direction:column;padding:20px 14px;gap:6px;position:sticky;top:0;height:100vh;overflow-y:auto}
 .sb-brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
-.sb-brand__logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));display:grid;place-items:center;flex:none}
-.sb-brand__logo svg{width:22px;height:22px}
+.sb-brand__logo{width:38px;height:38px;border-radius:11px;background:#fff;padding:5px;display:grid;place-items:center;flex:none;overflow:hidden}
+.sb-brand__logo img{width:100%;height:100%;object-fit:contain;display:block}
 .sb-brand__name{font-weight:800;font-size:16px;letter-spacing:-.4px}
 .sb-brand__sub{font-size:9.5px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
 .sb-group{margin-top:14px}
@@ -180,7 +180,7 @@ body.auth-ready .auth-gate{display:none !important}
 
 <!-- Gate de sesión -->
 <div class="auth-gate" id="auth-gate">
-  <div class="ag-logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg></div>
+  <div class="ag-logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
   <div class="ag-row"><div class="ag-spinner"></div><span class="ag-text">Cargando tu panel…</span></div>
 </div>
 <script>setTimeout(function(){ if (window.__synPanelBooted) return; document.body.classList.add('auth-ready'); }, 6000);</script>
@@ -189,7 +189,7 @@ body.auth-ready .auth-gate{display:none !important}
   <!-- Sidebar desktop -->
   <aside class="sidebar">
     <div class="sb-brand">
-      <div class="sb-brand__logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.2" fill="#2FD1C6" stroke="none"/></svg></div>
+      <div class="sb-brand__logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
       <div><div class="sb-brand__name">SYNOVA</div><div class="sb-brand__sub">Panel VIP</div></div>
     </div>
 
@@ -230,7 +230,7 @@ body.auth-ready .auth-gate{display:none !important}
     <!-- Topbar mobile -->
     <header class="topbar">
       <div class="topbar__brand">
-        <div class="sb-brand__logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/></svg></div>
+        <div class="sb-brand__logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
         SYNOVA
       </div>
       <div class="topbar-actions">

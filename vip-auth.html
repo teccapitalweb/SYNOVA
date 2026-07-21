@@ -83,7 +83,7 @@ body::after{
 .brand{text-align:center;margin-bottom:24px}
 .brand__logo{
   width:60px;height:60px;border-radius:16px;
-  background:linear-gradient(135deg,var(--primary),var(--primary-deep));
+  background:#fff;padding:7px;overflow:hidden;
   display:inline-flex;align-items:center;justify-content:center;
   margin-bottom:14px;box-shadow:0 12px 32px rgba(0,0,0,.35);position:relative;
 }
@@ -94,7 +94,7 @@ body::after{
   animation:shimmerBar 4s ease-in-out infinite;filter:blur(8px);opacity:.4;
 }
 @keyframes shimmerBar{0%,100%{background-position:0 0}50%{background-position:200% 0}}
-.brand__logo svg{width:34px;height:34px}
+.brand__logo img{width:100%;height:100%;object-fit:contain;display:block}
 .brand__name{
   font-family:'Plus Jakarta Sans','Inter',sans-serif;
   font-size:22px;font-weight:800;letter-spacing:-.6px;
@@ -216,6 +216,8 @@ body{display:block}
 :root[data-theme="night"] .btn{box-shadow:0 0 26px rgba(28,111,176,0.5),0 10px 30px rgba(28,111,176,0.38),inset 0 1px 0 rgba(255,255,255,.18)}
 :root[data-theme="night"] .btn:hover:not(:disabled){box-shadow:0 0 40px rgba(28,111,176,0.72),0 16px 42px rgba(28,111,176,0.48),inset 0 1px 0 rgba(255,255,255,.22)}
 :root[data-theme="night"] .brand__logo{border:1px solid rgba(47,209,198,0.4);box-shadow:0 0 30px rgba(28,111,176,0.5),0 12px 32px rgba(0,0,0,.35)}
+.ag-logo{background:#fff !important;padding:12px}
+.ag-logo img{width:100%;height:100%;object-fit:contain;display:block}
 :root[data-theme="night"] .brand__logo::before{opacity:.7;filter:blur(12px)}
 :root[data-theme="night"] .tab.is-active{box-shadow:0 0 22px rgba(28,111,176,0.5),0 4px 14px rgba(28,111,176,0.38),inset 0 1px 0 rgba(255,255,255,.18)}
 :root[data-theme="night"] .input:focus{box-shadow:0 0 0 4px var(--primary-glow),0 0 24px rgba(28,111,176,0.38)}
@@ -246,8 +248,12 @@ body{display:block}
 .hero-marquee .track{display:flex;gap:10px;width:max-content;animation:synovaSlide 46s linear infinite}
 .hero-marquee:hover .track{animation-play-state:paused}
 @keyframes synovaSlide{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.hero-marquee .pill{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--border-2);font-size:.72rem;font-weight:600;color:var(--text-2);white-space:nowrap;flex:none}
-.hero-marquee .pill svg{width:13px;height:13px;stroke:var(--highlight);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hero-marquee img{
+  width:112px;height:112px;object-fit:cover;border-radius:12px;flex:none;
+  border:1px solid var(--border-2);
+  box-shadow:0 10px 26px rgba(0,0,0,.4);
+}
+:root[data-theme="day"] .hero-marquee img{box-shadow:0 10px 26px rgba(11,58,102,.18)}
 
 .hero-refs-title{font-size:10.5px;letter-spacing:2.2px;text-transform:uppercase;color:var(--primary-soft);margin:0 0 14px;font-weight:700}
 :root[data-theme="day"] .hero-refs-title{color:var(--primary-deep)}
@@ -274,6 +280,7 @@ body{display:block}
   .auth-hero__desc{display:none}
   .auth-hero__stats{display:none}
   .hero-marquee{width:100%;margin:16px 0 18px;max-width:100%}
+  .hero-marquee img{width:86px;height:86px}
   .hero-hook{font-size:1.12rem;margin-bottom:14px}
   .hero-benefits{margin:0 auto 20px;max-width:340px;text-align:left;gap:9px}
   .hero-benefits li{font-size:.78rem}
@@ -317,7 +324,7 @@ body.auth-ready .auth-gate{display:none !important}
 <!-- Gate de sesión -->
 <div class="auth-gate" id="auth-gate" role="status" aria-live="polite">
   <div class="ag-logo">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg>
+    <img src="assets/img/synova-logo.png" alt="SYNOVA México">
   </div>
   <div class="ag-name">SYNOVA</div>
   <div class="ag-row">
@@ -333,7 +340,7 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
   <aside class="auth-hero">
     <div class="brand brand--hero">
       <div class="brand__logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg>
+        <img src="assets/img/synova-logo.png" alt="SYNOVA México">
       </div>
       <div>
         <div class="brand__name">SYNOVA</div>
@@ -344,20 +351,7 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
       <h1 class="auth-hero__title">Procesos, normas y calidad de atención que tu equipo <em>necesita dominar</em>.</h1>
       <p class="auth-hero__desc">Cursos clínicos especializados, sesiones en vivo con expertos y certificados con folio verificable para elevar el nivel de tu práctica en salud.</p>
       <div class="hero-marquee" aria-hidden="true"><div class="track">
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Accesos vasculares</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Código Mater</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Manejo de heridas</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Hemodiálisis</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Pie diabético</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Triage hospitalario</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Cuidados pediátricos</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Esterilización</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Accesos vasculares</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Código Mater</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Manejo de heridas</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Hemodiálisis</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Pie diabético</span>
-        <span class="pill"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>Triage hospitalario</span>
+        <img src="assets/img/cursos-mini/curso-01.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-02.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-03.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-04.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-05.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-06.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-07.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-08.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-01.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-02.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-03.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-04.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-05.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-06.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-07.jpg" alt="" loading="lazy"><img src="assets/img/cursos-mini/curso-08.jpg" alt="" loading="lazy">
       </div></div>
       <p class="hero-hook">Todo esto por <b>menos de $7 al día</b>:</p>
       <ul class="hero-benefits">
@@ -415,7 +409,7 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
 <div class="wrap">
   <div class="brand">
     <div class="brand__logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l6 4"/><circle cx="18" cy="6" r="2.4" fill="#2FD1C6" stroke="none"/></svg>
+      <img src="assets/img/synova-logo.png" alt="SYNOVA México">
     </div>
     <div class="brand__name">SYNOVA</div>
     <div class="brand__sub">Consultoría · Capacitación Clínica en Salud</div>
