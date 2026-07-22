@@ -1490,29 +1490,6 @@ Sections.inicio = function(){
       </div>
     </section>
 
-    <div style="height:22px"></div>
-
-    <section>
-      <div class="section-header">
-        <h2 class="section-header__title">Bienvenido al Club VIP SYNOVA<span class="section-header__badge">${toolEsVIP() ? 'Activo' : 'Sin activar'}</span></h2>
-      </div>
-      <div class="kpi-grid" style="margin-bottom:0">
-        <div class="kpi-card"><div class="kpi-card__label">Tu plan</div><div class="kpi-card__value" style="font-size:18px">${S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? (S.plan === 'anual' ? 'VIP Anual' : 'VIP Mensual') : 'Sin membresía')}</div></div>
-        <div class="kpi-card"><div class="kpi-card__label">Estado</div><div class="kpi-card__value" style="font-size:18px;color:${toolEsVIP() ? 'var(--success)' : 'var(--warn)'}">${toolEsVIP() ? 'Al corriente' : 'Pendiente'}</div></div>
-        <div class="kpi-card"><div class="kpi-card__label">Comunidad</div><div class="kpi-card__value" style="font-size:18px">Foro + Directorio</div></div>
-      </div>
-    </section>
-
-    <div style="height:22px"></div>
-
-    <section>
-      <div class="section-header"><h2 class="section-header__title">Explora tu panel</h2></div>
-      <div class="content-list">
-        <div class="content-row" data-section="cursos"><div class="content-row__thumb content-row__thumb--video"><svg class="ic"><use href="#i-book"/></svg></div><div class="content-row__body"><div class="content-row__title">Cursos clínicos y de procesos</div><div class="content-row__meta"><span>Normativa NOM en salud · calidad de atención · procesos clínicos</span></div></div><div class="content-row__action"><span class="row-btn row-btn--ghost">Ver<svg class="ic"><use href="#i-arrow-right"/></svg></span></div></div>
-        <div class="content-row" data-section="webinars"><div class="content-row__thumb content-row__thumb--live"><svg class="ic"><use href="#i-broadcast"/></svg></div><div class="content-row__body"><div class="content-row__title">Clases en vivo con especialistas</div><div class="content-row__meta"><span>Sesiones periódicas + grabaciones</span></div></div><div class="content-row__action"><span class="row-btn row-btn--ghost">Ver<svg class="ic"><use href="#i-arrow-right"/></svg></span></div></div>
-        <div class="content-row" data-section="pdfs"><div class="content-row__thumb content-row__thumb--pdf"><svg class="ic"><use href="#i-news"/></svg></div><div class="content-row__body"><div class="content-row__title">Guías, checklists y plantillas</div><div class="content-row__meta"><span>Material descargable para tu consultorio</span></div></div><div class="content-row__action"><span class="row-btn row-btn--ghost">Ver<svg class="ic"><use href="#i-arrow-right"/></svg></span></div></div>
-      </div>
-    </section>
   `;
   (async () => {
     try {
