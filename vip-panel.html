@@ -1375,7 +1375,7 @@ Sections.inicio = function(){
       <div class="banner__info">
         <span class="banner__eyebrow"><span class="banner__eyebrow__dot"></span>${escHtml(g.eyebrow)}<span class="banner__version">SYNOVA VIP</span></span>
         <h1 class="banner__title">${g.greet}, ${escHtml(nombre)}</h1>
-        <p class="banner__sub">Tu acceso a cursos clínicos, clases en vivo, normativa NOM, auditoría de calidad de atención y la comunidad de profesionales de salud de SYNOVA México.</p>
+        <p class="banner__sub">Tu acceso a cursos clínicos, clases en vivo, normativa NOM en salud, auditoría de calidad de atención y la comunidad de profesionales de salud de SYNOVA México.</p>
         ${!toolEsVIP() ? `<div style="margin-top:16px;position:relative;z-index:1"><button class="btn btn--accent btn--lg" data-section="suscripcion">Activar membresía VIP<svg class="ic"><use href="#i-arrow-right"/></svg></button></div>` : ''}
       </div>
       <div class="banner__stats">
@@ -1404,7 +1404,7 @@ Sections.inicio = function(){
     <section>
       <div class="section-header"><h2 class="section-header__title">Explora tu panel</h2></div>
       <div class="content-list">
-        <div class="content-row" data-section="cursos"><div class="content-row__thumb content-row__thumb--video"><svg class="ic"><use href="#i-book"/></svg></div><div class="content-row__body"><div class="content-row__title">Cursos clínicos y de procesos</div><div class="content-row__meta"><span>Normativa NOM · calidad de atención · procesos</span></div></div><div class="content-row__action"><span class="row-btn row-btn--ghost">Ver<svg class="ic"><use href="#i-arrow-right"/></svg></span></div></div>
+        <div class="content-row" data-section="cursos"><div class="content-row__thumb content-row__thumb--video"><svg class="ic"><use href="#i-book"/></svg></div><div class="content-row__body"><div class="content-row__title">Cursos clínicos y de procesos</div><div class="content-row__meta"><span>Normativa NOM en salud · calidad de atención · procesos clínicos</span></div></div><div class="content-row__action"><span class="row-btn row-btn--ghost">Ver<svg class="ic"><use href="#i-arrow-right"/></svg></span></div></div>
         <div class="content-row" data-section="webinars"><div class="content-row__thumb content-row__thumb--live"><svg class="ic"><use href="#i-broadcast"/></svg></div><div class="content-row__body"><div class="content-row__title">Clases en vivo con especialistas</div><div class="content-row__meta"><span>Sesiones periódicas + grabaciones</span></div></div><div class="content-row__action"><span class="row-btn row-btn--ghost">Ver<svg class="ic"><use href="#i-arrow-right"/></svg></span></div></div>
         <div class="content-row" data-section="pdfs"><div class="content-row__thumb content-row__thumb--pdf"><svg class="ic"><use href="#i-news"/></svg></div><div class="content-row__body"><div class="content-row__title">Guías, checklists y plantillas</div><div class="content-row__meta"><span>Material descargable para tu consultorio</span></div></div><div class="content-row__action"><span class="row-btn row-btn--ghost">Ver<svg class="ic"><use href="#i-arrow-right"/></svg></span></div></div>
       </div>
@@ -1431,7 +1431,7 @@ Sections.inicio = function(){
 /* ══════════════════════ CURSOS ══════════════════════ */
 Sections.cursos = function(){
   document.getElementById('content').innerHTML =
-    secHero('Catálogo VIP', 'Mis cursos', 'Cursos clínicos y de procesos incluidos en tu membresía SYNOVA VIP: normativa NOM, calidad de atención, auditoría y gestión de consultorio.') +
+    secHero('Catálogo VIP', 'Mis cursos', 'Cursos clínicos y de procesos incluidos en tu membresía SYNOVA VIP: normativa NOM en salud (expediente clínico, RPBI, infraestructura), calidad de atención, auditoría y gestión de consultorios, clínicas e instituciones.') +
     '<div id="cursos-grid" class="cursos-grid"></div>';
   cargarCursos();
 };
@@ -1650,7 +1650,7 @@ function abrirWebinarDetalle(id){
 /* ══════════════════════ PDFS Y MATERIAL ══════════════════════ */
 Sections.pdfs = function(){
   document.getElementById('content').innerHTML =
-    secHero('Biblioteca', 'PDFs y material', 'Guías, checklists y plantillas descargables para procesos, normativa NOM y calidad de atención en tu consultorio o institución.') +
+    secHero('Biblioteca', 'PDFs y material', 'Guías, checklists y plantillas descargables para procesos, normativa NOM en salud y calidad de atención en tu consultorio, clínica o institución.') +
     '<div id="pdfs-grid" class="pdfs-grid"></div>';
   cargarMateriales();
 };
