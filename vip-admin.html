@@ -701,7 +701,9 @@ const Store = {
     watch('certificados', 'certificados', 'desc', 'createdAt');
     watch('notificaciones', 'notificaciones', 'desc', 'createdAt');
     watch('posts', 'posts', 'desc', 'createdAt');
-    watch('directorio', 'directorio', 'desc', 'createdAt');
+    /* Sin orderBy: el panel guarda las tarjetas con updatedAt (no createdAt) y
+       orderBy excluiría en silencio los docs sin ese campo (mismo bug que visible!=false) */
+    watch('directorio', 'directorio');
   },
 
   estaActivo(m){ return m.activa === true || m.activo === true; },
@@ -1602,7 +1604,12 @@ window.publicarComoSynova = async function(){
   if (!texto) { Toast.error('Escribe algo para publicar'); return; }
   try {
     const { collection, addDoc, db, serverTimestamp } = window.__fs;
-    await addDoc(collection(db, 'posts'), { nombre: 'SYNOVA México', texto, esAdmin: true, likes: 0, autorEmail: window.AdminUser.email, createdAt: serverTimestamp() });
+    /* uid es OBLIGATORIO: las reglas de Firestore exigen uid == auth.uid al crear (mismo patrón que IMDIIL) */
+    await addDoc(collection(db, 'posts'), {
+      uid: window.AdminUser.uid, nombre: 'SYNOVA México', iniciales: 'SM', esAdmin: true,
+      texto, likes: 0, likedBy: {}, comentariosCount: 0,
+      autorEmail: window.AdminUser.email, createdAt: serverTimestamp()
+    });
     Toast.success('Publicado en el foro'); document.getElementById('fo-texto').value = '';
   } catch (e) { Toast.error('Error al publicar', e.message); }
 };
