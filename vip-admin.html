@@ -1553,7 +1553,7 @@ PAGES._ejecutarCronNoticias = async function(){
   const btn = document.getElementById('cron-run'); if (!btn) return;
   btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = 'Sincronizando…';
   try {
-    const token = await tokenAdmin();
+    const token = await window.__tokenAdmin();
     const res = await fetch(`${window.__WEBHOOK_URL}/noticias/sync`, { headers: { 'Authorization': 'Bearer ' + token } });
     const j = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(j.error || `HTTP ${res.status}`);
