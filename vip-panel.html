@@ -382,6 +382,8 @@ body::after{
 .curso-card__progress-pct{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--primary);font-weight:700;min-width:38px;text-align:right}
 
 /* Detail hero (modales) */
+.curso-portada-banner{width:100%;aspect-ratio:16/9;max-height:230px;border-radius:14px;background-size:cover;background-position:center;margin-bottom:14px;border:0.5px solid var(--border-2);box-shadow:0 10px 30px rgba(0,0,0,.28)}
+.modulo__num--img{background-size:cover;background-position:center;overflow:hidden}
 .detail-hero{display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:14px;background:linear-gradient(135deg,color-mix(in srgb,var(--area-color,var(--primary)) 18%,var(--surface)),color-mix(in srgb,var(--area-color,var(--primary)) 6%,var(--surface)));border:0.5px solid color-mix(in srgb,var(--area-color,var(--primary)) 25%,transparent);margin-bottom:16px}
 .detail-hero__icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--area-color,var(--primary)),color-mix(in srgb,var(--area-color,var(--primary)) 65%,#000));color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 18px color-mix(in srgb,var(--area-color,var(--primary)) 30%,transparent)}
 .detail-hero__tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
@@ -1595,7 +1597,7 @@ async function cargarCursos(){
       const completado = !!(progreso[c.id] && progreso[c.id].completado);
       const locked = !esVip;
       return `<div class="curso-card" style="--area-color:${color}" data-locked="${locked}" data-cid="${c.id}">
-        <div class="curso-card__cover">${iconoParaArea()}<div class="curso-card__cover-badge">${escHtml(c.area || 'SYNOVA')}</div></div>
+        <div class="curso-card__cover"${c.portada ? ` style="background-image:url('${String(c.portada).replace(/'/g,'%27')}');background-size:cover;background-position:center"` : ''}>${c.portada ? '' : iconoParaArea()}<div class="curso-card__cover-badge">${escHtml(c.area || 'SYNOVA')}</div></div>
         <div class="curso-card__body">
           <div class="curso-card__title">${escHtml(c.nombre || 'Curso SYNOVA')}</div>
           ${c.descripcion ? `<div class="curso-card__desc">${escHtml(c.descripcion)}</div>` : `<div class="curso-card__desc">Contenido clínico y de procesos incluido en tu membresía VIP.</div>`}
@@ -1638,11 +1640,13 @@ function abrirCursoDetalle(id){
 
   let materialesHtml = '';
   if (materiales.length) {
+    const matThumb = c.portada ? `<div class="modulo__num modulo__num--img" style="background-image:url('${String(c.portada).replace(/'/g,'%27')}')"></div>` : '<div class="modulo__num"><svg class="ic" style="width:13px;height:13px"><use href="#i-news"/></svg></div>';
     materialesHtml = '<div style="margin-top:18px"><div class="perfil-card__title">Material del curso</div><div class="modulos-list">' + materiales.map(m => `
-      <div class="modulo"><div class="modulo__num"><svg class="ic" style="width:13px;height:13px"><use href="#i-news"/></svg></div><div style="flex:1;min-width:0"><div class="modulo__title">${escHtml(m.titulo || 'Material')}</div></div>${m.url ? `<a class="row-btn row-btn--ghost" href="${escHtml(m.url)}" target="_blank" rel="noopener">Descargar<svg class="ic"><use href="#i-download"/></svg></a>` : ''}</div>`).join('') + '</div></div>';
+      <div class="modulo">${matThumb}<div style="flex:1;min-width:0"><div class="modulo__title">${escHtml(m.titulo || 'Material')}</div></div>${m.url ? `<a class="row-btn row-btn--ghost" href="${escHtml(m.url)}" target="_blank" rel="noopener">Descargar<svg class="ic"><use href="#i-download"/></svg></a>` : ''}</div>`).join('') + '</div></div>';
   }
 
   const body = `
+    ${c.portada ? `<div class="curso-portada-banner" style="background-image:url('${String(c.portada).replace(/'/g,'%27')}')"></div>` : ''}
     <div class="detail-hero" style="--area-color:${color}">
       <div class="detail-hero__icon">${iconoParaArea()}</div>
       <div style="min-width:0">

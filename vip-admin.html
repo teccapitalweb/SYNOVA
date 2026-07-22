@@ -1153,7 +1153,7 @@ PAGES.cursos = function(){
         <span class="sec-hero__eyebrow">Contenido</span>
         <h1 class="sec-hero__title">Cursos</h1>
         <p class="sec-hero__sub">Catálogo de cursos de procesos, normas y calidad de atención en salud.</p>
-        <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalCurso()"><svg class="ic"><use href="#i-plus"/></svg>Nuevo curso</button></div>
+        <div class="sec-hero__actions"><button class="btn btn-outline" onclick="abrirMigracionCursos()"><svg class="ic"><use href="#i-download"/></svg>Importar catálogo SYNOVA</button><button class="btn btn-primary" onclick="abrirModalCurso()"><svg class="ic"><use href="#i-plus"/></svg>Nuevo curso</button></div>
       </div>
       <div class="curso-toolbar">
         <div class="curso-search-wrap"><svg class="ic curso-search__icon"><use href="#i-search"/></svg><input class="curso-search__input" id="cu-buscar" placeholder="Buscar curso o instructor…"></div>
@@ -1713,5 +1713,210 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keydown', e => { if (e.key === 'Escape') Modal.close(); });
 });
 </script>
+<!-- ══════════════════════ MIGRACIÓN DE CATÁLOGO DE CURSOS SYNOVA ══════════════════════ -->
+<script>
+(function(){
+  /* Paleta por área para portadas */
+  const AREA_COL = {
+    'Urgencias':'#E0533D','Toxicología forense':'#7A5FBF','Urgencias metabólicas':'#C2410C','Seguridad del paciente':'#1C6FB0',
+    'Estética':'#C2557A','Salud pública':'#159E92','Pediatría':'#2FA4D1','Enfermería':'#1C6FB0','Heridas y estomas':'#0E7C86',
+    'Fisioterapia':'#3D8FCB','Endocrinología':'#B4530A','Geriatría':'#5B6BA8','Ginecoobstetricia':'#B14A78',
+    'Neonatología':'#2FA4D1','Nefrología':'#0B6E8C','Nutrición':'#0F9D58'
+  };
+  function areaColor(a){ return AREA_COL[a] || '#1C6FB0'; }
+
+  /* Portada SVG membretada (data URI) — misma para curso y sus materiales */
+  function wrapTitle(txt, max){
+    const words = String(txt).toUpperCase().split(/\s+/); const lines=[]; let cur='';
+    words.forEach(w=>{ if((cur+' '+w).trim().length<=max) cur=(cur+' '+w).trim(); else { if(cur)lines.push(cur); cur=w; } });
+    if(cur)lines.push(cur);
+    if(lines.length>4){ lines[3]=lines[3]+'…'; lines.length=4; }
+    return lines;
+  }
+  function svgPortada(nombre, area){
+    const color = areaColor(area);
+    const lines = wrapTitle(nombre, 22);
+    const fs = lines.length<=2 ? 58 : lines.length===3 ? 48 : 40;
+    const lh = Math.round(fs*1.16);
+    const startY = 604 - (lines.length-1)*lh;
+    const tspans = lines.map((l,i)=>`<tspan x="64" dy="${i===0?0:lh}">${l.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</tspan>`).join('');
+    const aw = Math.min(560, area.length*15+46);
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">`+
+      `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#08131F"/></linearGradient></defs>`+
+      `<rect width="1200" height="675" fill="url(#g)"/>`+
+      `<circle cx="1040" cy="130" r="250" fill="#ffffff" fill-opacity="0.05"/>`+
+      `<circle cx="1150" cy="560" r="150" fill="#ffffff" fill-opacity="0.04"/>`+
+      `<path d="M0 300 L360 300 L400 230 L455 400 L505 300 L1200 300" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="4"/>`+
+      `<text x="64" y="86" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="800" fill="#ffffff" letter-spacing="1">SYNOVA <tspan fill="#ffffff" fill-opacity="0.55">MÉXICO</tspan></text>`+
+      `<rect x="64" y="112" rx="18" ry="18" width="${aw}" height="42" fill="#ffffff" fill-opacity="0.15"/>`+
+      `<text x="${64+aw/2}" y="140" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="2">${area.toUpperCase().replace(/&/g,'&amp;')}</text>`+
+      `<text x="64" y="${startY}" font-family="Arial,Helvetica,sans-serif" font-size="${fs}" font-weight="800" fill="#ffffff" letter-spacing="-0.5">${tspans}</text>`+
+      `<rect x="0" y="667" width="1200" height="8" fill="#2FD1C6"/>`+
+      `<text x="1136" y="640" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="600" fill="#ffffff" fill-opacity="0.6">Herramientas · Cursos · Certificación</text>`+
+      `</svg>`;
+    return 'data:image/svg+xml,'+encodeURIComponent(svg);
+  }
+
+  /* ─────────── CATÁLOGO (clases y materiales tal cual los enlaces provistos) ─────────── */
+  const C = (t,u)=>({ titulo:t, url:u });
+  const MIG_COURSES = [
+    { slug:'politraumatizado-urgencias', nombre:'Manejo del paciente politraumatizado en la sala de urgencia', area:'Urgencias',
+      desc:'Evaluación inicial y reanimación del paciente politraumatizado en urgencias: valoración primaria y secundaria, control de hemorragias, vía aérea y priorización.',
+      clases:[ C('Clase 1 y 2','https://drive.google.com/file/d/1MVvPSj7S8CbmR5_6spGoXwauJCcN1HVd/view?usp=drive_link'), C('Clase 3 y 4','https://drive.google.com/file/d/1vgXVasUHj8rybDJr0bDEgCwvwdd32e-Z/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1ic__Vviv4BSDhpOl7rBbZlrjC7G_wRft/view?usp=drive_link') ],
+      mats:[ C('Presentación 1','https://docs.google.com/presentation/d/1usS7-X5LDbYy2ZNv3CrNTLe-6-JgtdfK/edit?usp=sharing'), C('Presentación 2','https://docs.google.com/presentation/d/1YrLwEBJLJy8_qUgYVkIXCdCkltJ8rWPU/edit?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1LjdL68Uvsp51ezl_aIoQOyLSUha9-BfM/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1anPV6tn7uwfnEhOWQ_OjKHumUAb9fi4H/edit?usp=drive_link'), C('Presentación 5','https://docs.google.com/presentation/d/1M2on-IvILD6hRtSUiWQxivVw8oj9xkdY/edit?usp=drive_link') ] },
+    { slug:'peritaje-toxicologico', nombre:'La importancia del peritaje toxicológico en investigaciones criminales', area:'Toxicología forense',
+      desc:'Fundamentos del peritaje toxicológico aplicado a la investigación criminal: cadena de custodia, matrices biológicas, técnicas analíticas e interpretación pericial.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1-bJMq062L7F8jQ-mDxJSure615eeVdM5/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1vN_JorEiURaJpbHN7C1wdguQxzsDw8nr/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1SVh5NgP9WSTx9kx3icWc2Gqo6lxLQtJq/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1SjajIvSUwAQVtbw8QIOcxJXFFEarc10g/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1kcKyVFUbClVtFDrBE0B_lU79YMxelzCo/view?usp=drive_link') ],
+      mats:[ C('Presentación 1 y 2','https://docs.google.com/presentation/d/1E5ACtEzixKr2Hp0qjnktaeuiJtgBDCtA/edit?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1xMLKudFqj4Oeb-l6d-1rg24-ybATuW8A/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1mF2_eFfPDWOE5Ou6qR4roN9-aT7xYact/edit?usp=drive_link'), C('Presentación 5','https://docs.google.com/presentation/d/1BqWJsXY8hbcNfa6YdryQcYanEB-i0U3p/edit?usp=drive_link') ] },
+    { slug:'cetoacidosis-diabetica', nombre:'Manejo integral del paciente con cetoacidosis diabética', area:'Urgencias metabólicas',
+      desc:'Diagnóstico y tratamiento de la cetoacidosis diabética: reposición hídrica, insulinoterapia, corrección electrolítica y prevención de complicaciones.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/14k4mQkTX9eEE7Ltnb4AMT4Mcc9hKLv9W/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1a0fwS6riMUF7uEyJNdfRtkXufSbOsLcW/view?usp=drive_link'), C('Clase 3 y 4','https://drive.google.com/file/d/1chC8Y9CVHI6mKTeu49XSv4aV-E99ZB2m/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/16MYSyRLP0xj4ELjrxru8vLXolla6cUnA/view?usp=drive_link') ],
+      mats:[ C('Presentación 1 y 2','https://docs.google.com/presentation/d/1pPWxXgqUHtlhd3N8R-pVdXSl4A80yjSl/edit?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1pe0lqc9YwwRu7ak6qvqG9E6A0QqPDvpi/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1kHfDUN56B3P68aexWjAOsJc_6QaT7gG5/edit?usp=drive_link'), C('Presentación 5','https://docs.google.com/presentation/d/111VyFkr3EN8B3eaa_iv7xgZro9kSHGTc/edit?usp=drive_link') ] },
+    { slug:'iaas-seguridad-paciente', nombre:'Prevención y control de infecciones asociadas a la atención en salud: estrategias para la seguridad del paciente', area:'Seguridad del paciente',
+      desc:'Estrategias para prevenir infecciones asociadas a la atención en salud (IAAS): higiene de manos, precauciones estándar y por mecanismo, y cultura de seguridad.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1UlP2PnUgYD_C9-p4YDL0bPmfN3np54YU/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1eHeSS1K_uBrpx4lbN7TR6zxPMSrfoVaf/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1pairEqD7G1cSO0GDRcb_OUoiSGkbTq2i/view?usp=drive_link'), C('Clase 4 y 5','https://drive.google.com/file/d/16pMna75_UiLJOmwhU2Cmyucep2HWdKZ1/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/10BuPupfga-Qkx14T1Dt7t7P2eDP4plhh/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1sTBKaIIptR__5Hl7QRLLccCLebjAaIzz/view?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1i2fKMASS72BrJpiyOR9CMbZkCp6pH7yV/edit?usp=drive_link'), C('Material 4','https://drive.google.com/file/d/1xpd1ggN4cT3GPsZhjPORHejSw_oK296X/view?usp=drive_link'), C('Material 5','https://drive.google.com/file/d/1eH5mAjMgJ-3ypflxUULzAL-crcUjYUTR/view?usp=drive_link'), C('Material 6','https://drive.google.com/file/d/1jJNrkysuJQw7VB1p5Ee6jDmrp8LrlEDQ/view?usp=drive_link'), C('Material 7','https://drive.google.com/file/d/1r6M6WQT4O2DVZxwi_4ROtzpb02ImtNXT/view?usp=drive_link') ] },
+    { slug:'electrolifting-plasma-pen', nombre:'Rejuvenecimiento facial eficaz: domina el electrolifting con Plasma Pen', area:'Estética',
+      desc:'Técnica de electrolifting con Plasma Pen para rejuvenecimiento facial: indicaciones, protocolo de aplicación, seguridad y cuidados posteriores.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1VJwV2Wd0C8qSksR7Wl9xVugsNS30kdcR/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1q4W3wU-HOK5xQlLdqf6Y4Jy6SDAJhTkR/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1At0cFrWu2BnKupAQ--DBw0HrmzDL7QyL/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1DAdRgva1Posb185iapVoR3iueZLOQXPh/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/16nHHx-Z2ZHHVpN2wm4voRL8mDbe0s-F3/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1WueI0k52hXK_PRjKskYyFB6VCnPDDprY/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1W6DnIpzv0z8u22rRQb3lEf-fFh1yXdpr/view?usp=drive_link'), C('Material 3','https://drive.google.com/file/d/1-425Zl8UKpYlggUVDnxMeH8iW52x8ikj/view?usp=drive_link'), C('Material 4','https://drive.google.com/file/d/1yQAc-pibg7NBoBmAM0eDlknvMcpef4Ep/view?usp=drive_link'), C('Material 5','https://drive.google.com/file/d/1XDXetBO0OsHaoySZqwlf7WeQZ0QjOQJx/view?usp=drive_link') ] },
+    { slug:'vigilancia-control-vectores', nombre:'Estrategias avanzadas en vigilancia y control de vectores', area:'Salud pública',
+      desc:'Vigilancia entomológica y control integrado de vectores: estrategias de prevención, manejo ambiental y respuesta ante enfermedades transmitidas por vectores.',
+      clases:[ C('Clase 1 y 2','https://drive.google.com/file/d/1pjf563K-BI6Qz2xcBj-yS0aOQB4fvDm1/view?usp=drive_link'), C('Clase 3 y 4','https://drive.google.com/file/d/1EUD5d6J1kTCSxL_etF-__pO39SZXa8Hd/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1q8zULxpvVgmzuWCfKle8f6aRjbS5XBwr/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1K2M8RycKLy_ZWg3Y8alQdQCjIQfGgfWK/view?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1QlZPuBNAnfHsanspPF9e5x5l-WLluVyM/edit?usp=drive_link'), C('Material 4','https://drive.google.com/file/d/1fRoe1TutrBcS9EyTFmOjseIcKQgYnIOJ/view?usp=drive_link') ] },
+    { slug:'deshidratacion-pediatrica', nombre:'Enfoque integral en el manejo de la deshidratación pediátrica: diagnóstico, tratamiento y prevención', area:'Pediatría',
+      desc:'Abordaje de la deshidratación pediátrica: clasificación del grado, planes de hidratación oral e intravenosa y prevención. Contenido en preparación.',
+      clases:[], mats:[] },
+    { slug:'terapia-infusion-enfermeria', nombre:'Terapia de infusión en enfermería', area:'Enfermería',
+      desc:'Principios de la terapia de infusión en enfermería: selección de accesos, cálculo de goteo, seguridad del paciente y prevención de complicaciones.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1rdtO5HPezOpcUX4ee0D6TeMvo3lmFYfD/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1fkXV0bdzZa9w4AK6bE_1T74mkmG7S5Qg/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1QXFhUrpxEkh1x03RsMrsscg6w1sBHtmo/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1L99OTXOwwTXf-9PZ0SE-X2iaUt_hlLPG/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/17lhU3wuc7-pTzLsWsc39-dUTRsn9qIYp/view?usp=drive_link') ],
+      mats:[ C('Hoja de cálculo','https://docs.google.com/spreadsheets/d/1qDMhpVuyzpgU9B4cptplXlbQMQkYhXuM/edit?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1dWqlfChib5CJJPvvZW0S92IF0iTeg9cv/view?usp=drive_link'), C('Documento 3','https://docs.google.com/document/d/1KGGTHeUDJXWsYP7SjTU0kK9JXeq8I3IA/edit?usp=drive_link') ] },
+    { slug:'preparacion-lecho-herida', nombre:'Preparación del lecho de la herida (PLH)', area:'Heridas y estomas',
+      desc:'Concepto TIME de preparación del lecho de la herida: desbridamiento, control de la carga bacteriana, manejo de la humedad y estimulación de los bordes.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1cPBOxN_6qweMXqMKW_2Wq50FvBj_gy3U/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1-UVD8s-NYpn6VCyxF8XWSkp330A8YIud/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1z_G8r7cdKQ9rMx-rcrR5kBmXutdgOHWh/view?usp=drive_link'), C('Clase 4 y 5','https://drive.google.com/file/d/1XVmMBL2NFOTAHE1zMzRVnWYsvFT-q_oD/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/12CT_9sGvddh6LF2DGE7_f_xQbCgwedsD/view?usp=drive_link') ] },
+    { slug:'lesiones-por-presion', nombre:'Manejo y abordaje de las lesiones por presión (LPP)', area:'Heridas y estomas',
+      desc:'Prevención, clasificación y tratamiento de las lesiones por presión: valoración de riesgo, cuidados de la piel, superficies de apoyo y apósitos.',
+      clases:[ C('Clase 1 y 2','https://drive.google.com/file/d/1zCOFO6dCj5mAftF6qNyDzj9JvALCg52N/view?usp=drive_link'), C('Clase 3 y 4','https://drive.google.com/file/d/12kiNX6qp08L0dyy1w2SCgDpCJeZUnMhE/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1JNzKEhq1qY_jwCIM4ScmvksFks40TAjF/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1wssFvmwFpidNZWYC-zjMO8abTrgK2iZQ/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1rrTrtU6Tu-XySGj9pH7pr5P9XiQUeQzU/view?usp=drive_link') ] },
+    { slug:'hipoxemia-ventilacion', nombre:'Manejo de la hipoxemia y mejora de la ventilación pulmonar en el contexto de la fisioterapia pulmonar', area:'Fisioterapia',
+      desc:'Fisioterapia respiratoria para el manejo de la hipoxemia: técnicas de reexpansión, higiene bronquial y mejora de la ventilación y el intercambio gaseoso.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1WUjCDyxtIhTVERWzdhog48-sayOtBjJ2/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1WGfLnPC4IgSNGl_Ibkf0KAsLo1wpmfNg/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/11gYBDKuBmOrS9ExcCKJH3qdZzmL4nGuI/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/15AnWtpM7HyYTU2s20gBHJTzEIkwCX8OD/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1QV3jUJVfq8GUokoDoiaQSoUrFY6KyD50/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1s_z33AO81C6F4SUgVfOOia0G3oFUmLfl/view?usp=drive_link') ] },
+    { slug:'paciente-quemado', nombre:'Manejo del paciente quemado', area:'Urgencias',
+      desc:'Atención integral del paciente quemado: cálculo de superficie corporal, reanimación con líquidos, manejo del dolor, curación y prevención de infecciones.',
+      clases:[ C('Clase 1 y 2','https://drive.google.com/file/d/1GnXNgUfY7CUp8VJqEVcPXeEpxI1BRqu-/view?usp=drive_link'), C('Clase 3 y 4','https://drive.google.com/file/d/1dAwZChcOiqTp4XSa_dihu_VNMN47MNRa/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1DjxGnZAfnx6E_yEhfg_fJM3H_t7agC13/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/19q5dXd5Fmju6-7NA7SmgCpcxXOs4DeNd/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1K9Ve97zA5gyTsU6e90btuDAPrXzOLPfU/view?usp=drive_link'), C('Material 3','https://drive.google.com/file/d/1LPE9Ea8typPU9sUrnnUjeDS3XTGgtyp4/view?usp=drive_link'), C('Material 4','https://drive.google.com/file/d/1i4aHfwpoW6lEDeeqi-OeI2WF-RoPcBWS/view?usp=drive_link'), C('Material 5','https://drive.google.com/file/d/1XaHYZX3Ox0_gvPCGaKBijNxYBohfA62c/view?usp=drive_link'), C('Material 6','https://drive.google.com/file/d/1EcDmJVQ2d8QXsFdgVfTITiRq9fy_967-/view?usp=drive_link'), C('Material 7','https://drive.google.com/file/d/1ZnAVJV7F1C-2uhn8JXzVY19KNtjevypc/view?usp=drive_link'), C('Material 8','https://drive.google.com/file/d/14lYy2IMNf7EJQtVHEIBvRVX1q7GX7mQw/view?usp=drive_link') ] },
+    { slug:'vacunas-prevencion', nombre:'La importancia de las vacunas en la prevención de enfermedades', area:'Salud pública',
+      desc:'Fundamentos de la vacunación: inmunidad, esquemas, cadena de frío, seguridad y estrategias para incrementar la cobertura y prevenir enfermedades.',
+      clases:[ C('Clase 1 y 2','https://drive.google.com/file/d/1tfsQz8r90u34guQhfTAWKatMr9E5DXX1/view?usp=drive_link'), C('Clase 3 y 4','https://drive.google.com/file/d/1HjA6-zQj8EqiVB4-CpJgB-A3asXm9uQw/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1maw0TbAfkDmSRQB473jaTi42nnM8p_AR/view?usp=sharing') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1K2M8RycKLy_ZWg3Y8alQdQCjIQfGgfWK/view?usp=sharing'), C('Material 2','https://drive.google.com/file/d/1qzEeZX2Z0DjUT3CP5xXW-oeC5oSOJ08Q/view?usp=sharing') ] },
+    { slug:'manejo-ostomias', nombre:'Manejo integral de ostomías', area:'Heridas y estomas',
+      desc:'Cuidado integral del paciente con ostomía: tipos de estomas, valoración del estoma y la piel periestomal, dispositivos, complicaciones y educación.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1FaYSmkCUs7yGbFt4iDpMVR8KhieDcCp3/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1eU7LeA_ruCS_d2-mn5-WTN3tFtlBKn-m/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1KgshzrolHGG_cEbi0GkfELJs1MDvnZZu/view?usp=drive_link'), C('Clase 4 y 5','https://drive.google.com/file/d/13isUbqobIhPa4BVKqJG3RQsUk-Dd5xgh/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1gw0gs_OkPXa1vsrZoVoEZBE-rqd15jnu/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/18QUSqCdCiA9ac-mIutGDlx1Q3X4gocXQ/view?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1rwXxCDQ0UO8qECFf4pAFQJYghbcFkmVN/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1zvZvrgbtJXTEJAVtiL0qrAnAKrT1Svle/edit?usp=drive_link'), C('Presentación 5','https://docs.google.com/presentation/d/1WYCkeyIACHtFlfq3MeUYhZarZRfWgeqS/edit?usp=drive_link') ] },
+    { slug:'heridas-apositos', nombre:'Fundamentos del manejo avanzado de heridas y selección de apósitos', area:'Heridas y estomas',
+      desc:'Manejo avanzado de heridas: valoración, tipos de apósitos y criterios de selección según fase de cicatrización, exudado y carga bacteriana.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1pmje0_9Czy8kcg21wPbRCqZYRLITaNQz/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1ZAjkhC-iYY4E3PKSw-Au_CWDigQoMmH0/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1mdcWPUvLyIg2O_xwqQaNX-_lljvyZXzW/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/16ZQ90dNo0HV-Lr4MZfLLKqfa_UbIJ57m/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1aFCa28tShpL-DQ8saSU9NTjlES9LPDcc/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/16fSYiCWVOjSgjhwi9VC-mIyvuyju-xWe/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/18HKc0lNkOY7p8mOCPYjjO6N9k0g_Tpry/view?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1MWpBUEbXm7qMgYiUVdcgf7ogzA1WnnKH/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1idx030UCNQPSjoxd1jeFA80baa0SwgmH/edit?usp=drive_link') ] },
+    { slug:'accesos-vasculares', nombre:'Manejo de accesos vasculares', area:'Enfermería',
+      desc:'Selección, inserción y cuidado de accesos vasculares periféricos y centrales: indicaciones, técnica, mantenimiento y prevención de complicaciones.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1hIKJaBSNn0JZhb0C_lXVNjmsTmK1LJX_/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1F60xDzxOvySHmbPVWXztqxgzH30vuh1J/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1y8S29zwU-gfViAoYPfIh8bP7On4OvXxi/view?usp=drive_link'), C('Clase 4 y 5','https://drive.google.com/file/d/1mQPpbw0ZnhunrPj2eyxFSbQ_Mf2zRw0v/view?usp=sharing') ],
+      mats:[ C('Presentación 1','https://docs.google.com/presentation/d/10PbgF3OAOfAtctlcZA4ZIuCnDI6Hzd1Q/edit?usp=drive_link'), C('Presentación 2','https://docs.google.com/presentation/d/1E_58dCZ5m6q1S28k9HwNAS9VO7-A4XpJ/edit?usp=drive_link') ] },
+    { slug:'diabetes-mellitus-2', nombre:'Actualización sobre el manejo de la diabetes mellitus tipo 2', area:'Endocrinología',
+      desc:'Actualización en diabetes mellitus tipo 2: metas de control, tratamiento farmacológico escalonado, nuevas familias de fármacos y prevención de complicaciones.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/19GDG9cA1tATbSOg3WymLYBI04PCEcEmS/view?usp=drive_link'), C('Clase 2 y 3','https://drive.google.com/file/d/1hPumE4tQYxKXpqVI9XJnV3GpI74_ocn-/view?usp=drive_link'), C('Clase 4 y 5','https://drive.google.com/file/d/1yv97QN8LaawihYXcncRc1oDhHDTY3UWQ/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1mRPjWSEUXDXZyOAVtSdRjqfBfcCv_VsH/view?usp=drive_link'), C('Presentación 2','https://docs.google.com/presentation/d/1at1yEucqJGyNmijHSEd27gQjh-I6D3gA/edit?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1cl6Wh4pjY96yVIZs42bu1fwoqynbKmev/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1DU9CZjWsVG9YD3R6ZtpX1NnwBoMVsXk-/edit?usp=drive_link'), C('Presentación 5','https://docs.google.com/presentation/d/1WXRQ8C4fHHTAZgXTMzcJQPXl5cGW7Uvy/edit?usp=drive_link'), C('Material 6','https://drive.google.com/file/d/12OXXrxiLxCecntT5r6uU-uIh6qwD8yMB/view?usp=drive_link') ] },
+    { slug:'fragilidad-vejez', nombre:'Síndrome de fragilidad en la vejez', area:'Geriatría',
+      desc:'Detección y manejo del síndrome de fragilidad en el adulto mayor: valoración geriátrica integral, intervención nutricional, ejercicio y prevención de caídas.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1zdaUYFxwUfDQqFl_t1yi2HEWMTKOw0P1/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1uqoq1T3O1QjO6uxt1OFXzFNG4vOXqSqd/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1v8pGBW71quqDX8F937lxvyiXOcUPWRVS/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1dtXbY546kak4xzA0DT2Sl1BY8wDx_MiL/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/15ZStu1U1izpFWKjwOrAE6mOkM68q6Me8/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1QhOKqzHBKM4XnZ3skQYwKf-UATamX8FX/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1Qer1Z8DZadEYw1o3tV-_b293o5l3cscV/view?usp=drive_link'), C('Material 3','https://drive.google.com/file/d/1RacHHQTMZwYP1lXQUeeMshGSYQ1JPtTr/view?usp=drive_link') ] },
+    { slug:'terapia-presion-negativa', nombre:'Manejo de la terapia de presión negativa (TPN)', area:'Heridas y estomas',
+      desc:'Terapia de presión negativa en el manejo de heridas complejas: indicaciones, contraindicaciones, configuración del sistema y seguimiento del paciente.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1HFLNG7GUpCfFr6BSC4YCysmhXmYJXKKx/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/18Q6Ix8fKD0EJTXA0i7v7ozry1bA18_2z/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1RI2ZA9bv4p-mMgpo_prlhVilQlog_npQ/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1ZxxPUV3VzBF26ZehZ0ExGxcAJSkNLEpC/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/12-c3kyxzhpZ6cV1c3xHnl8Xod5gjEas6/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/172-GPcecjv8LE604a2gcJSTcqBfnM443/view?usp=drive_link'), C('Presentación 2','https://docs.google.com/presentation/d/1qCGdhoKqCqQ5X0mD7F45L9CDf-8qtqXw/edit?usp=drive_link') ] },
+    { slug:'sindrome-hellp', nombre:'Manejo integral del síndrome de HELLP', area:'Ginecoobstetricia',
+      desc:'Diagnóstico y manejo del síndrome de HELLP: criterios de laboratorio, estabilización materna, momento de interrupción del embarazo y complicaciones.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1F1J03ihVjuViiggP05_nydL5oVIVSuro/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1aMT43Sp4CyVK--kuwqJPj1ZPITeRvX0s/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1oQS53VeH-lDNexea9etzt5fT6mbr8rv-/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1AYNtvVqKRGZdL0fuXj6ibFDLL4mTpUna/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1Y6lvLYTjkwsGGkoyJ89HJN8rOdCRg6tQ/view?usp=drive_link') ],
+      mats:[] },
+    { slug:'cateteres-implantables', nombre:'Acceso y cuidado de catéteres implantables', area:'Enfermería',
+      desc:'Acceso y cuidado de catéteres venosos implantables (reservorios): técnica de punción, mantenimiento, permeabilidad y prevención de infecciones.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1Cjna_3h2vYwKpNxOaoQTXsAdghEpkGIL/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1pXlOAz67-fmrfwrf9Dgo9jVcQrH4Twme/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1FkgCakbdyVAbeXa9n5zEVYKK93nJrdQe/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1pcpLhkJcWMLAwbF4DJZn-sUWc-ZX3ZNe/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1KiIrBnUGg-CKcvaG_9y7-K0SZe5IdIW1/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1b5JvEBa1VjBk8uxLlG_co4aMdU1A87v7/view?usp=drive_link'), C('Material 2','https://drive.google.com/file/d/1y2jc0ppOBijxtK6dFvHrilk6TMeWVOCy/view?usp=drive_link'), C('Material 3','https://drive.google.com/file/d/1INgJX6iUmn2_zNTZqIY3h3RQVPJDBKE4/view?usp=drive_link') ] },
+    { slug:'proceso-atencion-enfermeria', nombre:'Aplicación del proceso de atención en enfermería (PAE)', area:'Enfermería',
+      desc:'Aplicación del Proceso de Atención de Enfermería: valoración, diagnóstico (NANDA), planeación (NOC/NIC), ejecución y evaluación del cuidado.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/111RuXTnaB9Gu_0tTaw6gVyqMFjhXIYin/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/13caL9uzFEB4cs8AhhFQPAqz65JziNGau/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1MLuvSOKkLD6SYozY6wRwqmJ4u_6AUeCC/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1VDvrqtKusv82oa0NLlJ8eLApzfCf5CcS/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1HLw2IniCbpKB17VLB3IY86nffFWvz_A1/view?usp=drive_link') ],
+      mats:[] },
+    { slug:'sepsis-neonatal', nombre:'Manejo de sepsis neonatal', area:'Neonatología',
+      desc:'Diagnóstico y tratamiento de la sepsis neonatal temprana y tardía: factores de riesgo, tamizaje, antibioticoterapia empírica y soporte del recién nacido.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1uyh5yoWSa2YjZfjKGtHcmAZKnzX7gMKl/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1IPNOJBwaHfI6PxnjGVxXu_oR7KAOlkwR/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/17h2DDe0SkOfy8bS_oTcFqlA-TFOPYEj0/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1k3f3aYwydmHcx6bwQBd4cLWsGYt4d_B-/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1ROzxik9ssJ6_84rkI5kW-pNwOUnsmW6Z/view?usp=drive_link') ],
+      mats:[ C('Presentación 1','https://docs.google.com/presentation/d/1DbMSGJCd26i_xbZCyRuO1LzQ_uMKzR2g/edit?usp=drive_link'), C('Presentación 2','https://docs.google.com/presentation/d/1eRo8vQ6CJnflfdMqjYPAn54dc1CQMsxT/edit?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1gFavfEMD_IOFfF4kLfihwm9Gm7ymHBk8/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1gSZnHrO9Abbst0P2moqrzWGMZ5y7kPp2/edit?usp=drive_link'), C('Presentación 5','https://docs.google.com/presentation/d/12fbnBlbocI83d3qz3xtsjQVbxlkNOuL8/edit?usp=drive_link') ] },
+    { slug:'accesos-dialisis', nombre:'Accesos vasculares para diálisis: tipos, cuidados y prevención de infecciones', area:'Nefrología',
+      desc:'Accesos vasculares para hemodiálisis: fístulas, injertos y catéteres, cuidados de enfermería, valoración de permeabilidad y prevención de infecciones. Contenido en preparación.',
+      clases:[], mats:[] },
+    { slug:'dieta-cetogenica', nombre:'Dieta cetogénica para profesionales de la salud', area:'Nutrición',
+      desc:'Bases fisiológicas y aplicación clínica de la dieta cetogénica: indicaciones, cálculo de macronutrientes, seguimiento, beneficios y precauciones.',
+      clases:[ C('Clase 1','https://drive.google.com/file/d/1o9PGy5Mn0qs8etGtcj1Uw083v1xcC1FG/view?usp=drive_link'), C('Clase 2','https://drive.google.com/file/d/1-fox8JdtoUWrm_m7KegiAOV24WDYMWb2/view?usp=drive_link'), C('Clase 3','https://drive.google.com/file/d/1cl-a-pc7eE1F7KR7ilFehOZYvrLQZRF9/view?usp=drive_link'), C('Clase 4','https://drive.google.com/file/d/1PyM0QFQrdiz2jyI2EKvOoaCokv-fUCrr/view?usp=drive_link'), C('Clase 5','https://drive.google.com/file/d/1mNE32xbbTq9_515ojDpZ7eILuw2xFTcA/view?usp=drive_link') ],
+      mats:[ C('Material 1','https://drive.google.com/file/d/1oAUY1MfpcdKL7xSYLaECmZM6cS9pNIuj/view?usp=drive_link'), C('Presentación 2','https://docs.google.com/presentation/d/1Yy_9cw87jka4DcPVm-N_SW7B7MFc0kdn/edit?usp=drive_link'), C('Presentación 3','https://docs.google.com/presentation/d/1CaVo6T8mMnbhxWN_B4cp8GIaXI1mCx2v/edit?usp=drive_link'), C('Presentación 4','https://docs.google.com/presentation/d/1D58x_WOiQp71xwnfPXfs52h0LQNGYaqb/edit?usp=drive_link'), C('Presentación 5','https://docs.google.com/presentation/d/1JEWyj2VnxR75pDN0gwQmEWvxlg_vVnuZ/edit?usp=drive_link'), C('Presentación 6','https://docs.google.com/presentation/d/13G_cI2OV94NMMmbnscNkebAwlwUVo40c/edit?usp=drive_link') ] }
+  ];
+
+  /* Estima horas por número de clases */
+  function estHoras(n){ return Math.max(6, n*2); }
+
+  async function runMigracion(statusEl, btn){
+    const fs = window.__fs;
+    if (!fs || !fs.setDoc){ Toast.error('Firestore no está listo'); return; }
+    const { doc, setDoc, db, serverTimestamp } = fs;
+    btn.disabled = true;
+    let ok=0, fail=0;
+    for (let i=0;i<MIG_COURSES.length;i++){
+      const c = MIG_COURSES[i];
+      statusEl.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><div class="mig-spin"></div>Subiendo ${i+1}/${MIG_COURSES.length} · <b>${escHtml(c.nombre)}</b></div>`;
+      const portada = svgPortada(c.nombre, c.area);
+      const datos = {
+        nombre: c.nombre, area: c.area, nivel: 'Intermedio', instructor: 'Equipo docente SYNOVA',
+        horas: estHoras(c.clases.length), portada, descripcion: c.desc,
+        sesiones: c.clases.map((s,idx)=>({ titulo: s.titulo, url: s.url, orden: idx+1 })),
+        materiales: c.mats.map(m=>({ titulo: m.titulo, url: m.url, portada })),
+        activo: true, orden: i+1, origen: 'migracion-catalogo-2026'
+      };
+      try {
+        await setDoc(doc(db, 'cursos', 'syn-'+c.slug), { ...datos, createdAt: serverTimestamp() }, { merge: true });
+        ok++;
+      } catch(e){ fail++; console.error('[MIG]', c.slug, e); }
+    }
+    statusEl.innerHTML = `<div class="mig-done"><svg class="ic"><use href="#i-check"/></svg> Listo: <b>${ok}</b> cursos importados${fail?` · ${fail} con error`:''}.</div>`;
+    btn.disabled = false;
+    Toast.success('Catálogo importado', ok+' cursos en Firestore');
+    setTimeout(()=>{ if (window.PAGES && PAGES._refrescar_cursos) try{ PAGES._refrescar_cursos(true); }catch(e){} }, 800);
+  }
+
+  window.abrirMigracionCursos = function(){
+    const totalClases = MIG_COURSES.reduce((a,c)=>a+c.clases.length,0);
+    const totalMats = MIG_COURSES.reduce((a,c)=>a+c.mats.length,0);
+    const body = document.createElement('div');
+    body.innerHTML = `
+      <style>
+      .mig-spin{width:16px;height:16px;border:2px solid var(--border-2);border-top-color:var(--primary);border-radius:50%;animation:migspin .7s linear infinite;flex-shrink:0}
+      @keyframes migspin{to{transform:rotate(360deg)}}
+      .mig-done{display:flex;align-items:center;gap:8px;color:var(--success);font-weight:600}
+      .mig-done .ic{width:18px;height:18px}
+      .mig-list{max-height:240px;overflow:auto;border:1px solid var(--border-2);border-radius:12px;padding:8px;margin-top:12px}
+      .mig-item{display:flex;justify-content:space-between;gap:10px;padding:7px 9px;border-radius:8px;font-size:12.5px}
+      .mig-item:nth-child(odd){background:color-mix(in srgb,var(--primary) 5%,transparent)}
+      .mig-item span:last-child{color:var(--text-3);white-space:nowrap;font-family:'JetBrains Mono',monospace;font-size:11px}
+      </style>
+      <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Se subirán <b>${MIG_COURSES.length} cursos</b> a la colección <code>cursos</code> con portada generada, <b>${totalClases}</b> clases en video y <b>${totalMats}</b> materiales. Cada curso usa un ID fijo, así que puedes volver a ejecutar sin duplicar (actualiza los existentes).</p>
+      <div class="mig-list">${MIG_COURSES.map(c=>`<div class="mig-item"><span>${escHtml(c.nombre)}</span><span>${c.clases.length}cl · ${c.mats.length}mat</span></div>`).join('')}</div>
+      <div id="mig-status" style="margin-top:14px;font-size:13px;color:var(--text-2);min-height:24px"></div>`;
+    const footer = document.createElement('div');
+    footer.innerHTML = `<button class="btn btn-outline btn-sm" id="mig-cancel">Cerrar</button><button class="btn btn-primary btn-sm" id="mig-run"><svg class="ic"><use href="#i-download"/></svg>Iniciar importación</button>`;
+    Modal.open({ title:'Importar catálogo SYNOVA', subtitle:MIG_COURSES.length+' cursos clínicos', icon:'i-book', body, footer });
+    footer.querySelector('#mig-cancel').addEventListener('click', ()=>Modal.close());
+    footer.querySelector('#mig-run').addEventListener('click', ()=> runMigracion(body.querySelector('#mig-status'), footer.querySelector('#mig-run')));
+  };
+})();
+</script>
+
 </body>
 </html>
