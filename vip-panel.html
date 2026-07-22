@@ -663,6 +663,24 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .wa-rule__text{font-size:12.5px;color:var(--text-2);line-height:1.5}
 .wa-rule__text strong{color:var(--text)}
 
+/* CONTACTO · soporte, ventas y redes */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px}
+.contact-card{display:flex;gap:14px;align-items:center;background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:18px 20px;transition:transform .2s cubic-bezier(.2,.8,.25,1),border-color .2s,box-shadow .3s}
+.contact-card:hover{transform:translateY(-3px);border-color:var(--border-strong);box-shadow:0 14px 34px rgba(0,0,0,.14)}
+.contact-card--wa:hover{border-color:color-mix(in srgb,var(--whatsapp) 45%,transparent)}
+.contact-card__ic{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,var(--whatsapp),#128C4B);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 16px color-mix(in srgb,var(--whatsapp) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.2)}
+.contact-card__ic .ic{width:22px;height:22px}
+.contact-card__body{min-width:0}
+.contact-card__lbl{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--text-3)}
+.contact-card__val{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.4px;line-height:1.15;margin-top:3px}
+.contact-card__sub{font-size:11.5px;color:var(--text-2);margin-top:4px;line-height:1.45}
+.social-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.social-btn{flex:1;min-width:150px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 18px;border-radius:14px;font-size:13px;font-weight:700;color:#fff;transition:transform .15s,filter .15s,box-shadow .25s}
+.social-btn .ic{width:18px;height:18px}
+.social-btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+.social-btn--fb{background:linear-gradient(135deg,#1877F2,#0C5AD6);box-shadow:0 6px 18px rgba(24,119,242,.32)}
+.social-btn--ig{background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF);box-shadow:0 6px 18px rgba(221,42,123,.32)}
+
 /* MI PERFIL */
 .perfil-hero{background:var(--surface);border:0.5px solid var(--border);border-radius:18px;padding:24px;margin-bottom:14px;display:flex;gap:22px;align-items:center;position:relative;overflow:hidden;flex-wrap:wrap}
 .perfil-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 50%,var(--primary-glow),transparent 50%);filter:blur(50px);pointer-events:none;opacity:.5}
@@ -951,6 +969,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
 <symbol id="i-messages" viewBox="0 0 24 24"><path d="M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10"/><path d="M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2"/></symbol>
 <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></symbol>
 <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/></symbol>
 <symbol id="i-credit-card" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></symbol>
 <symbol id="i-bell" viewBox="0 0 24 24"><path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6"/><path d="M9 17v1a3 3 0 0 0 6 0v-1"/></symbol>
@@ -1054,6 +1073,13 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       <div class="widget__label"><svg class="ic"><use href="#i-whatsapp"/></svg>Comunidad SYNOVA</div>
       <div class="widget__count-sub">Profesionales de salud compartiendo procesos, normativa y buenas prácticas.</div>
       <button class="btn btn--wa btn--block btn--sm" data-section="canal"><svg class="ic"><use href="#i-whatsapp"/></svg>Ir al canal</button>
+    </div>
+
+    <div class="widget" id="widget-soporte">
+      <div class="widget__label"><svg class="ic"><use href="#i-phone"/></svg>Soporte y ventas</div>
+      <div class="widget__count" style="font-size:19px" id="soporte-tel">238 147 9274</div>
+      <div class="widget__count-sub">Promociones, descuentos y ayuda con tu membresía.</div>
+      <a class="btn btn--wa btn--block btn--sm" id="soporte-wa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whatsapp"/></svg>Escribir por WhatsApp</a>
     </div>
 
     <div class="widget" id="widget-actividad">
@@ -1312,6 +1338,15 @@ window.__fs = { doc, getDoc, getDocs, setDoc, updateDoc, collection, addDoc, del
 window.__auth = auth;
 window.__WEBHOOK_URL = WEBHOOK_URL;
 window.__STRIPE_PK = STRIPE_PUBLISHABLE_KEY;
+/* Datos de contacto oficiales de SYNOVA México (soporte, ventas, promociones y redes) */
+window.__CONTACTO = {
+  telefono: '238 147 9274',
+  telefonoRaw: '5212381479274',
+  waMsg: 'Hola SYNOVA, me gustaría información sobre las membresías y promociones.',
+  canal: 'https://whatsapp.com/channel/0029Vb92mNGAojYs7h1P9R06',
+  facebook: 'https://www.facebook.com/profile.php?id=61573591396783&locale=es_LA',
+  instagram: 'https://www.instagram.com/synovamexico'
+};
 window.__synPanelBooted = true;
 
 window.UserState = null;
@@ -2210,18 +2245,45 @@ window.guardarTarjeta = async function(){
   } catch (e) { Toast.error('No se pudo guardar tu tarjeta', e.message); }
 };
 
-/* ══════════════════════ CANAL WHATSAPP ══════════════════════ */
+/* ══════════════════════ CANAL WHATSAPP + CONTACTO ══════════════════════ */
 Sections.canal = function(){
+  const C = window.__CONTACTO || {};
+  const waSoporte = `https://wa.me/${C.telefonoRaw || ''}?text=${encodeURIComponent(C.waMsg || 'Hola SYNOVA')}`;
   document.getElementById('content').innerHTML =
-    secHero('Comunidad WhatsApp', 'Canal WhatsApp SYNOVA', 'Recibe alertas de nuevos cursos, clases en vivo y noticias del sector salud directo en tu WhatsApp.') +
+    secHero('Comunidad y contacto', 'Canal WhatsApp SYNOVA', 'Recibe alertas de nuevos cursos, clases en vivo y noticias del sector salud directo en tu WhatsApp — y contáctanos para promociones, ventas y soporte.') +
     `<section class="wa-hero">
       <div class="wa-hero__icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg></div>
       <h2 class="wa-hero__title">Únete al canal oficial</h2>
       <p class="wa-hero__sub">Un espacio para profesionales de la salud que comparten procesos, normativa y casos reales todos los días.</p>
-      <div id="wa-canal-cta" style="position:relative;z-index:1;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">
-        <div class="sub-loading__spin" style="width:18px;height:18px"></div>
+      <div style="position:relative;z-index:1;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+        <a class="btn btn--wa" href="${escHtml(C.canal || '#')}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whatsapp"/></svg>Unirme al canal</a>
       </div>
     </section>
+
+    <div class="contact-grid">
+      <a class="contact-card contact-card--wa" href="${escHtml(waSoporte)}" target="_blank" rel="noopener">
+        <div class="contact-card__ic"><svg class="ic"><use href="#i-whatsapp"/></svg></div>
+        <div class="contact-card__body">
+          <div class="contact-card__lbl">Soporte y ventas</div>
+          <div class="contact-card__val">${escHtml(C.telefono || '')}</div>
+          <div class="contact-card__sub">Promociones, descuentos y ayuda · toca para escribir por WhatsApp</div>
+        </div>
+      </a>
+      <a class="contact-card" href="tel:+${escHtml(C.telefonoRaw || '')}">
+        <div class="contact-card__ic" style="background:linear-gradient(135deg,var(--primary),var(--primary-deep))"><svg class="ic"><use href="#i-phone"/></svg></div>
+        <div class="contact-card__body">
+          <div class="contact-card__lbl">Llámanos</div>
+          <div class="contact-card__val">${escHtml(C.telefono || '')}</div>
+          <div class="contact-card__sub">Atención directa para dudas de tu membresía</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="social-row">
+      <a class="social-btn social-btn--fb" href="${escHtml(C.facebook || '#')}" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>Facebook</a>
+      <a class="social-btn social-btn--ig" href="${escHtml(C.instagram || '#')}" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zm0 3.68a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.4-10.85a1.44 1.44 0 1 0 0 2.88 1.44 1.44 0 0 0 0-2.88z"/></svg>Instagram</a>
+    </div>
+
     <div class="wa-rules">
       <div class="wa-rules__title">Reglas de la comunidad</div>
       <div class="wa-rule"><div class="wa-rule__check"><svg class="ic"><use href="#i-check"/></svg></div><div class="wa-rule__text"><strong>Respeto siempre.</strong> Trato profesional entre colegas de salud. Sin política, sin ataques personales.</div></div>
@@ -2229,24 +2291,6 @@ Sections.canal = function(){
       <div class="wa-rule"><div class="wa-rule__check"><svg class="ic"><use href="#i-check"/></svg></div><div class="wa-rule__text"><strong>Nada de spam.</strong> El canal es para aprender, no para vender servicios externos.</div></div>
       <div class="wa-rule"><div class="wa-rule__check"><svg class="ic"><use href="#i-check"/></svg></div><div class="wa-rule__text"><strong>Confidencialidad.</strong> Lo que se comparte en el grupo se queda en el grupo.</div></div>
     </div>`;
-  cargarCanalWhatsapp();
-};
-
-async function cargarCanalWhatsapp(){
-  const el = document.getElementById('wa-canal-cta');
-  if (!el) return;
-  try {
-    const { doc, getDoc, db } = window.__fs;
-    const snap = await getDoc(doc(db, 'config', 'club'));
-    const url = snap.exists() ? snap.data().whatsappUrl : null;
-    if (url) {
-      el.innerHTML = toolEsVIP()
-        ? `<a class="btn btn--wa" href="${escHtml(url)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whatsapp"/></svg>Abrir grupo</a>`
-        : `<button class="btn btn--wa" onclick="window.__showPaywallModal('El canal de WhatsApp es exclusivo para miembros VIP.')"><svg class="ic"><use href="#i-whatsapp"/></svg>Abrir grupo</button>`;
-    } else {
-      el.innerHTML = '<span class="pill">Muy pronto</span>';
-    }
-  } catch (e) { el.innerHTML = '<span class="pill">Muy pronto</span>'; }
 }
 
 /* ══════════════════════ MI PERFIL ══════════════════════ */
@@ -2457,6 +2501,14 @@ async function abrirPortalFacturacion(){
 window.__actualizarAside = async function(){
   const S = window.UserState;
   if (!S || !S.uid) return;
+  /* Botón de soporte por WhatsApp (número oficial de ventas/soporte) */
+  try {
+    const C = window.__CONTACTO || {};
+    const waBtn = document.getElementById('soporte-wa');
+    if (waBtn) waBtn.href = `https://wa.me/${C.telefonoRaw || ''}?text=${encodeURIComponent(C.waMsg || 'Hola SYNOVA')}`;
+    const telEl = document.getElementById('soporte-tel');
+    if (telEl && C.telefono) telEl.textContent = C.telefono;
+  } catch (e) {}
   try {
     const { collection, getDocs, getDoc, doc, db, query, where, orderBy } = window.__fs;
 
