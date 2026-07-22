@@ -367,6 +367,29 @@ body.auth-ready .auth-gate{display:none !important}
 .mb-kv{display:flex;justify-content:space-between;padding:6px 0;border-top:1px dashed var(--border-2)}
 .mb-kv:first-child{border-top:none}
 
+/* Noticias · cards del cron (mismo patrón que ICADEM) */
+.news-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:transform .15s,border-color .15s,box-shadow .25s}
+.news-card:hover{transform:translateY(-1px);border-color:var(--border-strong);box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.news-card__cover{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--c1,var(--primary)),color-mix(in srgb,var(--c1,var(--primary)) 60%,#000));color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 14px color-mix(in srgb,var(--c1,var(--primary)) 25%,transparent)}
+.news-card__cover .ic{width:24px;height:24px}
+.news-card__body{flex:1;min-width:0}
+.news-card__head{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap}
+.news-card__date{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text-3);font-weight:600;letter-spacing:.8px}
+.news-card__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.2px;line-height:1.3}
+.news-card__desc{font-size:12px;color:var(--text-2);line-height:1.5;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-card__source{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);font-weight:600;margin-top:6px;display:inline-flex;align-items:center;gap:4px}
+
+/* Cron card especial (noticias) */
+.cron-card{background:linear-gradient(135deg,var(--bg-deep) 0%,var(--surface-2) 100%);border:1px solid var(--border-2);border-radius:20px;padding:24px 26px;margin-bottom:18px;position:relative;overflow:hidden}
+.cron-card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 30%,color-mix(in srgb,var(--success) 18%,transparent),transparent 50%);filter:blur(40px);pointer-events:none}
+.cron-card__row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;position:relative;z-index:1}
+.cron-card__icon{width:54px;height:54px;border-radius:14px;background:linear-gradient(135deg,var(--success),#047857);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 22px color-mix(in srgb,var(--success) 35%,transparent),inset 0 1px 0 rgba(255,255,255,.18)}
+.cron-card__info{flex:1;min-width:0}
+.cron-card__lbl{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--success);display:inline-flex;align-items:center;gap:6px}
+.cron-card__lbl::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulseDotSmall 1.8s ease-out infinite;box-shadow:0 0 8px var(--success)}
+.cron-card__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.4px;margin-top:4px}
+.cron-card__sub{font-size:12.5px;color:var(--text-2);margin-top:4px}
+
 /* Info / estado */
 .info-strip{font-size:11.5px;color:var(--text-3);padding:10px 12px;background:color-mix(in srgb,var(--primary) 8%,var(--surface-2));border-left:3px solid var(--primary);border-radius:6px;line-height:1.55}
 .status-card{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);border:1px solid var(--border-2);border-radius:20px;padding:22px 24px;margin-bottom:18px;position:relative;overflow:hidden}
@@ -1453,95 +1476,96 @@ window.enviarNotificacion = async function(){
   } catch (e) { Toast.error('Error al enviar', e.message); }
 };
 
-/* ═══════════════════ NOTICIAS (cron automático) ═══════════════════ */
+/* ═══════════════════ NOTICIAS (cron automático · patrón ICADEM) ═══════════════════ */
 PAGES.noticias = function(){
   const page = document.getElementById('page');
-  page.innerHTML = `<div class="fade-up">
-    <div class="sec-hero"><span class="sec-hero__eyebrow"><svg class="ic" style="width:12px;height:12px"><use href="#i-news"/></svg>Cron automático</span><h1 class="sec-hero__title">Noticias</h1><p class="sec-hero__sub">El cron de Railway corre cada día a las 7 AM CDMX y publica noticias del sector salud (normativa NOM, bioseguridad, atención al paciente) en el panel VIP. Aquí ves la colección <strong>noticias_auto</strong> en tiempo real.</p></div>
-
-    <div class="dash-card" style="margin-bottom:22px">
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-        <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--success),#059669);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg class="ic" style="width:22px;height:22px"><use href="#i-news"/></svg></div>
-        <div style="flex:1;min-width:200px">
-          <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--success);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block"></span>Cron en línea</div>
-          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;margin-top:2px">NewsData → Firestore</div>
-          <div style="font-size:12px;color:var(--text-3);margin-top:3px" id="ns-meta">Cargando estado…</div>
+  page.innerHTML = `
+    <div class="fade-up">
+      <div class="sec-hero">
+        <span class="sec-hero__eyebrow">Cron automático</span>
+        <h1 class="sec-hero__title">Noticias</h1>
+        <p class="sec-hero__sub">El cron de Railway corre cada día a las 7 AM y publica noticias del sector salud (normativa, bioseguridad, atención al paciente — español e inglés) en el panel VIP. Aquí ves la colección <strong style="color:var(--text-2);">noticias_auto</strong> en tiempo real.</p>
+      </div>
+      <section class="cron-card">
+        <div class="cron-card__row">
+          <div class="cron-card__icon"><svg class="ic" style="width:24px;height:24px"><use href="#i-news"/></svg></div>
+          <div class="cron-card__info">
+            <span class="cron-card__lbl" id="cron-lbl">Cron en línea</span>
+            <div class="cron-card__title">NewsData → Firestore</div>
+            <div class="cron-card__sub" id="cron-sub">Cargando estado…</div>
+          </div>
+          <button class="btn btn--ghost" id="cron-run"><svg class="ic"><use href="#i-arrow-right"/></svg>Ejecutar ahora</button>
         </div>
-        <button class="btn btn-primary" id="ns-run" onclick="ejecutarNoticiasAhora()"><svg class="ic"><use href="#i-arrow-right"/></svg>Ejecutar ahora</button>
-      </div>
+      </section>
+      <div class="section-header"><h2 class="section-header__title">Últimas noticias publicadas<span class="section-header__badge" id="news-count">…</span></h2></div>
+      <div class="adm-list" id="news-list"><div class="empty"><h3>Cargando noticias…</h3></div></div>
     </div>
-
-    <div class="dash-card">
-      <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-news"/></svg>Últimas noticias publicadas</div><span class="tag tag--primary" id="ns-count">—</span></div>
-      <div class="mini-list" id="ns-list">${loadingRow()}</div>
-    </div>
-  </div>`;
-  cargarNoticiasAdmin();
+  `;
+  PAGES._cargarNoticiasAdmin();
+  document.getElementById('cron-run').addEventListener('click', () => PAGES._ejecutarCronNoticias());
 };
 
-window.cargarNoticiasAdmin = async function(){
-  const list = document.getElementById('ns-list');
-  if (!list) return;
+PAGES._cargarNoticiasAdmin = async function(){
+  const fb = window.__fs; if (!fb) return;
+  const list = document.getElementById('news-list'); if (!list) return;
   try {
-    const { collection, getDocs, db, query, orderBy, limit } = window.__fs;
-    let snap;
-    try { snap = await getDocs(query(collection(db, 'noticias_auto'), orderBy('createdAt', 'desc'), limit(30))); }
-    catch (e) { snap = await getDocs(collection(db, 'noticias_auto')); }
-    const noticias = []; snap.forEach(d => noticias.push({ id: d.id, ...d.data() }));
-
-    const badge = document.getElementById('badge-noticias'); if (badge) badge.textContent = String(noticias.length);
-    const count = document.getElementById('ns-count'); if (count) count.textContent = noticias.length + ' en el panel';
-    const meta = document.getElementById('ns-meta');
-    if (meta) {
-      const ultima = noticias[0]?.createdAt;
-      const fecha = ultima?.toDate ? ultima.toDate().toLocaleString('es-MX', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'aún no ha corrido';
-      meta.innerHTML = 'Última publicación: <strong>' + fecha + '</strong> · ' + noticias.length + ' noticias en el panel · Próxima corrida automática: <strong>7:00 AM</strong>';
+    const snap = await fb.getDocs(fb.query(fb.collection(fb.db, 'noticias_auto'), fb.orderBy('createdAt', 'desc'), fb.limit(30)));
+    const arts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const cnt = document.getElementById('news-count'); if (cnt) cnt.textContent = `${arts.length} en el panel`;
+    const badge = document.getElementById('badge-noticias'); if (badge) badge.textContent = String(arts.length);
+    const sub = document.getElementById('cron-sub');
+    if (sub) {
+      if (arts.length) {
+        const ult = arts[0].createdAt?.toDate ? arts[0].createdAt.toDate() : null;
+        sub.innerHTML = `Última publicación: <strong>${ult ? ult.toLocaleString('es-MX',{dateStyle:'medium',timeStyle:'short'}) : '—'}</strong> · <strong>${arts.length}</strong> noticias en el panel · Próxima corrida automática: <strong>7:00 AM</strong>`;
+      } else {
+        sub.innerHTML = `<strong>La colección está vacía.</strong> Presiona "Ejecutar ahora" para traer las primeras noticias.`;
+      }
     }
-
-    if (!noticias.length) { list.innerHTML = emptyRow('Aún no hay noticias. Presiona "Ejecutar ahora" para publicar las primeras.'); return; }
-    list.innerHTML = noticias.map(n => `<div class="mini-row" style="--c1:${n.color || 'var(--primary)'}">
-      <div class="mini-row__dot" style="background:color-mix(in srgb,${n.color || 'var(--primary)'} 16%,transparent);color:${n.color || 'var(--primary)'}"><svg class="ic"><use href="#i-news"/></svg></div>
-      <div class="mini-row__body">
-        <div class="mini-row__meta" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px"><span class="tag" style="background:color-mix(in srgb,${n.color || 'var(--primary)'} 14%,transparent);color:${n.color || 'var(--primary)'};border:0.5px solid color-mix(in srgb,${n.color || 'var(--primary)'} 30%,transparent)">${escHtml(n.categoriaNombre || n.categoria || 'General')}</span><span>${escHtml(n.fuente || '')}</span></div>
-        <div class="mini-row__title">${escHtml(n.titulo || 'Sin título')}</div>
-        ${n.link ? `<a href="${escHtml(n.link)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--primary);font-weight:600">Abrir fuente</a>` : ''}
-      </div>
-      <button class="icon-action icon-action--danger" onclick="borrarNoticiaAdmin('${n.id}')"><svg class="ic"><use href="#i-trash"/></svg></button>
-    </div>`).join('');
+    if (!arts.length) { list.innerHTML = '<div class="empty"><h3>Sin noticias todavía</h3><p>Ejecuta el cron con el botón de arriba.</p></div>'; return; }
+    list.innerHTML = arts.map(n => `
+      <div class="news-card" style="--c1:${n.color||'var(--primary)'};">
+        <div class="news-card__cover"><svg class="ic"><use href="#i-news"/></svg></div>
+        <div class="news-card__body">
+          <div class="news-card__head">
+            <span class="tag" style="color:${n.color||'#5b92c8'};border:1px solid ${(n.color||'#5b92c8')}40;background:${(n.color||'#5b92c8')}14;">${escHtml(n.categoriaNombre||n.categoria||n.cat||'')}</span>
+            <span class="tag" style="border:1px solid var(--border-2);color:var(--text-3);">${(n.lang||'es').toUpperCase()}</span>
+            <span class="news-card__date">${escHtml(n.fuente||'')}</span>
+          </div>
+          <div class="news-card__title">${escHtml(n.titulo||'')}</div>
+          <div class="news-card__source">${n.link ? `<a href="${escHtml(n.link)}" target="_blank" rel="noopener" style="color:var(--primary-soft);text-decoration:none;">Abrir fuente</a>` : ''}</div>
+        </div>
+        <div class="adm-row__actions">
+          <button class="icon-action icon-action--danger" data-del-news="${n.id}" title="Eliminar"><svg class="ic"><use href="#i-trash"/></svg></button>
+        </div>
+      </div>`).join('');
+    list.querySelectorAll('[data-del-news]').forEach(b => b.addEventListener('click', async () => {
+      if (!confirm('¿Eliminar esta noticia del panel?')) return;
+      try { await fb.deleteDoc(fb.doc(fb.db, 'noticias_auto', b.dataset.delNews)); Toast.success('Noticia eliminada'); PAGES._cargarNoticiasAdmin(); }
+      catch(e){ Toast.error('No se pudo eliminar', e.message||''); }
+    }));
   } catch (e) {
-    list.innerHTML = emptyRow('No se pudieron cargar las noticias: ' + e.message);
+    list.innerHTML = `<div class="empty"><h3>Error al leer noticias</h3><p>${escHtml(e.message||'')}</p></div>`;
   }
 };
 
-window.borrarNoticiaAdmin = function(id){
-  if (!confirm('¿Eliminar esta noticia del panel? Esta acción no se puede deshacer.')) return;
-  (async () => {
-    try {
-      const { doc, deleteDoc, db } = window.__fs;
-      await deleteDoc(doc(db, 'noticias_auto', id));
-      Toast.success('Noticia eliminada');
-      cargarNoticiasAdmin();
-    } catch (e) { Toast.error('Error al eliminar', e.message); }
-  })();
-};
-
-window.ejecutarNoticiasAhora = async function(){
-  const btn = document.getElementById('ns-run');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="ic spin" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Sincronizando…'; }
+PAGES._ejecutarCronNoticias = async function(){
+  const btn = document.getElementById('cron-run'); if (!btn) return;
+  btn.disabled = true; const orig = btn.innerHTML; btn.innerHTML = 'Sincronizando…';
   try {
-    const r = await fetch(window.__WEBHOOK_URL + '/noticias/sync?secret=default-secret');
-    const data = await r.json();
-    if (data.ok) {
-      Toast.success('Noticias sincronizadas', (data.resultado?.guardadas ?? 0) + ' noticias nuevas publicadas');
-      setTimeout(cargarNoticiasAdmin, 1200);
-    } else {
-      Toast.error('El servidor respondió con error', data.error || 'Revisa los logs de Railway');
-    }
+    const token = await tokenAdmin();
+    const res = await fetch(`${window.__WEBHOOK_URL}/noticias/sync`, { headers: { 'Authorization': 'Bearer ' + token } });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(j.error || `HTTP ${res.status}`);
+    const errs = (j.reporte || []).filter(r => r.error);
+    Toast.success(`Cron ejecutado · ${j.nuevas ?? 0} noticias nuevas`, errs.length ? `${errs.length} consulta(s) con error · revisa la consola` : 'Todo en orden');
+    if (errs.length) errs.slice(0,3).forEach(r => Toast.error(`${r.cat} (${r.lang})`, r.error));
+    console.log('[cron noticias] reporte completo:', j);
+    PAGES._cargarNoticiasAdmin();
   } catch (e) {
-    Toast.error('No se pudo ejecutar la sincronización', e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="ic"><use href="#i-arrow-right"/></svg>Ejecutar ahora'; }
+    Toast.error('No se pudo ejecutar el cron', e.message || 'Revisa que el webhook tenga la última versión');
   }
+  btn.disabled = false; btn.innerHTML = orig;
 };
 </script>
 
