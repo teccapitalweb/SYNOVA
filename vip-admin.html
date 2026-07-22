@@ -4,133 +4,405 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0B121F">
-<title>SYNOVA · Panel Admin</title>
+<meta name="description" content="SYNOVA México · Panel de administración VIP">
+<title>SYNOVA · Admin VIP</title>
 <link rel="icon" type="image/png" href="assets/img/synova-favicon.png">
+<link rel="apple-touch-icon" href="assets/img/synova-apple-touch.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
+/* SYNOVA ADMIN · panel VIP para consultoría de salud (procesos, normas, calidad de atención) */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit;text-decoration:none;cursor:pointer}
 img{display:block;max-width:100%}
-input,textarea,select{font:inherit;color:inherit}
+svg{flex-shrink:0}
+input,select,textarea{font:inherit;color:inherit}
 ::selection{background:var(--primary);color:#fff}
 
 :root[data-theme="night"]{
-  --bg:#0B121F;--bg-deep:#070B12;--surface:#101A2C;--surface-2:#16223A;--surface-3:#223353;
+  --bg:#0B121F;--bg-deep:#070B12;
+  --surface:#101A2C;--surface-2:#16223A;--surface-3:#223353;
   --border:rgba(140,190,230,0.08);--border-2:rgba(140,190,230,0.15);--border-strong:rgba(140,190,230,0.24);
   --text:#EAF2FA;--text-2:#A9BBD1;--text-3:#7C8FA8;
-  --primary:#1C6FB0;--primary-soft:#5FB6E0;--primary-deep:#0B4A7C;--primary-glow:rgba(28,111,176,0.42);--highlight:#2FD1C6;
-  --success:#34D399;--warn:#FBBF24;--danger:#F87171;--shadow-card:0 20px 60px rgba(0,0,0,0.5);
+  --primary:#1C6FB0;--primary-soft:#5FB6E0;--primary-deep:#0B4A7C;
+  --primary-glow:rgba(28,111,176,0.42);--highlight:#2FD1C6;
+  --success:#34D399;--danger:#F87171;--warning:#FBBF24;--accent:#8B7CF0;--info:#3B82F6;
+  --shadow-card:0 20px 60px rgba(0,0,0,0.55);
 }
 :root[data-theme="day"]{
-  --bg:#EEF5FC;--bg-deep:#DCEAF7;--surface:#FFFFFF;--surface-2:#F3F9FE;--surface-3:#E3EFF9;
+  --bg:#EEF5FC;--bg-deep:#DCEAF7;
+  --surface:#FFFFFF;--surface-2:#F3F9FE;--surface-3:#E3EFF9;
   --border:rgba(11,58,102,0.08);--border-2:rgba(11,58,102,0.14);--border-strong:rgba(11,58,102,0.24);
   --text:#0B2A4A;--text-2:#3E5975;--text-3:#7891A8;
-  --primary:#0D5FA0;--primary-soft:#3D8FCB;--primary-deep:#0A3E68;--primary-glow:rgba(13,95,160,0.24);--highlight:#159E92;
-  --success:#0F9D58;--warn:#B45309;--danger:#DC2D3F;--shadow-card:0 16px 50px rgba(11,58,102,0.12);
+  --primary:#0D5FA0;--primary-soft:#3D8FCB;--primary-deep:#0A3E68;
+  --primary-glow:rgba(13,95,160,0.28);--highlight:#159E92;
+  --success:#0F9D58;--danger:#DC2D3F;--warning:#B45309;--accent:#7C5CD6;--info:#3B82F6;
+  --shadow-card:0 16px 50px rgba(11,58,102,0.14);
 }
-body{font-family:'Inter',sans-serif;font-size:14px;color:var(--text);background:var(--bg);min-height:100vh}
+
+body{font-family:'Inter',sans-serif;font-size:14px;line-height:1.5;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow:hidden}
 h1,h2,h3{font-family:'Plus Jakarta Sans','Inter',sans-serif}
 .mono{font-family:'JetBrains Mono',monospace}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.spin{animation:spin .9s linear infinite}
 
-body:not(.auth-ready) .app-shell{display:none !important}
+/* AUTH GATE */
+body:not(.auth-ready) .app{display:none !important}
 body.auth-ready .auth-gate{display:none !important}
-.auth-gate{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(157deg,#0E1826 0%,#0B121F 55%,#070B12 100%)}
+.auth-gate{position:fixed;inset:0;z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:linear-gradient(157deg,#0E1826 0%,#0B121F 55%,#070B12 100%)}
 :root[data-theme="day"] .auth-gate{background:linear-gradient(157deg,#F4FAFF 0%,#EEF5FC 55%,#DCEAF7 100%)}
 .ag-logo{width:64px;height:64px;border-radius:18px;display:grid;place-items:center;background:#fff;padding:10px;box-shadow:var(--shadow-card);animation:agPulse 2.2s ease-in-out infinite}
-.ag-logo img{width:100%;height:100%;object-fit:contain;display:block}
-@keyframes agPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(.96)}}
+.ag-logo img{width:100%;height:100%;object-fit:contain}
+@keyframes agPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.75;transform:scale(.95)}}
 .ag-row{display:flex;align-items:center;gap:10px}
-.ag-spinner{width:14px;height:14px;border-radius:50%;border:2px solid var(--border-strong);border-top-color:var(--primary);animation:spin .7s linear infinite}
+.ag-spinner{width:15px;height:15px;border-radius:50%;border:2px solid var(--border-strong);border-top-color:var(--primary);animation:spin .7s linear infinite}
 .ag-text{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--text-3)}
 
-.app-shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
-.sidebar{background:var(--surface);border-right:1px solid var(--border-2);display:flex;flex-direction:column;padding:20px 14px;gap:6px;position:sticky;top:0;height:100vh;overflow-y:auto}
-.sb-brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px}
-.sb-brand__logo{width:36px;height:36px;border-radius:10px;background:#fff;padding:5px;display:grid;place-items:center;flex:none;overflow:hidden}
-.sb-brand__logo img{width:100%;height:100%;object-fit:contain;display:block}
-.sb-brand__name{font-weight:800;font-size:15px}
-.sb-brand__sub{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
-.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;font-size:13px;font-weight:600;color:var(--text-2);transition:all .15s;margin-bottom:2px}
-.sb-item:hover{background:var(--surface-2);color:var(--text)}
-.sb-item.is-active{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff}
-.sb-item svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9}
-.sb-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary-soft),var(--primary));display:grid;place-items:center;font-weight:800;font-size:11px;color:#071018;flex:none}
-.sb-user{flex:1;min-width:0}
-.sb-user__name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.icon-btn{width:32px;height:32px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border-2);display:grid;place-items:center;color:var(--text-2);flex:none}
-.icon-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.9}
+.app{display:grid;grid-template-columns:230px 1fr;height:100vh}
 
-.main{display:flex;flex-direction:column;min-height:100vh}
-.topbar{display:none;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border-2);background:var(--surface);position:sticky;top:0;z-index:20}
-.content{flex:1;padding:26px 32px 60px;max-width:1180px;width:100%;margin:0 auto}
-.page-head{margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px}
+/* SIDEBAR */
+.sidebar{background:var(--bg-deep);border-right:1px solid var(--border);padding:18px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--surface-2);border-radius:3px}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.brand__logo{width:38px;height:38px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.brand__logo img{width:100%;height:100%;object-fit:contain;display:block}
+.brand__name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;line-height:1.1}
+.brand__role{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--primary);padding:3px 8px;border-radius:100px;background:color-mix(in srgb,var(--primary) 14%,transparent);border:1px solid color-mix(in srgb,var(--primary) 30%,transparent);display:inline-flex;align-items:center;gap:5px;margin-top:3px}
+.brand__role::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--primary);animation:pulseDotSmall 1.8s ease-out infinite;box-shadow:0 0 6px var(--primary-glow)}
+
+.nav-section{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+.nav-label{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);padding:8px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;font-size:13px;font-weight:500;color:var(--text-2);transition:color .15s,background .15s;position:relative}
+.nav-item:hover{color:var(--text);background:var(--surface)}
+.nav-item.is-active{color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent)}
+.nav-item .ic{width:16px;height:16px;flex-shrink:0}
+.nav-item__badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:100px;background:var(--surface-2);color:var(--text-3)}
+.nav-item.is-active .nav-item__badge{background:var(--primary);color:#fff}
+
+/* MAIN */
+.main{overflow-y:auto;background:var(--bg);position:relative}
+.main::-webkit-scrollbar{width:8px}
+.main::-webkit-scrollbar-thumb{background:var(--surface-2);border-radius:4px}
+
+.topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.topbar__pill{display:inline-flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;padding:7px 13px;border-radius:100px;background:color-mix(in srgb,var(--primary) 12%,transparent);border:1px solid color-mix(in srgb,var(--primary) 30%,transparent);color:var(--primary)}
+.topbar__pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--primary);animation:pulseDotSmall 1.8s ease-out infinite;box-shadow:0 0 6px var(--primary-glow)}
+.topbar__right{display:flex;align-items:center;gap:10px}
+.theme-toggle,.icon-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--border-2);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.theme-toggle:hover,.icon-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.theme-toggle .ic,.icon-btn .ic{width:16px;height:16px}
+.avatar{display:flex;align-items:center;gap:9px;padding:6px 12px 6px 6px;border-radius:100px;background:var(--surface);border:1px solid var(--border-2)}
+.avatar__pic{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.2px;flex-shrink:0}
+.avatar__name{font-size:12px;font-weight:600;letter-spacing:-.1px;line-height:1.1}
+.avatar__role{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--primary);font-weight:700;letter-spacing:.6px;margin-top:1px}
+
+.page{padding:28px 32px 80px;max-width:1240px;margin:0 auto}
+
+/* SEC HERO */
+.sec-hero{padding:10px 0 24px;border-bottom:1px solid var(--border);margin-bottom:28px}
+.sec-hero__eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;color:var(--primary);padding:7px 13px;border-radius:100px;background:color-mix(in srgb,var(--primary) 12%,transparent);border:1px solid color-mix(in srgb,var(--primary) 28%,transparent)}
+.sec-hero__eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--primary);animation:pulseDotSmall 1.8s ease-out infinite;box-shadow:0 0 8px var(--primary-glow)}
+.sec-hero__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:clamp(26px,3.2vw,36px);font-weight:800;letter-spacing:-1.1px;line-height:1.05;margin-top:14px;background:linear-gradient(135deg,var(--text),color-mix(in srgb,var(--text) 55%,transparent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.sec-hero__sub{font-size:14px;color:var(--text-2);margin-top:10px;max-width:680px;line-height:1.6}
+.sec-hero__actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+
+/* KPI grid */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px 22px;position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.2,.8,.25,1),border-color .25s,box-shadow .3s}
+.kpi-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--c1,var(--primary)),var(--c2,var(--highlight)),var(--c1,var(--primary)));background-size:200% 100%;animation:shimmerBar 3.5s ease-in-out infinite;border-radius:20px 20px 0 0}
+@keyframes shimmerBar{0%,100%{background-position:0 0}50%{background-position:200% 0}}
+.kpi-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--c1,var(--primary)) 35%,transparent);box-shadow:0 14px 36px rgba(0,0,0,.2)}
+.kpi-card__label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);display:inline-flex;align-items:center;gap:6px;margin-bottom:10px}
+.kpi-card__label::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c1,var(--primary));animation:pulseDotSmall 2s ease-out infinite;box-shadow:0 0 8px var(--c1,var(--primary))}
+.kpi-card__value{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.8px;line-height:1;font-feature-settings:"tnum" 1;background:linear-gradient(135deg,var(--text),color-mix(in srgb,var(--text) 55%,transparent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.kpi-card__sub{font-size:11.5px;color:var(--text-2);margin-top:8px;font-weight:500}
+.kpi-card__sub strong{color:var(--c1,var(--primary));font-weight:700}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 22px;border-radius:100px;font-size:13px;font-weight:700;letter-spacing:-.1px;cursor:pointer;transition:all .2s cubic-bezier(.2,.8,.25,1);border:1px solid transparent}
+.btn .ic{width:14px;height:14px}
+.btn--accent,.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;box-shadow:0 8px 22px var(--primary-glow),inset 0 1px 0 rgba(255,255,255,.18)}
+.btn--accent:hover,.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px var(--primary-glow),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn--ghost,.btn-outline{background:var(--surface);color:var(--text);border-color:var(--border-2)}
+.btn--ghost:hover,.btn-outline:hover{border-color:var(--border-strong);transform:translateY(-1px)}
+.btn--danger,.btn-danger{background:color-mix(in srgb,var(--danger) 10%,transparent);color:var(--danger);border-color:color-mix(in srgb,var(--danger) 35%,transparent)}
+.btn--danger:hover,.btn-danger:hover{background:color-mix(in srgb,var(--danger) 16%,transparent);transform:translateY(-1px)}
+.btn--sm,.btn-sm{padding:8px 14px;font-size:11.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none !important}
+
+/* Inputs */
+.input,.select,.textarea,.field input,.field select,.field textarea{width:100%;padding:11px 14px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:11px;font-size:13.5px;color:var(--text);transition:border-color .15s,box-shadow .15s}
+.input:focus,.select:focus,.textarea:focus,.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-glow)}
+.input::placeholder,.textarea::placeholder{color:var(--text-3)}
+.textarea{resize:vertical;min-height:80px;line-height:1.5;font-family:inherit}
+.select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237C8FA8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.label,.field label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;display:block}
+.field{margin-bottom:14px}
+.field--row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field--check{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.field--check input{width:auto}
+
+/* Tags / pills */
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;background:var(--surface-2);color:var(--text-2);border:1px solid var(--border)}
+.tag--success,.pill.ok{background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--success);border-color:color-mix(in srgb,var(--success) 28%,transparent)}
+.tag--success::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--success);animation:pulseDotSmall 2s ease-out infinite;box-shadow:0 0 5px var(--success)}
+.tag--warning,.pill.warn{background:color-mix(in srgb,var(--warning) 14%,transparent);color:var(--warning);border-color:color-mix(in srgb,var(--warning) 28%,transparent)}
+.tag--danger{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger);border-color:color-mix(in srgb,var(--danger) 28%,transparent)}
+.tag--info{background:color-mix(in srgb,var(--info) 14%,transparent);color:var(--info);border-color:color-mix(in srgb,var(--info) 28%,transparent)}
+.tag--accent,.pill.gift{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 28%,transparent)}
+.tag--primary{background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 28%,transparent)}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:100px;font-size:10.5px;font-weight:700;font-family:'JetBrains Mono',monospace;letter-spacing:.4px}
+.pill.off{background:var(--surface-2);color:var(--text-3);border:1px solid var(--border)}
+
+/* Section header / toolbar */
+.section-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.section-header__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.3px;display:inline-flex;align-items:center;gap:10px}
+.section-header__badge{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.8px;padding:4px 11px;border-radius:100px;background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary);border:1px solid color-mix(in srgb,var(--primary) 28%,transparent);text-transform:uppercase;display:inline-flex;align-items:center;gap:5px}
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:22px}
+.searchbar{position:relative;flex:1;max-width:380px;min-width:200px}
+.searchbar input{width:100%;padding:11px 16px 11px 40px;background:var(--surface);border:1px solid var(--border-2);border-radius:100px;font-size:13px;color:var(--text)}
+.searchbar input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-glow)}
+.searchbar svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text-3);width:15px;height:15px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filters select,.filters input{padding:9px 13px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:10px;font-size:12.5px;color:var(--text)}
+
+/* Tabs / pills de filtro */
+.pills-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.pill-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text-2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:-.1px;transition:all .15s}
+.pill-btn:hover{border-color:var(--primary);color:var(--text);transform:translateY(-1px)}
+.pill-btn[data-active="1"]{background:color-mix(in srgb,var(--primary) 14%,transparent);border-color:var(--primary);color:var(--primary)}
+.pill-btn__count{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;background:color-mix(in srgb,var(--text-3) 18%,transparent);color:var(--text-2);margin-left:2px}
+.pill-btn[data-active="1"] .pill-btn__count{background:var(--primary);color:#fff}
+
+/* Table row (config precios / simple listas) */
+.table-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border)}
+.table-row:last-child{border-bottom:none}
+
+/* Tabla / lista de filas */
+.adm-list{display:flex;flex-direction:column;gap:8px}
+.adm-row{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:14px;transition:transform .15s,border-color .15s,box-shadow .25s}
+.adm-row:hover{transform:translateX(2px);border-color:var(--border-strong);box-shadow:0 6px 18px rgba(0,0,0,.16)}
+.adm-row__thumb{width:44px;height:44px;border-radius:11px;background:linear-gradient(135deg,var(--c1,var(--primary)),color-mix(in srgb,var(--c1,var(--primary)) 60%,#000));color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 14px color-mix(in srgb,var(--c1,var(--primary)) 25%,transparent)}
+.adm-row__thumb .ic{width:20px;height:20px}
+.adm-row__thumb img{width:100%;height:100%;object-fit:cover;border-radius:11px}
+.adm-row__body{flex:1;min-width:0}
+.adm-row__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.2px;line-height:1.3}
+.adm-row__meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);font-weight:600;display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.adm-row__meta span{display:inline-flex;align-items:center;gap:5px}
+.adm-row__meta .ic{width:11px;height:11px}
+.adm-row__actions{display:flex;gap:6px;flex-shrink:0;align-items:center}
+.icon-action{width:34px;height:34px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.icon-action:hover{color:var(--primary);border-color:color-mix(in srgb,var(--primary) 30%,transparent)}
+.icon-action--danger:hover{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 30%,transparent);background:color-mix(in srgb,var(--danger) 8%,transparent)}
+.icon-action .ic{width:14px;height:14px}
+
+/* Toggle iOS */
+.switch{width:42px;height:23px;border:none;background:transparent;cursor:pointer;padding:0;display:flex;align-items:center;flex-shrink:0}
+.switch-track{width:38px;height:21px;border-radius:11px;background:var(--surface-3);display:inline-flex;align-items:center;padding:0 2px;transition:background .25s cubic-bezier(.2,.8,.25,1);position:relative;box-shadow:inset 0 1px 3px rgba(0,0,0,.2)}
+.switch-thumb{width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.2,.8,.25,1)}
+.switch.is-active .switch-track{background:var(--success)}
+.switch.is-active .switch-thumb{transform:translateX(17px)}
+
+/* Form cards */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px 26px}
+.card{background:var(--surface);border:1px solid var(--border-2);border-radius:16px;padding:20px 22px}
+.grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:7px}
+.form-field--full{grid-column:1/-1}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+
+.page-head{margin-bottom:0}
 .page-head h1{font-size:21px;font-weight:800}
 .page-head p{color:var(--text-2);font-size:12.5px;margin-top:3px}
 
-.card{background:var(--surface);border:1px solid var(--border-2);border-radius:16px;padding:18px}
-.grid{display:grid;gap:14px}
-.grid-4{grid-template-columns:repeat(4,1fr)}
-.grid-2{grid-template-columns:repeat(2,1fr)}
-@media(max-width:960px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
+/* Dashboard cards */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-bottom:24px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 24px}
+.dash-card__header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.dash-card__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.2px;display:flex;align-items:center;gap:8px}
+.dash-card__title .ic{width:18px;height:18px;color:var(--primary)}
+.dash-card__link{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--primary);display:inline-flex;align-items:center;gap:5px;transition:gap .2s}
+.dash-card__link:hover{gap:8px}
+.dash-card__link .ic{width:11px;height:11px}
+.mini-list{display:flex;flex-direction:column;gap:8px}
+.mini-row{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border)}
+.mini-row:last-child{border-bottom:none;padding-bottom:0}
+.mini-row:first-child{padding-top:0}
+.mini-row__dot{width:32px;height:32px;border-radius:50%;background:color-mix(in srgb,var(--c1,var(--primary)) 14%,transparent);color:var(--c1,var(--primary));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mini-row__dot .ic{width:14px;height:14px}
+.mini-row__body{flex:1;min-width:0}
+.mini-row__title{font-size:13px;font-weight:600;letter-spacing:-.1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-row__meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);font-weight:500;margin-top:2px}
+.mini-row__right{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:var(--c1,var(--primary));font-feature-settings:"tnum" 1;white-space:nowrap}
 
-.kpi .lbl{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;font-family:'JetBrains Mono',monospace}
-.kpi .val{font-size:24px;font-weight:800;margin-top:6px}
-.kpi .sub{font-size:11px;color:var(--text-3);margin-top:3px}
+/* Cursos · toolbar + netflix cards */
+.curso-toolbar{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.curso-search-wrap{flex:1;min-width:220px;position:relative;display:flex;align-items:center}
+.curso-search__icon{position:absolute;left:14px;width:16px;height:16px;color:var(--text-3);pointer-events:none}
+.curso-search__input{width:100%;padding:11px 14px 11px 40px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text);font-size:13.5px}
+.curso-search__input:focus{outline:none;border-color:var(--primary)}
+.curso-view{display:flex;background:var(--surface-2);border:1px solid var(--border-2);border-radius:11px;padding:3px;gap:2px}
+.curso-view__btn{width:32px;height:32px;border-radius:7px;background:transparent;border:none;cursor:pointer;color:var(--text-3);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.curso-view__btn:hover{color:var(--text)}
+.curso-view__btn[data-active="1"]{background:var(--surface);color:var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.curso-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px;margin-top:6px}
+.curso-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:transform .25s cubic-bezier(.2,.8,.25,1),box-shadow .25s,border-color .15s;position:relative}
+.curso-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.3);border-color:color-mix(in srgb,var(--area-color,var(--primary)) 40%,transparent)}
+.curso-card__cover{position:relative;aspect-ratio:16/9;background-size:cover;background-position:center;background-color:var(--surface-3);background-image:linear-gradient(135deg,var(--surface-3),var(--surface-2))}
+.curso-card__cover-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,11,18,.05) 0%,rgba(7,11,18,.5) 80%,rgba(7,11,18,.75) 100%)}
+:root[data-theme="day"] .curso-card__cover-overlay{background:linear-gradient(180deg,rgba(11,42,74,.05) 0%,rgba(11,42,74,.4) 80%,rgba(11,42,74,.62) 100%)}
+.curso-card__cover-top{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;z-index:2}
+.curso-card__cover-bottom{position:absolute;bottom:10px;left:10px;right:10px;z-index:2}
+.curso-card__area{display:inline-flex;align-items:center;padding:4px 9px;border-radius:6px;background:var(--primary);color:#fff;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.curso-card__nivel{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.94);color:#0B2A4A;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
+.curso-card__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.2px;line-height:1.3;color:#fff}
+.curso-card__body{padding:14px 14px 12px}
+.curso-card__instructor{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.curso-card__meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.curso-card__meta-item{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--text-2)}
+.curso-card__footer{display:flex;align-items:center;justify-content:space-between;margin-top:11px}
+.curso-card__status{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
+.curso-card__status.is-active{color:var(--success)}
+.curso-card__status.is-inactive{color:var(--text-3)}
+.curso-card__status-dot{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 22%,transparent)}
+.curso-card__actions{display:flex;gap:5px}
+.curso-card__action{width:30px;height:30px;border-radius:7px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.curso-card__action:hover{background:var(--surface-3);color:var(--primary);border-color:var(--primary)}
+.curso-card__action--danger:hover{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger);border-color:var(--danger)}
+.curso-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.curso-row{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--area-color,var(--primary));border-radius:11px;transition:transform .15s,border-color .15s}
+.curso-row:hover{transform:translateX(2px)}
+.curso-row__thumb{width:56px;height:56px;border-radius:9px;background-size:cover;background-position:center;background-color:var(--surface-3);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--text-3)}
+.curso-row__body{flex:1;min-width:0}
+.curso-row__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;font-weight:700;letter-spacing:-.2px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.curso-row__meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px;font-size:11px;color:var(--text-3)}
+.curso-row__actions{display:flex;gap:5px;flex-shrink:0}
 
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 18px;border-radius:100px;font-weight:700;font-size:13px;cursor:pointer;border:1px solid transparent}
-.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff}
-.btn-outline{background:var(--surface-2);border-color:var(--border-2);color:var(--text)}
-.btn-danger{background:color-mix(in srgb,var(--danger) 12%,transparent);color:var(--danger);border-color:color-mix(in srgb,var(--danger) 30%,transparent)}
-.btn-sm{padding:7px 13px;font-size:11.5px}
-.btn:disabled{opacity:.5;cursor:not-allowed}
+/* Empty state */
+.empty{text-align:center;padding:56px 26px;background:var(--surface);border:1px dashed var(--border-2);border-radius:18px}
+.empty__icon,.empty svg{width:60px;height:60px;margin:0 auto 16px;border-radius:16px;background:var(--surface-2);color:var(--text-3);display:flex;align-items:center;justify-content:center}
+.empty svg{padding:16px;stroke:var(--text-3);fill:none;stroke-width:1.6}
+.empty h3{font-size:16px;font-weight:700;margin-bottom:7px}
+.empty p{font-size:13px;color:var(--text-2);max-width:380px;margin:0 auto;line-height:1.55}
 
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;font-family:'JetBrains Mono',monospace}
-.field input,.field textarea,.field select{width:100%;padding:11px 14px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:10px;font-size:13.5px}
-.field input:focus,.field textarea:focus{outline:none;border-color:var(--primary)}
+/* Modal */
+.modal-backdrop,.modal-overlay{position:fixed;inset:0;background:rgba(4,10,18,.6);backdrop-filter:blur(8px);z-index:9990;display:none;align-items:center;justify-content:center;padding:18px}
+.modal-backdrop.is-open,.modal-overlay.is-open{display:flex}
+.modal,.modal-box{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;width:100%;max-width:640px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-card);animation:modalIn .25s cubic-bezier(.2,.8,.25,1)}
+.modal-box{padding:0;max-width:460px}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal__header{padding:18px 22px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.modal__icon{width:36px;height:36px;border-radius:10px;background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:16px;font-weight:700;letter-spacing:-.2px}
+.modal__subtitle{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);font-weight:600;margin-top:2px}
+.modal__close{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--surface-2);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.modal__close:hover{color:var(--danger);background:color-mix(in srgb,var(--danger) 10%,transparent)}
+.modal__close .ic{width:14px;height:14px}
+.modal__body{padding:20px 22px;overflow-y:auto;flex:1}
+.modal__footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.modal-box h3{font-size:16px;margin:26px 26px 10px}
+.modal-box p{font-size:13px;color:var(--text-2);line-height:1.6;margin:0 26px 14px}
+.modal-box .field,.modal-box .modal-actions{margin-left:26px;margin-right:26px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px;margin-bottom:24px}
 
-.table-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-.table-row:last-child{border-bottom:none}
-.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:700}
-.pill.ok{background:color-mix(in srgb,var(--success) 15%,transparent);color:var(--success)}
-.pill.warn{background:color-mix(in srgb,var(--warn) 15%,transparent);color:var(--warn)}
-.pill.off{background:var(--surface-2);color:var(--text-3)}
-.pill.gift{background:color-mix(in srgb,var(--highlight) 15%,transparent);color:var(--highlight)}
+/* Toast */
+.toast-container,.toast-zone{position:fixed;top:20px;right:20px;z-index:9995;display:flex;flex-direction:column;gap:9px;max-width:340px}
+.toast{background:var(--surface);border:1px solid var(--border-2);border-radius:14px;padding:13px 16px;display:flex;gap:11px;align-items:flex-start;box-shadow:var(--shadow-card);animation:toastIn .25s cubic-bezier(.2,.8,.25,1);min-width:240px}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast__icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:color-mix(in srgb,var(--c1,var(--primary)) 14%,transparent);color:var(--c1,var(--primary))}
+.toast__icon .ic{width:13px;height:13px}
+.toast--success{--c1:var(--success)}
+.toast--error{--c1:var(--danger)}
+.toast--info{--c1:var(--info)}
+.toast__body{flex:1;min-width:0}
+.toast__title{font-size:13px;font-weight:600;letter-spacing:-.1px}
+.toast__msg{font-size:12px;color:var(--text-2);margin-top:2px;line-height:1.45}
 
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.filters select,.filters input{padding:8px 12px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:10px;font-size:12.5px}
+/* Foro / directorio admin */
+.foro-admin-list,.dir-admin-list{display:flex;flex-direction:column;gap:10px}
+.foro-admin-card{display:flex;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 16px}
+.foro-admin-card__av{width:42px;height:42px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--primary-deep))}
+.foro-admin-card__main{flex:1;min-width:0}
+.foro-admin-card__head{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.foro-admin-card__name{font-weight:700;font-size:14px}
+.foro-admin-card__time{font-size:11px;color:var(--text-3);margin-left:auto}
+.foro-admin-card__text{font-size:13.5px;color:var(--text);line-height:1.5;word-break:break-word;margin-bottom:6px}
+.foro-admin-card__img{max-width:200px;max-height:200px;border-radius:10px;display:block;margin-bottom:8px;object-fit:cover}
+.foro-admin-card__meta{font-size:11.5px;color:var(--text-3);font-family:'JetBrains Mono',monospace}
+.foro-admin-card__del{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-3);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s;align-self:flex-start}
+.foro-admin-card__del:hover{background:color-mix(in srgb,var(--danger) 16%,transparent);color:var(--danger);border-color:var(--danger)}
+.dir-adm-card{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:15px 16px;align-items:flex-start}
+.dir-adm-card__av{width:52px;height:52px;border-radius:12px;flex-shrink:0;object-fit:cover;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--primary-deep))}
+.dir-adm-card__main{flex:1;min-width:0}
+.dir-adm-card__name{font-weight:800;font-size:15px}
+.dir-adm-card__sector{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:3px 9px;border-radius:999px;margin:4px 0 6px}
+.dir-adm-card__bio{font-size:12.5px;color:var(--text-2);line-height:1.5;margin-bottom:6px}
+.dir-adm-card__meta{font-size:11.5px;color:var(--text-3);font-family:'JetBrains Mono',monospace}
 
-.empty{text-align:center;padding:40px 20px;color:var(--text-3)}
-.empty svg{width:32px;height:32px;stroke:var(--text-3);fill:none;stroke-width:1.6;margin:0 auto 12px}
+/* Composer */
+.adm-composer{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:16px}
+.adm-composer__input{width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:11px;padding:11px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none;resize:vertical;min-height:48px}
+.adm-composer__input:focus{border-color:var(--primary)}
+.adm-composer__actions{display:flex;align-items:center;justify-content:flex-end;margin-top:10px}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(4,8,14,.6);z-index:9990;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.is-open{display:flex}
-.modal-box{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;padding:26px;max-width:440px;width:100%;box-shadow:var(--shadow-card);animation:fadeUp .25s ease;max-height:85vh;overflow-y:auto}
-.modal-box h3{font-size:16px;margin-bottom:10px}
-.modal-box p{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:14px}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+/* Acciones de miembro */
+.mb-action-btn{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all .18s cubic-bezier(.2,.8,.25,1);text-align:left;color:var(--text);width:100%;margin-bottom:8px}
+.mb-action-btn:hover{border-color:var(--c,var(--primary));background:color-mix(in srgb,var(--c,var(--primary)) 8%,var(--surface-2));transform:translateY(-1px)}
+.mb-action-btn>svg:first-child{color:var(--c,var(--primary));flex-shrink:0}
+.mb-action-btn__body{flex:1;min-width:0}
+.mb-action-btn__title{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;color:var(--text);margin-bottom:2px}
+.mb-action-btn__sub{font-size:12px;color:var(--text-3);line-height:1.4}
+.mb-summary{background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 10%,var(--surface-2)),var(--surface-2));border:1px solid color-mix(in srgb,var(--primary) 35%,transparent);border-radius:12px;padding:16px 18px;margin-bottom:18px;display:flex;gap:12px;align-items:center}
+.mb-summary__av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary-soft),var(--primary));color:#071018;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;flex-shrink:0}
+.mb-opt{padding:14px 16px;background:var(--surface-2);border:1.5px solid var(--border);border-radius:12px;cursor:pointer;text-align:left;color:var(--text);font-family:inherit;display:flex;align-items:center;gap:12px;transition:all .18s;width:100%;margin-bottom:10px}
+.mb-opt:hover{transform:translateY(-1px)}
+.mb-kv{display:flex;justify-content:space-between;padding:6px 0;border-top:1px dashed var(--border-2)}
+.mb-kv:first-child{border-top:none}
 
-.toast-zone{position:fixed;bottom:20px;right:20px;z-index:9995;display:flex;flex-direction:column;gap:8px}
-.toast{background:var(--surface);border:1px solid var(--border-2);border-radius:12px;padding:12px 16px;font-size:12.5px;box-shadow:var(--shadow-card);animation:fadeUp .25s ease}
-.toast.ok{border-color:color-mix(in srgb,var(--success) 40%,transparent)}
-.toast.err{border-color:color-mix(in srgb,var(--danger) 40%,transparent)}
+/* Info / estado */
+.info-strip{font-size:11.5px;color:var(--text-3);padding:10px 12px;background:color-mix(in srgb,var(--primary) 8%,var(--surface-2));border-left:3px solid var(--primary);border-radius:6px;line-height:1.55}
+.status-card{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);border:1px solid var(--border-2);border-radius:20px;padding:22px 24px;margin-bottom:18px;position:relative;overflow:hidden}
+.status-card::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 30%,color-mix(in srgb,var(--success) 16%,transparent),transparent 50%);filter:blur(40px);pointer-events:none}
 
-@media(max-width:960px){
-  .app-shell{grid-template-columns:1fr}
+@keyframes pulseDotSmall{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.4}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .4s ease forwards}
+
+.mobile-nav{display:none}
+
+@media (max-width:880px){
+  .app{grid-template-columns:1fr}
   .sidebar{display:none}
-  .topbar{display:flex}
-  .content{padding:18px 16px 60px}
+  .page{padding:14px 14px 100px}
+  .topbar{padding:12px 14px}
+  .avatar__name,.avatar__role{display:none}
+  .avatar{padding:5px}
+  .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--surface);border-top:1px solid var(--border-2);padding:6px 4px max(6px,env(safe-area-inset-bottom));justify-content:space-around;align-items:center}
+  .mobile-nav__item{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--text-3);padding:5px 8px;border-radius:8px;font-size:9.5px;font-weight:600;letter-spacing:.3px}
+  .mobile-nav__item.is-active{color:var(--primary)}
+  .mobile-nav__item .ic{width:18px;height:18px}
+  .form-grid,.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .dash-grid{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .kpi-card{padding:14px 16px}
+  .kpi-card__value{font-size:24px}
+  .adm-row{flex-wrap:wrap;gap:10px}
+  .adm-row__actions{margin-left:auto}
+  .modal__body{padding:18px}
+  .modal__footer .btn{flex:1;min-width:100px}
+  .curso-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
-<body>
+<body style="visibility:hidden">
 
 <div class="auth-gate" id="auth-gate">
   <div class="ag-logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
@@ -138,79 +410,15 @@ body.auth-ready .auth-gate{display:none !important}
 </div>
 <script>setTimeout(function(){ if (window.__synAdminBooted) return; window.location.href = 'vip-auth.html'; }, 7000);</script>
 
-<div class="app-shell">
-  <aside class="sidebar">
-    <div class="sb-brand">
-      <div class="sb-brand__logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
-      <div><div class="sb-brand__name">SYNOVA</div><div class="sb-brand__sub">Panel Admin</div></div>
-    </div>
-    <nav>
-      <a class="sb-item" data-page="dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Dashboard</a>
-      <a class="sb-item" data-page="miembros"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Miembros VIP</a>
-      <a class="sb-item" data-page="cursos"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Cursos</a>
-      <a class="sb-item" data-page="webinars"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="12" rx="2"/><path d="M22 8l-5 3 5 3z"/></svg>Clases en vivo</a>
-      <a class="sb-item" data-page="materiales"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDFs y material</a>
-      <a class="sb-item" data-page="notificaciones"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Notificaciones</a>
-      <a class="sb-item" data-page="foro"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>Foro (moderar)</a>
-      <a class="sb-item" data-page="config"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</a>
-    </nav>
-    <div class="sb-footer">
-      <div class="sb-avatar" id="sb-avatar">··</div>
-      <div class="sb-user"><div class="sb-user__name" id="sb-user-name">Admin</div></div>
-      <button class="icon-btn" id="btn-theme-toggle" title="Tema"><svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/></svg></button>
-      <button class="icon-btn" id="btn-logout" title="Salir"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
-    </div>
-  </aside>
-
-  <div class="main">
-    <header class="topbar">
-      <b>SYNOVA · Admin</b>
-      <button class="icon-btn" style="margin-left:auto" id="btn-logout-m"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
-    </header>
-    <main class="content" id="content">
-      <div class="empty"><div class="ag-spinner" style="margin:0 auto"></div></div>
-    </main>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-overlay"><div class="modal-box" id="modal-box"></div></div>
-<div class="toast-zone" id="toast-zone"></div>
-
-<script>
-const Theme = {
-  init(){ document.documentElement.dataset.theme = localStorage.getItem('synova-admin:theme') || 'night'; },
-  toggle(){ const n = document.documentElement.dataset.theme === 'night' ? 'day' : 'night'; document.documentElement.dataset.theme = n; localStorage.setItem('synova-admin:theme', n); }
-};
-Theme.init();
-document.getElementById('btn-theme-toggle').addEventListener('click', () => Theme.toggle());
-
-function toast(msg, type){
-  const z = document.getElementById('toast-zone');
-  const el = document.createElement('div');
-  el.className = 'toast ' + (type === 'error' ? 'err' : 'ok');
-  el.textContent = msg;
-  z.appendChild(el);
-  setTimeout(() => el.remove(), 4200);
-}
-function abrirModal(html){ document.getElementById('modal-box').innerHTML = html; document.getElementById('modal-overlay').classList.add('is-open'); }
-function cerrarModal(){ document.getElementById('modal-overlay').classList.remove('is-open'); }
-window.cerrarModal = cerrarModal;
-window.escHtml = function(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); };
-document.getElementById('modal-overlay').addEventListener('click', (e) => { if (e.target.id === 'modal-overlay') cerrarModal(); });
-document.addEventListener('click', (e) => { const item = e.target.closest('[data-page]'); if (item) navigateTo(item.dataset.page); });
-function marcarActivo(page){ document.querySelectorAll('[data-page]').forEach(el => el.classList.toggle('is-active', el.dataset.page === page)); }
-</script>
-
-<!-- ══════════ FIREBASE + AUTH GUARD ══════════ -->
+<!-- ===== AUTH GUARD + FIRESTORE (Firebase) ===== -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc,
-  query, orderBy, limit, where, onSnapshot, serverTimestamp
+  query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ⚠️ PLACEHOLDER — mismo config que vip-auth.html / vip-panel.html */
 const firebaseConfig = {
   apiKey: "AIzaSyCd6vluCx539pq6Pf8hOZBJk8-cjT10epE",
   authDomain: "club-synova.firebaseapp.com",
@@ -221,11 +429,14 @@ const firebaseConfig = {
 };
 const ADMINS = ["teccapitalweb@gmail.com", "synovamexico@gmail.com"];
 window.__WEBHOOK_URL = "https://synova-webhook-production.up.railway.app";
+window.__ADMINS = ADMINS;
 
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-window.__fs = { doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc, query, orderBy, limit, where, onSnapshot, serverTimestamp, db };
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
+window.__fs = { doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc, query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp, db };
 window.__auth = auth;
 window.__synAdminBooted = true;
 
@@ -234,227 +445,1117 @@ onAuthStateChanged(auth, async (user) => {
   const email = (user.email || '').toLowerCase();
   if (!ADMINS.includes(email)) { window.location.href = 'vip-panel.html'; return; }
   window.AdminUser = { uid: user.uid, email, nombre: user.displayName || email.split('@')[0] };
-  document.getElementById('sb-avatar').textContent = (window.AdminUser.nombre || '??').slice(0,2).toUpperCase();
-  document.getElementById('sb-user-name').textContent = window.AdminUser.nombre;
+  const nameEl = document.getElementById('avatar-name');
+  const picEl = document.getElementById('avatar-pic');
+  if (nameEl) nameEl.textContent = window.AdminUser.nombre;
+  if (picEl) picEl.textContent = window.AdminUser.nombre.split(' ').slice(0,2).map(s=>s[0]).join('').toUpperCase().slice(0,2) || 'AD';
   document.body.classList.add('auth-ready');
-  navigateTo('dashboard');
+  document.body.style.visibility = 'visible';
+  window.dispatchEvent(new CustomEvent('adminready', { detail: { email, uid: user.uid } }));
+  if (window.navigateTo) window.navigateTo('dashboard');
 });
-async function cerrarSesion(){ await signOut(auth); window.location.href = 'vip-auth.html'; }
-document.getElementById('btn-logout').addEventListener('click', cerrarSesion);
-document.getElementById('btn-logout-m').addEventListener('click', cerrarSesion);
+
+async function cerrarSesion(){ if (window.Store && window.Store.destroy) window.Store.destroy(); await signOut(auth); window.location.href = 'vip-auth.html'; }
+window.__cerrarSesion = cerrarSesion;
 
 async function tokenAdmin(){ return window.__auth.currentUser ? await window.__auth.currentUser.getIdToken() : null; }
 window.__tokenAdmin = tokenAdmin;
 </script>
 
-<!-- ══════════ PÁGINAS DEL ADMIN ══════════ -->
-<script>
-const PAGES = {};
-window.navigateTo = function(page){
-  marcarActivo(page);
-  document.getElementById('content').innerHTML = '<div class="empty"><div class="ag-spinner" style="margin:0 auto"></div></div>';
-  (PAGES[page] || PAGES.dashboard)();
-};
+<!-- ICONOS SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l-2 0l9-9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6v13"/><path d="M12 6v13"/><path d="M21 6v13"/></symbol>
+<symbol id="i-broadcast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><path d="M16.243 16.243a6 6 0 1 0-8.486 0"/><path d="M19.071 19.071a10 10 0 1 0-14.142 0"/></symbol>
+<symbol id="i-news" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1-4 0v-13a1 1 0 0 0-1-1h-11a1 1 0 0 0-1 1v12a3 3 0 0 0 3 3h14"/><path d="M8 8h4"/><path d="M8 12h4"/><path d="M8 16h4"/></symbol>
+<symbol id="i-certificate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="15" cy="15" r="3"/><path d="M13 17.5v4.5l2-1.5l2 1.5v-4.5"/><path d="M10 19h-5a2 2 0 0 1-2-2v-10c0-1.1.9-2 2-2h14a2 2 0 0 1 2 2v6"/><path d="M6 9h12"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83a2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33a1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2a2 2 0 0 1-2-2v-.09a1.65 1.65 0 0 0-1-1.51a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0a2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2a2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83a2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2a2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0a2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2a2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1l1-4l9.5-9.5z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></symbol>
+<symbol id="i-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1-8.5 15a12 12 0 0 1-8.5-15a12 12 0 0 0 8.5-3"/><path d="M9 12l2 2l4-4"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+<symbol id="i-dollar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+<symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8s11 8 11 8s-4 8-11 8s-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-heart-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8l8-8c2.67-2.72 2.54-6.3.42-8.42z"/><path d="M3.5 12h4l1.5-3l3 6l1.5-3h7"/></symbol>
+<symbol id="i-clipboard-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2l4-4"/></symbol>
+</defs>
+</svg>
 
-/* ── DASHBOARD ── */
-PAGES.dashboard = async function(){
-  document.getElementById('content').innerHTML = `
-    <div class="page-head"><h1>Dashboard</h1><p>Resumen general de SYNOVA VIP.</p></div>
-    <div class="grid grid-4" id="dash-kpis">
-      <div class="card kpi"><div class="lbl">Miembros activos</div><div class="val">—</div></div>
-      <div class="card kpi"><div class="lbl">Registrados sin pagar</div><div class="val">—</div></div>
-      <div class="card kpi"><div class="lbl">Plan mensual</div><div class="val">—</div></div>
-      <div class="card kpi"><div class="lbl">Plan anual</div><div class="val">—</div></div>
-    </div>
-    <div class="card" style="margin-top:16px">
-      <h3 style="font-size:14px;margin-bottom:8px">Próximos pasos</h3>
-      <p style="font-size:12.5px;color:var(--text-2);line-height:1.7">1) Conecta el Firebase real de SYNOVA en los 3 archivos (auth/panel/admin).<br>2) Despliega el webhook en Railway con las variables de Stripe.<br>3) Ajusta el precio en <b>Configuración</b> — se refleja automáticamente en el panel de miembros.<br>4) Carga los cursos de SYNOVA en la sección Cursos.</p>
-    </div>`;
-  try {
-    const { collection, getDocs, db } = window.__fs;
-    const snap = await getDocs(collection(db, 'miembros'));
-    let activos = 0, sinPagar = 0, mensual = 0, anual = 0;
-    snap.forEach(d => {
-      const m = d.data();
-      const esActivo = m.activa === true || m.activo === true;
-      if (esActivo) { activos++; if (m.plan === 'anual') anual++; else if (m.plan === 'mensual') mensual++; }
-      else sinPagar++;
-    });
-    const kpis = document.querySelectorAll('#dash-kpis .kpi .val');
-    if (kpis[0]) kpis[0].textContent = activos;
-    if (kpis[1]) kpis[1].textContent = sinPagar;
-    if (kpis[2]) kpis[2].textContent = mensual;
-    if (kpis[3]) kpis[3].textContent = anual;
-  } catch (e) { console.warn('[SYNOVA admin] dashboard KPIs:', e.message); }
-};
-
-/* ── MIEMBROS VIP ── */
-PAGES.miembros = async function(){
-  document.getElementById('content').innerHTML = `
-    <div class="page-head"><h1>Miembros VIP</h1><p>Gestiona membresías, activaciones manuales y cancelaciones.</p></div>
-    <div class="filters">
-      <input type="text" id="mb-buscar" placeholder="Buscar por nombre o email…">
-      <select id="mb-filtro-plan"><option value="">Todos los planes</option><option value="mensual">Mensual</option><option value="anual">Anual</option><option value="regalo">Regalo</option><option value="sin-pagar">Sin pagar</option></select>
-    </div>
-    <div class="card"><div id="mb-list"></div></div>`;
-  document.getElementById('mb-buscar').addEventListener('input', pintarMiembros);
-  document.getElementById('mb-filtro-plan').addEventListener('change', pintarMiembros);
-  await cargarMiembros();
-};
-let __miembrosCache = [];
-async function cargarMiembros(){
-  try {
-    const { collection, getDocs, db } = window.__fs;
-    const snap = await getDocs(collection(db, 'miembros'));
-    __miembrosCache = [];
-    snap.forEach(d => __miembrosCache.push({ id: d.id, ...d.data() }));
-    pintarMiembros();
-  } catch (e) { document.getElementById('mb-list').innerHTML = `<div class="empty"><h3>No se pudo leer la colección "miembros"</h3><p>${escHtml(e.message)}</p></div>`; }
-}
-function pintarMiembros(){
-  const q = (document.getElementById('mb-buscar')?.value || '').toLowerCase();
-  const filtroPlan = document.getElementById('mb-filtro-plan')?.value || '';
-  let lista = __miembrosCache.filter(m => {
-    const texto = (m.nombre || '' ) + ' ' + (m.email || '');
-    if (q && !texto.toLowerCase().includes(q)) return false;
-    const esActivo = m.activa === true || m.activo === true;
-    if (filtroPlan === 'sin-pagar' && esActivo) return false;
-    if (filtroPlan && filtroPlan !== 'sin-pagar' && m.plan !== filtroPlan) return false;
-    return true;
-  });
-  const el = document.getElementById('mb-list');
-  if (!lista.length) { el.innerHTML = `<div class="empty"><h3>Sin resultados</h3><p>No hay miembros que coincidan con el filtro.</p></div>`; return; }
-  el.innerHTML = lista.map(m => {
-    const esActivo = m.activa === true || m.activo === true;
-    const pillClass = esActivo ? (m.esRegalo ? 'gift' : 'ok') : 'off';
-    const pillTxt = esActivo ? (m.esRegalo ? 'REGALO' : (m.plan === 'anual' ? 'ANUAL' : 'MENSUAL')) : 'SIN PAGAR';
-    return `<div class="table-row">
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand__logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
       <div>
-        <div style="font-weight:700;font-size:13px">${escHtml(m.nombre || m.email || m.id)}</div>
-        <div style="font-size:11.5px;color:var(--text-3)">${escHtml(m.email || '')}</div>
+        <div class="brand__name">SYNOVA</div>
+        <span class="brand__role">Admin</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="pill ${pillClass}">${pillTxt}</span>
-        <button class="btn btn-outline btn-sm" onclick="abrirActivarManual('${m.id}')">Activar/Regalar</button>
-        ${esActivo ? `<button class="btn btn-danger btn-sm" onclick="abrirCancelarMiembro('${m.id}')">Cancelar</button>` : ''}
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Resumen</div>
+      <a class="nav-item is-active" data-section="dashboard"><svg class="ic"><use href="#i-home"/></svg>Dashboard</a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Contenido</div>
+      <a class="nav-item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Cursos<span class="nav-item__badge" id="badge-cursos">0</span></a>
+      <a class="nav-item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Clases en vivo<span class="nav-item__badge" id="badge-webinars">0</span></a>
+      <a class="nav-item" data-section="materiales"><svg class="ic"><use href="#i-news"/></svg>PDFs y material<span class="nav-item__badge" id="badge-materiales">0</span></a>
+      <a class="nav-item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados<span class="nav-item__badge" id="badge-certificados">0</span></a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Comunicación</div>
+      <a class="nav-item" data-section="notificaciones"><svg class="ic"><use href="#i-bell"/></svg>Notificaciones<span class="nav-item__badge" id="badge-notif">0</span></a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Comunidad</div>
+      <a class="nav-item" data-section="miembros"><svg class="ic"><use href="#i-users"/></svg>Miembros VIP<span class="nav-item__badge" id="badge-miembros">0</span></a>
+      <a class="nav-item" data-section="foro"><svg class="ic"><use href="#i-users"/></svg>Foro<span class="nav-item__badge" id="badge-foro">0</span></a>
+      <a class="nav-item" data-section="directorio"><svg class="ic"><use href="#i-user"/></svg>Directorio<span class="nav-item__badge" id="badge-dir">0</span></a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Cuenta</div>
+      <a class="nav-item" data-section="config"><svg class="ic"><use href="#i-settings"/></svg>Configuración</a>
+      <a class="nav-item" id="btn-logout"><svg class="ic"><use href="#i-logout"/></svg>Cerrar sesión</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <span class="topbar__pill">Modo administrador</span>
+      <div class="topbar__right">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Cambiar tema"><svg class="ic"><use href="#i-moon"/></svg></button>
+        <div class="avatar">
+          <div class="avatar__pic" id="avatar-pic">··</div>
+          <div>
+            <div class="avatar__name" id="avatar-name">Admin</div>
+            <div class="avatar__role">SUPERADMIN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page" id="page"></div>
+  </main>
+
+  <nav class="mobile-nav">
+    <a class="mobile-nav__item is-active" data-section="dashboard"><svg class="ic"><use href="#i-home"/></svg>Inicio</a>
+    <a class="mobile-nav__item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Cursos</a>
+    <a class="mobile-nav__item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Vivo</a>
+    <a class="mobile-nav__item" data-section="miembros"><svg class="ic"><use href="#i-users"/></svg>Miembros</a>
+    <a class="mobile-nav__item" data-section="config"><svg class="ic"><use href="#i-settings"/></svg>Config</a>
+  </nav>
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal">
+    <div class="modal__header">
+      <div class="modal__icon" id="modal-icon"><svg class="ic"><use href="#i-plus"/></svg></div>
+      <div>
+        <div class="modal__title" id="modal-title">Título</div>
+        <div class="modal__subtitle" id="modal-subtitle"></div>
+      </div>
+      <button class="modal__close" id="modal-close"><svg class="ic"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="modal__body" id="modal-body"></div>
+    <div class="modal__footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+/* =========================================================
+   SYNOVA ADMIN · lógica completa conectada a Firebase real
+   ========================================================= */
+
+const Theme = {
+  init(){ const s = localStorage.getItem('synova-admin:theme') || 'night'; document.documentElement.dataset.theme = s; this.updateIcon(); },
+  toggle(){ const c = document.documentElement.dataset.theme; const n = c === 'night' ? 'day' : 'night'; document.documentElement.dataset.theme = n; localStorage.setItem('synova-admin:theme', n); this.updateIcon(); },
+  updateIcon(){ const b = document.getElementById('theme-toggle'); if (!b) return; const isDay = document.documentElement.dataset.theme === 'day'; b.innerHTML = '<svg class="ic"><use href="#' + (isDay ? 'i-sun' : 'i-moon') + '"/></svg>'; }
+};
+
+const Toast = {
+  show(type, title, msg, dur = 3800){
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast toast--' + type;
+    const icons = { success: 'i-check', error: 'i-close', info: 'i-bolt' };
+    t.innerHTML = `<div class="toast__icon"><svg class="ic"><use href="#${icons[type] || 'i-bolt'}"/></svg></div><div class="toast__body"><div class="toast__title">${escHtml(title)}</div>${msg ? `<div class="toast__msg">${escHtml(msg)}</div>` : ''}</div>`;
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; setTimeout(() => t.remove(), 250); }, dur);
+  },
+  success(t, m){ this.show('success', t, m); },
+  error(t, m){ this.show('error', t, m); },
+  info(t, m){ this.show('info', t, m); }
+};
+function toast(msg, type){ Toast.show(type === 'error' ? 'error' : 'success', msg); }
+
+const Modal = {
+  current: null,
+  open({ title, subtitle, icon = 'i-plus', body, footer, onClose }){
+    document.getElementById('modal-icon').innerHTML = '<svg class="ic"><use href="#' + icon + '"/></svg>';
+    document.getElementById('modal-title').textContent = title || '';
+    document.getElementById('modal-subtitle').textContent = subtitle || '';
+    const b = document.getElementById('modal-body'); b.innerHTML = '';
+    if (typeof body === 'string') b.innerHTML = body; else if (body) b.appendChild(body);
+    const f = document.getElementById('modal-footer'); f.innerHTML = '';
+    if (typeof footer === 'string') f.innerHTML = footer; else if (footer) f.appendChild(footer);
+    document.getElementById('modal-backdrop').classList.add('is-open');
+    this.current = { onClose };
+  },
+  close(){
+    document.getElementById('modal-backdrop').classList.remove('is-open');
+    if (this.current && this.current.onClose) this.current.onClose();
+    this.current = null;
+  }
+};
+window.Modal = Modal; window.Toast = Toast;
+
+function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+window.escHtml = escHtml;
+function toDate(v){
+  if (!v) return null;
+  if (v.toDate) return v.toDate();
+  if (v instanceof Date) return v;
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? null : d;
+}
+function fmtDate(v, opts){ const d = toDate(v); if (!d) return '—'; return d.toLocaleDateString('es-MX', opts || { day: 'numeric', month: 'long', year: 'numeric' }); }
+function fmtShort(v){ const d = toDate(v); if (!d) return '—'; return d.toLocaleDateString('es-MX', { day: '2-digit', month: 'short' }); }
+function initials(name){ return String(name || '??').trim().split(/\s+/).slice(0,2).map(s => s[0]).join('').toUpperCase() || '??'; }
+
+/* =========================================================
+   STORE · estado reactivo conectado a Firestore (window.__fs)
+   ========================================================= */
+const Store = {
+  miembros: [], cursos: [], webinars: [], materiales: [], certificados: [],
+  notificaciones: [], posts: [], directorio: [],
+  ready: false, unsubs: [], listeners: new Set(),
+
+  init(){
+    const fs = window.__fs;
+    if (!fs || !fs.db) { setTimeout(() => this.init(), 400); return; }
+    if (this.ready) return;
+    this.ready = true;
+    const { db, collection, query, orderBy, onSnapshot, limit } = fs;
+
+    const watch = (col, target, order, field, cap) => {
+      try {
+        const q = order ? query(collection(db, col), orderBy(field, order), limit(cap || 500)) : query(collection(db, col), limit(cap || 500));
+        const u = onSnapshot(q, snap => { this[target] = snap.docs.map(d => ({ id: d.id, uid: d.id, ...d.data() })); this._emit(target); }, () => {});
+        this.unsubs.push(u);
+      } catch (e) { /* colección aún vacía · OK */ }
+    };
+
+    watch('miembros', 'miembros');
+    watch('cursos', 'cursos', 'desc', 'createdAt');
+    watch('webinars', 'webinars', 'desc', 'fecha');
+    watch('materiales', 'materiales', 'desc', 'createdAt');
+    watch('certificados', 'certificados', 'desc', 'createdAt');
+    watch('notificaciones', 'notificaciones', 'desc', 'createdAt');
+    watch('posts', 'posts', 'desc', 'createdAt');
+    watch('directorio', 'directorio', 'desc', 'createdAt');
+  },
+
+  estaActivo(m){ return m.activa === true || m.activo === true; },
+
+  get stats(){
+    const activos = this.miembros.filter(m => this.estaActivo(m));
+    const mensual = activos.filter(m => m.plan === 'mensual').length;
+    const anual = activos.filter(m => m.plan === 'anual').length;
+    const regalo = activos.filter(m => m.esRegalo === true || m.plan === 'regalo').length;
+    const ahora = new Date();
+    const proximosWebinars = this.webinars.filter(w => { const f = toDate(w.fecha); return f && f > ahora; });
+    const cursosActivos = this.cursos.filter(c => c.activo !== false).length;
+    const materialesPub = this.materiales.filter(m => m.publicado !== false).length;
+    return {
+      miembrosActivos: activos.length, miembrosTotal: this.miembros.length, sinPagar: this.miembros.length - activos.length,
+      mensual, anual, regalo,
+      cursosActivos, cursosTotal: this.cursos.length,
+      webinarsProx: proximosWebinars.length,
+      materialesPub, materialesTotal: this.materiales.length,
+      certEmitidos: this.certificados.length,
+      notifTotal: this.notificaciones.length,
+      postsTotal: this.posts.length,
+      directorioTotal: this.directorio.length
+    };
+  },
+
+  subscribe(cb){ this.listeners.add(cb); return () => this.listeners.delete(cb); },
+  _emit(what){
+    this.listeners.forEach(cb => { try { cb(what); } catch(e){} });
+    this._updateBadges();
+    this._autoRerender(what);
+  },
+  _updateBadges(){
+    const map = { cursos: this.cursos.length, webinars: this.webinars.length, materiales: this.materiales.length, certificados: this.certificados.length, notif: this.notificaciones.length, miembros: this.miembros.length, foro: this.posts.length, dir: this.directorio.length };
+    Object.keys(map).forEach(k => { const el = document.getElementById('badge-' + k); if (el) el.textContent = String(map[k]); });
+  },
+  _autoRerender(what){
+    const active = document.querySelector('.nav-item.is-active[data-section]');
+    if (!active) return;
+    const section = active.dataset.section;
+    const rerenderMap = { miembros: 'miembros', dashboard: 'dashboard', cursos: 'cursos', webinars: 'webinars', materiales: 'materiales', certificados: 'certificados', notificaciones: 'notificaciones', foro: 'foro', directorio: 'directorio' };
+    if (section === 'dashboard') { if (PAGES.dashboard) PAGES.dashboard(); return; }
+    if (rerenderMap[what] === section && PAGES[section] && document.getElementById('page').dataset.live === section) {
+      if (typeof PAGES['_refrescar_' + section] === 'function') PAGES['_refrescar_' + section]();
+    }
+  },
+  destroy(){ this.unsubs.forEach(u => { try { u(); } catch(e){} }); this.unsubs = []; this.ready = false; }
+};
+window.Store = Store;
+window.addEventListener('adminready', () => Store.init());
+</script>
+
+<script>
+/* =========================================================
+   PAGES · router de secciones del admin
+   ========================================================= */
+const PAGES = {};
+window.navigateTo = function(section){
+  document.querySelectorAll('.nav-item, .mobile-nav__item').forEach(n => n.classList.remove('is-active'));
+  document.querySelectorAll(`[data-section="${section}"]`).forEach(n => n.classList.add('is-active'));
+  const page = document.getElementById('page');
+  page.dataset.live = section;
+  page.innerHTML = `<div class="empty"><svg class="spin" style="width:22px;height:22px;stroke:var(--primary);fill:none;stroke-width:2;margin:0 auto" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div>`;
+  (PAGES[section] || PAGES.dashboard)();
+  page.scrollTo?.({ top: 0 });
+  document.querySelector('.main')?.scrollTo({ top: 0 });
+};
+function navigate(section){ window.navigateTo(section); }
+
+/* ═══════════════════ DASHBOARD ═══════════════════ */
+PAGES.dashboard = function(){
+  const s = Store.stats;
+  const ready = Store.ready;
+  const page = document.getElementById('page');
+  page.innerHTML = `
+    <div class="fade-up">
+      <div class="sec-hero">
+        <span class="sec-hero__eyebrow"><svg class="ic" style="width:12px;height:12px"><use href="#i-heart-pulse"/></svg>Resumen general</span>
+        <h1 class="sec-hero__title">Dashboard</h1>
+        <p class="sec-hero__sub">Vista general del Club VIP SYNOVA · miembros, cursos de procesos y normas de salud, clases en vivo y material descargable.</p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card" style="--c1:var(--success);--c2:#22C55E">
+          <div class="kpi-card__label">Miembros activos</div>
+          <div class="kpi-card__value">${s.miembrosActivos}<span style="font-size:16px;color:var(--text-3);margin-left:4px">/${s.miembrosTotal}</span></div>
+          <div class="kpi-card__sub">${s.miembrosTotal > 0 ? `<strong>${Math.round(s.miembrosActivos / s.miembrosTotal * 100)}%</strong> de conversión` : 'Sin miembros aún'}</div>
+        </div>
+        <div class="kpi-card" style="--c1:var(--primary);--c2:var(--primary-soft)">
+          <div class="kpi-card__label">Registrados sin pagar</div>
+          <div class="kpi-card__value">${s.sinPagar}</div>
+          <div class="kpi-card__sub">Candidatos a activar manual</div>
+        </div>
+        <div class="kpi-card" style="--c1:var(--info);--c2:#60A5FA">
+          <div class="kpi-card__label">Plan mensual / anual</div>
+          <div class="kpi-card__value">${s.mensual}<span style="font-size:16px;color:var(--text-3)">/${s.anual}</span></div>
+          <div class="kpi-card__sub">${s.regalo} con acceso de cortesía</div>
+        </div>
+        <div class="kpi-card" style="--c1:var(--accent);--c2:#C4B5FD">
+          <div class="kpi-card__label">Cursos activos</div>
+          <div class="kpi-card__value">${s.cursosActivos}<span style="font-size:16px;color:var(--text-3)">/${s.cursosTotal}</span></div>
+          <div class="kpi-card__sub">Catálogo de procesos y normas</div>
+        </div>
+        <div class="kpi-card" style="--c1:var(--highlight);--c2:#5EEAD4">
+          <div class="kpi-card__label">Clases en vivo próximas</div>
+          <div class="kpi-card__value">${s.webinarsProx}</div>
+          <div class="kpi-card__sub">Programadas a futuro</div>
+        </div>
+        <div class="kpi-card" style="--c1:var(--warning);--c2:#FCD34D">
+          <div class="kpi-card__label">Certificados emitidos</div>
+          <div class="kpi-card__value">${s.certEmitidos}</div>
+          <div class="kpi-card__sub">Total acumulado</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-users"/></svg>Últimos miembros</div><a class="dash-card__link" data-go="miembros">Ver todos<svg class="ic"><use href="#i-arrow-right"/></svg></a></div>
+          <div class="mini-list" id="dash-miembros">${!ready ? loadingRow() : renderMiniMiembros()}</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-broadcast"/></svg>Próximas clases en vivo</div><a class="dash-card__link" data-go="webinars">Programar<svg class="ic"><use href="#i-arrow-right"/></svg></a></div>
+          <div class="mini-list" id="dash-webinars">${!ready ? loadingRow() : renderMiniWebinars()}</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-book"/></svg>Cursos del catálogo</div><a class="dash-card__link" data-go="cursos">Gestionar<svg class="ic"><use href="#i-arrow-right"/></svg></a></div>
+          <div class="mini-list" id="dash-cursos">${!ready ? loadingRow() : renderMiniCursos()}</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-bell"/></svg>Notificaciones enviadas</div><a class="dash-card__link" data-go="notificaciones">Enviar<svg class="ic"><use href="#i-arrow-right"/></svg></a></div>
+          <div class="mini-list" id="dash-notif">${!ready ? loadingRow() : renderMiniNotif()}</div>
+        </div>
       </div>
     </div>`;
+  page.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); navigate(b.dataset.go); }));
+};
+function loadingRow(){ return `<div style="padding:20px;text-align:center;color:var(--text-3);font-size:13px">Cargando desde Firestore…</div>`; }
+function emptyRow(txt){ return `<div style="padding:20px;text-align:center;color:var(--text-3);font-size:13px">${escHtml(txt)}</div>`; }
+function renderMiniMiembros(){
+  const arr = Store.miembros.slice().sort((a,b) => (toDate(b.createdAt||b.fechaRegistro)||0) - (toDate(a.createdAt||a.fechaRegistro)||0)).slice(0,4);
+  if (!arr.length) return emptyRow('Sin miembros registrados aún');
+  return arr.map(m => {
+    const activo = Store.estaActivo(m);
+    const c1 = activo ? (m.plan === 'anual' ? 'var(--primary)' : 'var(--info)') : 'var(--text-3)';
+    return `<div class="mini-row" style="--c1:${c1}"><div class="mini-row__dot"><svg class="ic"><use href="#i-user"/></svg></div><div class="mini-row__body"><div class="mini-row__title">${escHtml(m.nombre || m.displayName || m.email || 'Miembro')}</div><div class="mini-row__meta">${escHtml(m.email||'—')} · ${m.plan ? m.plan.toUpperCase() : 'SIN PLAN'}</div></div><span class="tag ${activo?'tag--success':'tag--danger'}">${activo?'Activo':'Inactivo'}</span></div>`;
   }).join('');
 }
+function renderMiniWebinars(){
+  const ahora = new Date();
+  const arr = Store.webinars.filter(w => { const f = toDate(w.fecha); return f && f > ahora; }).sort((a,b)=> toDate(a.fecha)-toDate(b.fecha)).slice(0,4);
+  if (!arr.length) return emptyRow('Sin clases en vivo programadas');
+  return arr.map(w => `<div class="mini-row" style="--c1:var(--highlight)"><div class="mini-row__dot"><svg class="ic"><use href="#i-broadcast"/></svg></div><div class="mini-row__body"><div class="mini-row__title">${escHtml(w.titulo||'Sin título')}</div><div class="mini-row__meta">${escHtml(w.instructor||'—')}</div></div><span class="mini-row__right">${fmtShort(w.fecha)}</span></div>`).join('');
+}
+function renderMiniCursos(){
+  const arr = Store.cursos.slice(0,4);
+  if (!arr.length) return emptyRow('Sin cursos en el catálogo');
+  return arr.map(c => `<div class="mini-row" style="--c1:var(--accent)"><div class="mini-row__dot"><svg class="ic"><use href="#i-book"/></svg></div><div class="mini-row__body"><div class="mini-row__title">${escHtml(c.nombre||c.titulo||'Sin título')}</div><div class="mini-row__meta">${escHtml(c.area||'General')} · ${c.horas||0}h</div></div><span class="tag ${c.activo!==false?'tag--success':'tag--danger'}">${c.activo!==false?'Activo':'Off'}</span></div>`).join('');
+}
+function renderMiniNotif(){
+  const arr = Store.notificaciones.slice(0,4);
+  if (!arr.length) return emptyRow('Aún no se ha enviado ninguna');
+  return arr.map(n => `<div class="mini-row" style="--c1:var(--primary)"><div class="mini-row__dot"><svg class="ic"><use href="#i-bell"/></svg></div><div class="mini-row__body"><div class="mini-row__title">${escHtml(n.titulo||'')}</div><div class="mini-row__meta">${escHtml((n.descripcion||'').slice(0,44))}</div></div></div>`).join('');
+}
+</script>
 
-window.abrirActivarManual = function(uid){
-  abrirModal(`<h3>Activar / regalar membresía</h3><p>Activa manualmente sin pasar por Stripe (cortesía, regalo, prueba).</p>
-    <div class="field"><label>Plan</label><select id="am-plan"><option value="mensual">Mensual</option><option value="anual">Anual</option></select></div>
-    <div class="field"><label>Días de acceso</label><input type="number" id="am-dias" value="30"></div>
-    <div class="modal-actions"><button class="btn btn-outline btn-sm" onclick="cerrarModal()">Cancelar</button><button class="btn btn-primary btn-sm" onclick="confirmarActivarManual('${uid}')">Activar</button></div>`);
+<script>
+/* ═══════════════════ MIEMBROS VIP ═══════════════════
+   Contrato EXACTO con el backend de Railway:
+   - Activar/regalar manual → escritura directa a Firestore (miembros/{uid})
+   - Cancelar suscripción   → POST /admin/cancelar-suscripcion { uid, atPeriodEnd }
+   - Eliminar miembro       → POST /admin/eliminar-miembro { uid }
+   ═══════════════════════════════════════════════════ */
+PAGES.miembros = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `
+    <div class="fade-up">
+      <div class="sec-hero">
+        <span class="sec-hero__eyebrow">Comunidad</span>
+        <h1 class="sec-hero__title">Miembros VIP</h1>
+        <p class="sec-hero__sub">Gestiona membresías, activaciones manuales y cancelaciones del Club SYNOVA.</p>
+      </div>
+      <div class="kpi-grid" id="mb-kpis"></div>
+      <div class="toolbar">
+        <div class="searchbar"><svg class="ic"><use href="#i-search"/></svg><input type="text" id="mb-buscar" placeholder="Buscar por nombre o email…"></div>
+        <select class="select" id="mb-filtro" style="max-width:200px">
+          <option value="">Todos los planes</option>
+          <option value="mensual">Mensual</option>
+          <option value="anual">Anual</option>
+          <option value="regalo">Regalo / cortesía</option>
+          <option value="sin-pagar">Sin pagar</option>
+        </select>
+      </div>
+      <div class="adm-list" id="mb-list"></div>
+    </div>`;
+  document.getElementById('mb-buscar').addEventListener('input', PAGES._refrescar_miembros);
+  document.getElementById('mb-filtro').addEventListener('change', PAGES._refrescar_miembros);
+  PAGES._refrescar_miembros();
 };
-window.confirmarActivarManual = async function(uid){
-  const plan = document.getElementById('am-plan').value;
-  const dias = parseInt(document.getElementById('am-dias').value) || 30;
-  try {
-    const { doc, updateDoc, db, serverTimestamp } = window.__fs;
-    const expira = new Date(Date.now() + dias * 86400000);
-    await updateDoc(doc(db, 'miembros', uid), {
-      activa: true, activo: true, plan, esRegalo: true, estado: 'activa',
-      expiraEn: expira.toISOString(), cancelacionProgramada: false,
-      activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp()
-    });
-    cerrarModal(); toast('Membresía activada', 'ok'); cargarMiembros();
-  } catch (e) { toast('Error al activar: ' + e.message, 'error'); }
-};
-window.abrirCancelarMiembro = function(uid){
-  abrirModal(`<h3>Cancelar suscripción del miembro</h3><p>¿Cancelar al finalizar el periodo actual, o de inmediato?</p>
-    <div class="modal-actions"><button class="btn btn-outline btn-sm" onclick="cerrarModal()">Cerrar</button><button class="btn btn-outline btn-sm" onclick="ejecutarCancelarMiembro('${uid}', true)">Al finalizar periodo</button><button class="btn btn-danger btn-sm" onclick="ejecutarCancelarMiembro('${uid}', false)">Cancelar ya</button></div>`);
-};
-window.ejecutarCancelarMiembro = async function(uid, atPeriodEnd){
-  try {
-    const token = await window.__tokenAdmin();
-    const r = await fetch(window.__WEBHOOK_URL + '/admin/cancelar-suscripcion', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-      body: JSON.stringify({ uid, atPeriodEnd })
-    });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error);
-    cerrarModal(); toast('Suscripción cancelada', 'ok'); cargarMiembros();
-  } catch (e) { toast('No se pudo cancelar (revisa que el webhook esté desplegado): ' + e.message, 'error'); }
+PAGES._refrescar_miembros = function(){
+  const kpiEl = document.getElementById('mb-kpis'); if (!kpiEl) return;
+  const s = Store.stats;
+  kpiEl.innerHTML = `
+    <div class="kpi-card" style="--c1:var(--success)"><div class="kpi-card__label">Activos</div><div class="kpi-card__value">${s.miembrosActivos}</div><div class="kpi-card__sub">de ${s.miembrosTotal} registrados</div></div>
+    <div class="kpi-card" style="--c1:var(--info)"><div class="kpi-card__label">Plan mensual</div><div class="kpi-card__value">${s.mensual}</div></div>
+    <div class="kpi-card" style="--c1:var(--primary)"><div class="kpi-card__label">Plan anual</div><div class="kpi-card__value">${s.anual}</div></div>
+    <div class="kpi-card" style="--c1:var(--accent)"><div class="kpi-card__label">Regalo / cortesía</div><div class="kpi-card__value">${s.regalo}</div></div>`;
+
+  const q = (document.getElementById('mb-buscar')?.value || '').toLowerCase();
+  const filtro = document.getElementById('mb-filtro')?.value || '';
+  let lista = Store.miembros.filter(m => {
+    const texto = (m.nombre || m.displayName || '') + ' ' + (m.email || '');
+    if (q && !texto.toLowerCase().includes(q)) return false;
+    const activo = Store.estaActivo(m);
+    if (filtro === 'sin-pagar') return !activo;
+    if (filtro === 'regalo') return activo && (m.esRegalo === true || m.plan === 'regalo');
+    if (filtro && filtro !== 'sin-pagar') return activo && m.plan === filtro;
+    return true;
+  });
+  const list = document.getElementById('mb-list');
+  if (!list) return;
+  if (!Store.ready) { list.innerHTML = `<div class="empty">${loadingRow()}</div>`; return; }
+  if (!lista.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg><h3>Sin resultados</h3><p>No hay miembros que coincidan con el filtro actual.</p></div>`; return; }
+  list.innerHTML = lista.map(m => {
+    const activo = Store.estaActivo(m);
+    const esRegalo = m.esRegalo === true || m.plan === 'regalo';
+    const pillClass = !activo ? 'off' : (esRegalo ? 'gift' : 'ok');
+    const pillTxt = !activo ? 'SIN PAGAR' : (esRegalo ? 'REGALO' : (m.plan === 'anual' ? 'ANUAL' : 'MENSUAL'));
+    const c1 = !activo ? 'var(--text-3)' : (m.plan === 'anual' ? 'var(--primary)' : 'var(--info)');
+    return `<div class="adm-row" style="--c1:${c1}">
+      <div class="adm-row__thumb">${initials(m.nombre || m.email)}</div>
+      <div class="adm-row__body">
+        <div class="adm-row__title">${escHtml(m.nombre || m.displayName || m.email || m.id)}</div>
+        <div class="adm-row__meta"><span><svg class="ic"><use href="#i-mail"/></svg>${escHtml(m.email || '—')}</span>${m.expiraEn||m.fechaFinAcceso ? `<span><svg class="ic"><use href="#i-clock"/></svg>Expira ${fmtDate(m.expiraEn||m.fechaFinAcceso)}</span>` : ''}</div>
+      </div>
+      <span class="pill ${pillClass}">${pillTxt}</span>
+      <button class="btn btn-outline btn-sm" onclick="abrirAccionesMiembro('${m.id}')"><svg class="ic"><use href="#i-settings"/></svg>Acciones</button>
+    </div>`;
+  }).join('');
 };
 
-/* ── CURSOS (CRUD simple) ── */
-PAGES.cursos = async function(){
-  document.getElementById('content').innerHTML = `
-    <div class="page-head"><h1>Cursos</h1><p>Catálogo de cursos clínicos de SYNOVA.</p><button class="btn btn-primary btn-sm" onclick="abrirNuevoCurso()">+ Nuevo curso</button></div>
-    <div class="card"><div id="cursos-admin-list"></div></div>`;
-  await cargarColeccionSimple('cursos', 'cursos-admin-list', (c) => `
-    <div class="table-row"><div><div style="font-weight:700;font-size:13px">${escHtml(c.nombre||'')}</div><div style="font-size:11.5px;color:var(--text-3)">${escHtml(c.area||'')}</div></div>
-    <button class="btn btn-danger btn-sm" onclick="borrarDoc('cursos','${c.id}','cursos-admin-list')">Eliminar</button></div>`);
-};
-window.abrirNuevoCurso = function(){
-  abrirModal(`<h3>Nuevo curso</h3>
-    <div class="field"><label>Nombre</label><input id="nc-nombre" placeholder="Ej. Manejo de heridas"></div>
-    <div class="field"><label>Área</label><input id="nc-area" placeholder="Ej. Atención avanzada"></div>
-    <div class="modal-actions"><button class="btn btn-outline btn-sm" onclick="cerrarModal()">Cancelar</button><button class="btn btn-primary btn-sm" onclick="guardarNuevoCurso()">Guardar</button></div>`);
-};
-window.guardarNuevoCurso = async function(){
-  const nombre = document.getElementById('nc-nombre').value.trim();
-  const area = document.getElementById('nc-area').value.trim();
-  if (!nombre) { toast('Falta el nombre del curso', 'error'); return; }
-  try {
-    const { collection, addDoc, db, serverTimestamp } = window.__fs;
-    await addDoc(collection(db, 'cursos'), { nombre, area, createdAt: serverTimestamp() });
-    cerrarModal(); toast('Curso agregado', 'ok'); PAGES.cursos();
-  } catch (e) { toast('Error: ' + e.message, 'error'); }
-};
-
-/* ── WEBINARS / MATERIALES (listas simples) ── */
-PAGES.webinars = async function(){
-  document.getElementById('content').innerHTML = `<div class="page-head"><h1>Clases en vivo</h1><p>Programa sesiones en vivo con especialistas.</p></div><div class="card"><div id="web-admin-list"></div></div>`;
-  await cargarColeccionSimple('webinars', 'web-admin-list', (w) => `<div class="table-row"><div style="font-weight:700;font-size:13px">${escHtml(w.titulo||'')}</div><button class="btn btn-danger btn-sm" onclick="borrarDoc('webinars','${w.id}','web-admin-list')">Eliminar</button></div>`);
-};
-PAGES.materiales = async function(){
-  document.getElementById('content').innerHTML = `<div class="page-head"><h1>PDFs y material</h1><p>Material descargable para miembros VIP.</p></div><div class="card"><div id="mat-admin-list"></div></div>`;
-  await cargarColeccionSimple('materiales', 'mat-admin-list', (m) => `<div class="table-row"><div style="font-weight:700;font-size:13px">${escHtml(m.titulo||'')}</div><button class="btn btn-danger btn-sm" onclick="borrarDoc('materiales','${m.id}','mat-admin-list')">Eliminar</button></div>`);
-};
-
-/* ── NOTIFICACIONES (crear) ── */
-PAGES.notificaciones = async function(){
-  document.getElementById('content').innerHTML = `
-    <div class="page-head"><h1>Notificaciones</h1><p>Envía un aviso a todos los miembros VIP.</p></div>
-    <div class="card" style="max-width:480px">
-      <div class="field"><label>Título</label><input id="nt-titulo" placeholder="Ej. Nueva clase en vivo esta semana"></div>
-      <div class="field"><label>Descripción</label><textarea id="nt-desc" rows="3" placeholder="Detalle del aviso"></textarea></div>
-      <button class="btn btn-primary btn-sm" onclick="enviarNotificacion()">Enviar notificación</button>
+/* ── Menú de acciones contextual ── */
+window.abrirAccionesMiembro = function(uid){
+  const m = Store.miembros.find(x => x.id === uid); if (!m) return;
+  const activo = Store.estaActivo(m);
+  const nombre = m.nombre || m.displayName || (m.email ? m.email.split('@')[0] : 'Sin nombre');
+  const body = document.createElement('div');
+  body.innerHTML = `
+    <div class="mb-summary">
+      <div class="mb-summary__av">${initials(nombre)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:800;font-size:15px">${escHtml(nombre)}</div>
+        <div style="font-size:12px;color:var(--text-3)">${escHtml(m.email||'')}</div>
+        <div style="margin-top:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:${activo?'var(--success)':'var(--text-3)'}">${activo?'● Miembro activo':'○ Sin pagar'}${m.plan?' · '+m.plan.toUpperCase():''}</div>
+      </div>
     </div>
-    <div class="card" style="margin-top:16px"><div id="nt-list"></div></div>`;
-  await cargarColeccionSimple('notificaciones', 'nt-list', (n) => `<div class="table-row"><div><div style="font-weight:700;font-size:13px">${escHtml(n.titulo||'')}</div><div style="font-size:11.5px;color:var(--text-3)">${escHtml(n.descripcion||'')}</div></div><button class="btn btn-danger btn-sm" onclick="borrarDoc('notificaciones','${n.id}','nt-list')">Eliminar</button></div>`);
+    <div>
+      ${!activo ? `
+        <button class="mb-action-btn" data-act="activar-mensual" style="--c:var(--info)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div class="mb-action-btn__body"><div class="mb-action-btn__title">Activar Plan Mensual</div><div class="mb-action-btn__sub">30 días de acceso · manual, sin pasar por Stripe</div></div></button>
+        <button class="mb-action-btn" data-act="activar-anual" style="--c:var(--primary)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><div class="mb-action-btn__body"><div class="mb-action-btn__title">Activar Plan Anual</div><div class="mb-action-btn__sub">365 días de acceso · manual, sin pasar por Stripe</div></div></button>
+        <button class="mb-action-btn" data-act="regalar" style="--c:var(--accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg><div class="mb-action-btn__body"><div class="mb-action-btn__title">Regalar acceso temporal</div><div class="mb-action-btn__sub">3, 7, 10 o 30 días de cortesía</div></div></button>
+      ` : `
+        <button class="mb-action-btn" data-act="renovar" style="--c:var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><div class="mb-action-btn__body"><div class="mb-action-btn__title">Renovar membresía</div><div class="mb-action-btn__sub">Extiende el mismo plan por otro periodo</div></div></button>
+        <button class="mb-action-btn" data-act="cancelar" style="--c:var(--warning)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg><div class="mb-action-btn__body"><div class="mb-action-btn__title">Cancelar suscripción</div><div class="mb-action-btn__sub">Detiene los cobros de Stripe vía el webhook de Railway</div></div></button>
+      `}
+      <button class="mb-action-btn" data-act="eliminar" style="--c:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg><div class="mb-action-btn__body"><div class="mb-action-btn__title">Eliminar miembro</div><div class="mb-action-btn__sub">Borra de Firestore, Stripe y Firebase Auth · irreversible</div></div></button>
+    </div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="mb-acc-cerrar">Cerrar</button>`;
+  Modal.open({ title: 'Acciones del miembro', subtitle: activo ? 'Miembro activo' : 'Aún no es miembro', icon: 'i-users', body, footer });
+  footer.querySelector('#mb-acc-cerrar').addEventListener('click', () => Modal.close());
+  body.querySelectorAll('[data-act]').forEach(btn => btn.addEventListener('click', () => {
+    const act = btn.dataset.act; Modal.close();
+    setTimeout(() => {
+      if (act === 'activar-mensual') return modalActivarManual(m, 'mensual', 30);
+      if (act === 'activar-anual') return modalActivarManual(m, 'anual', 365);
+      if (act === 'regalar') return modalRegalar(m);
+      if (act === 'renovar') return modalActivarManual(m, m.plan === 'anual' ? 'anual' : 'mensual', m.plan === 'anual' ? 365 : 30);
+      if (act === 'cancelar') return modalCancelar(m);
+      if (act === 'eliminar') return modalEliminar(m);
+    }, 150);
+  }));
+};
+
+/* ── Activar / regalar manual · escritura directa a Firestore (mismo contrato del panel actual) ── */
+function modalActivarManual(m, plan, dias){
+  const nombre = m.nombre || m.email || 'este miembro';
+  const planLabel = plan === 'anual' ? 'Plan Anual' : 'Plan Mensual';
+  const expiraFmt = fmtDate(new Date(Date.now() + dias * 86400000));
+  const body = document.createElement('div');
+  body.innerHTML = `
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div style="font-size:17px;font-weight:800">Activar ${planLabel}</div>
+      <div style="font-size:13px;color:var(--text-3)">para <strong style="color:var(--text)">${escHtml(nombre)}</strong></div>
+    </div>
+    <div class="card" style="padding:14px 16px;margin-bottom:14px">
+      <div class="mb-kv"><span style="color:var(--text-3);font-size:12.5px">Plan</span><span style="font-weight:700;color:var(--primary)">${planLabel.toUpperCase()}</span></div>
+      <div class="mb-kv"><span style="color:var(--text-3);font-size:12.5px">Días de acceso</span><span style="font-weight:700"><input type="number" id="am-dias" class="input" style="width:80px;padding:5px 8px;text-align:right;display:inline-block" value="${dias}"></span></div>
+      <div class="mb-kv"><span style="color:var(--text-3);font-size:12.5px">Expira aprox.</span><span style="font-weight:700">${expiraFmt}</span></div>
+    </div>
+    <div class="info-strip">Esta es una activación <strong>manual, sin pasar por Stripe</strong>. Se escribe directo en Firestore (colección <code>miembros</code>).</div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="am-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="am-confirm"><svg class="ic"><use href="#i-check"/></svg>Confirmar y activar</button>`;
+  Modal.open({ title: 'Confirmar activación', subtitle: planLabel, icon: 'i-users', body, footer });
+  footer.querySelector('#am-cancel').addEventListener('click', () => Modal.close());
+  footer.querySelector('#am-confirm').addEventListener('click', async () => {
+    const btn = footer.querySelector('#am-confirm'); btn.disabled = true; btn.innerHTML = 'Activando…';
+    const diasFinal = parseInt(body.querySelector('#am-dias').value) || dias;
+    try {
+      const { doc, updateDoc, db, serverTimestamp } = window.__fs;
+      const expira = new Date(Date.now() + diasFinal * 86400000);
+      await updateDoc(doc(db, 'miembros', m.id), {
+        activa: true, activo: true, plan, esRegalo: false, estadoSuscripcion: 'activa',
+        expiraEn: expira.toISOString(), fechaFinAcceso: expira.toISOString(), cancelacionProgramada: false,
+        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp()
+      });
+      Toast.success('¡Activado!', `${nombre} ahora tiene ${planLabel}`); Modal.close();
+    } catch (e) { Toast.error('No se pudo activar', e.message); btn.disabled = false; btn.innerHTML = 'Reintentar'; }
+  });
+}
+function modalRegalar(m){
+  const nombre = m.nombre || m.email || 'este miembro';
+  const body = document.createElement('div');
+  body.innerHTML = `
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#C4B5FD);color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/></svg></div>
+      <div style="font-size:17px;font-weight:800">Regalar acceso a</div>
+      <div style="font-size:14px;color:var(--text-2);font-weight:600">${escHtml(nombre)}</div>
+    </div>
+    <div class="grid grid-2" style="margin-bottom:14px">
+      ${[3,7,10,30].map(d => `<button class="mb-opt" data-days="${d}" style="justify-content:center;text-align:center;flex-direction:column"><span style="font-size:20px;font-weight:800;color:var(--accent)">${d} días</span></button>`).join('')}
+    </div>
+    <div class="info-strip">El miembro recibirá acceso completo por cortesía. Al expirar vuelve a "Sin pagar".</div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="rg-cancel">Cancelar</button>`;
+  Modal.open({ title: 'Regalar acceso', subtitle: 'Cortesía temporal', icon: 'i-users', body, footer });
+  footer.querySelector('#rg-cancel').addEventListener('click', () => Modal.close());
+  body.querySelectorAll('[data-days]').forEach(btn => btn.addEventListener('click', async () => {
+    const dias = parseInt(btn.dataset.days);
+    body.querySelectorAll('[data-days]').forEach(b => b.disabled = true);
+    try {
+      const { doc, updateDoc, db, serverTimestamp } = window.__fs;
+      const expira = new Date(Date.now() + dias * 86400000);
+      await updateDoc(doc(db, 'miembros', m.id), {
+        activa: true, activo: true, plan: 'regalo', esRegalo: true, estadoSuscripcion: 'activa',
+        expiraEn: expira.toISOString(), fechaFinAcceso: expira.toISOString(), cancelacionProgramada: false,
+        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp()
+      });
+      Toast.success('Regalo enviado', `${nombre} tiene ${dias} días gratis`); Modal.close();
+    } catch (e) { Toast.error('No se pudo regalar', e.message); body.querySelectorAll('[data-days]').forEach(b => b.disabled = false); }
+  }));
+}
+
+/* ── Cancelar suscripción · POST /admin/cancelar-suscripcion { uid, atPeriodEnd } ── */
+function modalCancelar(m){
+  const nombre = m.nombre || m.email || 'este miembro';
+  const expiraFmt = fmtDate(m.expiraEn || m.fechaFinAcceso);
+  const body = document.createElement('div');
+  body.innerHTML = `
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--warning),#FCD34D);color:#3A2B00;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="26" height="26"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+      <div style="font-size:17px;font-weight:800">Cancelar suscripción</div>
+      <div style="font-size:13px;color:var(--text-3)">de <strong style="color:var(--text)">${escHtml(nombre)}</strong></div>
+    </div>
+    <button class="mb-opt" data-mode="1" style="border-color:var(--success)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.2" width="20" height="20" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg><div><div style="font-weight:700;color:var(--success);margin-bottom:2px">Recomendado · al final del periodo</div><div style="font-size:12px;color:var(--text-3);line-height:1.4">No hay más cobros. Sigue activo hasta ${expiraFmt}.</div></div></button>
+    <button class="mb-opt" data-mode="0" style="border-color:var(--danger)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2.2" width="20" height="20" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><div><div style="font-weight:700;color:var(--danger);margin-bottom:2px">Cancelar inmediato</div><div style="font-size:12px;color:var(--text-3);line-height:1.4">Pierde acceso ahora. Sin reembolso.</div></div></button>
+    <div class="info-strip">Esta acción llama al webhook de Railway (<code>/admin/cancelar-suscripcion</code>), que cancela en Stripe automáticamente.</div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="cc-cerrar">Cerrar sin cancelar</button>`;
+  Modal.open({ title: 'Cancelar suscripción', subtitle: 'Confirmación', icon: 'i-users', body, footer });
+  footer.querySelector('#cc-cerrar').addEventListener('click', () => Modal.close());
+  body.querySelectorAll('[data-mode]').forEach(btn => btn.addEventListener('click', async () => {
+    const atPeriodEnd = btn.dataset.mode === '1';
+    if (!confirm(atPeriodEnd ? `¿Cancelar la renovación de ${nombre} al final del periodo?` : `¿Cancelar AHORA la suscripción de ${nombre}? Perderá acceso al instante.`)) return;
+    body.querySelectorAll('[data-mode]').forEach(b => b.disabled = true);
+    try {
+      const token = await window.__tokenAdmin();
+      const r = await fetch(window.__WEBHOOK_URL + '/admin/cancelar-suscripcion', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ uid: m.id, atPeriodEnd })
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || r.statusText);
+      Toast.success(atPeriodEnd ? 'Renovación cancelada' : 'Membresía terminada', atPeriodEnd ? `Sigue activo hasta ${expiraFmt}` : `${nombre} ya no es miembro`);
+      Modal.close();
+    } catch (e) { Toast.error('No se pudo cancelar', e.message + ' — revisa que el webhook esté desplegado'); body.querySelectorAll('[data-mode]').forEach(b => b.disabled = false); }
+  }));
+}
+
+/* ── Eliminar miembro · POST /admin/eliminar-miembro { uid } ── */
+function modalEliminar(m){
+  const nombre = m.nombre || m.email || 'este miembro';
+  const activo = Store.estaActivo(m);
+  const body = document.createElement('div');
+  body.innerHTML = `
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--danger),#FCA5A5);color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="26" height="26"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></div>
+      <div style="font-size:17px;font-weight:800">Eliminar miembro</div>
+      <div style="font-size:13px;color:var(--text-3)">Esta acción es <strong style="color:var(--danger)">irreversible</strong></div>
+    </div>
+    <div class="card" style="padding:12px 14px;margin-bottom:12px;border-color:color-mix(in srgb,var(--danger) 40%,transparent)">
+      <div style="font-weight:700;margin-bottom:6px">${escHtml(nombre)}</div>
+      <div style="font-size:12px;color:var(--text-3)">${escHtml(m.email||'')}</div>
+    </div>
+    <div class="card" style="padding:12px 14px;margin-bottom:14px">
+      <div style="font-weight:700;font-size:12.5px;margin-bottom:8px">Lo que va a pasar:</div>
+      <ul style="margin:0;padding-left:18px;font-size:12px;color:var(--text-2);line-height:1.7">
+        ${activo ? '<li>Su suscripción en Stripe se cancela automáticamente</li>' : ''}
+        <li>Su documento en <code>miembros</code> se borra de Firestore</li>
+        <li>Su cuenta en Firebase Auth se elimina</li>
+        <li>No podrá iniciar sesión nunca más con este correo</li>
+      </ul>
+    </div>
+    <div class="field"><label>Para confirmar, escribe <strong style="color:var(--danger)">ELIMINAR</strong></label><input type="text" id="el-confirm" class="input" placeholder="ELIMINAR" autocomplete="off"></div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="el-cancel">Cancelar</button><button class="btn btn-danger btn-sm" id="el-confirm" disabled>Eliminar definitivamente</button>`;
+  Modal.open({ title: 'Eliminar miembro', subtitle: 'Irreversible', icon: 'i-users', body, footer });
+  footer.querySelector('#el-cancel').addEventListener('click', () => Modal.close());
+  const input = body.querySelector('#el-confirm'); const btn = footer.querySelector('#el-confirm');
+  input.addEventListener('input', () => { btn.disabled = input.value.trim().toUpperCase() !== 'ELIMINAR'; });
+  btn.addEventListener('click', async () => {
+    if (input.value.trim().toUpperCase() !== 'ELIMINAR') return;
+    btn.disabled = true; btn.innerHTML = 'Eliminando…';
+    try {
+      const token = await window.__tokenAdmin();
+      const r = await fetch(window.__WEBHOOK_URL + '/admin/eliminar-miembro', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ uid: m.id })
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || r.statusText);
+      Toast.success('Miembro eliminado', `${nombre} ya no existe en el sistema`); Modal.close();
+    } catch (e) { Toast.error('No se pudo eliminar', e.message + ' — revisa que el webhook esté desplegado'); btn.disabled = false; btn.innerHTML = 'Reintentar eliminación'; }
+  });
+}
+</script>
+
+<script>
+/* ═══════════════════ CURSOS ═══════════════════ */
+const AREA_COLORS = { 'Normas y calidad': 'var(--primary)', 'Procesos clínicos': 'var(--highlight)', 'Bioseguridad': 'var(--accent)', 'Atención al paciente': 'var(--info)', 'Gestión y auditoría': 'var(--warning)', 'General': 'var(--text-3)' };
+let __cursoView = 'grid', __cursoQ = '', __cursoArea = '';
+PAGES.cursos = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `
+    <div class="fade-up">
+      <div class="sec-hero">
+        <span class="sec-hero__eyebrow">Contenido</span>
+        <h1 class="sec-hero__title">Cursos</h1>
+        <p class="sec-hero__sub">Catálogo de cursos de procesos, normas y calidad de atención en salud.</p>
+        <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalCurso()"><svg class="ic"><use href="#i-plus"/></svg>Nuevo curso</button></div>
+      </div>
+      <div class="curso-toolbar">
+        <div class="curso-search-wrap"><svg class="ic curso-search__icon"><use href="#i-search"/></svg><input class="curso-search__input" id="cu-buscar" placeholder="Buscar curso o instructor…"></div>
+        <div class="curso-view">
+          <button class="curso-view__btn" data-view="grid" data-active="${__cursoView==='grid'?1:0}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></button>
+          <button class="curso-view__btn" data-view="list" data-active="${__cursoView==='list'?1:0}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>
+        </div>
+      </div>
+      <div class="pills-row" id="cu-pills"></div>
+      <div id="cu-container"></div>
+    </div>`;
+  document.getElementById('cu-buscar').value = __cursoQ;
+  document.getElementById('cu-buscar').addEventListener('input', e => { __cursoQ = e.target.value; PAGES._refrescar_cursos(); });
+  page.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { __cursoView = b.dataset.view; PAGES._refrescar_cursos(true); }));
+  PAGES._refrescar_cursos(true);
+};
+PAGES._refrescar_cursos = function(rebindView){
+  if (rebindView) { document.querySelectorAll('.curso-view__btn').forEach(b => b.dataset.active = b.dataset.view === __cursoView ? '1' : '0'); }
+  const areas = [...new Set(Store.cursos.map(c => c.area || 'General'))];
+  const pillsEl = document.getElementById('cu-pills');
+  if (pillsEl) {
+    pillsEl.innerHTML = `<button class="pill-btn" data-area="" data-active="${__cursoArea===''?1:0}">Todas<span class="pill-btn__count">${Store.cursos.length}</span></button>` +
+      areas.map(a => `<button class="pill-btn" data-area="${escHtml(a)}" data-active="${__cursoArea===a?1:0}">${escHtml(a)}<span class="pill-btn__count">${Store.cursos.filter(c=>(c.area||'General')===a).length}</span></button>`).join('');
+    pillsEl.querySelectorAll('[data-area]').forEach(b => b.addEventListener('click', () => { __cursoArea = b.dataset.area; PAGES._refrescar_cursos(); }));
+  }
+  const cont = document.getElementById('cu-container'); if (!cont) return;
+  if (!Store.ready) { cont.innerHTML = loadingRow(); return; }
+  let lista = Store.cursos.filter(c => {
+    if (__cursoArea && (c.area||'General') !== __cursoArea) return false;
+    if (__cursoQ) { const t = ((c.nombre||c.titulo||'') + ' ' + (c.instructor||'')).toLowerCase(); if (!t.includes(__cursoQ.toLowerCase())) return false; }
+    return true;
+  });
+  if (!lista.length) { cont.innerHTML = `<div class="curso-empty empty"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><h3>Sin cursos aún</h3><p>Crea el primer curso del catálogo SYNOVA con "Nuevo curso".</p></div>`; return; }
+  if (__cursoView === 'grid') {
+    cont.innerHTML = `<div class="curso-grid">${lista.map(cursoCardGrid).join('')}</div>`;
+  } else {
+    cont.innerHTML = `<div class="curso-list">${lista.map(cursoCardList).join('')}</div>`;
+  }
+  cont.querySelectorAll('[data-edit-curso]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); abrirModalCurso(b.dataset.editCurso); }));
+  cont.querySelectorAll('[data-del-curso]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); confirmarBorrarDoc('cursos', b.dataset.delCurso, 'este curso'); }));
+  cont.querySelectorAll('[data-toggle-curso]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); toggleCampo('cursos', b.dataset.toggleCurso, 'activo', b.dataset.val !== 'true'); }));
+};
+function cursoCardGrid(c){
+  const area = c.area || 'General'; const color = AREA_COLORS[area] || 'var(--primary)';
+  const activo = c.activo !== false;
+  const cover = c.portada ? `background-image:url('${c.portada.replace(/'/g,"")}')` : '';
+  return `<div class="curso-card" style="--area-color:${color}">
+    <div class="curso-card__cover" style="${cover}">
+      <div class="curso-card__cover-overlay"></div>
+      <div class="curso-card__cover-top"><span class="curso-card__area" style="background:${color}">${escHtml(area)}</span>${c.nivel ? `<span class="curso-card__nivel">${escHtml(c.nivel)}</span>` : ''}</div>
+      <div class="curso-card__cover-bottom"><div class="curso-card__title">${escHtml(c.nombre||c.titulo||'Sin título')}</div></div>
+    </div>
+    <div class="curso-card__body">
+      ${c.instructor ? `<div class="curso-card__instructor"><svg class="ic" style="width:12px;height:12px"><use href="#i-user"/></svg>${escHtml(c.instructor)}</div>` : ''}
+      <div class="curso-card__meta">${c.horas ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-clock"/></svg>${c.horas}h</span>` : ''}${c.inscritos ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-users"/></svg>${c.inscritos}</span>` : ''}</div>
+      <div class="curso-card__footer">
+        <span class="curso-card__status ${activo?'is-active':'is-inactive'}"><span class="curso-card__status-dot"></span>${activo?'Activo':'Inactivo'}</span>
+        <div class="curso-card__actions">
+          <button class="curso-card__action" data-edit-curso="${c.id}" title="Editar"><svg class="ic"><use href="#i-edit"/></svg></button>
+          <button class="curso-card__action" data-toggle-curso="${c.id}" data-val="${activo}" title="${activo?'Desactivar':'Activar'}"><svg class="ic"><use href="#${activo?'i-eye':'i-check'}"/></svg></button>
+          <button class="curso-card__action curso-card__action--danger" data-del-curso="${c.id}" title="Eliminar"><svg class="ic"><use href="#i-trash"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function cursoCardList(c){
+  const area = c.area || 'General'; const color = AREA_COLORS[area] || 'var(--primary)'; const activo = c.activo !== false;
+  return `<div class="curso-row" style="--area-color:${color}">
+    <div class="curso-row__thumb" style="${c.portada?`background-image:url('${c.portada.replace(/'/g,"")}')`:''}">${c.portada?'':'<svg class="ic"><use href="#i-book"/></svg>'}</div>
+    <div class="curso-row__body">
+      <div class="curso-row__title">${escHtml(c.nombre||c.titulo||'Sin título')}</div>
+      <div class="curso-row__meta"><span class="tag" style="color:${color};border-color:${color}">${escHtml(area)}</span>${c.nivel?`<span>${escHtml(c.nivel)}</span>`:''}${c.instructor?`<span>· ${escHtml(c.instructor)}</span>`:''}<span class="tag ${activo?'tag--success':'tag--danger'}">${activo?'Activo':'Inactivo'}</span></div>
+    </div>
+    <div class="curso-row__actions">
+      <button class="icon-action" data-edit-curso="${c.id}"><svg class="ic"><use href="#i-edit"/></svg></button>
+      <button class="icon-action icon-action--danger" data-del-curso="${c.id}"><svg class="ic"><use href="#i-trash"/></svg></button>
+    </div>
+  </div>`;
+}
+window.abrirModalCurso = function(id){
+  const c = id ? Store.cursos.find(x => x.id === id) : null;
+  const body = document.createElement('div');
+  body.innerHTML = `<div class="form-grid">
+    <div class="form-field form-field--full"><label class="label">Nombre del curso</label><input class="input" id="cu-nombre" placeholder="Ej. NOM-004-SSA3 · Expediente clínico" value="${escHtml(c?.nombre||c?.titulo||'')}"></div>
+    <div class="form-field"><label class="label">Área</label><input class="input" id="cu-area" placeholder="Ej. Normas y calidad" value="${escHtml(c?.area||'')}"></div>
+    <div class="form-field"><label class="label">Nivel</label><select class="select" id="cu-nivel"><option ${c?.nivel==='Básico'?'selected':''}>Básico</option><option ${!c||c?.nivel==='Intermedio'?'selected':''}>Intermedio</option><option ${c?.nivel==='Avanzado'?'selected':''}>Avanzado</option></select></div>
+    <div class="form-field"><label class="label">Instructor</label><input class="input" id="cu-instructor" placeholder="Ej. Dra. Ana Fuentes" value="${escHtml(c?.instructor||'')}"></div>
+    <div class="form-field"><label class="label">Duración (horas)</label><input type="number" class="input" id="cu-horas" value="${c?.horas||8}"></div>
+    <div class="form-field form-field--full"><label class="label">URL de portada (opcional)</label><input class="input" id="cu-portada" placeholder="https://…" value="${escHtml(c?.portada||'')}"></div>
+    <div class="form-field form-field--full"><label class="label">Descripción</label><textarea class="textarea" id="cu-desc" rows="3">${escHtml(c?.descripcion||'')}</textarea></div>
+  </div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="cu-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="cu-guardar"><svg class="ic"><use href="#i-check"/></svg>${c?'Guardar cambios':'Crear curso'}</button>`;
+  Modal.open({ title: c ? 'Editar curso' : 'Nuevo curso', subtitle: 'Catálogo SYNOVA', icon: 'i-book', body, footer });
+  footer.querySelector('#cu-cancel').addEventListener('click', () => Modal.close());
+  footer.querySelector('#cu-guardar').addEventListener('click', async () => {
+    const nombre = body.querySelector('#cu-nombre').value.trim();
+    if (!nombre) { Toast.error('Falta el nombre del curso'); return; }
+    const datos = {
+      nombre, area: body.querySelector('#cu-area').value.trim() || 'General',
+      nivel: body.querySelector('#cu-nivel').value, instructor: body.querySelector('#cu-instructor').value.trim(),
+      horas: parseInt(body.querySelector('#cu-horas').value) || 0, portada: body.querySelector('#cu-portada').value.trim(),
+      descripcion: body.querySelector('#cu-desc').value.trim()
+    };
+    try {
+      const { doc, updateDoc, addDoc, collection, db, serverTimestamp } = window.__fs;
+      if (c) { await updateDoc(doc(db, 'cursos', c.id), datos); Toast.success('Curso actualizado'); }
+      else { await addDoc(collection(db, 'cursos'), { ...datos, activo: true, inscritos: 0, createdAt: serverTimestamp() }); Toast.success('Curso creado'); }
+      Modal.close();
+    } catch (e) { Toast.error('Error al guardar', e.message); }
+  });
+};
+
+/* ═══════════════════ WEBINARS / CLASES EN VIVO ═══════════════════ */
+PAGES.webinars = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Contenido</span><h1 class="sec-hero__title">Clases en vivo</h1><p class="sec-hero__sub">Programa sesiones en vivo con especialistas en procesos y calidad de atención.</p>
+    <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalWebinar()"><svg class="ic"><use href="#i-plus"/></svg>Nueva clase</button></div></div>
+    <div class="adm-list" id="web-list"></div></div>`;
+  PAGES._refrescar_webinars();
+};
+PAGES._refrescar_webinars = function(){
+  const list = document.getElementById('web-list'); if (!list) return;
+  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
+  if (!Store.webinars.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-broadcast"/></svg><h3>Sin clases programadas</h3><p>Crea la primera clase en vivo con "Nueva clase".</p></div>`; return; }
+  const ahora = new Date();
+  list.innerHTML = Store.webinars.slice().sort((a,b)=>toDate(b.fecha)-toDate(a.fecha)).map(w => {
+    const f = toDate(w.fecha); const futura = f && f > ahora;
+    return `<div class="adm-row" style="--c1:var(--highlight)">
+      <div class="adm-row__thumb"><svg class="ic"><use href="#i-broadcast"/></svg></div>
+      <div class="adm-row__body"><div class="adm-row__title">${escHtml(w.titulo||'')}</div><div class="adm-row__meta"><span><svg class="ic"><use href="#i-user"/></svg>${escHtml(w.instructor||'—')}</span><span><svg class="ic"><use href="#i-calendar"/></svg>${f?f.toLocaleString('es-MX',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Sin fecha'}</span>${w.area?`<span>${escHtml(w.area)}</span>`:''}</div></div>
+      <span class="tag ${futura?'tag--success':'tag--danger'}">${futura?'Próxima':'Pasada'}</span>
+      <div class="adm-row__actions"><button class="icon-action" onclick="abrirModalWebinar('${w.id}')"><svg class="ic"><use href="#i-edit"/></svg></button><button class="icon-action icon-action--danger" onclick="confirmarBorrarDoc('webinars','${w.id}','esta clase')"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+    </div>`;
+  }).join('');
+};
+window.abrirModalWebinar = function(id){
+  const w = id ? Store.webinars.find(x => x.id === id) : null;
+  const fechaVal = w?.fecha ? (toDate(w.fecha)?.toISOString().slice(0,16)) : '';
+  const body = document.createElement('div');
+  body.innerHTML = `<div class="form-grid">
+    <div class="form-field form-field--full"><label class="label">Título</label><input class="input" id="wb-titulo" value="${escHtml(w?.titulo||'')}" placeholder="Ej. Auditoría de procesos clínicos en vivo"></div>
+    <div class="form-field"><label class="label">Instructor</label><input class="input" id="wb-instructor" value="${escHtml(w?.instructor||'')}"></div>
+    <div class="form-field"><label class="label">Área</label><input class="input" id="wb-area" value="${escHtml(w?.area||'')}"></div>
+    <div class="form-field"><label class="label">Fecha y hora</label><input type="datetime-local" class="input" id="wb-fecha" value="${fechaVal}"></div>
+    <div class="form-field"><label class="label">Duración (min)</label><input type="number" class="input" id="wb-duracion" value="${w?.duracion||60}"></div>
+    <div class="form-field form-field--full"><label class="label">Link de la sesión</label><input class="input" id="wb-link" value="${escHtml(w?.link||'')}" placeholder="https://meet…"></div>
+  </div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="wb-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="wb-guardar"><svg class="ic"><use href="#i-check"/></svg>${w?'Guardar cambios':'Crear clase'}</button>`;
+  Modal.open({ title: w ? 'Editar clase en vivo' : 'Nueva clase en vivo', icon: 'i-broadcast', body, footer });
+  footer.querySelector('#wb-cancel').addEventListener('click', () => Modal.close());
+  footer.querySelector('#wb-guardar').addEventListener('click', async () => {
+    const titulo = body.querySelector('#wb-titulo').value.trim();
+    if (!titulo) { Toast.error('Falta el título'); return; }
+    const fechaRaw = body.querySelector('#wb-fecha').value;
+    const datos = { titulo, instructor: body.querySelector('#wb-instructor').value.trim(), area: body.querySelector('#wb-area').value.trim(), fecha: fechaRaw ? new Date(fechaRaw).toISOString() : null, duracion: parseInt(body.querySelector('#wb-duracion').value)||60, link: body.querySelector('#wb-link').value.trim() };
+    try {
+      const { doc, updateDoc, addDoc, collection, db, serverTimestamp } = window.__fs;
+      if (w) { await updateDoc(doc(db, 'webinars', w.id), datos); Toast.success('Clase actualizada'); }
+      else { await addDoc(collection(db, 'webinars'), { ...datos, registrados: 0, createdAt: serverTimestamp() }); Toast.success('Clase creada'); }
+      Modal.close();
+    } catch (e) { Toast.error('Error al guardar', e.message); }
+  });
+};
+
+/* ═══════════════════ MATERIALES / PDFs ═══════════════════ */
+PAGES.materiales = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Contenido</span><h1 class="sec-hero__title">PDFs y material</h1><p class="sec-hero__sub">Plantillas, guías y checklists descargables para miembros VIP.</p>
+    <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalMaterial()"><svg class="ic"><use href="#i-plus"/></svg>Nuevo material</button></div></div>
+    <div class="adm-list" id="mat-list"></div></div>`;
+  PAGES._refrescar_materiales();
+};
+PAGES._refrescar_materiales = function(){
+  const list = document.getElementById('mat-list'); if (!list) return;
+  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
+  if (!Store.materiales.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-folder"/></svg><h3>Sin material aún</h3><p>Sube el primer PDF o plantilla con "Nuevo material".</p></div>`; return; }
+  list.innerHTML = Store.materiales.map(m => `<div class="adm-row" style="--c1:var(--info)">
+    <div class="adm-row__thumb"><svg class="ic"><use href="#i-news"/></svg></div>
+    <div class="adm-row__body"><div class="adm-row__title">${escHtml(m.titulo||'')}</div><div class="adm-row__meta"><span>${escHtml(m.categoria||'General')}</span></div></div>
+    <span class="tag ${m.publicado!==false?'tag--success':'tag--danger'}">${m.publicado!==false?'Publicado':'Borrador'}</span>
+    <div class="adm-row__actions"><button class="icon-action" onclick="abrirModalMaterial('${m.id}')"><svg class="ic"><use href="#i-edit"/></svg></button><button class="icon-action icon-action--danger" onclick="confirmarBorrarDoc('materiales','${m.id}','este material')"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+  </div>`).join('');
+};
+window.abrirModalMaterial = function(id){
+  const m = id ? Store.materiales.find(x => x.id === id) : null;
+  const body = document.createElement('div');
+  body.innerHTML = `<div class="form-grid">
+    <div class="form-field form-field--full"><label class="label">Título</label><input class="input" id="mt-titulo" value="${escHtml(m?.titulo||'')}" placeholder="Ej. Checklist NOM-087 · Residuos biológico-infecciosos"></div>
+    <div class="form-field"><label class="label">Categoría</label><input class="input" id="mt-cat" value="${escHtml(m?.categoria||'')}"></div>
+    <div class="form-field"><label class="label">Publicado</label><select class="select" id="mt-pub"><option value="1" ${m?.publicado!==false?'selected':''}>Sí, visible para miembros</option><option value="0" ${m?.publicado===false?'selected':''}>No, borrador</option></select></div>
+    <div class="form-field form-field--full"><label class="label">URL del archivo</label><input class="input" id="mt-url" value="${escHtml(m?.url||'')}" placeholder="https://…"></div>
+  </div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="mt-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="mt-guardar"><svg class="ic"><use href="#i-check"/></svg>${m?'Guardar cambios':'Crear material'}</button>`;
+  Modal.open({ title: m ? 'Editar material' : 'Nuevo material', icon: 'i-folder', body, footer });
+  footer.querySelector('#mt-cancel').addEventListener('click', () => Modal.close());
+  footer.querySelector('#mt-guardar').addEventListener('click', async () => {
+    const titulo = body.querySelector('#mt-titulo').value.trim();
+    if (!titulo) { Toast.error('Falta el título'); return; }
+    const datos = { titulo, categoria: body.querySelector('#mt-cat').value.trim() || 'General', publicado: body.querySelector('#mt-pub').value === '1', url: body.querySelector('#mt-url').value.trim() };
+    try {
+      const { doc, updateDoc, addDoc, collection, db, serverTimestamp } = window.__fs;
+      if (m) { await updateDoc(doc(db, 'materiales', m.id), datos); Toast.success('Material actualizado'); }
+      else { await addDoc(collection(db, 'materiales'), { ...datos, descargas: 0, createdAt: serverTimestamp() }); Toast.success('Material creado'); }
+      Modal.close();
+    } catch (e) { Toast.error('Error al guardar', e.message); }
+  });
+};
+
+/* ── Helpers genéricos: borrar / toggle ── */
+window.confirmarBorrarDoc = function(coleccion, id, label){
+  if (!confirm(`¿Eliminar ${label || 'este elemento'}? Esta acción no se puede deshacer.`)) return;
+  (async () => {
+    try { const { doc, deleteDoc, db } = window.__fs; await deleteDoc(doc(db, coleccion, id)); Toast.success('Eliminado'); }
+    catch (e) { Toast.error('Error al eliminar', e.message); }
+  })();
+};
+window.toggleCampo = async function(coleccion, id, campo, valor){
+  try { const { doc, updateDoc, db } = window.__fs; await updateDoc(doc(db, coleccion, id), { [campo]: valor }); }
+  catch (e) { Toast.error('Error', e.message); }
+};
+</script>
+
+<script>
+/* ═══════════════════ CERTIFICADOS ═══════════════════ */
+PAGES.certificados = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Contenido</span><h1 class="sec-hero__title">Certificados</h1><p class="sec-hero__sub">Certificados de finalización emitidos a miembros del Club VIP SYNOVA.</p>
+    <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalCertificado()"><svg class="ic"><use href="#i-plus"/></svg>Emitir certificado</button></div></div>
+    <div class="kpi-grid" id="ce-kpis"></div>
+    <div class="adm-list" id="ce-list"></div></div>`;
+  PAGES._refrescar_certificados();
+};
+PAGES._refrescar_certificados = function(){
+  const kpiEl = document.getElementById('ce-kpis');
+  if (kpiEl) {
+    const totalHoras = Store.certificados.reduce((s,c) => s + (parseInt(c.horas)||0), 0);
+    kpiEl.innerHTML = `<div class="kpi-card" style="--c1:var(--warning)"><div class="kpi-card__label">Emitidos</div><div class="kpi-card__value">${Store.certificados.length}</div></div>
+      <div class="kpi-card" style="--c1:var(--primary)"><div class="kpi-card__label">Horas certificadas</div><div class="kpi-card__value">${totalHoras}</div></div>`;
+  }
+  const list = document.getElementById('ce-list'); if (!list) return;
+  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
+  if (!Store.certificados.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-certificate"/></svg><h3>Sin certificados aún</h3><p>Emite el primer certificado con "Emitir certificado".</p></div>`; return; }
+  list.innerHTML = Store.certificados.slice().sort((a,b)=>toDate(b.emitido||b.createdAt)-toDate(a.emitido||a.createdAt)).map(c => `<div class="adm-row" style="--c1:var(--warning)">
+    <div class="adm-row__thumb"><svg class="ic"><use href="#i-certificate"/></svg></div>
+    <div class="adm-row__body"><div class="adm-row__title">${escHtml(c.estudiante||'')}</div><div class="adm-row__meta"><span>${escHtml(c.curso||'')}</span><span>Folio ${escHtml(c.folio||'—')}</span><span>${fmtShort(c.emitido||c.createdAt)}</span></div></div>
+    <div class="adm-row__actions"><button class="icon-action icon-action--danger" onclick="confirmarBorrarDoc('certificados','${c.id}','este certificado')"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+  </div>`).join('');
+};
+window.abrirModalCertificado = function(){
+  const folio = 'SYNOVA-' + new Date().getFullYear() + '-' + Math.floor(10000 + Math.random()*89999);
+  const body = document.createElement('div');
+  body.innerHTML = `<div class="form-grid">
+    <div class="form-field form-field--full"><label class="label">Nombre del estudiante</label><input class="input" id="ce-nombre" placeholder="Nombre completo"></div>
+    <div class="form-field"><label class="label">Email</label><input type="email" class="input" id="ce-email"></div>
+    <div class="form-field"><label class="label">Curso</label><input class="input" id="ce-curso" list="ce-cursos-list"><datalist id="ce-cursos-list">${Store.cursos.map(c=>`<option value="${escHtml(c.nombre||c.titulo||'')}">`).join('')}</datalist></div>
+    <div class="form-field"><label class="label">Folio</label><input class="input" id="ce-folio" value="${folio}"></div>
+    <div class="form-field"><label class="label">Horas acreditadas</label><input type="number" class="input" id="ce-horas" value="8"></div>
+  </div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="ce-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="ce-guardar"><svg class="ic"><use href="#i-check"/></svg>Emitir certificado</button>`;
+  Modal.open({ title: 'Emitir certificado', icon: 'i-certificate', body, footer });
+  footer.querySelector('#ce-cancel').addEventListener('click', () => Modal.close());
+  footer.querySelector('#ce-guardar').addEventListener('click', async () => {
+    const estudiante = body.querySelector('#ce-nombre').value.trim();
+    if (!estudiante) { Toast.error('Falta el nombre del estudiante'); return; }
+    const datos = { estudiante, email: body.querySelector('#ce-email').value.trim(), curso: body.querySelector('#ce-curso').value.trim(), folio: body.querySelector('#ce-folio').value.trim(), horas: parseInt(body.querySelector('#ce-horas').value)||0, emitido: new Date().toISOString() };
+    try {
+      const { collection, addDoc, db, serverTimestamp } = window.__fs;
+      await addDoc(collection(db, 'certificados'), { ...datos, emitidoPor: window.AdminUser.email, createdAt: serverTimestamp() });
+      Toast.success('Certificado emitido', datos.folio); Modal.close();
+    } catch (e) { Toast.error('Error al emitir', e.message); }
+  });
+};
+
+/* ═══════════════════ NOTIFICACIONES ═══════════════════ */
+PAGES.notificaciones = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Comunicación</span><h1 class="sec-hero__title">Notificaciones</h1><p class="sec-hero__sub">Envía un aviso que llega a la campanita de todos los miembros VIP en tiempo real.</p></div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-send"/></svg>Nueva notificación</div></div>
+        <div class="field"><label>Título</label><input class="input" id="nt-titulo" placeholder="Ej. Nueva clase en vivo esta semana"></div>
+        <div class="field"><label>Descripción</label><textarea class="textarea" id="nt-desc" rows="3" placeholder="Detalle del aviso"></textarea></div>
+        <div class="field"><label>Tipo</label><select class="select" id="nt-tipo"><option value="general">General</option><option value="urgente">Urgente</option><option value="contenido">Contenido nuevo</option></select></div>
+        <button class="btn btn-primary" onclick="enviarNotificacion()"><svg class="ic"><use href="#i-send"/></svg>Enviar notificación</button>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-bell"/></svg>Historial</div></div>
+        <div class="mini-list" id="nt-list"></div>
+      </div>
+    </div></div>`;
+  PAGES._refrescar_notificaciones();
+};
+PAGES._refrescar_notificaciones = function(){
+  const list = document.getElementById('nt-list'); if (!list) return;
+  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
+  if (!Store.notificaciones.length) { list.innerHTML = emptyRow('Aún no se ha enviado ninguna notificación'); return; }
+  list.innerHTML = Store.notificaciones.map(n => `<div class="mini-row" style="--c1:${n.tipo==='urgente'?'var(--danger)':'var(--primary)'}">
+    <div class="mini-row__dot"><svg class="ic"><use href="#i-bell"/></svg></div>
+    <div class="mini-row__body"><div class="mini-row__title">${escHtml(n.titulo||'')}</div><div class="mini-row__meta">${escHtml((n.descripcion||'').slice(0,60))}</div></div>
+    <button class="icon-action icon-action--danger" onclick="confirmarBorrarDoc('notificaciones','${n.id}','esta notificación')"><svg class="ic"><use href="#i-trash"/></svg></button>
+  </div>`).join('');
 };
 window.enviarNotificacion = async function(){
   const titulo = document.getElementById('nt-titulo').value.trim();
   const descripcion = document.getElementById('nt-desc').value.trim();
-  if (!titulo) { toast('Falta el título', 'error'); return; }
+  const tipo = document.getElementById('nt-tipo').value;
+  if (!titulo) { Toast.error('Falta el título'); return; }
   try {
     const { collection, addDoc, db, serverTimestamp } = window.__fs;
-    await addDoc(collection(db, 'notificaciones'), { titulo, descripcion, tipo: 'general', creadoPor: window.AdminUser.email, createdAt: serverTimestamp() });
-    toast('Notificación enviada', 'ok'); PAGES.notificaciones();
-  } catch (e) { toast('Error: ' + e.message, 'error'); }
+    await addDoc(collection(db, 'notificaciones'), { titulo, descripcion, tipo, creadoPor: window.AdminUser.email, createdAt: serverTimestamp() });
+    Toast.success('Notificación enviada');
+    document.getElementById('nt-titulo').value = ''; document.getElementById('nt-desc').value = '';
+  } catch (e) { Toast.error('Error al enviar', e.message); }
+};
+</script>
+
+<script>
+/* ═══════════════════ FORO (moderación) ═══════════════════ */
+PAGES.foro = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Comunidad</span><h1 class="sec-hero__title">Foro</h1><p class="sec-hero__sub">Publicaciones de la comunidad SYNOVA. Modera o publica avisos como cuenta oficial.</p></div>
+    <div class="adm-composer">
+      <textarea class="adm-composer__input" id="fo-texto" placeholder="Publicar como SYNOVA…"></textarea>
+      <div class="adm-composer__actions"><button class="btn btn-primary btn-sm" onclick="publicarComoSynova()"><svg class="ic"><use href="#i-send"/></svg>Publicar</button></div>
+    </div>
+    <div class="foro-admin-list" id="fo-list"></div></div>`;
+  PAGES._refrescar_foro();
+};
+PAGES._refrescar_foro = function(){
+  const list = document.getElementById('fo-list'); if (!list) return;
+  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
+  if (!Store.posts.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg><h3>Sin publicaciones aún</h3><p>Cuando los miembros publiquen en el foro aparecerán aquí para moderar.</p></div>`; return; }
+  list.innerHTML = Store.posts.map(p => `<div class="foro-admin-card">
+    <div class="foro-admin-card__av">${initials(p.nombre)}</div>
+    <div class="foro-admin-card__main">
+      <div class="foro-admin-card__head"><span class="foro-admin-card__name">${escHtml(p.nombre||'Miembro')}</span>${p.esAdmin ? '<span class="tag tag--primary">SYNOVA</span>' : ''}<span class="foro-admin-card__time">${fmtShort(p.createdAt)}</span></div>
+      <div class="foro-admin-card__text">${escHtml(p.texto||'')}</div>
+      ${p.imagenUrl ? `<img class="foro-admin-card__img" src="${p.imagenUrl}" alt="">` : ''}
+      <div class="foro-admin-card__meta">${p.likes||0} reacciones</div>
+    </div>
+    <button class="foro-admin-card__del" onclick="confirmarBorrarDoc('posts','${p.id}','esta publicación')"><svg class="ic"><use href="#i-trash"/></svg></button>
+  </div>`).join('');
+};
+window.publicarComoSynova = async function(){
+  const texto = document.getElementById('fo-texto').value.trim();
+  if (!texto) { Toast.error('Escribe algo para publicar'); return; }
+  try {
+    const { collection, addDoc, db, serverTimestamp } = window.__fs;
+    await addDoc(collection(db, 'posts'), { nombre: 'SYNOVA México', texto, esAdmin: true, likes: 0, autorEmail: window.AdminUser.email, createdAt: serverTimestamp() });
+    Toast.success('Publicado en el foro'); document.getElementById('fo-texto').value = '';
+  } catch (e) { Toast.error('Error al publicar', e.message); }
 };
 
-/* ── FORO (moderación simple) ── */
-PAGES.foro = async function(){
-  document.getElementById('content').innerHTML = `<div class="page-head"><h1>Foro (moderar)</h1><p>Publicaciones de la comunidad SYNOVA.</p></div><div class="card"><div id="foro-admin-list"></div></div>`;
-  await cargarColeccionSimple('posts', 'foro-admin-list', (p) => `<div class="table-row"><div><div style="font-weight:700;font-size:13px">${escHtml(p.nombre||'')}</div><div style="font-size:11.5px;color:var(--text-3)">${escHtml((p.texto||'').slice(0,80))}</div></div><button class="btn btn-danger btn-sm" onclick="borrarDoc('posts','${p.id}','foro-admin-list')">Eliminar</button></div>`);
+/* ═══════════════════ DIRECTORIO (moderación) ═══════════════════ */
+PAGES.directorio = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Comunidad</span><h1 class="sec-hero__title">Directorio</h1><p class="sec-hero__sub">Directorio profesional de miembros del Club VIP SYNOVA.</p></div>
+    <div class="dir-admin-list" id="dir-list"></div></div>`;
+  PAGES._refrescar_directorio();
+};
+PAGES._refrescar_directorio = function(){
+  const list = document.getElementById('dir-list'); if (!list) return;
+  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
+  if (!Store.directorio.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-user"/></svg><h3>Sin entradas en el directorio</h3><p>Cuando los miembros completen su ficha profesional aparecerán aquí.</p></div>`; return; }
+  list.innerHTML = Store.directorio.map(d => `<div class="dir-adm-card">
+    ${d.foto ? `<img class="dir-adm-card__av" src="${d.foto}" alt="">` : `<div class="dir-adm-card__av">${initials(d.nombre)}</div>`}
+    <div class="dir-adm-card__main">
+      <div class="dir-adm-card__name">${escHtml(d.nombre||'')}</div>
+      ${d.sector||d.especialidad ? `<span class="dir-adm-card__sector">${escHtml(d.sector||d.especialidad)}</span>` : ''}
+      ${d.bio ? `<div class="dir-adm-card__bio">${escHtml(d.bio)}</div>` : ''}
+      <div class="dir-adm-card__meta">${escHtml(d.email||'')}</div>
+    </div>
+    <button class="icon-action icon-action--danger" onclick="confirmarBorrarDoc('directorio','${d.id}','esta ficha')"><svg class="ic"><use href="#i-trash"/></svg></button>
+  </div>`).join('');
 };
 
-/* ── CONFIGURACIÓN · precios editables (el corazón del pedido de hoy) ── */
+/* ═══════════════════ CONFIGURACIÓN · precios editables ═══════════════════
+   Lógica EXACTA preservada del panel de SYNOVA: colección config/club,
+   campos precioMes / precioAno, mismo contrato que consume vip-panel.html.
+   ═══════════════════════════════════════════════════════════════════════ */
 PAGES.config = async function(){
-  document.getElementById('content').innerHTML = `
-    <div class="page-head"><h1>Configuración</h1><p>Ajustes generales de SYNOVA · el precio se refleja en vivo en el panel de miembros.</p></div>
-    <div class="card" style="max-width:480px">
-      <h3 style="font-size:14px;margin-bottom:14px">Precios de la membresía VIP</h3>
-      <div class="field"><label>Precio mensual (MXN)</label><input type="number" id="cfg-precio-mes" value="199"></div>
-      <div class="field"><label>Precio anual (MXN)</label><input type="number" id="cfg-precio-ano" value="1899"></div>
-      <p style="font-size:11.5px;color:var(--text-3);line-height:1.6;margin-bottom:14px">Al guardar, este es el precio que se muestra en el panel VIP y con el que se arma el cobro en Stripe (checkout dinámico) — no requiere crear un nuevo producto en Stripe cada vez que cambie.</p>
-      <button class="btn btn-primary" onclick="guardarConfig()">Guardar configuración</button>
-    </div>`;
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Cuenta</span><h1 class="sec-hero__title">Configuración</h1><p class="sec-hero__sub">Ajustes generales de SYNOVA · el precio se refleja en vivo en el panel de miembros.</p></div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-dollar"/></svg>Precios de la membresía VIP</div></div>
+        <div class="field"><label>Precio mensual (MXN)</label><input type="number" class="input" id="cfg-precio-mes" value="199"></div>
+        <div class="field"><label>Precio anual (MXN)</label><input type="number" class="input" id="cfg-precio-ano" value="1899"></div>
+        <div class="info-strip" style="margin-bottom:14px">Al guardar, este es el precio que se muestra en <code>vip-panel.html</code> y con el que se arma el cobro dinámico en Stripe — no requiere crear un producto nuevo en Stripe cada vez que cambie.</div>
+        <button class="btn btn-primary" onclick="guardarConfig()"><svg class="ic"><use href="#i-check"/></svg>Guardar configuración</button>
+      </div>
+
+      <div class="dash-card status-card">
+        <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-bolt"/></svg>Estado de la integración</div></div>
+        <div class="mini-list">
+          <div class="mini-row" style="--c1:var(--success)"><div class="mini-row__dot"><svg class="ic"><use href="#i-shield-check"/></svg></div><div class="mini-row__body"><div class="mini-row__title">Firebase Auth + Firestore</div><div class="mini-row__meta">club-synova · conectado</div></div><span class="tag tag--success">OK</span></div>
+          <div class="mini-row" style="--c1:var(--success)"><div class="mini-row__dot"><svg class="ic"><use href="#i-bolt"/></svg></div><div class="mini-row__body"><div class="mini-row__title">Webhook Railway</div><div class="mini-row__meta">synova-webhook-production</div></div><span class="tag tag--success">OK</span></div>
+          <div class="mini-row" style="--c1:var(--success)"><div class="mini-row__dot"><svg class="ic"><use href="#i-dollar"/></svg></div><div class="mini-row__body"><div class="mini-row__title">Stripe</div><div class="mini-row__meta">Checkout + cancelaciones vía webhook</div></div><span class="tag tag--success">OK</span></div>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-shield-check"/></svg>Administradores</div></div>
+        <p style="font-size:12.5px;color:var(--text-2);line-height:1.6;margin-bottom:12px">Definidos en el código de <code>vip-admin.html</code> · solo estos correos pueden entrar a este panel.</p>
+        <div class="adm-list" id="cfg-admins"></div>
+      </div>
+
+      <div class="dash-card">
+        <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-moon"/></svg>Preferencias</div></div>
+        <div class="mini-row" style="--c1:var(--primary)"><div class="mini-row__dot"><svg class="ic"><use href="#i-moon"/></svg></div><div class="mini-row__body"><div class="mini-row__title">Tema de la interfaz</div><div class="mini-row__meta">Claro / oscuro</div></div><button class="btn btn-outline btn-sm" onclick="Theme.toggle()">Cambiar</button></div>
+      </div>
+    </div></div>`;
+
+  const adminsEl = document.getElementById('cfg-admins');
+  if (adminsEl) adminsEl.innerHTML = (window.__ADMINS||[]).map(e => `<div class="adm-row" style="--c1:var(--primary)"><div class="adm-row__thumb"><svg class="ic"><use href="#i-shield-check"/></svg></div><div class="adm-row__body"><div class="adm-row__title" style="font-size:13px">${escHtml(e)}</div></div><span class="tag tag--primary">Superadmin</span></div>`).join('');
+
   try {
     const { doc, getDoc, db } = window.__fs;
     const snap = await getDoc(doc(db, 'config', 'club'));
@@ -469,32 +1570,25 @@ window.guardarConfig = async function(){
     const precioMes = parseInt(document.getElementById('cfg-precio-mes').value) || 199;
     const precioAno = parseInt(document.getElementById('cfg-precio-ano').value) || 1899;
     await setDoc(doc(db, 'config', 'club'), { precioMes, precioAno, actualizadoPor: window.AdminUser.email, actualizadoEn: serverTimestamp() }, { merge: true });
-    toast('Configuración guardada — ya se refleja en el panel VIP', 'ok');
-  } catch (e) { toast('Error al guardar: ' + e.message, 'error'); }
+    Toast.success('Configuración guardada', 'Ya se refleja en el panel VIP');
+  } catch (e) { Toast.error('Error al guardar', e.message); }
 };
+</script>
 
-/* ── Helpers genéricos ── */
-async function cargarColeccionSimple(nombreCol, targetId, tarjeta){
-  try {
-    const { collection, getDocs, db } = window.__fs;
-    const snap = await getDocs(collection(db, nombreCol));
-    const el = document.getElementById(targetId);
-    if (snap.empty) { el.innerHTML = `<div class="empty"><h3>Sin registros aún</h3></div>`; return; }
-    let items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
-    el.innerHTML = items.map(tarjeta).join('');
-  } catch (e) {
-    const el = document.getElementById(targetId);
-    if (el) el.innerHTML = `<div class="empty"><h3>No se pudo cargar "${nombreCol}"</h3><p>${escHtml(e.message)}</p></div>`;
-  }
-}
-window.borrarDoc = async function(coleccion, id, targetId){
-  try {
-    const { doc, deleteDoc, db } = window.__fs;
-    await deleteDoc(doc(db, coleccion, id));
-    toast('Eliminado', 'ok');
-    navigateTo(document.querySelector('.sb-item.is-active')?.dataset.page || 'dashboard');
-  } catch (e) { toast('Error al eliminar: ' + e.message, 'error'); }
-};
+<script>
+/* ═══════════════════ WIRING GLOBAL ═══════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  document.getElementById('theme-toggle').addEventListener('click', () => Theme.toggle());
+  document.querySelectorAll('.nav-item, .mobile-nav__item').forEach(b => b.addEventListener('click', e => {
+    e.preventDefault();
+    if (b.id === 'btn-logout') { if (confirm('¿Cerrar sesión?')) { window.__cerrarSesion ? window.__cerrarSesion() : (window.location.href = 'vip-auth.html'); } return; }
+    if (b.dataset.section) navigate(b.dataset.section);
+  }));
+  document.getElementById('modal-close').addEventListener('click', () => Modal.close());
+  document.getElementById('modal-backdrop').addEventListener('click', e => { if (e.target.id === 'modal-backdrop') Modal.close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') Modal.close(); });
+});
 </script>
 </body>
 </html>
