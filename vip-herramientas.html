@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="night">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0B121F">
+<meta name="description" content="SYNOVA México · Herramientas clínicas Pro · Calculadoras de dosis, IMC, anestésicos, nutrición y receta médica para profesionales de la salud.">
+<title>SYNOVA · Herramientas Pro</title>
+<link rel="icon" type="image/png" href="assets/img/synova-favicon.png">
+<link rel="apple-touch-icon" href="assets/img/synova-apple-touch.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SYNOVA VIP">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* ══════════ SYNOVA · Herramientas Pro · tokens y base (calcado del panel VIP) ══════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none;cursor:pointer}
+img{display:block;max-width:100%}
+svg{flex-shrink:0}
+input,select,textarea{font:inherit;color:inherit}
+ul{list-style:none}
+::selection{background:var(--primary);color:#fff}
+
+:root[data-theme="night"]{
+  --bg:#0B121F;--bg-deep:#070B12;
+  --surface:#101A2C;--surface-2:#16223A;--surface-3:#223353;
+  --border:rgba(140,190,230,0.08);--border-2:rgba(140,190,230,0.15);--border-strong:rgba(140,190,230,0.24);
+  --text:#EAF2FA;--text-2:#A9BBD1;--text-3:#7C8FA8;
+  --primary:#1C6FB0;--primary-soft:#5FB6E0;--primary-deep:#0B4A7C;
+  --primary-glow:rgba(28,111,176,0.42);--highlight:#2FD1C6;
+  --success:#34D399;--danger:#F87171;--warn:#FBBF24;--whatsapp:#22C55E;
+  --shadow-card:0 20px 60px rgba(0,0,0,0.55);
+}
+:root[data-theme="day"]{
+  --bg:#EEF5FC;--bg-deep:#DCEAF7;
+  --surface:#FFFFFF;--surface-2:#F3F9FE;--surface-3:#E3EFF9;
+  --border:rgba(11,58,102,0.08);--border-2:rgba(11,58,102,0.14);--border-strong:rgba(11,58,102,0.24);
+  --text:#0B2A4A;--text-2:#3E5975;--text-3:#7891A8;
+  --primary:#0D5FA0;--primary-soft:#3D8FCB;--primary-deep:#0A3E68;
+  --primary-glow:rgba(13,95,160,0.28);--highlight:#159E92;
+  --success:#0F9D58;--danger:#DC2D3F;--warn:#B45309;--whatsapp:#16A34A;
+  --shadow-card:0 16px 50px rgba(11,58,102,0.14);
+}
+
+body{
+  font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:1.55;
+  background:var(--bg);color:var(--text);overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  transition:background .35s,color .35s;position:relative;min-height:100vh;
+  visibility:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;
+  background:radial-gradient(circle at 25% 30%,var(--primary-glow),transparent 50%),radial-gradient(circle at 75% 70%,color-mix(in srgb,var(--highlight) 18%,transparent),transparent 50%);
+  filter:blur(60px);pointer-events:none;
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;
+  background-image:linear-gradient(to right,rgba(140,190,230,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(140,190,230,.05) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);
+  mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);
+  pointer-events:none;
+}
+:root[data-theme="day"] body::after{background-image:linear-gradient(to right,rgba(11,58,102,.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(11,58,102,.04) 1px,transparent 1px)}
+
+.ic{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic--sm{width:13px;height:13px}.ic--lg{width:22px;height:22px}.ic--xl{width:28px;height:28px}
+
+.app{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 20px 80px;min-height:100vh}
+
+/* ══════════ TOPBAR ══════════ */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:calc(16px + env(safe-area-inset-top)) 0 16px;position:sticky;top:0;z-index:50;background:linear-gradient(180deg,var(--bg) 60%,transparent);backdrop-filter:blur(6px)}
+.topbar__brand{display:flex;align-items:center;gap:11px}
+.topbar__logo{width:40px;height:40px;border-radius:11px;background:#fff;border:0.5px solid rgba(11,58,102,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:5px;box-shadow:0 2px 8px rgba(11,58,102,.12)}
+.topbar__logo img{width:100%;height:100%;object-fit:contain}
+.topbar__name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;line-height:1.1}
+.topbar__tag{display:inline-block;font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--primary);font-weight:700;margin-top:3px;padding:2px 7px;border-radius:100px;background:color-mix(in srgb,var(--primary) 12%,transparent);border:0.5px solid color-mix(in srgb,var(--primary) 30%,transparent)}
+.topbar__right{display:flex;align-items:center;gap:8px}
+.chip-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px 8px 12px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2);font-size:12px;color:var(--text-2);font-weight:600;transition:color .15s,border-color .15s,background .15s}
+.chip-btn:hover{color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
+.chip-btn .ic{width:15px;height:15px}
+.icon-btn{width:36px;height:36px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);transition:color .15s,border-color .15s,background .15s}
+.icon-btn:hover{color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
+.icon-btn .ic{width:16px;height:16px}
+.avatar{display:flex;align-items:center;gap:9px;padding:5px 12px 5px 5px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2)}
+.avatar__circle{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.3px}
+.avatar__info{display:flex;flex-direction:column;line-height:1.15}
+.avatar__name{font-size:11.5px;font-weight:600}
+.avatar__plan{font-size:9px;font-weight:700;color:var(--primary);letter-spacing:.5px}
+@media(max-width:560px){.avatar__info{display:none}.topbar__brand .topbar__tag{display:none}}
+
+/* ══════════ HERO ══════════ */
+.hero{background:linear-gradient(135deg,#101A2C 0%,#070B12 100%);border-radius:20px;padding:26px 30px;position:relative;overflow:hidden;border:0.5px solid var(--border-2);box-shadow:0 12px 40px rgba(0,0,0,.35);margin-bottom:22px}
+:root[data-theme="day"] .hero{background:linear-gradient(135deg,#FFFFFF 0%,#F3F9FE 100%);box-shadow:0 8px 32px rgba(11,58,102,.1)}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 25%,color-mix(in srgb,var(--primary) 26%,transparent),transparent 45%),radial-gradient(circle at 85% 75%,color-mix(in srgb,var(--highlight) 20%,transparent),transparent 50%);filter:blur(40px);pointer-events:none}
+.hero__in{position:relative;z-index:1}
+.hero__eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:100px;background:color-mix(in srgb,var(--surface) 60%,transparent);backdrop-filter:blur(20px);border:0.5px solid color-mix(in srgb,var(--primary) 32%,transparent);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary-soft)}
+.hero__eyebrow__dot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulseDot 1.8s ease-out infinite}
+@keyframes pulseDot{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--success) 60%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hero__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:clamp(22px,2.6vw,30px);font-weight:700;letter-spacing:-.8px;line-height:1.12;margin-top:14px;background:linear-gradient(135deg,var(--text),color-mix(in srgb,var(--text) 65%,transparent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero__sub{font-size:13.5px;color:var(--text-2);margin-top:10px;max-width:620px;line-height:1.55}
+
+/* ══════════ NAV DE HERRAMIENTAS ══════════ */
+.tool-nav{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;margin-bottom:8px;scrollbar-width:none}
+.tool-nav::-webkit-scrollbar{display:none}
+.tool-tab{flex-shrink:0;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2);color:var(--text-2);font-size:12.5px;font-weight:600;white-space:nowrap;transition:all .15s}
+.tool-tab:hover{color:var(--text);border-color:var(--border-strong)}
+.tool-tab.is-active{background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 40%,transparent);font-weight:700}
+.tool-tab .ic{width:15px;height:15px}
+
+/* ══════════ BOTONES ══════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:9px 16px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.1px;cursor:pointer;transition:transform .15s,box-shadow .25s,background .15s;white-space:nowrap}
+.btn .ic{width:14px;height:14px}
+.btn--primary{background:var(--text);color:var(--bg);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.btn--primary:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,0,0,.26)}
+.btn--accent{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;box-shadow:0 4px 14px var(--primary-glow)}
+.btn--accent:hover{transform:translateY(-1px);box-shadow:0 6px 22px var(--primary-glow)}
+.btn--ghost{background:transparent;color:var(--text-2);border:0.5px solid var(--border-2)}
+.btn--ghost:hover{color:var(--text);border-color:var(--text-2)}
+.btn--block{width:100%}
+.btn--sm{padding:7px 12px;font-size:11px}
+.btn--lg{padding:13px 22px;font-size:13.5px}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+/* ══════════ TOOL SECTION HEAD ══════════ */
+.tool-section__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.tool-section__title{display:flex;align-items:center;gap:14px;min-width:0}
+.tool-section__icon{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 22px -8px var(--primary-glow)}
+.tool-section__icon .ic{width:22px;height:22px}
+.tool-section__title h1{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.4px;line-height:1.15}
+.tool-section__title p{font-size:12.5px;color:var(--text-2);margin-top:3px;line-height:1.45;max-width:560px}
+.tool-section__actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:600px){.tool-section__actions{width:100%}.tool-section__actions .btn{flex:1}}
+
+/* ══════════ SISTEMA DE HERRAMIENTAS (bn-*) ══════════ */
+.bn-tool{display:flex;flex-direction:column;gap:18px}
+.bn-card{position:relative;background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 94%,var(--primary)) 0%,var(--surface) 55%);border:1px solid var(--border-2);border-radius:18px;padding:22px;box-shadow:0 1px 2px rgba(0,0,0,.16),0 10px 26px -16px rgba(0,0,0,.30)}
+.bn-card__t{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.4px;margin:0 0 16px;display:flex;align-items:center;gap:9px;text-transform:uppercase}
+.bn-card__t .ic{width:16px;height:16px;color:var(--primary)}
+.bn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;align-items:start}
+.bn-field{display:grid;grid-template-rows:auto auto auto;row-gap:7px;align-content:start;min-width:0}
+.bn-field>label{font-size:11px;font-weight:700;color:var(--text-2);letter-spacing:.3px;text-transform:uppercase;line-height:1.35;display:flex;align-items:flex-end;min-height:calc(2*1.35em)}
+.bn-field__hint{font-size:10.5px;color:var(--text-3);line-height:1.45}
+@supports(grid-template-rows:subgrid){.bn-field{grid-template-rows:subgrid;grid-row:span 3}.bn-field>label{min-height:0}}
+.bn-field--full{grid-column:1/-1}
+.bn-actions{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.bn-tool .btn{min-height:46px}
+.bn-viplock{display:flex;gap:14px;align-items:center;background:color-mix(in srgb,var(--primary) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--primary) 35%,var(--border-2));border-radius:14px;padding:14px 16px;margin-bottom:4px}
+.bn-viplock__ic{width:38px;height:38px;border-radius:11px;background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bn-viplock__txt{flex:1;min-width:0}
+.bn-viplock__t{font-weight:700;color:var(--text);font-size:13.5px;line-height:1.4}
+.bn-viplock__d{color:var(--text-2);font-size:12px;margin-top:3px;line-height:1.55}
+.bn-viplock .bn-viplock-btn{flex-shrink:0;white-space:nowrap}
+@media(max-width:640px){.bn-viplock{flex-direction:column;align-items:stretch;gap:12px;text-align:left}.bn-viplock .bn-viplock-btn{width:100%;min-height:46px}}
+@media(max-width:640px){.bn-grid{grid-template-columns:1fr;gap:13px}.bn-field>label{min-height:0}.bn-actions .btn{flex:1 1 100%}}
+
+.input,.bn-select,textarea.input{width:100%;box-sizing:border-box;min-height:48px;background:var(--surface-2);color:var(--text);border:1px solid var(--border-2);border-radius:13px;padding:13px 15px;font-size:14.5px;font-family:inherit;font-weight:500;letter-spacing:.1px;transition:border-color .18s,box-shadow .18s,background .18s;box-shadow:inset 0 1px 1px rgba(0,0,0,.10)}
+textarea.input{min-height:88px;resize:vertical;line-height:1.5}
+.input::placeholder{color:var(--text-3);opacity:1;font-weight:400}
+.input:hover,.bn-select:hover{border-color:color-mix(in srgb,var(--primary) 42%,var(--border-2))}
+.input:focus,.bn-select:focus{outline:none;border-color:var(--primary);background:color-mix(in srgb,var(--primary) 7%,var(--surface-2));box-shadow:0 0 0 4px var(--primary-glow),inset 0 1px 1px rgba(0,0,0,.10)}
+.input::-webkit-outer-spin-button,.input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.input[type=number]{-moz-appearance:textfield}
+.bn-select{appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:40px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7a99' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.bn-seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border-2);border-radius:13px;padding:4px;gap:4px;flex-wrap:wrap}
+.bn-seg button{border:none;background:transparent;color:var(--text-2);font-size:12.5px;font-weight:600;font-family:inherit;padding:9px 14px;border-radius:9px;cursor:pointer;transition:.18s}
+.bn-seg button:hover{color:var(--text)}
+.bn-seg button.is-on{background:var(--primary);color:#fff;box-shadow:0 4px 12px -2px var(--primary-glow)}
+
+.bn-result{position:relative;overflow:hidden;background:radial-gradient(120% 100% at 50% 0%,color-mix(in srgb,var(--primary) 16%,transparent) 0%,transparent 60%),linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid color-mix(in srgb,var(--primary) 30%,var(--border-2));border-radius:18px;padding:24px;text-align:center;box-shadow:0 12px 34px -18px var(--primary-glow)}
+.bn-result__lbl{font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
+.bn-result__val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1.05;font-feature-settings:"tnum" 1;word-break:break-word;transition:color .2s}
+.bn-result__unit{font-size:15px;font-weight:600;color:var(--text-2);margin-left:4px}
+.bn-result__note{font-size:12px;color:var(--text-3);margin-top:12px;line-height:1.5}
+.bn-formula{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);background:color-mix(in srgb,var(--primary) 6%,var(--surface-2));border:1px solid var(--border-2);border-left:3px solid var(--primary);border-radius:12px;padding:12px 14px;margin-top:16px;text-align:center;letter-spacing:.2px}
+.bn-mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:16px}
+.bn-mini__c{background:var(--surface-2);border:1px solid var(--border-2);border-radius:14px;padding:14px 16px;transition:border-color .18s,transform .18s}
+.bn-mini__c:hover{border-color:color-mix(in srgb,var(--primary) 38%,var(--border-2));transform:translateY(-1px)}
+.bn-mini__l{font-size:10.5px;color:var(--text-3);letter-spacing:.5px;text-transform:uppercase;font-weight:700}
+.bn-mini__v{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700;color:var(--text);margin-top:4px}
+.bn-mini__sub{font-size:10.5px;color:var(--text-3);margin-top:2px}
+.bn-tbl{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+.bn-tbl th{text-align:left;color:var(--text-3);font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;padding:0 8px 10px}
+.bn-tbl td{padding:8px 8px;border-top:1px solid var(--border);color:var(--text);vertical-align:middle}
+.bn-tbl tbody tr:hover td{background:color-mix(in srgb,var(--primary) 4%,transparent)}
+.bn-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;font-family:'JetBrains Mono',monospace;letter-spacing:.4px}
+.bn-badge--hi{background:color-mix(in srgb,var(--danger) 16%,transparent);color:var(--danger)}
+.bn-badge--mid{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.bn-badge--lo{background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary)}
+.bn-badge--ok{background:color-mix(in srgb,var(--success) 16%,transparent);color:var(--success)}
+.bn-alert{display:flex;gap:11px;align-items:flex-start;border-radius:13px;padding:13px 15px;font-size:12.5px;line-height:1.5;margin-top:14px}
+.bn-alert .ic{width:17px;height:17px;flex-shrink:0;margin-top:1px}
+.bn-alert--danger{background:color-mix(in srgb,var(--danger) 12%,transparent);border:1px solid color-mix(in srgb,var(--danger) 32%,transparent);color:var(--text)}
+.bn-alert--warn{background:color-mix(in srgb,var(--warn) 12%,transparent);border:1px solid color-mix(in srgb,var(--warn) 32%,transparent);color:var(--text)}
+.bn-alert--ok{background:color-mix(in srgb,var(--success) 12%,transparent);border:1px solid color-mix(in srgb,var(--success) 32%,transparent);color:var(--text)}
+.bn-alert--info{background:color-mix(in srgb,var(--primary) 9%,transparent);border:1px solid color-mix(in srgb,var(--primary) 28%,transparent);color:var(--text)}
+.bn-info-list{display:grid;gap:10px;margin-top:4px}
+.bn-info-row{display:grid;grid-template-columns:130px 1fr;gap:12px;font-size:12.5px;line-height:1.5;padding:8px 0;border-top:1px solid var(--border)}
+.bn-info-row:first-child{border-top:none}
+.bn-info-row__k{color:var(--text-3);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+.bn-info-row__v{color:var(--text)}
+@media(max-width:520px){.bn-info-row{grid-template-columns:1fr;gap:2px}}
+.bn-disclaimer{font-size:11px;color:var(--text-3);line-height:1.55;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:13px 15px;display:flex;gap:10px;align-items:flex-start}
+.bn-disclaimer .ic{width:15px;height:15px;flex-shrink:0;margin-top:1px;color:var(--warn)}
+.rx-line{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;padding:12px;border:1px solid var(--border-2);border-radius:13px;background:var(--surface-2);margin-bottom:10px}
+.rx-line__grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+@media(max-width:520px){.rx-line__grid{grid-template-columns:1fr}}
+.rx-del{align-self:center;width:38px;height:38px;border-radius:10px;border:1px solid var(--border-2);background:transparent;color:var(--text-3);display:flex;align-items:center;justify-content:center;transition:.15s}
+.rx-del:hover{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 40%,transparent)}
+
+/* ══════════ PAYWALL ══════════ */
+.paywall-modal{position:fixed;inset:0;z-index:99200;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+.paywall-modal.is-open{display:flex}
+.paywall-modal__box{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;max-width:440px;width:100%;padding:32px 28px;text-align:center;position:relative}
+.paywall-modal__close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:transparent;border:1px solid var(--border);color:var(--text-3);display:flex;align-items:center;justify-content:center;transition:.15s}
+.paywall-modal__close:hover{color:var(--text);border-color:var(--text-3)}
+.paywall-modal__ic{width:64px;height:64px;border-radius:50%;background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 18px}
+.paywall-modal__ic svg{width:28px;height:28px}
+.paywall-modal__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:10px;line-height:1.2}
+.paywall-modal__sub{font-size:13.5px;color:var(--text-2);line-height:1.6;margin-bottom:22px}
+.paywall-modal__actions{display:flex;flex-direction:column;gap:9px}
+
+/* ══════════ TOAST ══════════ */
+.toast-container{position:fixed;bottom:20px;right:20px;z-index:99990;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+@media(max-width:960px){.toast-container{left:12px;right:12px;bottom:20px}}
+.toast{background:var(--surface);border:0.5px solid var(--border-2);border-radius:11px;padding:11px 14px;display:flex;align-items:center;gap:11px;min-width:260px;max-width:380px;box-shadow:0 10px 32px rgba(0,0,0,.18);pointer-events:auto;transform:translateX(120%);transition:transform .35s cubic-bezier(.2,.8,.25,1)}
+@media(max-width:960px){.toast{min-width:0;max-width:none;width:100%}}
+.toast.is-show{transform:translateX(0)}
+.toast__icon{flex-shrink:0}.toast__icon .ic{width:20px;height:20px}
+.toast--success .toast__icon{color:var(--success)}.toast--error .toast__icon{color:var(--danger)}.toast--info .toast__icon{color:var(--primary)}
+.toast__title{font-size:13px;font-weight:700}.toast__msg{font-size:11.5px;color:var(--text-2);margin-top:1px}
+
+.fade-up{animation:fadeUp .45s cubic-bezier(.2,.8,.25,1)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.loader{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.loader__spin{width:38px;height:38px;border:3px solid var(--border-2);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<!-- ══════════ ICON SPRITES ══════════ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6l-12 12"/><path d="M6 6l12 12"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2l4 -4"/></symbol>
+<symbol id="i-alert-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+<symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z"/><path d="M12 16h.01"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"/><path d="M7 11l5 5l5 -5"/><path d="M12 4v12"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M5 12l6 6"/><path d="M5 12l6 -6"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 18l6 -6"/><path d="M13 6l6 6"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></symbol>
+<symbol id="i-tools" viewBox="0 0 24 24"><path d="M3 21h4l13 -13a1.5 1.5 0 0 0 -4 -4l-13 13v4"/><path d="M14.5 5.5l4 4"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24"><path d="M12 6l4 6l5 -4l-2 10h-14l-2 -10l5 4z"/></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><path d="M6.5 17a4.5 4.5 0 0 0 4.5 -4.5v-6.5"/><path d="M12 3v3"/><circle cx="12" cy="4" r="1"/><path d="M3 8l3 -1l3 1"/><path d="M15 8l3 -1l3 1"/><path d="M3 8l3 6h-6z"/><path d="M15 8l3 6h-6z"/><path d="M9 21h6"/></symbol>
+<symbol id="i-pill" viewBox="0 0 24 24"><path d="M4.5 12.5l8 -8a4.94 4.94 0 0 1 7 7l-8 8a4.94 4.94 0 0 1 -7 -7"/><path d="M8.5 8.5l7 7"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
+<symbol id="i-syringe" viewBox="0 0 24 24"><path d="M9 3l6 6"/><path d="M18 6l-9 9l-4 1l1 -4l9 -9"/><path d="M13 5l6 6"/><path d="M3 21l3 -3"/></symbol>
+<symbol id="i-apple" viewBox="0 0 24 24"><path d="M12 8a5 5 0 0 0 -5 5c0 3 2 6 5 8c3 -2 5 -5 5 -8a5 5 0 0 0 -5 -5z"/><path d="M12 8c0 -2 1 -4 3 -5"/></symbol>
+<symbol id="i-file-text" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><path d="M9 9h1"/><path d="M9 13h6"/><path d="M9 17h6"/></symbol>
+<symbol id="i-clipboard-check" viewBox="0 0 24 24"><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/><path d="M9 14l2 2l4 -4"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7l16 0"/><path d="M10 11l0 6"/><path d="M14 11l0 6"/><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/></symbol>
+<symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3 8l4 -16l3 8h4"/></symbol>
+<symbol id="i-stethoscope" viewBox="0 0 24 24"><path d="M6 4v6a4 4 0 0 0 8 0V4"/><path d="M10 10v3a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="9" r="1.6"/><circle cx="6" cy="4" r="1.4"/><circle cx="10" cy="4" r="1.4"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24"><path d="M5 4h14a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-14a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1z"/><path d="M8 4v3"/><path d="M12 4v4"/><path d="M16 4v3"/></symbol>
+</svg>
+
+<div class="loader" id="loader"><div class="loader__spin"></div></div>
+
+<div class="app">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <a href="vip-panel.html" class="topbar__logo" title="Volver al panel"><img src="assets/img/synova-logo.png" alt="SYNOVA" onerror="this.style.display='none'"></a>
+      <div>
+        <div class="topbar__name">SYNOVA México</div>
+        <span class="topbar__tag">Herramientas Pro</span>
+      </div>
+    </div>
+    <div class="topbar__right">
+      <a href="vip-panel.html" class="chip-btn"><svg class="ic"><use href="#i-arrow-left"/></svg><span>Panel</span></a>
+      <button class="icon-btn" id="theme-toggle" title="Cambiar tema"><svg class="ic"><use href="#i-moon"/></svg></button>
+      <div class="avatar">
+        <div class="avatar__circle" id="avatar-circle">··</div>
+        <div class="avatar__info">
+          <span class="avatar__name" id="avatar-name">—</span>
+          <span class="avatar__plan" id="avatar-plan">—</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero fade-up">
+    <div class="hero__in">
+      <span class="hero__eyebrow"><span class="hero__eyebrow__dot"></span>Suite clínica · Uso profesional</span>
+      <h1 class="hero__title">Herramientas Pro para profesionales de la salud</h1>
+      <p class="hero__sub">Calculadoras clínicas de precisión con reporte PDF membretado SYNOVA. Cada herramienta es una ayuda de cálculo; la decisión terapéutica final siempre corresponde al profesional tratante.</p>
+    </div>
+  </section>
+
+  <!-- NAV -->
+  <nav class="tool-nav" id="tool-nav"></nav>
+
+  <!-- CONTENT -->
+  <main id="tool-content"></main>
+</div>
+
+<!-- PAYWALL -->
+<div class="paywall-modal" id="paywall-modal" role="dialog" aria-modal="true">
+  <div class="paywall-modal__box">
+    <button class="paywall-modal__close" id="paywall-close" aria-label="Cerrar"><svg class="ic ic--sm"><use href="#i-close"/></svg></button>
+    <div class="paywall-modal__ic"><svg><use href="#i-crown"/></svg></div>
+    <h2 class="paywall-modal__title" id="paywall-title">Función exclusiva VIP</h2>
+    <p class="paywall-modal__sub" id="paywall-sub">Las Herramientas Pro son parte de la membresía SYNOVA. Actívala para ver resultados y descargar tus reportes en PDF.</p>
+    <div class="paywall-modal__actions">
+      <a class="btn btn--accent btn--lg" href="vip-panel.html?seccion=suscripcion">Activar membresía VIP</a>
+      <button class="btn btn--ghost" id="paywall-dismiss" type="button">Seguir explorando</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-zone"></div>
+
+<!-- ══════════ FIREBASE · AUTH GUARD + MEMBRESÍA (mismo patrón que vip-panel) ══════════ -->
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCd6vluCx539pq6Pf8hOZBJk8-cjT10epE",
+  authDomain: "club-synova.firebaseapp.com",
+  projectId: "club-synova",
+  storageBucket: "club-synova.firebasestorage.app",
+  messagingSenderId: "571482389437",
+  appId: "1:571482389437:web:2326d40cde49b62ca8f0d4"
+};
+const WEBHOOK_URL = "https://synova-webhook-production.up.railway.app";
+const ADMINS = ["teccapitalweb@gmail.com", "synovamexico@gmail.com"];
+
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+setPersistence(auth, browserLocalPersistence);
+window.__auth = auth;
+
+function iniciales(nombre, email){
+  const base = (nombre || email || '?').trim();
+  const partes = base.split(/[\s@.]+/).filter(Boolean);
+  if (partes.length >= 2) return (partes[0][0] + partes[1][0]).toUpperCase();
+  return base.slice(0, 2).toUpperCase();
+}
+
+async function resolverMembresia(uid){
+  let membership = null;
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 6000);
+    const r = await fetch(`${WEBHOOK_URL}/membership/${uid}`, { signal: ctrl.signal });
+    clearTimeout(t);
+    if (r.ok) membership = await r.json();
+  } catch (e) { console.warn('[SYNOVA] webhook /membership no respondió, fallback Firestore:', e.message); }
+  const snap = await getDoc(doc(db, 'miembros', uid));
+  const d = snap.exists() ? snap.data() : {};
+  if (!membership) {
+    const exp = d.expiraEn || d.fechaFinAcceso || d.fechaProximaRenovacion || null;
+    const expDate = exp ? (exp.toDate ? exp.toDate() : new Date(exp)) : null;
+    const vigente = (d.activa === true || d.activo === true) && (!expDate || expDate.getTime() > Date.now());
+    membership = { activo: vigente, activa: vigente, plan: d.plan || null };
+  }
+  return { membership, docData: d };
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = 'vip-auth.html'; return; }
+  const email = (user.email || '').toLowerCase();
+  const isAdmin = ADMINS.includes(email);
+  let modo = 'sin-membresia', plan = null, membership = null;
+  if (isAdmin) { modo = 'vip'; plan = 'admin'; membership = { activo: true, activa: true, plan: 'admin' }; }
+  else {
+    const r = await resolverMembresia(user.uid);
+    membership = r.membership;
+    if (membership && (membership.activo || membership.activa)) { modo = 'vip'; plan = membership.plan || 'mensual'; }
+  }
+  window.UserState = {
+    uid: user.uid, email, displayName: user.displayName || '',
+    nombre: user.displayName || email.split('@')[0],
+    iniciales: iniciales(user.displayName, email),
+    isAdmin, modo, plan, membership
+  };
+  document.getElementById('avatar-circle').textContent = window.UserState.iniciales;
+  document.getElementById('avatar-name').textContent = window.UserState.nombre;
+  document.getElementById('avatar-plan').textContent = isAdmin ? 'ADMIN' : (modo === 'vip' ? (plan === 'anual' ? 'VIP ANUAL' : 'VIP MENSUAL') : 'SIN PLAN');
+  document.getElementById('loader').style.display = 'none';
+  document.body.style.visibility = 'visible';
+  window.dispatchEvent(new CustomEvent('synova:ready'));
+});
+
+window.__signOut = async function(){ try { await signOut(auth); window.location.href = 'vip-auth.html'; } catch(e){} };
+</script>
+
+<!-- ══════════ CORE · helpers, toast, paywall, PDF ══════════ -->
+<script>
+function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+const Toast = (function(){
+  function show(type, t, m, d){
+    d = d || 3200;
+    const cont = document.getElementById('toast-zone');
+    const el = document.createElement('div');
+    el.className = 'toast toast--' + type;
+    const im = { success: 'i-check-circle', error: 'i-alert-circle', info: 'i-info' };
+    el.innerHTML = '<div class="toast__icon"><svg class="ic"><use href="#' + (im[type] || 'i-info') + '"/></svg></div><div><div class="toast__title">' + escHtml(t || '') + '</div>' + (m ? '<div class="toast__msg">' + escHtml(m) + '</div>' : '') + '</div>';
+    cont.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('is-show'));
+    setTimeout(() => { el.classList.remove('is-show'); setTimeout(() => el.remove(), 400); }, d);
+  }
+  return { success:(t,m,d)=>show('success',t,m,d), error:(t,m,d)=>show('error',t,m,d), info:(t,m,d)=>show('info',t,m,d) };
+})();
+window.Toast = Toast;
+
+/* ── Tema ── */
+(function(){
+  const saved = localStorage.getItem('synova_theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+  function syncIcon(){
+    const t = document.documentElement.getAttribute('data-theme');
+    const u = document.querySelector('#theme-toggle use');
+    if (u) u.setAttribute('href', t === 'day' ? '#i-moon' : '#i-sun');
+  }
+  syncIcon();
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'day' ? 'night' : 'day';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('synova_theme', next);
+    syncIcon();
+  });
+})();
+
+/* ── VIP / paywall ── */
+window.toolEsVIP = function(){
+  const S = window.UserState;
+  if (!S) return false;
+  return S.modo === 'vip' || S.isAdmin === true;
+};
+window.__showPaywallModal = function(cfg){
+  const el = document.getElementById('paywall-modal');
+  if (cfg && cfg.title) document.getElementById('paywall-title').textContent = cfg.title;
+  if (cfg && cfg.sub) document.getElementById('paywall-sub').textContent = cfg.sub;
+  el.classList.add('is-open');
+};
+function toolRequiereVIP(nombre){
+  if (toolEsVIP()) return true;
+  window.__showPaywallModal({
+    title: 'Función exclusiva para miembros VIP',
+    sub: 'Las Herramientas Pro son exclusivas para miembros VIP. Actívala para ver los resultados de ' + (nombre || 'las calculadoras') + ' y descargar tus reportes en PDF.'
+  });
+  return false;
+}
+document.getElementById('paywall-close')?.addEventListener('click', () => document.getElementById('paywall-modal').classList.remove('is-open'));
+document.getElementById('paywall-dismiss')?.addEventListener('click', () => document.getElementById('paywall-modal').classList.remove('is-open'));
+document.getElementById('paywall-modal')?.addEventListener('click', e => { if (e.target.id === 'paywall-modal') e.currentTarget.classList.remove('is-open'); });
+
+/* ── Numéricos ── */
+function num(v){ if (v === '' || v == null) return null; const n = parseFloat(String(v).replace(',', '.')); return isFinite(n) ? n : null; }
+function fmt(n, dec){
+  if (n === null || n === undefined || !isFinite(n)) return '—';
+  dec = dec === undefined ? 2 : dec;
+  return Number(n.toFixed(dec)).toLocaleString('es-MX', { maximumFractionDigits: dec, minimumFractionDigits: 0 });
+}
+function folio(pref){
+  const d = new Date();
+  const r = Math.random().toString(36).slice(2, 5).toUpperCase();
+  return (pref || 'SYN') + '-' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '-' + r;
+}
+function hoyStr(){ return new Date().toLocaleDateString('es-MX', { day:'numeric', month:'long', year:'numeric' }); }
+
+/* ══════════ PDF · membrete SYNOVA ══════════ */
+const SYN = { azul:[28,111,176], tealAcc:[47,209,198], tinta:[15,23,42], gris:[110,120,140], gris2:[150,160,178], linea:[225,232,245] };
+function pdfHeader(pdf, titulo, sub){
+  const W = 210, M = 16;
+  pdf.setFillColor(...SYN.azul); pdf.rect(0,0,W,7,'F');
+  pdf.setFillColor(...SYN.tealAcc); pdf.rect(0,7,W,2,'F');
+  let y = 20;
+  pdf.setFontSize(9); pdf.setTextColor(...SYN.azul); pdf.setFont(undefined,'bold');
+  pdf.text('SYNOVA MÉXICO', M, y);
+  pdf.setFont(undefined,'normal'); pdf.setFontSize(8); pdf.setTextColor(...SYN.gris);
+  pdf.text('Herramientas Pro · Formación y recursos clínicos', W-M, y, {align:'right'});
+  y += 9;
+  pdf.setFontSize(16); pdf.setTextColor(...SYN.tinta); pdf.setFont(undefined,'bold');
+  pdf.text(titulo, M, y); pdf.setFont(undefined,'normal'); y += 6;
+  if (sub){ pdf.setFontSize(9); pdf.setTextColor(...SYN.gris); pdf.text(sub, M, y); y += 4; }
+  pdf.setDrawColor(...SYN.linea); pdf.setLineWidth(0.4); pdf.line(M, y+2, W-M, y+2); y += 10;
+  return y;
+}
+function pdfFooter(pdf, pageNote){
+  const W = 210, H = 297, M = 16;
+  pdf.setDrawColor(...SYN.linea); pdf.setLineWidth(0.4); pdf.line(M, H-15, W-M, H-15);
+  pdf.setFontSize(7.5); pdf.setTextColor(...SYN.gris2);
+  pdf.text('Generado con SYNOVA VIP · synovamexico · ' + hoyStr(), M, H-10);
+  pdf.text(pageNote || 'Documento de apoyo clínico · no sustituye el juicio profesional', W-M, H-10, {align:'right'});
+}
+function pdfKV(pdf, y, pares, colX){
+  colX = colX || 62;
+  pdf.setFontSize(10);
+  pares.forEach(([k,v]) => {
+    pdf.setTextColor(...SYN.gris); pdf.setFont(undefined,'normal'); pdf.text(k, 16, y);
+    pdf.setTextColor(...SYN.tinta); pdf.setFont(undefined,'bold');
+    const lines = pdf.splitTextToSize(String(v == null ? '—' : v), 210-16-colX);
+    pdf.text(lines, colX, y); pdf.setFont(undefined,'normal');
+    y += 6 * lines.length;
+  });
+  return y;
+}
+function pdfSectionTitle(pdf, y, txt){
+  pdf.setFillColor(...SYN.azul); pdf.rect(16, y-3.5, 2.2, 4.5, 'F');
+  pdf.setFontSize(11); pdf.setTextColor(...SYN.tinta); pdf.setFont(undefined,'bold');
+  pdf.text(txt, 21, y); pdf.setFont(undefined,'normal');
+  return y + 7;
+}
+function qrDataURL(text, size){
+  size = size || 120;
+  const tmp = document.createElement('div');
+  tmp.style.position='absolute'; tmp.style.left='-9999px'; document.body.appendChild(tmp);
+  try {
+    new QRCode(tmp, { text: text, width: size, height: size, correctLevel: QRCode.CorrectLevel.M });
+    const cvs = tmp.querySelector('canvas');
+    const url = cvs ? cvs.toDataURL('image/png') : null;
+    document.body.removeChild(tmp);
+    return url;
+  } catch(e){ try{ document.body.removeChild(tmp);}catch(_){} return null; }
+}
+
+/* Shell común de cada herramienta */
+function toolShell(container, cfg){
+  const lock = (!toolEsVIP())
+    ? `<div class="bn-viplock"><div class="bn-viplock__ic"><svg class="ic"><use href="#i-crown"/></svg></div><div class="bn-viplock__txt"><div class="bn-viplock__t">Herramienta Pro · exclusiva para miembros VIP</div><div class="bn-viplock__d">Puedes explorarla y capturar datos, pero el resultado y el reporte PDF requieren una membresía activa.</div></div><a class="btn btn--accent btn--sm bn-viplock-btn" href="vip-panel.html?seccion=suscripcion">Hazte VIP</a></div>`
+    : '';
+  container.innerHTML = `
+    <div class="bn-tool fade-up">
+      <div class="tool-section__head">
+        <div class="tool-section__title">
+          <div class="tool-section__icon"><svg class="ic"><use href="#${cfg.icon}"/></svg></div>
+          <div><h1>${escHtml(cfg.title)}</h1><p>${escHtml(cfg.sub)}</p></div>
+        </div>
+        <div class="tool-section__actions">${cfg.actions || ''}</div>
+      </div>
+      ${lock}
+      ${cfg.body}
+    </div>`;
+  return container.querySelector('.bn-tool');
+}
+
+/* ══════════ REGISTRO Y ROUTER ══════════ */
+const TOOLS = [];
+function registerTool(t){ TOOLS.push(t); }
+let __activeTool = null;
+function renderNav(){
+  const nav = document.getElementById('tool-nav');
+  nav.innerHTML = TOOLS.map(t => `<button class="tool-tab" data-tool="${t.id}"><svg class="ic"><use href="#${t.icon}"/></svg>${escHtml(t.tab)}</button>`).join('');
+  nav.querySelectorAll('[data-tool]').forEach(b => b.addEventListener('click', () => openTool(b.dataset.tool)));
+}
+function openTool(id){
+  const t = TOOLS.find(x => x.id === id) || TOOLS[0];
+  __activeTool = t.id;
+  document.querySelectorAll('#tool-nav .tool-tab').forEach(b => b.classList.toggle('is-active', b.dataset.tool === t.id));
+  const c = document.getElementById('tool-content');
+  c.innerHTML = '';
+  t.mount(c);
+  try { history.replaceState(null, '', '#' + t.id); } catch(e){}
+  const nav = document.getElementById('tool-nav');
+  const tab = nav.querySelector(`[data-tool="${t.id}"]`);
+  if (tab) tab.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
+}
+function bootTools(){
+  renderNav();
+  const hash = (location.hash || '').replace('#','');
+  openTool(TOOLS.find(t => t.id === hash) ? hash : TOOLS[0].id);
+}
+window.addEventListener('synova:ready', bootTools);
+</script>
+
+<!-- Los módulos de herramientas se inyectan a continuación -->
+
+<!-- ══════════════════════ HERRAMIENTA 1 · DOSIS POR PESO (mg/kg) ══════════════════════ -->
+<script>
+(function(){
+  /* Dataset clínico. basis:'dia' = mg/kg/día repartido en tomas · basis:'dosis' = mg/kg por toma.
+     mgml = concentración de la presentación para calcular el volumen. Referencias: rangos pediátricos estándar (Lexicomp / Nelson). */
+  const FARMACOS = [
+    { id:'paracetamol', n:'Paracetamol (Acetaminofén)', via:'Oral', basis:'dosis', min:10, max:15, freq:4, maxDosis:1000, maxDia:4000, capNota:'Máx. 75 mg/kg/día en niños y 4 g/día en adultos.',
+      pres:[{l:'Gotas 100 mg/mL',v:100},{l:'Susp. 160 mg/5 mL',v:32},{l:'Susp. 500 mg/5 mL (forte)',v:100},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Fiebre y dolor leve a moderado.', ci:'Hepatopatía grave, hipersensibilidad. Precaución en desnutrición y ayuno prolongado.', ram:'Hepatotoxicidad por sobredosis; rash. Muy seguro a dosis correcta.' },
+    { id:'ibuprofeno', n:'Ibuprofeno', via:'Oral', basis:'dosis', min:5, max:10, freq:3, maxDosis:600, maxDia:2400, capNota:'Máx. 40 mg/kg/día (niños) · 2.4 g/día (adulto). No usar <6 meses.',
+      pres:[{l:'Susp. 100 mg/5 mL',v:20},{l:'Susp. 200 mg/5 mL (forte)',v:40},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Dolor, fiebre e inflamación.', ci:'Úlcera péptica activa, ERC, deshidratación, <6 meses, 3.º trimestre de embarazo.', ram:'Gastritis, sangrado digestivo, nefrotoxicidad, retención de líquidos.' },
+    { id:'amoxicilina', n:'Amoxicilina', via:'Oral', basis:'dia', min:40, max:90, freq:3, maxDia:3000, capNota:'40–50 mg/kg/día en infecciones leves; 80–90 mg/kg/día en otitis/neumonía.',
+      pres:[{l:'Susp. 250 mg/5 mL',v:50},{l:'Susp. 500 mg/5 mL',v:100},{l:'Susp. 125 mg/5 mL',v:25},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Infecciones respiratorias, otitis, faringoamigdalitis, ITU.', ci:'Alergia a penicilinas.', ram:'Diarrea, rash, candidiasis; reacción anafiláctica (raro).' },
+    { id:'amoxiclav', n:'Amoxicilina / Ác. clavulánico', via:'Oral', basis:'dia', min:40, max:90, freq:2, maxDia:2600, capNota:'Dosis calculada sobre el componente amoxicilina, c/12 h.',
+      pres:[{l:'Susp. 400/57 mg/5 mL',v:80},{l:'Susp. 600/42.9 mg/5 mL (ES)',v:120},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Infecciones por gérmenes productores de betalactamasa (sinusitis, otitis, mordeduras).', ci:'Alergia a penicilinas, antecedente de colestasis por el fármaco.', ram:'Diarrea (mayor que amoxicilina sola), hepatotoxicidad, rash.' },
+    { id:'azitromicina', n:'Azitromicina', via:'Oral', basis:'dia', min:10, max:10, freq:1, maxDia:500, capNota:'10 mg/kg el día 1, luego 5 mg/kg/día días 2–5 (o 10 mg/kg/día × 3).',
+      pres:[{l:'Susp. 200 mg/5 mL',v:40},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Respiratorias atípicas, faringitis (alérgicos a penicilina), tosferina.', ci:'Alergia a macrólidos, hepatopatía, QT largo.', ram:'Dolor abdominal, diarrea, prolongación del QT.' },
+    { id:'claritromicina', n:'Claritromicina', via:'Oral', basis:'dia', min:15, max:15, freq:2, maxDia:1000, capNota:'15 mg/kg/día repartido c/12 h.',
+      pres:[{l:'Susp. 250 mg/5 mL',v:50},{l:'Susp. 125 mg/5 mL',v:25},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Respiratorias, H. pylori, atípicas.', ci:'QT largo, uso con estatinas/cisaprida, hepatopatía.', ram:'Disgeusia, náusea, interacciones por CYP3A4, QT.' },
+    { id:'cefalexina', n:'Cefalexina', via:'Oral', basis:'dia', min:25, max:50, freq:4, maxDia:4000, capNota:'25–50 mg/kg/día c/6–8 h (hasta 100 mg/kg/día en infección grave).',
+      pres:[{l:'Susp. 250 mg/5 mL',v:50},{l:'Susp. 500 mg/5 mL',v:100},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Piel y tejidos blandos, ITU, faringitis estreptocócica.', ci:'Alergia a cefalosporinas; precaución si alergia grave a penicilina.', ram:'Diarrea, rash, náusea.' },
+    { id:'metronidazol', n:'Metronidazol', via:'Oral', basis:'dia', min:20, max:30, freq:3, maxDia:2250, capNota:'20–30 mg/kg/día c/8 h (amebiasis hasta 50 mg/kg/día).',
+      pres:[{l:'Susp. 250 mg/5 mL',v:50},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Anaerobios, amebiasis, giardiasis, vaginosis.', ci:'1.er trimestre de embarazo, hepatopatía grave, ingesta de alcohol.', ram:'Sabor metálico, náusea, efecto disulfiram con alcohol, neuropatía.' },
+    { id:'tmpsmx', n:'Trimetoprim / Sulfametoxazol', via:'Oral', basis:'dia', min:8, max:12, freq:2, maxDia:320, capNota:'Dosis sobre el componente TMP, c/12 h. Máx. 320 mg TMP/día.',
+      pres:[{l:'Susp. 40/200 mg/5 mL',v:8},{l:'Solo mg TMP (sin volumen)',v:0}],
+      ind:'ITU, otitis, neumonía por Pneumocystis, algunas piodermias.', ci:'<2 meses, déficit de G6PD, hepatopatía, alergia a sulfas, embarazo a término.', ram:'Rash (incluye Stevens-Johnson), hiperkalemia, mielosupresión.' },
+    { id:'nitrofurantoina', n:'Nitrofurantoína', via:'Oral', basis:'dia', min:5, max:7, freq:4, maxDia:400, capNota:'5–7 mg/kg/día c/6 h para ITU no complicada.',
+      pres:[{l:'Susp. 25 mg/5 mL',v:5},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'ITU baja no complicada.', ci:'<1 mes, ERC (TFG<30), déficit de G6PD, embarazo a término.', ram:'Náusea, neumonitis, neuropatía, coloración de orina.' },
+    { id:'prednisolona', n:'Prednisolona', via:'Oral', basis:'dia', min:1, max:2, freq:2, maxDia:60, capNota:'1–2 mg/kg/día. Máx. típico 60 mg/día.',
+      pres:[{l:'Sol. 15 mg/5 mL',v:3},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Asma/crisis, laringotraqueítis, inflamación, alergia grave.', ci:'Infección micótica sistémica; precaución en DM, HTA, varicela.', ram:'Hiperglucemia, retención de sodio, cambios de ánimo, insomnio.' },
+    { id:'dexametasona', n:'Dexametasona', via:'Oral', basis:'dia', min:0.15, max:0.6, freq:2, maxDia:16, capNota:'0.15–0.6 mg/kg/día. En crup 0.15–0.6 mg/kg dosis única.',
+      pres:[{l:'Elíxir 0.5 mg/5 mL',v:0.1},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Crup, edema, antiinflamatorio, antiemético.', ci:'Infección sistémica no controlada; precaución en DM/HTA.', ram:'Hiperglucemia, inmunosupresión, agitación.' },
+    { id:'ondansetron', n:'Ondansetrón', via:'Oral', basis:'dosis', min:0.15, max:0.15, freq:3, maxDosis:8, maxDia:24, capNota:'0.15 mg/kg/dosis c/8 h. Máx. 8 mg por dosis.',
+      pres:[{l:'Sol. 4 mg/5 mL',v:0.8},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Náusea y vómito (gastroenteritis, postoperatorio, quimio).', ci:'QT largo, uso con apomorfina.', ram:'Cefalea, estreñimiento, prolongación del QT.' },
+    { id:'salbutamol', n:'Salbutamol (jarabe)', via:'Oral', basis:'dosis', min:0.1, max:0.15, freq:3, maxDosis:4, maxDia:12, capNota:'0.1–0.15 mg/kg/dosis c/6–8 h. Se prefiere la vía inhalada.',
+      pres:[{l:'Jarabe 2 mg/5 mL',v:0.4},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Broncoespasmo (cuando no hay inhalador).', ci:'Taquiarritmia; precaución en cardiopatía e hipertiroidismo.', ram:'Temblor, taquicardia, hipokalemia, nerviosismo.' },
+    { id:'difenhidramina', n:'Difenhidramina', via:'Oral', basis:'dosis', min:1, max:1.25, freq:4, maxDosis:50, maxDia:300, capNota:'1–1.25 mg/kg/dosis c/6 h. No usar en <2 años.',
+      pres:[{l:'Jarabe 12.5 mg/5 mL',v:2.5},{l:'Solo mg (sin volumen)',v:0}],
+      ind:'Alergia, urticaria, reacción leve.', ci:'<2 años, glaucoma, retención urinaria, asma agudo.', ram:'Somnolencia (o excitación paradójica en niños), boca seca.' }
+  ];
+
+  function mount(c){
+    const opts = FARMACOS.map((f,i)=>`<option value="${f.id}">${escHtml(f.n)}</option>`).join('');
+    toolShell(c, {
+      icon:'i-pill', title:'Calculadora de dosis por peso (mg/kg)',
+      sub:'Selecciona el fármaco, captura el peso y obtén la dosis por toma, el volumen exacto de la presentación y el esquema recomendado.',
+      actions:`<button class="btn btn--accent btn--sm" id="dp-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>`,
+      body:`
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-stethoscope"/></svg>Datos del paciente y fármaco</div>
+        <div class="bn-grid">
+          <div class="bn-field bn-field--full"><label>Fármaco</label><select class="bn-select" id="dp-farm">${opts}</select><div class="bn-field__hint" id="dp-via">—</div></div>
+          <div class="bn-field"><label>Peso del paciente</label><input class="input" id="dp-peso" inputmode="decimal" placeholder="ej. 14"><div class="bn-field__hint">kg</div></div>
+          <div class="bn-field"><label>Edad <span style="text-transform:none;font-weight:500">(opcional)</span></label><input class="input" id="dp-edad" placeholder="ej. 3 años"><div class="bn-field__hint">Solo para el reporte</div></div>
+          <div class="bn-field"><label>Presentación</label><select class="bn-select" id="dp-pres"></select><div class="bn-field__hint">Concentración para el volumen</div></div>
+          <div class="bn-field"><label>Tomas al día</label><select class="bn-select" id="dp-freq"></select><div class="bn-field__hint" id="dp-freqhint">Frecuencia del esquema</div></div>
+        </div>
+      </div>
+
+      <div class="bn-result">
+        <div class="bn-result__lbl">Dosis por toma</div>
+        <div class="bn-result__val"><span id="dp-val">—</span></div>
+        <div class="bn-result__note" id="dp-esquema">Captura el peso para calcular.</div>
+      </div>
+
+      <div class="bn-mini" id="dp-mini" style="display:none">
+        <div class="bn-mini__c"><div class="bn-mini__l">Dosis diaria total</div><div class="bn-mini__v" id="dp-m-dia">—</div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Volumen por toma</div><div class="bn-mini__v" id="dp-m-vol">—</div><div class="bn-mini__sub" id="dp-m-volsub"></div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Rango mg/kg</div><div class="bn-mini__v" id="dp-m-rango">—</div><div class="bn-mini__sub" id="dp-m-basis"></div></div>
+      </div>
+
+      <div id="dp-alert"></div>
+
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-file-text"/></svg>Ficha del fármaco</div>
+        <div class="bn-info-list">
+          <div class="bn-info-row"><div class="bn-info-row__k">Indicaciones</div><div class="bn-info-row__v" id="dp-ind">—</div></div>
+          <div class="bn-info-row"><div class="bn-info-row__k">Contraindicaciones</div><div class="bn-info-row__v" id="dp-ci">—</div></div>
+          <div class="bn-info-row"><div class="bn-info-row__k">Reacciones adversas</div><div class="bn-info-row__v" id="dp-ram">—</div></div>
+          <div class="bn-info-row"><div class="bn-info-row__k">Nota de dosis</div><div class="bn-info-row__v" id="dp-nota">—</div></div>
+        </div>
+      </div>
+
+      <div class="bn-disclaimer"><svg class="ic"><use href="#i-alert-triangle"/></svg><div>Herramienta de apoyo de cálculo. Verifica siempre dosis, presentación y contraindicaciones contra la ficha técnica vigente. La indicación final es responsabilidad del profesional tratante.</div></div>`
+    });
+
+    const q = id => c.querySelector('#'+id);
+    let last = null;
+
+    function fillFreq(f){
+      const sel = q('dp-freq');
+      const rango = f.basis === 'dia' ? [1,2,3,4] : [1,2,3,4,6];
+      sel.innerHTML = rango.map(n=>`<option value="${n}"${n===f.freq?' selected':''}>${n} ${n===1?'vez':'veces'} al día · c/${Math.round(24/n)} h</option>`).join('');
+    }
+    function fillPres(f){
+      q('dp-pres').innerHTML = f.pres.map((p,i)=>`<option value="${i}">${escHtml(p.l)}</option>`).join('');
+    }
+    function loadFarm(){
+      const f = FARMACOS.find(x=>x.id===q('dp-farm').value) || FARMACOS[0];
+      q('dp-via').textContent = 'Vía: '+f.via+' · '+(f.basis==='dia'?'dosis diaria repartida':'dosis por toma');
+      fillPres(f); fillFreq(f);
+      q('dp-ind').textContent = f.ind; q('dp-ci').textContent = f.ci; q('dp-ram').textContent = f.ram; q('dp-nota').textContent = f.capNota;
+      calc();
+    }
+    function calc(){
+      const f = FARMACOS.find(x=>x.id===q('dp-farm').value) || FARMACOS[0];
+      const peso = num(q('dp-peso').value);
+      const freq = parseInt(q('dp-freq').value,10) || f.freq;
+      const pres = f.pres[parseInt(q('dp-pres').value,10)||0] || f.pres[0];
+      const val=q('dp-val'), esq=q('dp-esquema'), mini=q('dp-mini'), alert=q('dp-alert');
+      q('dp-m-basis').textContent = f.basis==='dia' ? 'por día' : 'por dosis';
+      q('dp-m-rango').textContent = (f.min===f.max?fmt(f.min,2):fmt(f.min,2)+'–'+fmt(f.max,2))+' mg/kg';
+      if (peso===null || peso<=0){ val.textContent='—'; esq.textContent='Captura el peso para calcular.'; mini.style.display='none'; alert.innerHTML=''; last=null; return; }
+
+      let perMin, perMax, diaMin, diaMax;
+      if (f.basis==='dia'){
+        diaMin = peso*f.min; diaMax = peso*f.max;
+        if (f.maxDia){ diaMin=Math.min(diaMin,f.maxDia); diaMax=Math.min(diaMax,f.maxDia); }
+        perMin = diaMin/freq; perMax = diaMax/freq;
+      } else {
+        perMin = peso*f.min; perMax = peso*f.max;
+        if (f.maxDosis){ perMin=Math.min(perMin,f.maxDosis); perMax=Math.min(perMax,f.maxDosis); }
+        diaMin = perMin*freq; diaMax = perMax*freq;
+        if (f.maxDia){ diaMin=Math.min(diaMin,f.maxDia); diaMax=Math.min(diaMax,f.maxDia); }
+      }
+      const same = Math.abs(perMin-perMax) < 0.01;
+      val.innerHTML = (same? fmt(perMax,1) : fmt(perMin,1)+' – '+fmt(perMax,1)) + '<span class="bn-result__unit">mg</span>';
+      esq.textContent = 'Administrar cada '+Math.round(24/freq)+' h ('+freq+(freq===1?' vez':' tomas')+' al día), vía '+f.via.toLowerCase()+'.';
+
+      q('dp-m-dia').textContent = (Math.abs(diaMin-diaMax)<0.01? fmt(diaMax,1): fmt(diaMin,1)+'–'+fmt(diaMax,1))+' mg';
+      if (pres.v>0){
+        const vMin=perMin/pres.v, vMax=perMax/pres.v;
+        q('dp-m-vol').textContent = (Math.abs(vMin-vMax)<0.01? fmt(vMax,1): fmt(vMin,1)+'–'+fmt(vMax,1))+' mL';
+        q('dp-m-volsub').textContent = 'con '+pres.l.replace('Solo mg','—');
+      } else { q('dp-m-vol').textContent='—'; q('dp-m-volsub').textContent='sin presentación líquida'; }
+      mini.style.display='';
+
+      // Alertas de tope
+      let al='';
+      const teoMax = f.basis==='dia' ? peso*f.max : peso*f.max*freq;
+      if (f.maxDia && teoMax > f.maxDia){
+        al += `<div class="bn-alert bn-alert--warn"><svg class="ic"><use href="#i-alert-triangle"/></svg><div><b>Tope aplicado.</b> El cálculo por peso superaría el máximo de <b>${fmt(f.maxDia,0)} mg/día</b>; la dosis se limitó a ese tope. ${escHtml(f.capNota)}</div></div>`;
+      }
+      if (f.basis==='dosis' && f.maxDosis && peso*f.max > f.maxDosis){
+        al += `<div class="bn-alert bn-alert--warn"><svg class="ic"><use href="#i-alert-triangle"/></svg><div><b>Tope por toma.</b> Se limitó a <b>${fmt(f.maxDosis,0)} mg</b> por dosis (máximo del fármaco).</div></div>`;
+      }
+      alert.innerHTML = al;
+
+      last = { f, peso, edad:q('dp-edad').value.trim(), freq, pres, perMin, perMax, diaMin, diaMax, same };
+    }
+
+    q('dp-farm').addEventListener('change', loadFarm);
+    ['dp-peso','dp-edad','dp-pres','dp-freq'].forEach(id=>q(id).addEventListener('input', calc));
+    q('dp-freq').addEventListener('change', calc);
+    q('dp-pres').addEventListener('change', calc);
+
+    q('dp-pdf').addEventListener('click', ()=>{
+      if (!toolRequiereVIP('la calculadora de dosis')) return;
+      if (!last){ Toast.error('Faltan datos','Captura el peso primero.'); return; }
+      if (!window.jspdf){ Toast.error('PDF no disponible','Revisa tu conexión.'); return; }
+      const { jsPDF } = window.jspdf; const pdf = new jsPDF({unit:'mm',format:'a4'});
+      const f = last.f;
+      let y = pdfHeader(pdf,'Cálculo de dosis por peso','Folio: '+folio('DOS')+'  ·  '+hoyStr());
+      y = pdfSectionTitle(pdf,y,'Paciente');
+      y = pdfKV(pdf,y,[['Peso:',fmt(last.peso,1)+' kg'],['Edad:',last.edad||'No especificada']]);
+      y += 2;
+      y = pdfSectionTitle(pdf,y,'Prescripción calculada');
+      const dosisTxt = (last.same?fmt(last.perMax,1):fmt(last.perMin,1)+'–'+fmt(last.perMax,1))+' mg por toma';
+      const volTxt = last.pres.v>0 ? (Math.abs(last.perMin/last.pres.v-last.perMax/last.pres.v)<0.01?fmt(last.perMax/last.pres.v,1):fmt(last.perMin/last.pres.v,1)+'–'+fmt(last.perMax/last.pres.v,1))+' mL ('+last.pres.l+')' : '—';
+      y = pdfKV(pdf,y,[
+        ['Fármaco:',f.n],
+        ['Vía:',f.via],
+        ['Dosis por toma:',dosisTxt],
+        ['Volumen por toma:',volTxt],
+        ['Frecuencia:','Cada '+Math.round(24/last.freq)+' h ('+last.freq+(last.freq===1?' vez':' tomas')+'/día)'],
+        ['Dosis diaria total:',(Math.abs(last.diaMin-last.diaMax)<0.01?fmt(last.diaMax,1):fmt(last.diaMin,1)+'–'+fmt(last.diaMax,1))+' mg'],
+        ['Rango de referencia:',(f.min===f.max?fmt(f.min,2):fmt(f.min,2)+'–'+fmt(f.max,2))+' mg/kg '+(f.basis==='dia'?'por día':'por dosis')]
+      ]);
+      y += 2;
+      y = pdfSectionTitle(pdf,y,'Información del fármaco');
+      y = pdfKV(pdf,y,[['Indicaciones:',f.ind],['Contraindicaciones:',f.ci],['Reacciones adversas:',f.ram],['Nota:',f.capNota]]);
+      pdfFooter(pdf);
+      pdf.save('dosis-'+f.id+'-'+Date.now()+'.pdf');
+      Toast.success('PDF generado','Reporte de dosis por peso');
+    });
+
+    loadFarm();
+  }
+
+  registerTool({ id:'dosis-peso', tab:'Dosis por peso', icon:'i-pill', mount });
+})();
+</script>
+
+<!-- ══════════════════════ HERRAMIENTA 2 · RECETA MÉDICA (NOM-004-SSA3) ══════════════════════ -->
+<script>
+(function(){
+  const LS = 'synova_receta_medico';
+  function rxRow(data){
+    data = data || {};
+    return `<div class="rx-line" data-rx>
+      <div>
+        <div class="rx-line__grid" style="margin-bottom:9px">
+          <input class="input" data-f="med" placeholder="Medicamento (denominación genérica)" value="${escHtml(data.med||'')}">
+          <input class="input" data-f="pres" placeholder="Presentación (tabletas 500 mg…)" value="${escHtml(data.pres||'')}">
+        </div>
+        <div class="rx-line__grid">
+          <input class="input" data-f="dosis" placeholder="Dosis y vía (1 tab. VO)" value="${escHtml(data.dosis||'')}">
+          <input class="input" data-f="freq" placeholder="Frecuencia y duración (c/8 h × 7 días)" value="${escHtml(data.freq||'')}">
+        </div>
+      </div>
+      <button class="rx-del" data-del title="Quitar"><svg class="ic ic--sm"><use href="#i-trash"/></svg></button>
+    </div>`;
+  }
+
+  function mount(c){
+    toolShell(c, {
+      icon:'i-file-text', title:'Generador de receta médica',
+      sub:'Receta con estructura conforme a la NOM-004-SSA3 y al Reglamento de Insumos para la Salud: folio de control, código QR de verificación y formato listo para imprimir.',
+      actions:`<button class="btn btn--ghost btn--sm" id="rx-clear">Limpiar</button><button class="btn btn--accent btn--sm" id="rx-pdf">Generar receta PDF<svg class="ic"><use href="#i-download"/></svg></button>`,
+      body:`
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-stethoscope"/></svg>Datos del médico <span style="text-transform:none;font-weight:500;color:var(--text-3)">· se guardan en este equipo</span></div>
+        <div class="bn-grid">
+          <div class="bn-field"><label>Nombre del médico</label><input class="input" id="rx-medico" placeholder="Dr(a). Nombre Apellido"></div>
+          <div class="bn-field"><label>Cédula profesional</label><input class="input" id="rx-cedula" inputmode="numeric" placeholder="0000000"><div class="bn-field__hint">Obligatoria en la receta</div></div>
+          <div class="bn-field"><label>Especialidad</label><input class="input" id="rx-esp" placeholder="Médico general / especialidad"></div>
+          <div class="bn-field"><label>Cédula de especialidad <span style="text-transform:none;font-weight:500">(opcional)</span></label><input class="input" id="rx-cedesp" inputmode="numeric" placeholder="0000000"></div>
+          <div class="bn-field"><label>Institución / consultorio</label><input class="input" id="rx-inst" placeholder="Clínica u hospital"></div>
+          <div class="bn-field"><label>Teléfono de contacto</label><input class="input" id="rx-tel" inputmode="tel" placeholder="238 000 0000"></div>
+          <div class="bn-field bn-field--full"><label>Domicilio del consultorio</label><input class="input" id="rx-dom" placeholder="Calle, número, colonia, ciudad"></div>
+        </div>
+      </div>
+
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-user"/></svg>Datos del paciente</div>
+        <div class="bn-grid">
+          <div class="bn-field bn-field--full"><label>Nombre del paciente</label><input class="input" id="rx-pac" placeholder="Nombre completo"></div>
+          <div class="bn-field"><label>Edad</label><input class="input" id="rx-edad" placeholder="ej. 34 años"></div>
+          <div class="bn-field"><label>Peso <span style="text-transform:none;font-weight:500">(opcional)</span></label><input class="input" id="rx-peso" inputmode="decimal" placeholder="kg"></div>
+          <div class="bn-field"><label>Fecha</label><input class="input" id="rx-fecha" type="date"></div>
+          <div class="bn-field bn-field--full"><label>Diagnóstico</label><input class="input" id="rx-dx" placeholder="Diagnóstico o impresión clínica"></div>
+        </div>
+      </div>
+
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-pill"/></svg>Prescripción (Rp.)</div>
+        <div id="rx-list"></div>
+        <button class="btn btn--ghost btn--sm" id="rx-add" style="margin-top:4px"><svg class="ic"><use href="#i-plus"/></svg>Agregar medicamento</button>
+        <div class="bn-field bn-field--full" style="margin-top:16px"><label>Indicaciones generales</label><textarea class="input" id="rx-indic" placeholder="Reposo, hidratación, signos de alarma, próxima cita…"></textarea></div>
+      </div>
+
+      <div class="bn-alert bn-alert--info"><svg class="ic"><use href="#i-info"/></svg><div>Para medicamentos controlados (fracciones I–III) se requiere receta con código de barras y talonario oficial de la autoridad sanitaria. Esta herramienta genera recetas para medicamentos de venta libre y de fracciones IV–VI.</div></div>`
+    });
+
+    const q = id => c.querySelector('#'+id);
+    // Prefill médico
+    try { const s = JSON.parse(localStorage.getItem(LS)||'{}'); ['medico','cedula','esp','cedesp','inst','tel','dom'].forEach(k=>{ if(s[k]) q('rx-'+k).value = s[k]; }); } catch(e){}
+    try { q('rx-fecha').valueAsDate = new Date(); } catch(e){}
+    if (window.UserState && !q('rx-medico').value) q('rx-medico').value = window.UserState.nombre ? ('Dr(a). '+window.UserState.nombre) : '';
+
+    const list = q('rx-list');
+    list.insertAdjacentHTML('beforeend', rxRow());
+    function bindRows(){
+      list.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
+        if (list.querySelectorAll('[data-rx]').length <= 1){ b.closest('[data-rx]').querySelectorAll('input').forEach(i=>i.value=''); return; }
+        b.closest('[data-rx]').remove();
+      });
+    }
+    bindRows();
+    q('rx-add').onclick = () => { list.insertAdjacentHTML('beforeend', rxRow()); bindRows(); };
+
+    function saveMedico(){
+      const s = {}; ['medico','cedula','esp','cedesp','inst','tel','dom'].forEach(k=> s[k]=q('rx-'+k).value.trim());
+      try { localStorage.setItem(LS, JSON.stringify(s)); } catch(e){}
+    }
+    ['medico','cedula','esp','cedesp','inst','tel','dom'].forEach(k=> q('rx-'+k).addEventListener('input', saveMedico));
+
+    q('rx-clear').onclick = () => {
+      ['rx-pac','rx-edad','rx-peso','rx-dx','rx-indic'].forEach(id=>q(id).value='');
+      list.innerHTML=''; list.insertAdjacentHTML('beforeend', rxRow()); bindRows();
+      Toast.info('Listo','Se limpiaron los datos del paciente.');
+    };
+
+    q('rx-pdf').onclick = () => {
+      if (!toolRequiereVIP('el generador de receta médica')) return;
+      const medico = q('rx-medico').value.trim(), cedula = q('rx-cedula').value.trim(), paciente = q('rx-pac').value.trim();
+      if (!medico || !cedula){ Toast.error('Faltan datos','Captura nombre y cédula profesional del médico.'); return; }
+      if (!paciente){ Toast.error('Faltan datos','Captura el nombre del paciente.'); return; }
+      const meds = [];
+      list.querySelectorAll('[data-rx]').forEach(r=>{
+        const g = f => r.querySelector('[data-f="'+f+'"]').value.trim();
+        if (g('med')) meds.push({ med:g('med'), pres:g('pres'), dosis:g('dosis'), freq:g('freq') });
+      });
+      if (!meds.length){ Toast.error('Sin medicamentos','Agrega al menos un medicamento.'); return; }
+      if (!window.jspdf){ Toast.error('PDF no disponible','Revisa tu conexión.'); return; }
+
+      const { jsPDF } = window.jspdf; const pdf = new jsPDF({unit:'mm',format:'a4'});
+      const W=210, M=16; const fol = folio('RX');
+      let y = pdfHeader(pdf,'Receta médica','Folio: '+fol);
+      // Encabezado del médico
+      pdf.setFontSize(12); pdf.setTextColor(...SYN.tinta); pdf.setFont(undefined,'bold'); pdf.text(medico, M, y); y+=5.5;
+      pdf.setFont(undefined,'normal'); pdf.setFontSize(9); pdf.setTextColor(...SYN.gris);
+      const esp = q('rx-esp').value.trim(); if (esp){ pdf.text(esp, M, y); y+=4.4; }
+      pdf.text('Cédula profesional: '+cedula + (q('rx-cedesp').value.trim()?('   ·   Céd. esp.: '+q('rx-cedesp').value.trim()):''), M, y); y+=4.4;
+      const inst=q('rx-inst').value.trim(), dom=q('rx-dom').value.trim(), tel=q('rx-tel').value.trim();
+      if (inst){ pdf.text(inst, M, y); y+=4.4; }
+      if (dom){ pdf.splitTextToSize(dom, W-2*M).forEach(l=>{pdf.text(l,M,y);y+=4.4;}); }
+      if (tel){ pdf.text('Tel: '+tel, M, y); y+=4.4; }
+      pdf.setDrawColor(...SYN.linea); pdf.line(M,y+1,W-M,y+1); y+=8;
+
+      // Paciente
+      const fechaVal = q('rx-fecha').value ? new Date(q('rx-fecha').value+'T12:00:00').toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}) : hoyStr();
+      y = pdfSectionTitle(pdf,y,'Paciente');
+      const pesoV = q('rx-peso').value.trim();
+      y = pdfKV(pdf,y,[
+        ['Nombre:',paciente],
+        ['Edad:',q('rx-edad').value.trim()||'—'],
+        ...(pesoV?[['Peso:',pesoV+' kg']]:[]),
+        ['Fecha:',fechaVal],
+        ['Diagnóstico:',q('rx-dx').value.trim()||'—']
+      ]);
+      y+=3;
+
+      // Rp.
+      y = pdfSectionTitle(pdf,y,'Rp.');
+      pdf.setFontSize(10);
+      meds.forEach((m,i)=>{
+        if (y > 250){ pdfFooter(pdf); pdf.addPage(); y = pdfHeader(pdf,'Receta médica (cont.)','Folio: '+fol); }
+        pdf.setFont(undefined,'bold'); pdf.setTextColor(...SYN.tinta);
+        const head = (i+1)+'. '+m.med + (m.pres?('  —  '+m.pres):'');
+        pdf.splitTextToSize(head, W-2*M).forEach(l=>{ pdf.text(l,M,y); y+=5; });
+        pdf.setFont(undefined,'normal'); pdf.setTextColor(...SYN.gris);
+        const linea = [m.dosis,m.freq].filter(Boolean).join('  ·  ');
+        if (linea){ pdf.splitTextToSize(linea, W-2*M-4).forEach(l=>{ pdf.text(l,M+4,y); y+=4.6; }); }
+        y+=2.5;
+      });
+
+      // Indicaciones
+      const indic = q('rx-indic').value.trim();
+      if (indic){
+        y+=1; y = pdfSectionTitle(pdf,y,'Indicaciones');
+        pdf.setFontSize(10); pdf.setTextColor(...SYN.tinta);
+        pdf.splitTextToSize(indic, W-2*M).forEach(l=>{ if(y>260){pdfFooter(pdf);pdf.addPage();y=20;} pdf.text(l,M,y); y+=5; });
+      }
+
+      // Firma + QR
+      let fy = Math.max(y+18, 240);
+      if (fy > 250) fy = 250;
+      const qrText = 'SYNOVA·Receta '+fol+'\nMédico: '+medico+'\nCéd: '+cedula+'\nPaciente: '+paciente+'\nFecha: '+fechaVal;
+      const qr = qrDataURL(qrText, 120);
+      if (qr){ pdf.addImage(qr,'PNG', W-M-24, fy-6, 24, 24); pdf.setFontSize(7); pdf.setTextColor(...SYN.gris2); pdf.text('Verificación', W-M-12, fy+21, {align:'center'}); }
+      pdf.setDrawColor(...SYN.tinta); pdf.setLineWidth(0.3); pdf.line(M, fy+14, M+70, fy+14);
+      pdf.setFontSize(9); pdf.setTextColor(...SYN.tinta); pdf.text(medico, M, fy+19);
+      pdf.setFontSize(8); pdf.setTextColor(...SYN.gris); pdf.text('Cédula profesional: '+cedula, M, fy+23);
+
+      pdfFooter(pdf,'Folio '+fol+' · válido con firma autógrafa');
+      pdf.save('receta-'+fol+'.pdf');
+      Toast.success('Receta generada','Folio '+fol);
+    };
+  }
+
+  registerTool({ id:'receta', tab:'Receta médica', icon:'i-file-text', mount });
+})();
+</script>
+
+<!-- ══════════════════════ HERRAMIENTA 3 · IMC + RIESGO CARDIOMETABÓLICO ══════════════════════ -->
+<script>
+(function(){
+  function clasificarIMC(imc){
+    if (imc < 16) return { t:'Bajo peso severo', b:'hi' };
+    if (imc < 17) return { t:'Bajo peso moderado', b:'mid' };
+    if (imc < 18.5) return { t:'Bajo peso', b:'mid' };
+    if (imc < 25) return { t:'Peso normal', b:'ok' };
+    if (imc < 30) return { t:'Sobrepeso', b:'mid' };
+    if (imc < 35) return { t:'Obesidad grado I', b:'hi' };
+    if (imc < 40) return { t:'Obesidad grado II', b:'hi' };
+    return { t:'Obesidad grado III', b:'hi' };
+  }
+  function clasificarPA(s,d){
+    if (s==null||d==null) return null;
+    if (s>=180||d>=120) return { t:'Crisis hipertensiva', b:'hi', nota:'Requiere valoración médica urgente.' };
+    if (s>=140||d>=90) return { t:'Hipertensión etapa 2', b:'hi', nota:'Confirmar con mediciones repetidas y valoración.' };
+    if (s>=130||d>=80) return { t:'Hipertensión etapa 1', b:'mid', nota:'Cambios en estilo de vida; valorar tratamiento.' };
+    if (s>=120&&d<80) return { t:'Presión elevada', b:'mid', nota:'Vigilar y modificar estilo de vida.' };
+    return { t:'Presión normal', b:'ok', nota:'Mantener hábitos saludables.' };
+  }
+
+  function mount(c){
+    toolShell(c, {
+      icon:'i-heart', title:'IMC y riesgo cardiometabólico',
+      sub:'Índice de masa corporal con clasificación OMS, circunferencia de cintura, índices cintura/cadera y cintura/talla, y clasificación de presión arterial en un solo tablero.',
+      actions:`<button class="btn btn--accent btn--sm" id="ic-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>`,
+      body:`
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-user"/></svg>Datos antropométricos</div>
+        <div class="bn-grid">
+          <div class="bn-field"><label>Sexo</label>
+            <div class="bn-seg" id="ic-sexo"><button data-v="M" class="is-on">Hombre</button><button data-v="F">Mujer</button></div>
+            <div class="bn-field__hint">Ajusta los puntos de corte de riesgo</div></div>
+          <div class="bn-field"><label>Edad</label><input class="input" id="ic-edad" inputmode="numeric" placeholder="años"><div class="bn-field__hint">Opcional</div></div>
+          <div class="bn-field"><label>Peso</label><input class="input" id="ic-peso" inputmode="decimal" placeholder="ej. 78"><div class="bn-field__hint">kg</div></div>
+          <div class="bn-field"><label>Talla</label><input class="input" id="ic-talla" inputmode="decimal" placeholder="ej. 172"><div class="bn-field__hint">cm</div></div>
+          <div class="bn-field"><label>Circunferencia de cintura</label><input class="input" id="ic-cint" inputmode="decimal" placeholder="ej. 92"><div class="bn-field__hint">cm · a nivel del ombligo</div></div>
+          <div class="bn-field"><label>Circunferencia de cadera <span style="text-transform:none;font-weight:500">(opcional)</span></label><input class="input" id="ic-cad" inputmode="decimal" placeholder="ej. 100"><div class="bn-field__hint">cm · para índice C/C</div></div>
+          <div class="bn-field"><label>Presión sistólica <span style="text-transform:none;font-weight:500">(opcional)</span></label><input class="input" id="ic-sis" inputmode="numeric" placeholder="ej. 128"><div class="bn-field__hint">mmHg</div></div>
+          <div class="bn-field"><label>Presión diastólica <span style="text-transform:none;font-weight:500">(opcional)</span></label><input class="input" id="ic-dia" inputmode="numeric" placeholder="ej. 82"><div class="bn-field__hint">mmHg</div></div>
+        </div>
+      </div>
+
+      <div class="bn-result">
+        <div class="bn-result__lbl">Índice de masa corporal</div>
+        <div class="bn-result__val"><span id="ic-imc">—</span><span class="bn-result__unit">kg/m²</span></div>
+        <div class="bn-result__note" id="ic-imc-cls">Captura peso y talla.</div>
+        <div class="bn-formula">IMC = peso (kg) ÷ talla² (m)</div>
+      </div>
+
+      <div class="bn-mini" id="ic-mini" style="display:none">
+        <div class="bn-mini__c"><div class="bn-mini__l">Peso saludable</div><div class="bn-mini__v" id="ic-pesoideal">—</div><div class="bn-mini__sub">IMC 18.5–24.9</div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Cintura</div><div class="bn-mini__v" id="ic-cint-v">—</div><div class="bn-mini__sub" id="ic-cint-s"></div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Índice cintura/talla</div><div class="bn-mini__v" id="ic-ict">—</div><div class="bn-mini__sub" id="ic-ict-s"></div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Índice cintura/cadera</div><div class="bn-mini__v" id="ic-icc">—</div><div class="bn-mini__sub" id="ic-icc-s"></div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Presión arterial</div><div class="bn-mini__v" id="ic-pa">—</div><div class="bn-mini__sub" id="ic-pa-s"></div></div>
+      </div>
+
+      <div id="ic-reco"></div>
+
+      <div class="bn-disclaimer"><svg class="ic"><use href="#i-alert-triangle"/></svg><div>Puntos de corte de cintura según ALAD/OMS para población latinoamericana. El riesgo cardiometabólico integral requiere valoración clínica completa (glucosa, perfil de lípidos, antecedentes). Herramienta de tamizaje, no diagnóstica.</div></div>`
+    });
+
+    const q = id => c.querySelector('#'+id);
+    let sexo='M', last=null;
+    q('ic-sexo').querySelectorAll('button').forEach(b=>b.onclick=()=>{ q('ic-sexo').querySelectorAll('button').forEach(x=>x.classList.remove('is-on')); b.classList.add('is-on'); sexo=b.dataset.v; calc(); });
+
+    function calc(){
+      const peso=num(q('ic-peso').value), tallaCm=num(q('ic-talla').value), cint=num(q('ic-cint').value), cad=num(q('ic-cad').value);
+      const sis=num(q('ic-sis').value), dia=num(q('ic-dia').value);
+      const imcEl=q('ic-imc'), clsEl=q('ic-imc-cls'), mini=q('ic-mini'), reco=q('ic-reco');
+
+      let imc=null, cls=null;
+      if (peso>0 && tallaCm>0){
+        const t=tallaCm/100; imc=peso/(t*t); cls=clasificarIMC(imc);
+        imcEl.textContent=fmt(imc,1);
+        imcEl.style.color = cls.b==='ok'?'var(--success)':cls.b==='mid'?'var(--warn)':'var(--danger)';
+        clsEl.innerHTML='<span class="bn-badge bn-badge--'+cls.b+'">'+cls.t.toUpperCase()+'</span>';
+        const pMin=18.5*t*t, pMax=24.9*t*t;
+        q('ic-pesoideal').textContent=fmt(pMin,0)+'–'+fmt(pMax,0)+' kg';
+      } else { imcEl.textContent='—'; imcEl.style.color=''; clsEl.textContent='Captura peso y talla.'; }
+
+      // Cintura
+      let cintR=null;
+      if (cint>0){
+        const c1 = sexo==='M'?90:80, c2 = sexo==='M'?102:88;
+        cintR = cint>=c2 ? {t:'Muy alto',b:'hi'} : cint>=c1 ? {t:'Elevado',b:'mid'} : {t:'Normal',b:'ok'};
+        q('ic-cint-v').textContent=fmt(cint,0)+' cm';
+        q('ic-cint-s').innerHTML='<span class="bn-badge bn-badge--'+cintR.b+'">'+cintR.t+'</span>';
+      } else { q('ic-cint-v').textContent='—'; q('ic-cint-s').textContent='—'; }
+
+      // Cintura/talla
+      let ictR=null, ict=null;
+      if (cint>0 && tallaCm>0){
+        ict=cint/tallaCm; ictR = ict>=0.6?{t:'Muy alto',b:'hi'}:ict>=0.5?{t:'Elevado',b:'mid'}:{t:'Saludable',b:'ok'};
+        q('ic-ict').textContent=fmt(ict,2);
+        q('ic-ict-s').innerHTML='<span class="bn-badge bn-badge--'+ictR.b+'">'+ictR.t+'</span>';
+      } else { q('ic-ict').textContent='—'; q('ic-ict-s').textContent='meta < 0.5'; }
+
+      // Cintura/cadera
+      let iccR=null, icc=null;
+      if (cint>0 && cad>0){
+        icc=cint/cad; const lim = sexo==='M'?0.9:0.85;
+        iccR = icc>lim?{t:'Elevado',b:'hi'}:{t:'Normal',b:'ok'};
+        q('ic-icc').textContent=fmt(icc,2);
+        q('ic-icc-s').innerHTML='<span class="bn-badge bn-badge--'+iccR.b+'">'+iccR.t+'</span> límite '+lim;
+      } else { q('ic-icc').textContent='—'; q('ic-icc-s').textContent='requiere cadera'; }
+
+      // PA
+      const paR = clasificarPA(sis,dia);
+      if (paR){ q('ic-pa').textContent=fmt(sis,0)+'/'+fmt(dia,0); q('ic-pa-s').innerHTML='<span class="bn-badge bn-badge--'+paR.b+'">'+paR.t+'</span>'; }
+      else { q('ic-pa').textContent='—'; q('ic-pa-s').textContent='—'; }
+
+      if (imc!=null || cintR || paR) mini.style.display=''; else mini.style.display='none';
+
+      // Recomendaciones
+      const recs=[]; let nivel='ok';
+      if (cls){
+        if (cls.b!=='ok') nivel = cls.b==='hi'?'hi':'mid';
+        if (imc>=25) recs.push('Objetivo de reducción de peso: bajar 5–10% del peso actual mejora glucosa, presión y lípidos.');
+        if (imc<18.5) recs.push('Bajo peso: valorar ingesta calórica, causas secundarias y apoyo nutricional.');
+      }
+      if (ictR && ict>=0.5){ nivel = (nivel==='hi')?'hi':'mid'; recs.push('Adiposidad central elevada (cintura/talla ≥ 0.5): fuerte predictor de riesgo cardiometabólico.'); }
+      if (cintR && cintR.b!=='ok'){ if(cintR.b==='hi') nivel='hi'; recs.push('Circunferencia de cintura en rango de riesgo: reforzar actividad física y reducir azúcares/ultraprocesados.'); }
+      if (paR && paR.b!=='ok'){ if(paR.b==='hi') nivel='hi'; recs.push('Presión arterial: '+paR.nota); }
+      if (!recs.length && (imc!=null)){ recs.push('Parámetros dentro de rangos saludables. Mantener alimentación equilibrada y ≥150 min/semana de actividad física.'); }
+
+      if (recs.length){
+        const cl = nivel==='hi'?'danger':nivel==='mid'?'warn':'ok';
+        reco.innerHTML = '<div class="bn-alert bn-alert--'+cl+'"><svg class="ic"><use href="#i-activity"/></svg><div><b>Recomendaciones</b><ul style="margin:8px 0 0;padding-left:18px;line-height:1.6">'+recs.map(r=>'<li>'+escHtml(r)+'</li>').join('')+'</ul></div></div>';
+      } else reco.innerHTML='';
+
+      last = { sexo, edad:q('ic-edad').value.trim(), peso, tallaCm, imc, cls, cint, cintR, ict, ictR, icc, iccR, sis, dia, paR, recs };
+    }
+    ['ic-edad','ic-peso','ic-talla','ic-cint','ic-cad','ic-sis','ic-dia'].forEach(id=>q(id).addEventListener('input', calc));
+
+    q('ic-pdf').onclick=()=>{
+      if (!toolRequiereVIP('la calculadora de IMC')) return;
+      if (!last || last.imc==null){ Toast.error('Faltan datos','Captura al menos peso y talla.'); return; }
+      if (!window.jspdf){ Toast.error('PDF no disponible'); return; }
+      const { jsPDF } = window.jspdf; const pdf = new jsPDF({unit:'mm',format:'a4'});
+      let y = pdfHeader(pdf,'Evaluación de IMC y riesgo cardiometabólico','Folio: '+folio('IMC')+'  ·  '+hoyStr());
+      y = pdfSectionTitle(pdf,y,'Paciente');
+      y = pdfKV(pdf,y,[['Sexo:',last.sexo==='M'?'Hombre':'Mujer'],['Edad:',last.edad||'—'],['Peso:',fmt(last.peso,1)+' kg'],['Talla:',fmt(last.tallaCm,0)+' cm']]);
+      y+=2; y = pdfSectionTitle(pdf,y,'Resultados');
+      const rows=[['IMC:',fmt(last.imc,1)+' kg/m²  ('+last.cls.t+')']];
+      if (last.cint>0) rows.push(['Cintura:',fmt(last.cint,0)+' cm'+(last.cintR?('  ('+last.cintR.t+')'):'')]);
+      if (last.ict) rows.push(['Cintura/talla:',fmt(last.ict,2)+(last.ictR?('  ('+last.ictR.t+')'):'')]);
+      if (last.icc) rows.push(['Cintura/cadera:',fmt(last.icc,2)+(last.iccR?('  ('+last.iccR.t+')'):'')]);
+      if (last.paR) rows.push(['Presión arterial:',fmt(last.sis,0)+'/'+fmt(last.dia,0)+' mmHg  ('+last.paR.t+')']);
+      y = pdfKV(pdf,y,rows);
+      if (last.recs.length){
+        y+=2; y = pdfSectionTitle(pdf,y,'Recomendaciones');
+        pdf.setFontSize(10); pdf.setTextColor(...SYN.tinta);
+        last.recs.forEach(r=>{ pdf.splitTextToSize('• '+r, 178).forEach(l=>{ if(y>262){pdfFooter(pdf);pdf.addPage();y=20;} pdf.text(l,16,y); y+=5.2; }); y+=1; });
+      }
+      pdfFooter(pdf,'Tamizaje · no sustituye valoración clínica');
+      pdf.save('imc-riesgo-'+Date.now()+'.pdf');
+      Toast.success('PDF generado','Evaluación cardiometabólica');
+    };
+
+    calc();
+  }
+  registerTool({ id:'imc', tab:'IMC y riesgo', icon:'i-heart', mount });
+})();
+</script>
+
+<!-- ══════════════════════ HERRAMIENTA 4 · DOSIS MÁXIMA DE ANESTÉSICOS LOCALES ══════════════════════ -->
+<script>
+(function(){
+  const CART_ML = 1.8; // cartucho dental estándar
+  /* maxKg mg/kg · maxAbs tope absoluto mg · mgml concentración · epiMgml adrenalina por mL (0 = sin vasoconstrictor) */
+  const ANEST = [
+    { id:'lido2epi', n:'Lidocaína 2% c/epinefrina 1:100,000', mgml:20, maxKg:7, maxAbs:500, epiMgml:0.01, epiTxt:'Epinefrina 1:100,000' },
+    { id:'lido2', n:'Lidocaína 2% simple', mgml:20, maxKg:4.4, maxAbs:300, epiMgml:0, epiTxt:'Sin vasoconstrictor' },
+    { id:'mepi2epi', n:'Mepivacaína 2% c/vasoconstrictor', mgml:20, maxKg:6.6, maxAbs:400, epiMgml:0.01, epiTxt:'Epinefrina 1:100,000 / levonordefrina' },
+    { id:'mepi3', n:'Mepivacaína 3% simple', mgml:30, maxKg:4.4, maxAbs:300, epiMgml:0, epiTxt:'Sin vasoconstrictor' },
+    { id:'arti4epi100', n:'Articaína 4% c/epinefrina 1:100,000', mgml:40, maxKg:7, maxAbs:500, epiMgml:0.01, epiTxt:'Epinefrina 1:100,000' },
+    { id:'arti4epi200', n:'Articaína 4% c/epinefrina 1:200,000', mgml:40, maxKg:7, maxAbs:500, epiMgml:0.005, epiTxt:'Epinefrina 1:200,000' },
+    { id:'prilo4', n:'Prilocaína 4% simple', mgml:40, maxKg:6, maxAbs:400, epiMgml:0, epiTxt:'Sin vasoconstrictor' },
+    { id:'bupi05epi', n:'Bupivacaína 0.5% c/epinefrina 1:200,000', mgml:5, maxKg:1.3, maxAbs:90, epiMgml:0.005, epiTxt:'Epinefrina 1:200,000 · larga duración' }
+  ];
+
+  function mount(c){
+    const opts = ANEST.map(a=>`<option value="${a.id}">${escHtml(a.n)}</option>`).join('');
+    toolShell(c, {
+      icon:'i-syringe', title:'Dosis máxima de anestésicos locales',
+      sub:'Calcula la dosis máxima segura por peso, el volumen y el número de cartuchos (1.8 mL), con control del límite de vasoconstrictor en pacientes sanos y cardiópatas.',
+      actions:`<button class="btn btn--accent btn--sm" id="an-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>`,
+      body:`
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-syringe"/></svg>Datos del procedimiento</div>
+        <div class="bn-grid">
+          <div class="bn-field bn-field--full"><label>Anestésico y presentación</label><select class="bn-select" id="an-farm">${opts}</select><div class="bn-field__hint" id="an-vaso">—</div></div>
+          <div class="bn-field"><label>Peso del paciente</label><input class="input" id="an-peso" inputmode="decimal" placeholder="ej. 70"><div class="bn-field__hint">kg</div></div>
+          <div class="bn-field"><label>Estado del paciente</label>
+            <div class="bn-seg" id="an-estado"><button data-v="sano" class="is-on">Sano (ASA I–II)</button><button data-v="cardio">Cardiópata</button></div>
+            <div class="bn-field__hint">Ajusta el límite de epinefrina</div></div>
+          <div class="bn-field"><label>Cartuchos a administrar <span style="text-transform:none;font-weight:500">(opcional)</span></label><input class="input" id="an-cart" inputmode="decimal" placeholder="ej. 3"><div class="bn-field__hint">Para verificar contra el máximo</div></div>
+        </div>
+      </div>
+
+      <div class="bn-result">
+        <div class="bn-result__lbl">Dosis máxima segura</div>
+        <div class="bn-result__val"><span id="an-val">—</span><span class="bn-result__unit">mg</span></div>
+        <div class="bn-result__note" id="an-note">Captura el peso para calcular.</div>
+      </div>
+
+      <div class="bn-mini" id="an-mini" style="display:none">
+        <div class="bn-mini__c"><div class="bn-mini__l">Volumen máximo</div><div class="bn-mini__v" id="an-vol">—</div><div class="bn-mini__sub">de solución</div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Cartuchos máx.</div><div class="bn-mini__v" id="an-cartmax">—</div><div class="bn-mini__sub" id="an-cartmax-s">de 1.8 mL</div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Límite por anestésico</div><div class="bn-mini__v" id="an-lim-anes">—</div><div class="bn-mini__sub" id="an-lim-anes-s"></div></div>
+        <div class="bn-mini__c" id="an-epi-card"><div class="bn-mini__l">Límite por vasoconstrictor</div><div class="bn-mini__v" id="an-lim-epi">—</div><div class="bn-mini__sub" id="an-lim-epi-s"></div></div>
+      </div>
+
+      <div id="an-alert"></div>
+
+      <div class="bn-disclaimer"><svg class="ic"><use href="#i-alert-triangle"/></svg><div>Dosis máximas de referencia para adultos sanos. Reduce el límite en pediátricos, adultos mayores, hepatópatas y embarazadas. Límite de epinefrina: 0.2 mg en paciente sano y 0.04 mg en cardiópata. Verifica siempre contra la ficha técnica del producto.</div></div>`
+    });
+
+    const q = id => c.querySelector('#'+id);
+    let estado='sano', last=null;
+    q('an-estado').querySelectorAll('button').forEach(b=>b.onclick=()=>{ q('an-estado').querySelectorAll('button').forEach(x=>x.classList.remove('is-on')); b.classList.add('is-on'); estado=b.dataset.v; calc(); });
+
+    function calc(){
+      const a = ANEST.find(x=>x.id===q('an-farm').value) || ANEST[0];
+      q('an-vaso').textContent = a.epiTxt + ' · '+a.mgml+' mg/mL · '+fmt(a.mgml*CART_ML,0)+' mg por cartucho';
+      const peso=num(q('an-peso').value), cartUsa=num(q('an-cart').value);
+      const val=q('an-val'), note=q('an-note'), mini=q('an-mini'), alert=q('an-alert');
+      const epiCard=q('an-epi-card');
+      epiCard.style.display = a.epiMgml>0 ? '' : 'none';
+
+      if (peso===null || peso<=0){ val.textContent='—'; note.textContent='Captura el peso para calcular.'; mini.style.display='none'; alert.innerHTML=''; last=null; return; }
+
+      const maxByKg = peso*a.maxKg;
+      const maxAnes = Math.min(maxByKg, a.maxAbs);
+      const cartMg = a.mgml*CART_ML;
+      const maxCartAnes = maxAnes/cartMg;
+
+      // Límite por epinefrina
+      let maxCartEpi = Infinity, epiLim=null, maxCartFinal = maxCartAnes, limitante='anestésico';
+      if (a.epiMgml>0){
+        epiLim = estado==='cardio' ? 0.04 : 0.2;
+        maxCartEpi = epiLim/(a.epiMgml*CART_ML);
+        if (maxCartEpi < maxCartAnes){ maxCartFinal = maxCartEpi; limitante='vasoconstrictor'; }
+      }
+      const maxMgFinal = maxCartFinal*cartMg;
+      const maxVolFinal = maxCartFinal*CART_ML;
+
+      val.textContent = fmt(maxMgFinal,0);
+      note.innerHTML = 'Equivale a <b>'+fmt(maxCartFinal,1)+' cartuchos</b> ('+fmt(maxVolFinal,1)+' mL). Factor limitante: <b>'+limitante+'</b>.';
+      q('an-vol').textContent=fmt(maxVolFinal,1)+' mL';
+      q('an-cartmax').textContent=fmt(Math.floor(maxCartFinal*10)/10,1);
+      q('an-cartmax-s').textContent = 'seguro: '+Math.floor(maxCartFinal)+' completos';
+      q('an-lim-anes').textContent=fmt(maxAnes,0)+' mg';
+      q('an-lim-anes-s').textContent = (maxByKg<a.maxAbs? fmt(a.maxKg,1)+' mg/kg' : 'tope '+a.maxAbs+' mg');
+      if (a.epiMgml>0){ q('an-lim-epi').textContent=fmt(maxCartEpi,1)+' cart'; q('an-lim-epi-s').textContent=(estado==='cardio'?'cardiópata ':'sano ')+epiLim+' mg epi'; }
+
+      mini.style.display='';
+
+      let al='';
+      if (peso*a.maxKg > a.maxAbs) al += `<div class="bn-alert bn-alert--info"><svg class="ic"><use href="#i-info"/></svg><div>El cálculo por peso (${fmt(peso*a.maxKg,0)} mg) excede el tope absoluto del fármaco; se aplicó el máximo de <b>${a.maxAbs} mg</b>.</div></div>`;
+      if (limitante==='vasoconstrictor') al += `<div class="bn-alert bn-alert--warn"><svg class="ic"><use href="#i-alert-triangle"/></svg><div><b>El vasoconstrictor es el factor limitante.</b> En este paciente ${estado==='cardio'?'cardiópata':'sano'}, la epinefrina limita a <b>${fmt(maxCartFinal,1)} cartuchos</b> antes que el propio anestésico.</div></div>`;
+      if (cartUsa>0){
+        if (cartUsa > maxCartFinal) al += `<div class="bn-alert bn-alert--danger"><svg class="ic"><use href="#i-alert-triangle"/></svg><div><b>⚠ Excede el máximo seguro.</b> Planeas ${fmt(cartUsa,1)} cartuchos (${fmt(cartUsa*cartMg,0)} mg) y el límite es ${fmt(maxCartFinal,1)} (${fmt(maxMgFinal,0)} mg). Reduce la dosis.</div></div>`;
+        else al += `<div class="bn-alert bn-alert--ok"><svg class="ic"><use href="#i-check-circle"/></svg><div><b>Dentro del margen seguro.</b> ${fmt(cartUsa,1)} cartuchos = ${fmt(cartUsa*cartMg,0)} mg (${fmt(cartUsa/maxCartFinal*100,0)}% del máximo).</div></div>`;
+      }
+      alert.innerHTML=al;
+
+      last = { a, peso, estado, maxMgFinal, maxVolFinal, maxCartFinal, maxAnes, epiLim, limitante, cartUsa };
+    }
+    q('an-farm').addEventListener('change', calc);
+    ['an-peso','an-cart'].forEach(id=>q(id).addEventListener('input', calc));
+
+    q('an-pdf').onclick=()=>{
+      if (!toolRequiereVIP('la calculadora de anestésicos')) return;
+      if (!last){ Toast.error('Faltan datos','Captura el peso primero.'); return; }
+      if (!window.jspdf){ Toast.error('PDF no disponible'); return; }
+      const { jsPDF } = window.jspdf; const pdf = new jsPDF({unit:'mm',format:'a4'}); const a=last.a;
+      let y = pdfHeader(pdf,'Dosis máxima de anestésico local','Folio: '+folio('ANE')+'  ·  '+hoyStr());
+      y = pdfSectionTitle(pdf,y,'Datos');
+      y = pdfKV(pdf,y,[['Anestésico:',a.n],['Concentración:',a.mgml+' mg/mL ('+fmt(a.mgml*CART_ML,0)+' mg/cartucho de 1.8 mL)'],['Peso:',fmt(last.peso,1)+' kg'],['Estado:',last.estado==='cardio'?'Cardiópata (límite epi 0.04 mg)':'Sano ASA I–II (límite epi 0.2 mg)']]);
+      y+=2; y = pdfSectionTitle(pdf,y,'Dosis máxima segura');
+      y = pdfKV(pdf,y,[
+        ['Dosis máxima:',fmt(last.maxMgFinal,0)+' mg'],
+        ['Volumen máximo:',fmt(last.maxVolFinal,1)+' mL'],
+        ['Cartuchos máx.:',fmt(last.maxCartFinal,1)+' (seguro '+Math.floor(last.maxCartFinal)+' completos)'],
+        ['Factor limitante:',last.limitante==='vasoconstrictor'?'Vasoconstrictor (epinefrina)':'Anestésico'],
+        ...(last.cartUsa>0?[['Dosis planeada:',fmt(last.cartUsa,1)+' cartuchos = '+fmt(last.cartUsa*a.mgml*CART_ML,0)+' mg ('+(last.cartUsa>last.maxCartFinal?'EXCEDE el máximo':'dentro del margen')+')']]:[])
+      ]);
+      pdfFooter(pdf,'Referencia adulto sano · ajustar en poblaciones especiales');
+      pdf.save('anestesico-'+a.id+'-'+Date.now()+'.pdf');
+      Toast.success('PDF generado','Reporte de anestésico local');
+    };
+
+    calc();
+  }
+  registerTool({ id:'anestesicos', tab:'Anestésicos', icon:'i-syringe', mount });
+})();
+</script>
+
+<!-- ══════════════════════ HERRAMIENTA 5 · NUTRICIÓN CLÍNICA (CALORÍAS + MACROS) ══════════════════════ -->
+<script>
+(function(){
+  const ACT = [
+    { v:1.2, l:'Sedentario (poco o nada de ejercicio)' },
+    { v:1.375, l:'Ligero (1–3 días/semana)' },
+    { v:1.55, l:'Moderado (3–5 días/semana)' },
+    { v:1.725, l:'Intenso (6–7 días/semana)' },
+    { v:1.9, l:'Muy intenso (físico + entrenamiento)' }
+  ];
+  /* Objetivos: ajuste calórico (kcal o factor) + presets de proteína g/kg y grasa % */
+  const OBJ = {
+    mant:   { l:'Mantenimiento de peso', tipo:'kcal', aj:0, prot:1.2, grasa:28 },
+    perd:   { l:'Pérdida de peso (déficit)', tipo:'kcal', aj:-500, prot:1.6, grasa:28 },
+    gan:    { l:'Ganancia muscular (superávit)', tipo:'kcal', aj:400, prot:2.0, grasa:25 },
+    dm:     { l:'Diabetes / control glucémico', tipo:'kcal', aj:-300, prot:1.2, grasa:30 },
+    desn:   { l:'Desnutrición / repleción', tipo:'kcal', aj:500, prot:1.5, grasa:30 },
+    estres: { l:'Estrés metabólico / postquirúrgico', tipo:'factor', aj:1.3, prot:1.5, grasa:30 }
+  };
+
+  function mount(c){
+    const actOpts = ACT.map((a,i)=>`<option value="${a.v}"${i===2?' selected':''}>${escHtml(a.l)}</option>`).join('');
+    const objOpts = Object.entries(OBJ).map(([k,o])=>`<option value="${k}">${escHtml(o.l)}</option>`).join('');
+    toolShell(c, {
+      icon:'i-apple', title:'Calculadora de nutrición clínica',
+      sub:'Gasto energético por Mifflin-St Jeor y Harris-Benedict, ajuste por objetivo o patología y reparto de macronutrientes con gramos, calorías y porcentajes.',
+      actions:`<button class="btn btn--accent btn--sm" id="nu-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>`,
+      body:`
+      <div class="bn-card">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-user"/></svg>Datos del paciente</div>
+        <div class="bn-grid">
+          <div class="bn-field"><label>Sexo</label>
+            <div class="bn-seg" id="nu-sexo"><button data-v="M" class="is-on">Hombre</button><button data-v="F">Mujer</button></div></div>
+          <div class="bn-field"><label>Edad</label><input class="input" id="nu-edad" inputmode="numeric" placeholder="años"></div>
+          <div class="bn-field"><label>Peso</label><input class="input" id="nu-peso" inputmode="decimal" placeholder="ej. 72"><div class="bn-field__hint">kg</div></div>
+          <div class="bn-field"><label>Talla</label><input class="input" id="nu-talla" inputmode="decimal" placeholder="ej. 168"><div class="bn-field__hint">cm</div></div>
+          <div class="bn-field bn-field--full"><label>Nivel de actividad física</label><select class="bn-select" id="nu-act">${actOpts}</select></div>
+          <div class="bn-field bn-field--full"><label>Objetivo clínico</label><select class="bn-select" id="nu-obj">${objOpts}</select><div class="bn-field__hint" id="nu-obj-hint">Define el ajuste calórico y el reparto de macros</div></div>
+          <div class="bn-field"><label>Proteína</label><input class="input" id="nu-prot" inputmode="decimal"><div class="bn-field__hint">g/kg de peso · editable</div></div>
+          <div class="bn-field"><label>Grasa</label><input class="input" id="nu-grasa" inputmode="decimal"><div class="bn-field__hint">% de las calorías · editable</div></div>
+        </div>
+      </div>
+
+      <div class="bn-result">
+        <div class="bn-result__lbl">Requerimiento calórico objetivo</div>
+        <div class="bn-result__val"><span id="nu-kcal">—</span><span class="bn-result__unit">kcal/día</span></div>
+        <div class="bn-result__note" id="nu-note">Captura peso, talla y edad.</div>
+      </div>
+
+      <div class="bn-mini" id="nu-mini-e" style="display:none">
+        <div class="bn-mini__c"><div class="bn-mini__l">GEB · Mifflin-St Jeor</div><div class="bn-mini__v" id="nu-mifflin">—</div><div class="bn-mini__sub">basal</div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">GEB · Harris-Benedict</div><div class="bn-mini__v" id="nu-hb">—</div><div class="bn-mini__sub">basal (referencia)</div></div>
+        <div class="bn-mini__c"><div class="bn-mini__l">Gasto total (GET)</div><div class="bn-mini__v" id="nu-get">—</div><div class="bn-mini__sub" id="nu-get-s">con actividad</div></div>
+      </div>
+
+      <div class="bn-card" id="nu-macro-card" style="display:none">
+        <div class="bn-card__t"><svg class="ic"><use href="#i-activity"/></svg>Reparto de macronutrientes</div>
+        <table class="bn-tbl">
+          <thead><tr><th>Macronutriente</th><th>Gramos/día</th><th>kcal</th><th>% del total</th></tr></thead>
+          <tbody id="nu-macro-body"></tbody>
+        </table>
+        <div class="bn-formula" id="nu-macro-note" style="margin-top:14px"></div>
+      </div>
+
+      <div class="bn-disclaimer"><svg class="ic"><use href="#i-alert-triangle"/></svg><div>Las ecuaciones estiman el gasto en población general; en obesidad usa peso ajustado y en pacientes críticos considera calorimetría indirecta. El plan final debe individualizarse por un nutriólogo o médico.</div></div>`
+    });
+
+    const q = id => c.querySelector('#'+id);
+    let sexo='M', last=null, protTouched=false, grasaTouched=false;
+    q('nu-sexo').querySelectorAll('button').forEach(b=>b.onclick=()=>{ q('nu-sexo').querySelectorAll('button').forEach(x=>x.classList.remove('is-on')); b.classList.add('is-on'); sexo=b.dataset.v; calc(); });
+
+    function applyObjDefaults(){
+      const o = OBJ[q('nu-obj').value];
+      q('nu-prot').value = o.prot; q('nu-grasa').value = o.grasa;
+      protTouched=false; grasaTouched=false;
+      q('nu-obj-hint').textContent = o.tipo==='factor' ? ('Aplica factor de estrés ×'+o.aj) : (o.aj===0?'Sin ajuste calórico':(o.aj>0?'+':'')+o.aj+' kcal sobre el GET');
+    }
+    q('nu-obj').addEventListener('change', ()=>{ applyObjDefaults(); calc(); });
+    q('nu-prot').addEventListener('input', ()=>{ protTouched=true; calc(); });
+    q('nu-grasa').addEventListener('input', ()=>{ grasaTouched=true; calc(); });
+    ['nu-edad','nu-peso','nu-talla'].forEach(id=>q(id).addEventListener('input', calc));
+    q('nu-act').addEventListener('change', calc);
+
+    function calc(){
+      const peso=num(q('nu-peso').value), tallaCm=num(q('nu-talla').value), edad=num(q('nu-edad').value);
+      const act=parseFloat(q('nu-act').value)||1.55;
+      const o=OBJ[q('nu-obj').value];
+      const kcalEl=q('nu-kcal'), note=q('nu-note'), miniE=q('nu-mini-e'), macroCard=q('nu-macro-card');
+      if (!(peso>0 && tallaCm>0 && edad>0)){ kcalEl.textContent='—'; note.textContent='Captura peso, talla y edad.'; miniE.style.display='none'; macroCard.style.display='none'; last=null; return; }
+
+      const mifflin = sexo==='M' ? (10*peso + 6.25*tallaCm - 5*edad + 5) : (10*peso + 6.25*tallaCm - 5*edad - 161);
+      const hb = sexo==='M' ? (88.362 + 13.397*peso + 4.799*tallaCm - 5.677*edad) : (447.593 + 9.247*peso + 3.098*tallaCm - 4.330*edad);
+      const get = mifflin*act;
+      const objetivo = o.tipo==='factor' ? (mifflin*o.aj) : (get + o.aj);
+
+      kcalEl.textContent = fmt(objetivo,0);
+      note.innerHTML = o.tipo==='factor'
+        ? 'GEB × factor de estrés '+o.aj+'. Base Mifflin-St Jeor.'
+        : (o.aj===0 ? 'Igual al gasto total estimado (mantenimiento).' : (o.aj>0?'Superávit de +':'Déficit de ')+Math.abs(o.aj)+' kcal sobre el GET.');
+      q('nu-mifflin').textContent=fmt(mifflin,0)+' kcal';
+      q('nu-hb').textContent=fmt(hb,0)+' kcal';
+      q('nu-get').textContent=fmt(get,0)+' kcal';
+      q('nu-get-s').textContent='factor actividad ×'+act;
+      miniE.style.display='';
+
+      // Macros
+      const protGkg = num(q('nu-prot').value) || o.prot;
+      const grasaPct = num(q('nu-grasa').value) || o.grasa;
+      const protG = protGkg*peso; const protKcal = protG*4;
+      const grasaKcal = objetivo*(grasaPct/100); const grasaG = grasaKcal/9;
+      let carbKcal = objetivo - protKcal - grasaKcal; if (carbKcal<0) carbKcal=0;
+      const carbG = carbKcal/4;
+      const rows = [
+        ['Proteínas', protG, protKcal, 'lo'],
+        ['Grasas', grasaG, grasaKcal, 'mid'],
+        ['Carbohidratos', carbG, carbKcal, 'ok']
+      ];
+      q('nu-macro-body').innerHTML = rows.map(([n,g,k,b])=>`<tr><td><span class="bn-badge bn-badge--${b}">${n}</span></td><td style="font-family:'JetBrains Mono',monospace;font-weight:700">${fmt(g,0)} g</td><td>${fmt(k,0)} kcal</td><td>${fmt(k/objetivo*100,0)}%</td></tr>`).join('');
+      let macroNote = 'Proteína '+fmt(protGkg,2)+' g/kg · Grasa '+fmt(grasaPct,0)+'% · Carbohidratos por diferencia.';
+      if (protKcal+grasaKcal > objetivo) macroNote = '⚠ La proteína y la grasa configuradas ya superan las calorías objetivo; reduce alguno de los dos.';
+      q('nu-macro-note').textContent = macroNote;
+      macroCard.style.display='';
+
+      last = { sexo, edad, peso, tallaCm, act, o:q('nu-obj').value, objLbl:o.l, mifflin, hb, get, objetivo, protGkg, grasaPct, protG, protKcal, grasaG, grasaKcal, carbG, carbKcal };
+    }
+
+    q('nu-pdf').onclick=()=>{
+      if (!toolRequiereVIP('la calculadora de nutrición')) return;
+      if (!last){ Toast.error('Faltan datos','Captura peso, talla y edad.'); return; }
+      if (!window.jspdf){ Toast.error('PDF no disponible'); return; }
+      const { jsPDF } = window.jspdf; const pdf = new jsPDF({unit:'mm',format:'a4'});
+      let y = pdfHeader(pdf,'Plan calórico y de macronutrientes','Folio: '+folio('NUT')+'  ·  '+hoyStr());
+      y = pdfSectionTitle(pdf,y,'Paciente');
+      y = pdfKV(pdf,y,[['Sexo:',last.sexo==='M'?'Hombre':'Mujer'],['Edad:',fmt(last.edad,0)+' años'],['Peso:',fmt(last.peso,1)+' kg'],['Talla:',fmt(last.tallaCm,0)+' cm'],['Actividad:','factor ×'+last.act],['Objetivo:',last.objLbl]]);
+      y+=2; y = pdfSectionTitle(pdf,y,'Gasto energético');
+      y = pdfKV(pdf,y,[['GEB Mifflin-St Jeor:',fmt(last.mifflin,0)+' kcal'],['GEB Harris-Benedict:',fmt(last.hb,0)+' kcal'],['Gasto total (GET):',fmt(last.get,0)+' kcal'],['Objetivo calórico:',fmt(last.objetivo,0)+' kcal/día']]);
+      y+=2; y = pdfSectionTitle(pdf,y,'Macronutrientes');
+      y = pdfKV(pdf,y,[
+        ['Proteínas:',fmt(last.protG,0)+' g  ('+fmt(last.protGkg,2)+' g/kg · '+fmt(last.protKcal,0)+' kcal · '+fmt(last.protKcal/last.objetivo*100,0)+'%)'],
+        ['Grasas:',fmt(last.grasaG,0)+' g  ('+fmt(last.grasaKcal,0)+' kcal · '+fmt(last.grasaPct,0)+'%)'],
+        ['Carbohidratos:',fmt(last.carbG,0)+' g  ('+fmt(last.carbKcal,0)+' kcal · '+fmt(last.carbKcal/last.objetivo*100,0)+'%)']
+      ]);
+      pdfFooter(pdf,'Estimación · individualizar con nutriólogo');
+      pdf.save('nutricion-'+Date.now()+'.pdf');
+      Toast.success('PDF generado','Plan nutricional');
+    };
+
+    applyObjDefaults();
+    calc();
+  }
+  registerTool({ id:'nutricion', tab:'Nutrición clínica', icon:'i-apple', mount });
+})();
+</script>
+
+</body>
+</html>
