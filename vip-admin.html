@@ -527,6 +527,7 @@ window.__tokenAdmin = tokenAdmin;
     <div class="nav-section">
       <div class="nav-label">Comunicación</div>
       <a class="nav-item" data-section="notificaciones"><svg class="ic"><use href="#i-bell"/></svg>Notificaciones<span class="nav-item__badge" id="badge-notif">0</span></a>
+      <a class="nav-item" data-section="noticias"><svg class="ic"><use href="#i-news"/></svg>Noticias<span class="nav-item__badge" id="badge-noticias">0</span></a>
     </div>
 
     <div class="nav-section">
@@ -1450,6 +1451,97 @@ window.enviarNotificacion = async function(){
     Toast.success('Notificación enviada');
     document.getElementById('nt-titulo').value = ''; document.getElementById('nt-desc').value = '';
   } catch (e) { Toast.error('Error al enviar', e.message); }
+};
+
+/* ═══════════════════ NOTICIAS (cron automático) ═══════════════════ */
+PAGES.noticias = function(){
+  const page = document.getElementById('page');
+  page.innerHTML = `<div class="fade-up">
+    <div class="sec-hero"><span class="sec-hero__eyebrow"><svg class="ic" style="width:12px;height:12px"><use href="#i-news"/></svg>Cron automático</span><h1 class="sec-hero__title">Noticias</h1><p class="sec-hero__sub">El cron de Railway corre cada día a las 7 AM CDMX y publica noticias del sector salud (normativa NOM, bioseguridad, atención al paciente) en el panel VIP. Aquí ves la colección <strong>noticias_auto</strong> en tiempo real.</p></div>
+
+    <div class="dash-card" style="margin-bottom:22px">
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--success),#059669);color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg class="ic" style="width:22px;height:22px"><use href="#i-news"/></svg></div>
+        <div style="flex:1;min-width:200px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--success);display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block"></span>Cron en línea</div>
+          <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;margin-top:2px">NewsData → Firestore</div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:3px" id="ns-meta">Cargando estado…</div>
+        </div>
+        <button class="btn btn-primary" id="ns-run" onclick="ejecutarNoticiasAhora()"><svg class="ic"><use href="#i-arrow-right"/></svg>Ejecutar ahora</button>
+      </div>
+    </div>
+
+    <div class="dash-card">
+      <div class="dash-card__header"><div class="dash-card__title"><svg class="ic"><use href="#i-news"/></svg>Últimas noticias publicadas</div><span class="tag tag--primary" id="ns-count">—</span></div>
+      <div class="mini-list" id="ns-list">${loadingRow()}</div>
+    </div>
+  </div>`;
+  cargarNoticiasAdmin();
+};
+
+window.cargarNoticiasAdmin = async function(){
+  const list = document.getElementById('ns-list');
+  if (!list) return;
+  try {
+    const { collection, getDocs, db, query, orderBy, limit } = window.__fs;
+    let snap;
+    try { snap = await getDocs(query(collection(db, 'noticias_auto'), orderBy('createdAt', 'desc'), limit(30))); }
+    catch (e) { snap = await getDocs(collection(db, 'noticias_auto')); }
+    const noticias = []; snap.forEach(d => noticias.push({ id: d.id, ...d.data() }));
+
+    const badge = document.getElementById('badge-noticias'); if (badge) badge.textContent = String(noticias.length);
+    const count = document.getElementById('ns-count'); if (count) count.textContent = noticias.length + ' en el panel';
+    const meta = document.getElementById('ns-meta');
+    if (meta) {
+      const ultima = noticias[0]?.createdAt;
+      const fecha = ultima?.toDate ? ultima.toDate().toLocaleString('es-MX', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'aún no ha corrido';
+      meta.innerHTML = 'Última publicación: <strong>' + fecha + '</strong> · ' + noticias.length + ' noticias en el panel · Próxima corrida automática: <strong>7:00 AM</strong>';
+    }
+
+    if (!noticias.length) { list.innerHTML = emptyRow('Aún no hay noticias. Presiona "Ejecutar ahora" para publicar las primeras.'); return; }
+    list.innerHTML = noticias.map(n => `<div class="mini-row" style="--c1:${n.color || 'var(--primary)'}">
+      <div class="mini-row__dot" style="background:color-mix(in srgb,${n.color || 'var(--primary)'} 16%,transparent);color:${n.color || 'var(--primary)'}"><svg class="ic"><use href="#i-news"/></svg></div>
+      <div class="mini-row__body">
+        <div class="mini-row__meta" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px"><span class="tag" style="background:color-mix(in srgb,${n.color || 'var(--primary)'} 14%,transparent);color:${n.color || 'var(--primary)'};border:0.5px solid color-mix(in srgb,${n.color || 'var(--primary)'} 30%,transparent)">${escHtml(n.categoriaNombre || n.categoria || 'General')}</span><span>${escHtml(n.fuente || '')}</span></div>
+        <div class="mini-row__title">${escHtml(n.titulo || 'Sin título')}</div>
+        ${n.link ? `<a href="${escHtml(n.link)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--primary);font-weight:600">Abrir fuente</a>` : ''}
+      </div>
+      <button class="icon-action icon-action--danger" onclick="borrarNoticiaAdmin('${n.id}')"><svg class="ic"><use href="#i-trash"/></svg></button>
+    </div>`).join('');
+  } catch (e) {
+    list.innerHTML = emptyRow('No se pudieron cargar las noticias: ' + e.message);
+  }
+};
+
+window.borrarNoticiaAdmin = function(id){
+  if (!confirm('¿Eliminar esta noticia del panel? Esta acción no se puede deshacer.')) return;
+  (async () => {
+    try {
+      const { doc, deleteDoc, db } = window.__fs;
+      await deleteDoc(doc(db, 'noticias_auto', id));
+      Toast.success('Noticia eliminada');
+      cargarNoticiasAdmin();
+    } catch (e) { Toast.error('Error al eliminar', e.message); }
+  })();
+};
+
+window.ejecutarNoticiasAhora = async function(){
+  const btn = document.getElementById('ns-run');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<svg class="ic spin" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>Sincronizando…'; }
+  try {
+    const r = await fetch(window.__WEBHOOK_URL + '/noticias/sync?secret=default-secret');
+    const data = await r.json();
+    if (data.ok) {
+      Toast.success('Noticias sincronizadas', (data.resultado?.guardadas ?? 0) + ' noticias nuevas publicadas');
+      setTimeout(cargarNoticiasAdmin, 1200);
+    } else {
+      Toast.error('El servidor respondió con error', data.error || 'Revisa los logs de Railway');
+    }
+  } catch (e) {
+    Toast.error('No se pudo ejecutar la sincronización', e.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg class="ic"><use href="#i-arrow-right"/></svg>Ejecutar ahora'; }
+  }
 };
 </script>
 
