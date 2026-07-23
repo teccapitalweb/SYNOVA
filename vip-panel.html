@@ -1297,16 +1297,29 @@ function cerrarDrawer(){ document.getElementById('mobile-drawer').classList.remo
 document.getElementById('mobile-nav-more')?.addEventListener('click', abrirDrawer);
 document.getElementById('mobile-drawer-close')?.addEventListener('click', cerrarDrawer);
 document.getElementById('mobile-drawer-overlay')?.addEventListener('click', cerrarDrawer);
-document.getElementById('drawer-logout-btn')?.addEventListener('click', () => {
-  if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-    window.__signOut && window.__signOut();
-  }
+/* Modal de confirmación de logout (estilo SYNOVA) */
+function openLogoutModal(){
+  Modal.open({
+    id:'logout-confirm',
+    title:'¿Cerrar sesión?',
+    subtitle:'Tu progreso queda guardado',
+    icon:'i-logout',
+    size:'sm',
+    body:`<p style="color:var(--text-2);font-size:14px;line-height:1.55;margin:0;">Vas a salir del Panel VIP de SYNOVA. La próxima vez tendrás que iniciar sesión de nuevo con tu correo y contraseña.</p>`,
+    footer:`<button class="btn btn--ghost" onclick="Modal.close('logout-confirm')">Cancelar</button><button class="btn btn--accent" id="confirm-logout" style="background:var(--danger);box-shadow:0 4px 14px color-mix(in srgb,var(--danger) 40%,transparent);color:#fff;">Cerrar sesión</button>`
+  });
+  document.getElementById('confirm-logout')?.addEventListener('click', () => {
+    Modal.close('logout-confirm');
+    if (window.__signOut) window.__signOut();
+  });
+}
+window.openLogoutModal = openLogoutModal;
+document.getElementById('drawer-logout-btn')?.addEventListener('click', (e) => {
+  e.preventDefault();
+  cerrarDrawer();
+  setTimeout(() => openLogoutModal(), 200);
 });
-document.getElementById('btn-logout')?.addEventListener('click', () => {
-  if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-    window.__signOut && window.__signOut();
-  }
-});
+document.getElementById('btn-logout')?.addEventListener('click', openLogoutModal);
 document.getElementById('btn-avatar')?.addEventListener('click', () => navigateTo('perfil'));
 
 /* ══════════════════════ ROUTER ══════════════════════ */

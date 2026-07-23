@@ -301,6 +301,7 @@ body.auth-ready .auth-gate{display:none !important}
 @keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .modal__header{padding:18px 22px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
 .modal__icon{width:36px;height:36px;border-radius:10px;background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal__icon .ic{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .modal__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:16px;font-weight:700;letter-spacing:-.2px}
 .modal__subtitle{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);font-weight:600;margin-top:2px}
 .modal__close{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--surface-2);color:var(--text-2);display:flex;align-items:center;justify-content:center;transition:all .15s}
@@ -1700,12 +1701,28 @@ window.guardarConfig = async function(){
 
 <script>
 /* ═══════════════════ WIRING GLOBAL ═══════════════════ */
+/* Modal de confirmación de logout (estilo SYNOVA) */
+function openLogoutModal(){
+  Modal.open({
+    title: '¿Cerrar sesión?',
+    subtitle: 'Panel de administración',
+    icon: 'i-logout',
+    body: `<p style="color:var(--text-2);font-size:14px;line-height:1.55;margin:0;">Vas a salir del panel de administración de SYNOVA. La próxima vez tendrás que iniciar sesión de nuevo con tu correo y contraseña.</p>`,
+    footer: `<button class="btn btn-outline" onclick="Modal.close()">Cancelar</button><button class="btn btn-primary" id="confirm-logout" style="background:var(--danger);box-shadow:0 8px 22px color-mix(in srgb,var(--danger) 40%,transparent);color:#fff;">Cerrar sesión</button>`
+  });
+  document.getElementById('confirm-logout')?.addEventListener('click', () => {
+    Modal.close();
+    window.__cerrarSesion ? window.__cerrarSesion() : (window.location.href = 'vip-auth.html');
+  });
+}
+window.openLogoutModal = openLogoutModal;
+
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   document.getElementById('theme-toggle').addEventListener('click', () => Theme.toggle());
   document.querySelectorAll('.nav-item, .mobile-nav__item').forEach(b => b.addEventListener('click', e => {
     e.preventDefault();
-    if (b.id === 'btn-logout') { if (confirm('¿Estás seguro de que deseas cerrar sesión?')) { window.__cerrarSesion ? window.__cerrarSesion() : (window.location.href = 'vip-auth.html'); } return; }
+    if (b.id === 'btn-logout') { openLogoutModal(); return; }
     if (b.dataset.section) navigate(b.dataset.section);
   }));
   document.getElementById('modal-close').addEventListener('click', () => Modal.close());
