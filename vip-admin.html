@@ -285,6 +285,40 @@ body.auth-ready .auth-gate{display:none !important}
 .curso-row__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:13.5px;font-weight:700;letter-spacing:-.2px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .curso-row__meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:4px;font-size:11px;color:var(--text-3)}
 .curso-row__actions{display:flex;gap:5px;flex-shrink:0}
+.curso-row__area{padding:2px 7px;border-radius:5px;border:1px solid currentColor;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.curso-row__nivel{padding:2px 7px;border-radius:5px;background:var(--surface-2);font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;color:var(--text-3);letter-spacing:.5px;text-transform:uppercase}
+.curso-row__instructor{color:var(--text-3);font-size:11.5px}
+.curso-row__stats{display:flex;gap:12px;flex-shrink:0}
+.curso-row__stat{text-align:center}
+.curso-row__stat-val{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.3px;line-height:1}
+.curso-row__stat-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3);margin-top:2px}
+
+/* Pills de filtro (cursos / webinars / pdfs) */
+.curso-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.curso-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text-2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:12.5px;font-weight:600;letter-spacing:-.1px;transition:all .15s}
+.curso-pill:hover{border-color:var(--primary);color:var(--text);transform:translateY(-1px)}
+.curso-pill[data-active="1"]{background:color-mix(in srgb,var(--primary) 14%,transparent);border-color:var(--primary);color:var(--primary)}
+.curso-pill__count{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:5px;background:color-mix(in srgb,var(--text-3) 18%,transparent);color:var(--text-2);margin-left:2px}
+.curso-pill[data-active="1"] .curso-pill__count{background:var(--primary);color:#fff}
+.curso-pill__dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+
+/* Skeleton (mientras carga Firestore) */
+.skeleton-line{background:var(--surface-3);border-radius:5px;display:block}
+.skeleton-shimmer{background:linear-gradient(90deg,var(--surface-3) 0%,var(--surface-2) 50%,var(--surface-3) 100%);background-size:200% 100%;animation:shimmerSkeleton 1.4s ease-in-out infinite}
+@keyframes shimmerSkeleton{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Empty state estilo curso */
+.curso-empty{padding:60px 24px;text-align:center;background:var(--surface-2);border:1px dashed var(--border-2);border-radius:14px;margin-top:18px}
+.curso-empty__icon{width:64px;height:64px;border-radius:50%;background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px}
+.curso-empty__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.curso-empty__sub{font-size:13px;color:var(--text-3);line-height:1.5;max-width:360px;margin:0 auto}
+.curso-search__clear{position:absolute;right:10px;width:26px;height:26px;border-radius:7px;background:var(--surface-3);border:none;color:var(--text-2);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.curso-search__clear:hover{color:var(--text)}
+@media (max-width:768px){
+  .curso-row{flex-wrap:wrap}
+  .curso-row__stats{order:3;width:100%;justify-content:flex-end;padding-top:8px;border-top:1px dashed var(--border);margin-top:4px}
+  .curso-row__actions{order:4}
+}
 
 /* Empty state */
 .empty{text-align:center;padding:56px 26px;background:var(--surface);border:1px dashed var(--border-2);border-radius:18px}
@@ -738,7 +772,8 @@ const Store = {
     this._autoRerender(what);
   },
   _updateBadges(){
-    const map = { cursos: this.cursos.length, webinars: this.webinars.length, materiales: this.materiales.length, certificados: this.certificados.length, notif: this.notificaciones.length, miembros: this.miembros.length, foro: this.posts.length, dir: this.directorio.length };
+    const matsEnCursos = this.cursos.reduce((s,c) => s + (Array.isArray(c.materiales) ? c.materiales.length : 0), 0);
+    const map = { cursos: this.cursos.length, webinars: this.webinars.length, materiales: this.materiales.length + matsEnCursos, certificados: this.certificados.length, notif: this.notificaciones.length, miembros: this.miembros.length, foro: this.posts.length, dir: this.directorio.length };
     Object.keys(map).forEach(k => { const el = document.getElementById('badge-' + k); if (el) el.textContent = String(map[k]); });
   },
   _autoRerender(what){
@@ -749,6 +784,10 @@ const Store = {
     if (section === 'dashboard') { if (PAGES.dashboard) PAGES.dashboard(); return; }
     if (rerenderMap[what] === section && PAGES[section] && document.getElementById('page').dataset.live === section) {
       if (typeof PAGES['_refrescar_' + section] === 'function') PAGES['_refrescar_' + section]();
+    }
+    /* Los materiales agregados viven dentro de los docs de cursos: si cambia un curso, refrescar la vista de materiales */
+    if (what === 'cursos' && section === 'materiales' && document.getElementById('page').dataset.live === 'materiales') {
+      if (typeof PAGES._refrescar_materiales === 'function') PAGES._refrescar_materiales();
     }
   },
   destroy(){ this.unsubs.forEach(u => { try { u(); } catch(e){} }); this.unsubs = []; this.ready = false; }
@@ -1270,28 +1309,105 @@ window.abrirModalCurso = function(id){
 };
 
 /* ═══════════════════ WEBINARS / CLASES EN VIVO ═══════════════════ */
+let __webQ = '', __webTab = 'proximos';
 PAGES.webinars = function(){
   const page = document.getElementById('page');
   page.innerHTML = `<div class="fade-up">
-    <div class="sec-hero"><span class="sec-hero__eyebrow">Contenido</span><h1 class="sec-hero__title">Clases en vivo</h1><p class="sec-hero__sub">Programa sesiones en vivo con especialistas en procesos y calidad de atención.</p>
-    <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalWebinar()"><svg class="ic"><use href="#i-plus"/></svg>Nueva clase</button></div></div>
-    <div class="adm-list" id="web-list"></div></div>`;
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Programación en vivo</span><h1 class="sec-hero__title">Clases en vivo</h1><p class="sec-hero__sub">Programa las transmisiones en vivo que verán los miembros VIP. <strong style="color:var(--text-2);">El countdown del panel se actualiza automáticamente</strong> con la próxima clase.</p>
+    <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalWebinar()"><svg class="ic"><use href="#i-plus"/></svg>Nueva clase en vivo</button></div></div>
+    <div class="kpi-grid" id="web-kpis"></div>
+    <div class="curso-toolbar">
+      <div class="curso-search-wrap">
+        <svg class="ic curso-search__icon"><use href="#i-search"/></svg>
+        <input class="curso-search__input" id="web-buscar" placeholder="Buscar por título o instructor…">
+        <button id="web-buscar-clear" class="curso-search__clear" style="display:none;" aria-label="Limpiar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="curso-pills">
+      <button class="curso-pill" data-web-tab="proximos" data-active="${__webTab==='proximos'?1:''}"><span class="curso-pill__dot" style="background:#EF4444;"></span>Próximos</button>
+      <button class="curso-pill" data-web-tab="pasados" data-active="${__webTab==='pasados'?1:''}">Pasados</button>
+      <button class="curso-pill" data-web-tab="todos" data-active="${__webTab==='todos'?1:''}">Todos</button>
+    </div>
+    <div id="web-container"></div></div>`;
+  const inp = document.getElementById('web-buscar'); const clr = document.getElementById('web-buscar-clear');
+  inp.value = __webQ; clr.style.display = __webQ ? '' : 'none';
+  inp.addEventListener('input', e => { __webQ = e.target.value.toLowerCase().trim(); clr.style.display = e.target.value ? '' : 'none'; PAGES._refrescar_webinars(); });
+  clr.addEventListener('click', () => { inp.value = ''; __webQ = ''; clr.style.display = 'none'; PAGES._refrescar_webinars(); });
+  page.querySelectorAll('[data-web-tab]').forEach(btn => btn.addEventListener('click', () => {
+    page.querySelectorAll('[data-web-tab]').forEach(b => b.removeAttribute('data-active'));
+    btn.setAttribute('data-active','1'); __webTab = btn.dataset.webTab; PAGES._refrescar_webinars();
+  }));
   PAGES._refrescar_webinars();
 };
 PAGES._refrescar_webinars = function(){
-  const list = document.getElementById('web-list'); if (!list) return;
-  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
-  if (!Store.webinars.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-broadcast"/></svg><h3>Sin clases programadas</h3><p>Crea la primera clase en vivo con "Nueva clase".</p></div>`; return; }
-  const ahora = new Date();
-  list.innerHTML = Store.webinars.slice().sort((a,b)=>toDate(b.fecha)-toDate(a.fecha)).map(w => {
-    const f = toDate(w.fecha); const futura = f && f > ahora;
-    return `<div class="adm-row" style="--c1:var(--highlight)">
-      <div class="adm-row__thumb"><svg class="ic"><use href="#i-broadcast"/></svg></div>
-      <div class="adm-row__body"><div class="adm-row__title">${escHtml(w.titulo||'')}</div><div class="adm-row__meta"><span><svg class="ic"><use href="#i-user"/></svg>${escHtml(w.instructor||'—')}</span><span><svg class="ic"><use href="#i-calendar"/></svg>${f?f.toLocaleString('es-MX',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):'Sin fecha'}</span>${w.area?`<span>${escHtml(w.area)}</span>`:''}</div></div>
-      <span class="tag ${futura?'tag--success':'tag--danger'}">${futura?'Próxima':'Pasada'}</span>
-      <div class="adm-row__actions"><button class="icon-action" onclick="abrirModalWebinar('${w.id}')"><svg class="ic"><use href="#i-edit"/></svg></button><button class="icon-action icon-action--danger" onclick="confirmarBorrarDoc('webinars','${w.id}','esta clase')"><svg class="ic"><use href="#i-trash"/></svg></button></div>
+  const kpiEl = document.getElementById('web-kpis');
+  const cont = document.getElementById('web-container'); if (!cont) return;
+  const ahora = Date.now();
+  if (!Store.ready) {
+    cont.innerHTML = `<div class="curso-list">${[1,2,3].map(()=>`
+      <div class="curso-row" style="--area-color:#EF4444;">
+        <div class="curso-row__thumb skeleton-shimmer" style="background-image:none;"></div>
+        <div class="curso-row__body"><div class="skeleton-line skeleton-shimmer" style="width:60%;height:14px;"></div><div class="skeleton-line skeleton-shimmer" style="width:40%;height:11px;margin-top:8px;"></div></div>
+      </div>`).join('')}</div>`;
+    return;
+  }
+  /* KPIs */
+  const proximos = Store.webinars.filter(w => { const f = toDate(w.fecha); return f && f.getTime() > ahora; });
+  const pasados = Store.webinars.length - proximos.length;
+  const proxima = [...proximos].sort((a,b)=>(toDate(a.fecha)?.getTime()||0)-(toDate(b.fecha)?.getTime()||0))[0];
+  let proximaTxt = '—';
+  if (proxima) { const f = toDate(proxima.fecha); if (f) proximaTxt = f.toLocaleDateString('es-MX',{day:'numeric',month:'short'}) + ' · ' + String(f.getHours()).padStart(2,'0') + ':' + String(f.getMinutes()).padStart(2,'0'); }
+  if (kpiEl) kpiEl.innerHTML = `
+    <div class="kpi-card" style="--c1:#EF4444;--c2:#F87171;"><div class="kpi-card__label">Próximas clases</div><div class="kpi-card__value">${proximos.length}</div><div class="kpi-card__sub">Próxima · ${proximaTxt}</div></div>
+    <div class="kpi-card" style="--c1:#9CA3AF;--c2:#6B7280;"><div class="kpi-card__label">Pasadas</div><div class="kpi-card__value">${pasados}</div><div class="kpi-card__sub">Total histórico</div></div>
+    <div class="kpi-card" style="--c1:var(--primary);--c2:var(--highlight);"><div class="kpi-card__label">Total programadas</div><div class="kpi-card__value">${Store.webinars.length}</div><div class="kpi-card__sub">En Firestore</div></div>`;
+  /* Lista filtrada */
+  let webs = [...Store.webinars];
+  if (__webTab === 'proximos') { webs = webs.filter(w => { const f = toDate(w.fecha); return f && f.getTime() > ahora; }); webs.sort((a,b)=>(toDate(a.fecha)?.getTime()||0)-(toDate(b.fecha)?.getTime()||0)); }
+  else if (__webTab === 'pasados') { webs = webs.filter(w => { const f = toDate(w.fecha); return f && f.getTime() <= ahora; }); webs.sort((a,b)=>(toDate(b.fecha)?.getTime()||0)-(toDate(a.fecha)?.getTime()||0)); }
+  else { webs.sort((a,b)=>(toDate(b.fecha)?.getTime()||0)-(toDate(a.fecha)?.getTime()||0)); }
+  if (__webQ) webs = webs.filter(w => ((w.titulo||'') + ' ' + (w.instructor||'')).toLowerCase().includes(__webQ));
+  if (!webs.length) {
+    const hayWebs = Store.webinars.length > 0;
+    cont.innerHTML = `<div class="curso-empty">
+      <div class="curso-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 16.24a6 6 0 0 1 0-8.49"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></div>
+      <div class="curso-empty__title">${__webQ ? 'Sin resultados' : (__webTab === 'proximos' ? 'Sin clases programadas' : (__webTab === 'pasados' ? 'Sin clases pasadas' : 'Sin clases aún'))}</div>
+      <div class="curso-empty__sub">${__webQ ? 'Prueba con otros términos' : (hayWebs && __webTab !== 'todos' ? 'Cambia el filtro para ver otras' : 'Programa la primera clase en vivo con "Nueva clase en vivo"')}</div>
     </div>`;
-  }).join('');
+    return;
+  }
+  cont.innerHTML = `<div class="curso-list">${webs.map(w => {
+    const f = toDate(w.fecha);
+    const esProximo = f && f.getTime() > ahora;
+    const fmtFecha = f ? f.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'}) : 'Sin fecha';
+    const fmtHora = f ? String(f.getHours()).padStart(2,'0') + ':' + String(f.getMinutes()).padStart(2,'0') : '--:--';
+    const colorBorde = esProximo ? '#EF4444' : '#9CA3AF';
+    let proxTxt = '';
+    if (f) {
+      const diffDias = Math.round((f.getTime() - ahora) / 86400000);
+      if (esProximo) { proxTxt = diffDias === 0 ? 'HOY' : (diffDias === 1 ? 'MAÑANA' : (diffDias < 7 ? 'En ' + diffDias + ' días' : 'En ' + Math.ceil(diffDias/7) + ' sem.')); }
+      else { const d = Math.abs(diffDias); proxTxt = d === 0 ? 'Hoy (pasada)' : (d === 1 ? 'Ayer' : 'Hace ' + d + 'd'); }
+    }
+    return `<div class="curso-row" style="--area-color:${colorBorde};">
+      <div class="curso-row__thumb" style="background:color-mix(in srgb,${colorBorde} 14%,transparent);color:${colorBorde};background-image:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49"/><path d="M7.76 16.24a6 6 0 0 1 0-8.49"/></svg>
+      </div>
+      <div class="curso-row__body">
+        <div class="curso-row__title">${escHtml(w.titulo||'Sin título')}</div>
+        <div class="curso-row__meta">
+          ${w.instructor ? `<span class="curso-row__instructor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="display:inline;vertical-align:-2px;margin-right:3px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${escHtml(w.instructor)}</span><span style="color:var(--text-3);">·</span>` : ''}
+          <span class="curso-row__instructor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="display:inline;vertical-align:-2px;margin-right:3px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>${fmtFecha} · ${fmtHora}</span>
+          ${esProximo ? `<span class="curso-row__area" style="color:${colorBorde};background:color-mix(in srgb,${colorBorde} 10%,transparent);">${proxTxt}</span>` : `<span class="curso-row__nivel">${proxTxt}</span>`}
+        </div>
+      </div>
+      <div class="curso-row__stats"><div class="curso-row__stat"><div class="curso-row__stat-val">${w.duracion||60}</div><div class="curso-row__stat-lbl">min</div></div></div>
+      <div class="curso-row__actions">
+        ${w.link ? `<a href="${escHtml(w.link)}" target="_blank" rel="noopener noreferrer" class="curso-card__action" title="Abrir transmisión" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
+        <button class="curso-card__action" onclick="abrirModalWebinar('${w.id}')" title="Editar"><svg class="ic" style="width:14px;height:14px"><use href="#i-edit"/></svg></button>
+        <button class="curso-card__action curso-card__action--danger" onclick="confirmarBorrarDoc('webinars','${w.id}','esta clase')" title="Eliminar"><svg class="ic" style="width:14px;height:14px"><use href="#i-trash"/></svg></button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
 };
 window.abrirModalWebinar = function(id){
   const w = id ? Store.webinars.find(x => x.id === id) : null;
@@ -1324,30 +1440,167 @@ window.abrirModalWebinar = function(id){
 };
 
 /* ═══════════════════ MATERIALES / PDFs ═══════════════════ */
+let __matQ = '', __matCurso = 'todos';
+/* Vista agregada estilo OdonTeck: materiales dentro de cada curso + materiales sueltos de la colección */
+PAGES._todosLosMateriales = function(){
+  const out = [];
+  Store.cursos.forEach(c => {
+    (Array.isArray(c.materiales) ? c.materiales : []).forEach((m, idx) => {
+      out.push({ tipo: 'curso', cursoId: c.id, cursoTitulo: c.nombre || c.titulo || 'Sin título', cursoArea: c.area || 'General', idx, titulo: m.titulo || 'Sin título', url: m.url || '' });
+    });
+  });
+  Store.materiales.forEach(m => {
+    out.push({ tipo: 'suelto', id: m.id, cursoId: null, cursoTitulo: m.categoria || 'General', cursoArea: m.categoria || 'General', titulo: m.titulo || 'Sin título', url: m.url || '', publicado: m.publicado !== false });
+  });
+  return out;
+};
 PAGES.materiales = function(){
   const page = document.getElementById('page');
   page.innerHTML = `<div class="fade-up">
-    <div class="sec-hero"><span class="sec-hero__eyebrow">Contenido</span><h1 class="sec-hero__title">PDFs y material</h1><p class="sec-hero__sub">Plantillas, guías y checklists descargables para miembros VIP.</p>
+    <div class="sec-hero"><span class="sec-hero__eyebrow">Material descargable</span><h1 class="sec-hero__title">PDFs y material</h1><p class="sec-hero__sub">Aquí ves la <strong style="color:var(--text-2);">lista completa</strong> de materiales: los vinculados a cada curso del catálogo y los materiales generales, en tiempo real desde Firestore.</p>
     <div class="sec-hero__actions"><button class="btn btn-primary" onclick="abrirModalMaterial()"><svg class="ic"><use href="#i-plus"/></svg>Nuevo material</button></div></div>
-    <div class="adm-list" id="mat-list"></div></div>`;
+    <div class="kpi-grid" id="mat-kpis"></div>
+    <div class="curso-toolbar">
+      <div class="curso-search-wrap">
+        <svg class="ic curso-search__icon"><use href="#i-search"/></svg>
+        <input class="curso-search__input" id="mat-buscar" placeholder="Buscar por título o curso…">
+        <button id="mat-buscar-clear" class="curso-search__clear" style="display:none;" aria-label="Limpiar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="curso-pills" id="mat-pills-curso"></div>
+    <div id="mat-container"></div></div>`;
+  const inp = document.getElementById('mat-buscar'); const clr = document.getElementById('mat-buscar-clear');
+  inp.value = __matQ; clr.style.display = __matQ ? '' : 'none';
+  inp.addEventListener('input', e => { __matQ = e.target.value.toLowerCase().trim(); clr.style.display = e.target.value ? '' : 'none'; PAGES._refrescar_materiales(); });
+  clr.addEventListener('click', () => { inp.value = ''; __matQ = ''; clr.style.display = 'none'; PAGES._refrescar_materiales(); });
   PAGES._refrescar_materiales();
 };
 PAGES._refrescar_materiales = function(){
-  const list = document.getElementById('mat-list'); if (!list) return;
-  if (!Store.ready) { list.innerHTML = loadingRow(); return; }
-  if (!Store.materiales.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-folder"/></svg><h3>Sin material aún</h3><p>Sube el primer PDF o plantilla con "Nuevo material".</p></div>`; return; }
-  list.innerHTML = Store.materiales.map(m => `<div class="adm-row" style="--c1:var(--info)">
-    <div class="adm-row__thumb"><svg class="ic"><use href="#i-news"/></svg></div>
-    <div class="adm-row__body"><div class="adm-row__title">${escHtml(m.titulo||'')}</div><div class="adm-row__meta"><span>${escHtml(m.categoria||'General')}</span></div></div>
-    <span class="tag ${m.publicado!==false?'tag--success':'tag--danger'}">${m.publicado!==false?'Publicado':'Borrador'}</span>
-    <div class="adm-row__actions"><button class="icon-action" onclick="abrirModalMaterial('${m.id}')"><svg class="ic"><use href="#i-edit"/></svg></button><button class="icon-action icon-action--danger" onclick="confirmarBorrarDoc('materiales','${m.id}','este material')"><svg class="ic"><use href="#i-trash"/></svg></button></div>
-  </div>`).join('');
+  const cont = document.getElementById('mat-container'); if (!cont) return;
+  const kpiEl = document.getElementById('mat-kpis');
+  const pillsEl = document.getElementById('mat-pills-curso');
+  if (!Store.ready) {
+    cont.innerHTML = `<div class="curso-list">${[1,2,3].map(()=>`
+      <div class="curso-row" style="--area-color:var(--info);">
+        <div class="curso-row__thumb skeleton-shimmer" style="background-image:none;"></div>
+        <div class="curso-row__body"><div class="skeleton-line skeleton-shimmer" style="width:60%;height:14px;"></div><div class="skeleton-line skeleton-shimmer" style="width:40%;height:11px;margin-top:8px;"></div></div>
+      </div>`).join('')}</div>`;
+    return;
+  }
+  const todos = PAGES._todosLosMateriales();
+  /* KPIs */
+  const enCursos = todos.filter(m => m.tipo === 'curso').length;
+  const sueltos = todos.length - enCursos;
+  const cursosConMat = new Set(todos.filter(m => m.cursoId).map(m => m.cursoId)).size;
+  if (kpiEl) kpiEl.innerHTML = `
+    <div class="kpi-card" style="--c1:var(--info);--c2:#60A5FA;"><div class="kpi-card__label">Total materiales</div><div class="kpi-card__value">${todos.length}</div><div class="kpi-card__sub">${cursosConMat} curso${cursosConMat!==1?'s':''} con material</div></div>
+    <div class="kpi-card" style="--c1:var(--success);--c2:#22C55E;"><div class="kpi-card__label">En cursos</div><div class="kpi-card__value">${enCursos}</div><div class="kpi-card__sub">Vinculados al catálogo</div></div>
+    <div class="kpi-card" style="--c1:var(--warning);--c2:#F59E0B;"><div class="kpi-card__label">Generales</div><div class="kpi-card__value">${sueltos}</div><div class="kpi-card__sub">Sin curso asignado</div></div>`;
+  /* Pills por curso */
+  if (pillsEl) {
+    const cursosCon = Array.from(new Set(todos.filter(m => m.cursoId).map(m => m.cursoId)))
+      .map(id => Store.cursos.find(c => c.id === id)).filter(Boolean)
+      .sort((a,b) => (a.nombre||a.titulo||'').localeCompare(b.nombre||b.titulo||''));
+    pillsEl.innerHTML = `<button class="curso-pill" data-mat-curso="todos" data-active="${__matCurso==='todos'?1:''}">Todos los cursos <span class="curso-pill__count">${todos.length}</span></button>` +
+      (sueltos ? `<button class="curso-pill" data-mat-curso="__general" data-active="${__matCurso==='__general'?1:''}">Generales <span class="curso-pill__count">${sueltos}</span></button>` : '') +
+      cursosCon.map(c => {
+        const count = todos.filter(m => m.cursoId === c.id).length;
+        const nom = c.nombre || c.titulo || '';
+        const corto = nom.length > 35 ? nom.slice(0,35)+'…' : nom;
+        return `<button class="curso-pill" data-mat-curso="${c.id}" data-active="${__matCurso===c.id?1:''}" title="${escHtml(nom)}">${escHtml(corto)} <span class="curso-pill__count">${count}</span></button>`;
+      }).join('');
+    pillsEl.querySelectorAll('[data-mat-curso]').forEach(btn => btn.addEventListener('click', () => {
+      pillsEl.querySelectorAll('[data-mat-curso]').forEach(b => b.removeAttribute('data-active'));
+      btn.setAttribute('data-active','1'); __matCurso = btn.dataset.matCurso; PAGES._refrescar_materiales();
+    }));
+  }
+  /* Lista filtrada */
+  let mats = todos;
+  if (__matCurso === '__general') mats = mats.filter(m => m.tipo === 'suelto');
+  else if (__matCurso !== 'todos') mats = mats.filter(m => m.cursoId === __matCurso);
+  if (__matQ) mats = mats.filter(m => ((m.titulo||'') + ' ' + (m.cursoTitulo||'')).toLowerCase().includes(__matQ));
+  if (!mats.length) {
+    cont.innerHTML = `<div class="curso-empty">
+      <div class="curso-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+      <div class="curso-empty__title">${(__matQ || __matCurso !== 'todos') ? 'Sin resultados' : 'Sin materiales aún'}</div>
+      <div class="curso-empty__sub">${(__matQ || __matCurso !== 'todos') ? 'Prueba con otros filtros o búsqueda' : 'Importa el catálogo SYNOVA en Cursos o sube el primero con "Nuevo material"'}</div>
+    </div>`;
+    return;
+  }
+  cont.innerHTML = `<div class="curso-list">${mats.map(m => {
+    const areaColor = (m.tipo === 'curso' ? (AREA_COLORS[m.cursoArea] || 'var(--info)') : 'var(--warning)');
+    const cursoTit = m.cursoTitulo || '';
+    const corto = cursoTit.length > 45 ? cursoTit.slice(0,45)+'…' : cursoTit;
+    const acciones = m.tipo === 'curso'
+      ? `<button class="curso-card__action" onclick="abrirModalMaterialCurso('${m.cursoId}',${m.idx})" title="Editar material"><svg class="ic" style="width:14px;height:14px"><use href="#i-edit"/></svg></button>
+         <button class="curso-card__action curso-card__action--danger" onclick="borrarMaterialCurso('${m.cursoId}',${m.idx})" title="Eliminar material"><svg class="ic" style="width:14px;height:14px"><use href="#i-trash"/></svg></button>`
+      : `<button class="curso-card__action" onclick="abrirModalMaterial('${m.id}')" title="Editar material"><svg class="ic" style="width:14px;height:14px"><use href="#i-edit"/></svg></button>
+         <button class="curso-card__action curso-card__action--danger" onclick="confirmarBorrarDoc('materiales','${m.id}','este material')" title="Eliminar material"><svg class="ic" style="width:14px;height:14px"><use href="#i-trash"/></svg></button>`;
+    return `<div class="curso-row" style="--area-color:${areaColor};">
+      <div class="curso-row__thumb" style="background:color-mix(in srgb,${areaColor} 14%,transparent);color:${areaColor};background-image:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="curso-row__body">
+        <div class="curso-row__title">${escHtml(m.titulo)}</div>
+        <div class="curso-row__meta">
+          <span class="curso-row__area" style="color:${areaColor};background:color-mix(in srgb,${areaColor} 10%,transparent);">${escHtml(m.cursoArea)}</span>
+          <span class="curso-row__instructor" title="${escHtml(cursoTit)}">· ${escHtml(corto)}</span>
+          ${m.tipo === 'suelto' && !m.publicado ? `<span class="curso-row__nivel">Borrador</span>` : ''}
+        </div>
+      </div>
+      <div class="curso-row__actions">
+        ${m.url ? `<a href="${escHtml(m.url)}" target="_blank" rel="noopener noreferrer" class="curso-card__action" title="Abrir enlace" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
+        ${acciones}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+};
+/* Editar / borrar material dentro de un curso (actualiza el array materiales del doc del curso) */
+window.abrirModalMaterialCurso = function(cursoId, idx){
+  const c = Store.cursos.find(x => x.id === cursoId); if (!c) return;
+  const m = (c.materiales || [])[idx]; if (!m) return;
+  const body = document.createElement('div');
+  body.innerHTML = `<div class="form-grid">
+    <div class="form-field form-field--full"><label class="label">Título</label><input class="input" id="mc-titulo" value="${escHtml(m.titulo||'')}"></div>
+    <div class="form-field form-field--full"><label class="label">URL del archivo</label><input class="input" id="mc-url" value="${escHtml(m.url||'')}" placeholder="https://…"></div>
+    <div class="form-field form-field--full"><label class="label">Curso</label><input class="input" value="${escHtml(c.nombre||c.titulo||'')}" disabled style="opacity:.6"></div>
+  </div>`;
+  const footer = document.createElement('div');
+  footer.innerHTML = `<button class="btn btn-outline btn-sm" id="mc-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="mc-guardar"><svg class="ic"><use href="#i-check"/></svg>Guardar cambios</button>`;
+  Modal.open({ title: 'Editar material', subtitle: 'Material del curso', icon: 'i-folder', body, footer });
+  footer.querySelector('#mc-cancel').addEventListener('click', () => Modal.close());
+  footer.querySelector('#mc-guardar').addEventListener('click', async () => {
+    const titulo = body.querySelector('#mc-titulo').value.trim();
+    if (!titulo) { Toast.error('Falta el título'); return; }
+    const nuevos = (c.materiales || []).map((x,i) => i === idx ? { ...x, titulo, url: body.querySelector('#mc-url').value.trim() } : x);
+    try {
+      const { doc, updateDoc, db } = window.__fs;
+      await updateDoc(doc(db, 'cursos', cursoId), { materiales: nuevos });
+      Toast.success('Material actualizado'); Modal.close();
+    } catch (e) { Toast.error('Error al guardar', e.message); }
+  });
+};
+window.borrarMaterialCurso = function(cursoId, idx){
+  const c = Store.cursos.find(x => x.id === cursoId); if (!c) return;
+  const m = (c.materiales || [])[idx]; if (!m) return;
+  if (!confirm(`¿Eliminar "${m.titulo || 'este material'}" del curso? Esta acción no se puede deshacer.`)) return;
+  (async () => {
+    try {
+      const { doc, updateDoc, db } = window.__fs;
+      const nuevos = (c.materiales || []).filter((x,i) => i !== idx);
+      await updateDoc(doc(db, 'cursos', cursoId), { materiales: nuevos });
+      Toast.success('Material eliminado');
+    } catch (e) { Toast.error('Error al eliminar', e.message); }
+  })();
 };
 window.abrirModalMaterial = function(id){
   const m = id ? Store.materiales.find(x => x.id === id) : null;
   const body = document.createElement('div');
+  const cursosOpts = Store.cursos.slice().sort((a,b)=>(a.nombre||a.titulo||'').localeCompare(b.nombre||b.titulo||''))
+    .map(c => `<option value="${c.id}">${escHtml(c.nombre||c.titulo||'Sin título')}</option>`).join('');
   body.innerHTML = `<div class="form-grid">
     <div class="form-field form-field--full"><label class="label">Título</label><input class="input" id="mt-titulo" value="${escHtml(m?.titulo||'')}" placeholder="Ej. Checklist NOM-087 · Residuos biológico-infecciosos"></div>
+    ${!m ? `<div class="form-field form-field--full"><label class="label">Curso al que pertenece</label><select class="select" id="mt-curso"><option value="">— General (sin curso) —</option>${cursosOpts}</select></div>` : ''}
     <div class="form-field"><label class="label">Categoría</label><input class="input" id="mt-cat" value="${escHtml(m?.categoria||'')}"></div>
     <div class="form-field"><label class="label">Publicado</label><select class="select" id="mt-pub"><option value="1" ${m?.publicado!==false?'selected':''}>Sí, visible para miembros</option><option value="0" ${m?.publicado===false?'selected':''}>No, borrador</option></select></div>
     <div class="form-field form-field--full"><label class="label">URL del archivo</label><input class="input" id="mt-url" value="${escHtml(m?.url||'')}" placeholder="https://…"></div>
@@ -1359,11 +1612,23 @@ window.abrirModalMaterial = function(id){
   footer.querySelector('#mt-guardar').addEventListener('click', async () => {
     const titulo = body.querySelector('#mt-titulo').value.trim();
     if (!titulo) { Toast.error('Falta el título'); return; }
-    const datos = { titulo, categoria: body.querySelector('#mt-cat').value.trim() || 'General', publicado: body.querySelector('#mt-pub').value === '1', url: body.querySelector('#mt-url').value.trim() };
+    const url = body.querySelector('#mt-url').value.trim();
+    const cursoSel = body.querySelector('#mt-curso')?.value || '';
     try {
       const { doc, updateDoc, addDoc, collection, db, serverTimestamp } = window.__fs;
-      if (m) { await updateDoc(doc(db, 'materiales', m.id), datos); Toast.success('Material actualizado'); }
-      else { await addDoc(collection(db, 'materiales'), { ...datos, descargas: 0, createdAt: serverTimestamp() }); Toast.success('Material creado'); }
+      if (m) {
+        const datos = { titulo, categoria: body.querySelector('#mt-cat').value.trim() || 'General', publicado: body.querySelector('#mt-pub').value === '1', url };
+        await updateDoc(doc(db, 'materiales', m.id), datos); Toast.success('Material actualizado');
+      } else if (cursoSel) {
+        /* Vinculado a un curso: se agrega al array materiales del doc del curso (estilo OdonTeck) */
+        const c = Store.cursos.find(x => x.id === cursoSel);
+        const nuevos = [ ...(c?.materiales || []), { titulo, url, portada: c?.portada || '' } ];
+        await updateDoc(doc(db, 'cursos', cursoSel), { materiales: nuevos });
+        Toast.success('Material agregado al curso');
+      } else {
+        const datos = { titulo, categoria: body.querySelector('#mt-cat').value.trim() || 'General', publicado: body.querySelector('#mt-pub').value === '1', url };
+        await addDoc(collection(db, 'materiales'), { ...datos, descargas: 0, createdAt: serverTimestamp() }); Toast.success('Material creado');
+      }
       Modal.close();
     } catch (e) { Toast.error('Error al guardar', e.message); }
   });
