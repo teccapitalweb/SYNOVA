@@ -3751,7 +3751,7 @@ function mountNutricion(c){
     grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
       const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
       if (!esVip()){ window.__showPaywallModal('Activa tu membresía SYNOVA VIP para ver el contenido de este curso.'); return; }
-      if (!cursoDesbloqueado(c)){ const d = diasRestantes(c); Toast.info('Curso en camino','Se desbloquea en ' + d + (d===1?' día':' días') + '.'); return; }
+      /* Bloqueado o no, el detalle SIEMPRE se abre (estilo OdonTeck): adentro se muestra el aviso elegante */
       abrirCurso(c.id);
     }));
   }
@@ -3770,7 +3770,7 @@ function mountNutricion(c){
     const port = portadaDe(c);
 
     let clasesHtml = sesiones.length
-      ? '<div class="perfil-card__title" style="margin-top:6px">Clases</div>' + sesiones.map((s,i) => {
+      ? sesiones.map((s,i) => {
           const vista = prog.vistas.includes(i);
           const desblok = claseDesbloqueada(id, i, sesiones.length);
           if (vista) {
@@ -3803,11 +3803,55 @@ function mountNutricion(c){
         }).join('')
       : '';
 
-    const body = '<div id="curso-detalle-body">' +
-      (port ? '<div class="curso-portada-banner" style="background-image:url(\'' + port.replace(/'/g,'%27') + '\')"></div>' : '') +
-      '<div class="detail-hero" style="--area-color:' + color + '"><div class="detail-hero__icon">' + iconoParaArea() + '</div><div style="min-width:0"><div class="detail-hero__tags"><span class="tag tag--new">' + escHtml(c.area || 'SYNOVA') + '</span></div><div class="detail-hero__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div></div></div>' +
-      (c.descripcion ? '<p style="font-size:13.5px;color:var(--text-2);line-height:1.6;margin-bottom:6px">' + escHtml(c.descripcion) + '</p>' : '') +
-      clasesHtml + matsHtml + '</div>';
+    /* ── Hero estilo OdonTeck: portada de fondo + tags + meta ── */
+    const desbloq = cursoDesbloqueado(c);
+    const dFalta = diasRestantes(c);
+    const heroBg = (port && port.indexOf('data:') !== 0)
+      ? 'background:linear-gradient(135deg,rgba(0,0,0,.35),rgba(0,0,0,.7)),url(\'' + port.replace(/'/g,'%27') + '\');background-size:cover;background-position:center;'
+      : 'background:linear-gradient(135deg,' + color + ',#08131F);';
+    const tagW = 'color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12);';
+    const heroHtml =
+      '<div style="' + heroBg + 'border-radius:14px;padding:24px;color:#fff;margin-bottom:18px;">' +
+        '<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">' +
+          '<span class="tag" style="' + tagW + '">' + escHtml(c.area || 'SYNOVA') + '</span>' +
+          (c.nivel ? '<span class="tag" style="' + tagW + '">' + escHtml(c.nivel) + '</span>' : '') +
+          (c.disponibleSiempre ? '<span class="tag" style="color:#0B1018;border-color:var(--success);background:var(--success);font-weight:700;">DISPONIBLE</span>' : '') +
+        '</div>' +
+        '<h2 style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-bottom:8px;">' + escHtml(c.nombre || 'Curso SYNOVA') + '</h2>' +
+        '<div style="display:flex;gap:14px;font-size:12px;opacity:.9;flex-wrap:wrap;">' +
+          (c.instructor ? '<span><svg class="ic" style="color:#fff;width:13px;height:13px"><use href="#i-users"/></svg> ' + escHtml(c.instructor) + '</span>' : '') +
+          (c.horas ? '<span><svg class="ic" style="color:#fff;width:13px;height:13px"><use href="#i-clock"/></svg> ' + c.horas + 'h</span>' : '') +
+          (sesiones.length ? '<span><svg class="ic" style="color:#fff;width:13px;height:13px"><use href="#i-book"/></svg> ' + sesiones.length + ' clase' + (sesiones.length!==1?'s':'') + '</span>' : '') +
+        '</div>' +
+      '</div>';
+    const descHtml = c.descripcion ? '<p style="font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:18px">' + escHtml(c.descripcion) + '</p>' : '';
+
+    let contenidoHtml;
+    if (!desbloq){
+      /* Aviso elegante de desbloqueo próximo (estilo OdonTeck) */
+      contenidoHtml =
+        '<div class="empty-state" style="background:var(--surface-2);border:1px solid var(--border-2);border-radius:14px;padding:32px 24px;text-align:center;">' +
+          '<div class="empty-state__icon" style="margin:0 auto 12px"><svg class="ic ic--xl" style="color:var(--primary)"><use href="#i-shield-check"/></svg></div>' +
+          '<h3 style="color:var(--primary);margin-bottom:8px">🔒 Este curso se desbloquea pronto</h3>' +
+          '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Disponible en <strong style="color:var(--primary)">' + dFalta + ' día' + (dFalta!==1?'s':'') + '</strong>. Los cursos se desbloquean progresivamente para que aproveches cada uno a fondo.</p>' +
+          '<p style="font-size:12px;color:var(--text-3);margin-top:10px">Si quieres acceso anticipado, contáctanos.</p>' +
+        '</div>';
+    } else {
+      /* Barra de progreso del curso (estilo OdonTeck) */
+      const pct = sesiones.length ? Math.round((prog.vistas.length / sesiones.length) * 100) : 0;
+      const progHtml = sesiones.length
+        ? '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);font-weight:600;">📺 Clases del curso</div>' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:' + (pct===100?'var(--success)':'var(--primary)') + ';font-weight:700;">' + prog.vistas.length + '/' + sesiones.length + ' · ' + pct + '%</div>' +
+          '</div>' +
+          '<div style="height:6px;background:var(--surface-3);border-radius:3px;overflow:hidden;margin-bottom:14px;">' +
+            '<div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--primary),var(--highlight));border-radius:3px;transition:width .4s ease;"></div>' +
+          '</div>'
+        : '';
+      contenidoHtml = progHtml + clasesHtml + matsHtml;
+    }
+
+    const body = '<div id="curso-detalle-body">' + heroHtml + descHtml + contenidoHtml + '</div>';
 
     Modal.open({ id:'curso-detalle', title: escHtml(c.nombre || 'Curso'), subtitle: escHtml(c.area || ''), icon:'i-book', size:'lg', body,
       footer: '<button class="btn btn--ghost" onclick="Modal.close(\'curso-detalle\')">Cerrar</button>' });
