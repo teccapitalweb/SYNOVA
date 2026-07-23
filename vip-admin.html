@@ -1705,7 +1705,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('theme-toggle').addEventListener('click', () => Theme.toggle());
   document.querySelectorAll('.nav-item, .mobile-nav__item').forEach(b => b.addEventListener('click', e => {
     e.preventDefault();
-    if (b.id === 'btn-logout') { if (confirm('¿Cerrar sesión?')) { window.__cerrarSesion ? window.__cerrarSesion() : (window.location.href = 'vip-auth.html'); } return; }
+    if (b.id === 'btn-logout') { if (confirm('¿Estás seguro de que deseas cerrar sesión?')) { window.__cerrarSesion ? window.__cerrarSesion() : (window.location.href = 'vip-auth.html'); } return; }
     if (b.dataset.section) navigate(b.dataset.section);
   }));
   document.getElementById('modal-close').addEventListener('click', () => Modal.close());

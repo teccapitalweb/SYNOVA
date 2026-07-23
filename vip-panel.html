@@ -1297,8 +1297,16 @@ function cerrarDrawer(){ document.getElementById('mobile-drawer').classList.remo
 document.getElementById('mobile-nav-more')?.addEventListener('click', abrirDrawer);
 document.getElementById('mobile-drawer-close')?.addEventListener('click', cerrarDrawer);
 document.getElementById('mobile-drawer-overlay')?.addEventListener('click', cerrarDrawer);
-document.getElementById('drawer-logout-btn')?.addEventListener('click', () => window.__signOut && window.__signOut());
-document.getElementById('btn-logout')?.addEventListener('click', () => window.__signOut && window.__signOut());
+document.getElementById('drawer-logout-btn')?.addEventListener('click', () => {
+  if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+    window.__signOut && window.__signOut();
+  }
+});
+document.getElementById('btn-logout')?.addEventListener('click', () => {
+  if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+    window.__signOut && window.__signOut();
+  }
+});
 document.getElementById('btn-avatar')?.addEventListener('click', () => navigateTo('perfil'));
 
 /* ══════════════════════ ROUTER ══════════════════════ */
