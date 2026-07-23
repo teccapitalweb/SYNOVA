@@ -263,8 +263,16 @@ body.auth-ready .auth-gate{display:none !important}
 .curso-card__cover-bottom{position:absolute;bottom:10px;left:10px;right:10px;z-index:2}
 .curso-card__area{display:inline-flex;align-items:center;padding:4px 9px;border-radius:6px;background:var(--primary);color:#fff;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .curso-card__nivel{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.94);color:#0B2A4A;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}
-.curso-card__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.2px;line-height:1.3;color:#fff}
+.curso-card__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;letter-spacing:-.2px;line-height:1.3;color:var(--text);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:36px}
 .curso-card__body{padding:14px 14px 12px}
+/* Toggle on/off · estilo iOS (igual que OdonTeck) */
+.curso-card__toggle{width:44px;height:24px;border:none;background:transparent;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.curso-card__toggle-track{width:40px;height:22px;border-radius:11px;background:rgba(156,163,175,.55);display:inline-flex;align-items:center;padding:0 2px;transition:background .25s cubic-bezier(.2,.8,.25,1);position:relative;box-shadow:inset 0 1px 3px rgba(0,0,0,.25)}
+.curso-card__toggle-thumb{width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.2,.8,.25,1)}
+.curso-card__toggle.is-active .curso-card__toggle-track{background:var(--success);box-shadow:inset 0 1px 3px rgba(0,0,0,.18),0 0 0 2px color-mix(in srgb,var(--success) 18%,transparent)}
+.curso-card__toggle.is-active .curso-card__toggle-thumb{transform:translateX(18px)}
+.curso-card__status.is-active .curso-card__status-dot{animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 3px color-mix(in srgb,currentColor 22%,transparent)}50%{box-shadow:0 0 0 5px color-mix(in srgb,currentColor 10%,transparent)}}
 .curso-card__instructor{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .curso-card__meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 .curso-card__meta-item{display:inline-flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;color:var(--text-2)}
@@ -1245,6 +1253,36 @@ function portadaCurso(c){
   return pool[_hashStr(c.id || titulo) % pool.length] || PORTADA_DEFAULT;
 }
 window.portadaCurso = portadaCurso;
+/* Si una imagen de portada no carga (URL caída), revierte a la portada membretada SYNOVA — mismo mecanismo que el panel.
+   Así NUNCA se ven covers rotos ni íconos gigantes. */
+const __portadaDead = {};
+let __portadaRefT = null;
+function portadaCursoAdm(c){
+  const url = portadaCurso(c);
+  if (__portadaDead[url] === true){
+    if (c.portada && esPortadaGenerica(c.portada)) return c.portada; /* SVG membretado guardado en Firestore */
+    if (window.__svgPortada) return window.__svgPortada(c.nombre || c.titulo || 'Curso SYNOVA', c.area || 'General');
+  }
+  return url;
+}
+window.portadaCursoAdm = portadaCursoAdm;
+function precargarPortadasAdm(lista){
+  (lista || Store.cursos).forEach(c => {
+    const url = portadaCurso(c);
+    if (!url || url.indexOf('https://') !== 0 || (url in __portadaDead)) return;
+    __portadaDead[url] = false;
+    const im = new Image();
+    im.onerror = function(){
+      __portadaDead[url] = true;
+      clearTimeout(__portadaRefT);
+      __portadaRefT = setTimeout(function(){
+        try { if (document.getElementById('cu-container')) PAGES._refrescar_cursos(); } catch(e){}
+        try { if (document.getElementById('mat-container')) PAGES._refrescar_materiales(); } catch(e){}
+      }, 250);
+    };
+    im.src = url;
+  });
+}
 /* Día de desbloqueo por curso · mismo cálculo que el panel (rank × 8 según orden, saltando los "siempre") */
 const DRIP_DIAS_ADM = 8;
 function mapaDesbloqueo(){
@@ -1297,6 +1335,7 @@ PAGES._refrescar_cursos = function(rebindView){
   });
   if (!lista.length) { cont.innerHTML = `<div class="curso-empty empty"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><h3>Sin cursos aún</h3><p>Crea el primer curso del catálogo SYNOVA con "Nuevo curso".</p></div>`; return; }
   const mapDesb = mapaDesbloqueo();
+  precargarPortadasAdm(lista);
   if (__cursoView === 'grid') {
     cont.innerHTML = `<div class="curso-grid">${lista.map(c => cursoCardGrid(c, mapDesb)).join('')}</div>`;
   } else {
@@ -1316,23 +1355,36 @@ function _badgeDesbloqueo(c, map){
 function cursoCardGrid(c, map){
   const area = c.area || 'General'; const color = AREA_COLORS[area] || 'var(--primary)';
   const activo = c.activo !== false;
-  const port = portadaCurso(c);
-  const cover = `background-image:url('${String(port).replace(/'/g,'%27')}')`;
-  return `<div class="curso-card" style="--area-color:${color}">
-    <div class="curso-card__cover" style="${cover}">
+  const clases = (c.sesiones && c.sesiones.length) || 0;
+  const horas = c.horas || clases || 0;
+  const nMats = (c.materiales && c.materiales.length) || 0;
+  const port = portadaCursoAdm(c);
+  const tituloEsc = escHtml(c.nombre||c.titulo||'Sin título');
+  return `<div class="curso-card" data-id="${c.id}" style="--area-color:${color}">
+    <div class="curso-card__cover" style="background-image:url('${String(port).replace(/'/g,'%27')}')">
       <div class="curso-card__cover-overlay"></div>
-      <div class="curso-card__cover-top"><span class="curso-card__area" style="background:${color}">${escHtml(area)}</span>${c.nivel ? `<span class="curso-card__nivel">${escHtml(c.nivel)}</span>` : ''}</div>
-      <div class="curso-card__cover-bottom"><div class="curso-card__title">${escHtml(c.nombre||c.titulo||'Sin título')}</div></div>
+      <div class="curso-card__cover-top">
+        <span class="curso-card__area" style="background:${color}">${escHtml(area)}</span>
+        <button class="curso-card__toggle ${activo?'is-active':''}" data-toggle-curso="${c.id}" data-val="${activo}" title="${activo?'Desactivar':'Activar'} curso">
+          <span class="curso-card__toggle-track"><span class="curso-card__toggle-thumb"></span></span>
+        </button>
+      </div>
+      ${c.nivel ? `<div class="curso-card__cover-bottom"><span class="curso-card__nivel">${escHtml(c.nivel)}</span></div>` : ''}
     </div>
     <div class="curso-card__body">
-      ${c.instructor ? `<div class="curso-card__instructor"><svg class="ic" style="width:12px;height:12px"><use href="#i-user"/></svg>${escHtml(c.instructor)}</div>` : ''}
-      <div class="curso-card__meta">${c.horas ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-clock"/></svg>${c.horas}h</span>` : ''}${c.inscritos ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-users"/></svg>${c.inscritos}</span>` : ''}<span class="curso-card__meta-item">${_badgeDesbloqueo(c, map)}</span></div>
+      <div class="curso-card__title" title="${tituloEsc}">${tituloEsc}</div>
+      ${c.instructor ? `<div class="curso-card__instructor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${escHtml(c.instructor)}</div>` : ''}
+      <div class="curso-card__meta">
+        <span class="curso-card__meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></svg>${clases} clase${clases!==1?'s':''}</span>
+        <span class="curso-card__meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${horas}h</span>
+        ${nMats > 0 ? `<span class="curso-card__meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>${nMats} mat.</span>` : ''}
+        <span class="curso-card__meta-item">${_badgeDesbloqueo(c, map)}</span>
+      </div>
       <div class="curso-card__footer">
         <span class="curso-card__status ${activo?'is-active':'is-inactive'}"><span class="curso-card__status-dot"></span>${activo?'Activo':'Inactivo'}</span>
         <div class="curso-card__actions">
-          <button class="curso-card__action" data-edit-curso="${c.id}" title="Editar"><svg class="ic"><use href="#i-edit"/></svg></button>
-          <button class="curso-card__action" data-toggle-curso="${c.id}" data-val="${activo}" title="${activo?'Desactivar':'Activar'}"><svg class="ic"><use href="#${activo?'i-eye':'i-check'}"/></svg></button>
-          <button class="curso-card__action curso-card__action--danger" data-del-curso="${c.id}" title="Eliminar"><svg class="ic"><use href="#i-trash"/></svg></button>
+          <button class="curso-card__action" data-edit-curso="${c.id}" title="Editar curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="curso-card__action curso-card__action--danger" data-del-curso="${c.id}" title="Eliminar curso"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></button>
         </div>
       </div>
     </div>
@@ -1340,16 +1392,30 @@ function cursoCardGrid(c, map){
 }
 function cursoCardList(c, map){
   const area = c.area || 'General'; const color = AREA_COLORS[area] || 'var(--primary)'; const activo = c.activo !== false;
-  const port = portadaCurso(c);
-  return `<div class="curso-row" style="--area-color:${color}">
+  const clases = (c.sesiones && c.sesiones.length) || 0;
+  const horas = c.horas || clases || 0;
+  const port = portadaCursoAdm(c);
+  return `<div class="curso-row" data-id="${c.id}" style="--area-color:${color}">
     <div class="curso-row__thumb" style="background-image:url('${String(port).replace(/'/g,'%27')}')"></div>
     <div class="curso-row__body">
       <div class="curso-row__title">${escHtml(c.nombre||c.titulo||'Sin título')}</div>
-      <div class="curso-row__meta"><span class="tag" style="color:${color};border-color:${color}">${escHtml(area)}</span>${c.nivel?`<span>${escHtml(c.nivel)}</span>`:''}${c.instructor?`<span>· ${escHtml(c.instructor)}</span>`:''}<span class="tag ${activo?'tag--success':'tag--danger'}">${activo?'Activo':'Inactivo'}</span>${_badgeDesbloqueo(c, map)}</div>
+      <div class="curso-row__meta">
+        <span class="curso-row__area" style="color:${color};border-color:color-mix(in srgb,${color} 35%,transparent);background:color-mix(in srgb,${color} 10%,transparent)">${escHtml(area)}</span>
+        ${c.nivel?`<span class="curso-row__nivel">${escHtml(c.nivel)}</span>`:''}
+        ${c.instructor?`<span class="curso-row__instructor">· ${escHtml(c.instructor)}</span>`:''}
+        ${_badgeDesbloqueo(c, map)}
+      </div>
     </div>
+    <div class="curso-row__stats">
+      <div class="curso-row__stat"><div class="curso-row__stat-val">${clases}</div><div class="curso-row__stat-lbl">clases</div></div>
+      <div class="curso-row__stat"><div class="curso-row__stat-val">${horas}h</div><div class="curso-row__stat-lbl">horas</div></div>
+    </div>
+    <button class="curso-card__toggle ${activo?'is-active':''}" data-toggle-curso="${c.id}" data-val="${activo}" title="${activo?'Desactivar':'Activar'} curso">
+      <span class="curso-card__toggle-track"><span class="curso-card__toggle-thumb"></span></span>
+    </button>
     <div class="curso-row__actions">
-      <button class="icon-action" data-edit-curso="${c.id}"><svg class="ic"><use href="#i-edit"/></svg></button>
-      <button class="icon-action icon-action--danger" data-del-curso="${c.id}"><svg class="ic"><use href="#i-trash"/></svg></button>
+      <button class="curso-card__action" data-edit-curso="${c.id}" title="Editar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+      <button class="curso-card__action curso-card__action--danger" data-del-curso="${c.id}" title="Eliminar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
     </div>
   </div>`;
 }
@@ -1653,7 +1719,7 @@ let __matQ = '', __matCurso = 'todos', __matEstado = 'todos';
 PAGES._todosLosMateriales = function(){
   const out = [];
   Store.cursos.forEach(c => {
-    const portCurso = portadaCurso(c);
+    const portCurso = portadaCursoAdm(c);
     (Array.isArray(c.materiales) ? c.materiales : []).forEach((m, idx) => {
       out.push({ tipo: 'curso', cursoId: c.id, cursoTitulo: c.nombre || c.titulo || 'Sin título', cursoArea: c.area || 'General', idx, titulo: m.titulo || 'Sin título', url: m.url || '',
         disponibleSiempre: m.disponibleSiempre === true,
@@ -1707,6 +1773,7 @@ PAGES._refrescar_materiales = function(){
       </div>`).join('')}</div>`;
     return;
   }
+  precargarPortadasAdm();
   const todos = PAGES._todosLosMateriales();
   /* KPIs · mismos que OdonTeck: total / siempre / progresivo */
   const sueltos = todos.filter(m => m.tipo === 'suelto').length;
@@ -2294,6 +2361,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `</svg>`;
     return 'data:image/svg+xml,'+encodeURIComponent(svg);
   }
+  window.__svgPortada = svgPortada; /* fallback de portadas para las cards del admin */
 
   /* ─────────── Portadas REALES por curso (fotos médicas Unsplash, mismo patrón que OdonTeck) ───────────
      La misma imagen del curso se usa en sus clases y en sus materiales/PDFs. */
