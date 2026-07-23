@@ -1184,6 +1184,75 @@ function modalEliminar(m){
 <script>
 /* ═══════════════════ CURSOS ═══════════════════ */
 const AREA_COLORS = { 'Normas y calidad': 'var(--primary)', 'Procesos clínicos': 'var(--highlight)', 'Bioseguridad': 'var(--accent)', 'Atención al paciente': 'var(--info)', 'Gestión y auditoría': 'var(--warning)', 'General': 'var(--text-3)' };
+
+/* ── Portadas reales · MISMO mapa que vip-panel (lo que ven los miembros es lo que ves aquí) ── */
+const _IMG = id => 'https://images.unsplash.com/photo-' + id + '?w=900&auto=format&fit=crop&q=80';
+const PORTADA_POOLS = {
+  urgencias:  ['1551601651-2a8555f1a136','1516574187841-cb9cc2ca948b','1538108149393-fbbd81895907','1551076805-e1869033e561'].map(_IMG),
+  enfermeria: ['1576765608535-5f04d1e3f289','1579684385127-1ef15d508118','1584515933487-779824d29309','1584744982491-665216d95f8b'].map(_IMG),
+  laboratorio:['1532094349884-543bc11b234d','1576086213369-97a306d36557','1532187863486-abf9dbad1b69'].map(_IMG),
+  pediatria:  ['1519689680058-324335c77eba','1583911860205-72f8ac8ddcbe'].map(_IMG),
+  nutricion:  ['1490645935967-10de6ba17061','1512621776951-a57141f2eefd'].map(_IMG),
+  estetica:   ['1570172619644-dfd03ed5d881'].map(_IMG),
+  general:    ['1505751172876-fa1923c5c528','1559839734-2b71ea197ec2','1576091160399-112ba8d25d1d','1584308666744-24d5c474f2ae','1587854692152-cbe660dbde88','1612349317150-e413f6a5b16d'].map(_IMG)
+};
+const PORTADA_TEMAS = [
+  ['urgencias',['politraumatiz','urgencia','quemado','reanimac','trauma','cirug','ventilac','hipoxem','sepsis']],
+  ['pediatria',['pediátr','pediatr','neonatal','infantil','niñ','deshidratación pediátrica']],
+  ['nutricion',['nutric','dieta','cetogénic','cetogenic','alimentac']],
+  ['estetica',['estétic','estetic','facial','plasma pen','electrolifting','rejuvenec']],
+  ['laboratorio',['toxicológ','toxicolog','pericial','forense','laboratorio','vector','vigilancia']],
+  ['enfermeria',['enfermer','infusión','infusion','herida','apósito','aposito','ostom','catéter','cateter','vascular','diálisis','dialisis','presión','presion','lecho','vacun','atención','atencion']]
+];
+const PORTADA_DEFAULT = _IMG('1505751172876-fa1923c5c528');
+const PORTADAS_CURSO = {
+  'syn-politraumatizado-urgencias':  _IMG('1551601651-2a8555f1a136'),
+  'syn-peritaje-toxicologico':       _IMG('1532094349884-543bc11b234d'),
+  'syn-cetoacidosis-diabetica':      _IMG('1576086213369-97a306d36557'),
+  'syn-iaas-seguridad-paciente':     _IMG('1584982751601-97dcc096659c'),
+  'syn-electrolifting-plasma-pen':   _IMG('1570172619644-dfd03ed5d881'),
+  'syn-vigilancia-control-vectores': _IMG('1532187863486-abf9dbad1b69'),
+  'syn-deshidratacion-pediatrica':   _IMG('1519689680058-324335c77eba'),
+  'syn-terapia-infusion-enfermeria': _IMG('1576765608535-5f04d1e3f289'),
+  'syn-preparacion-lecho-herida':    _IMG('1584744982491-665216d95f8b'),
+  'syn-lesiones-por-presion':        _IMG('1586773860418-d37222d8fce3'),
+  'syn-hipoxemia-ventilacion':       _IMG('1551076805-e1869033e561'),
+  'syn-paciente-quemado':            _IMG('1516574187841-cb9cc2ca948b'),
+  'syn-vacunas-prevencion':          _IMG('1587370560942-ad2a04eabb6d'),
+  'syn-manejo-ostomias':             _IMG('1579684385127-1ef15d508118'),
+  'syn-heridas-apositos':            _IMG('1603398938378-e54eab446dde'),
+  'syn-accesos-vasculares':          _IMG('1538108149393-fbbd81895907'),
+  'syn-diabetes-mellitus-2':         _IMG('1576091160399-112ba8d25d1d'),
+  'syn-fragilidad-vejez':            _IMG('1544126592-807ade215a0b'),
+  'syn-terapia-presion-negativa':    _IMG('1584308666744-24d5c474f2ae'),
+  'syn-sindrome-hellp':              _IMG('1559839734-2b71ea197ec2'),
+  'syn-cateteres-implantables':      _IMG('1579154204601-01588f351e67'),
+  'syn-proceso-atencion-enfermeria': _IMG('1584515933487-779824d29309'),
+  'syn-sepsis-neonatal':             _IMG('1583911860205-72f8ac8ddcbe'),
+  'syn-accesos-dialisis':            _IMG('1587854692152-cbe660dbde88'),
+  'syn-dieta-cetogenica':            _IMG('1490645935967-10de6ba17061')
+};
+function esPortadaGenerica(p){ return !p || String(p).indexOf('data:image/svg') === 0; }
+function _hashStr(s){ let h = 0; s = String(s||''); for (let i = 0; i < s.length; i++){ h = ((h << 5) - h + s.charCodeAt(i)) | 0; } return Math.abs(h); }
+function portadaCurso(c){
+  if (!c) return PORTADA_DEFAULT;
+  if (PORTADAS_CURSO[c.id]) return PORTADAS_CURSO[c.id];
+  if (!esPortadaGenerica(c.portada)) return c.portada;
+  const titulo = ((c.nombre || c.titulo || '') + ' ' + (c.area || '')).toLowerCase();
+  let tema = 'general';
+  for (const [tm, kws] of PORTADA_TEMAS){ if (kws.some(k => titulo.includes(k))){ tema = tm; break; } }
+  const pool = PORTADA_POOLS[tema];
+  return pool[_hashStr(c.id || titulo) % pool.length] || PORTADA_DEFAULT;
+}
+window.portadaCurso = portadaCurso;
+/* Día de desbloqueo por curso · mismo cálculo que el panel (rank × 8 según orden, saltando los "siempre") */
+const DRIP_DIAS_ADM = 8;
+function mapaDesbloqueo(){
+  const orden = Store.cursos.slice().sort((a,b)=>(a.orden||999)-(b.orden||999));
+  const map = {}; let rank = 0;
+  orden.forEach(c => { if (c.disponibleSiempre) map[c.id] = 0; else { map[c.id] = rank * DRIP_DIAS_ADM; rank++; } });
+  return map;
+}
 let __cursoView = 'grid', __cursoQ = '', __cursoArea = '';
 PAGES.cursos = function(){
   const page = document.getElementById('page');
@@ -1227,19 +1296,28 @@ PAGES._refrescar_cursos = function(rebindView){
     return true;
   });
   if (!lista.length) { cont.innerHTML = `<div class="curso-empty empty"><svg viewBox="0 0 24 24"><use href="#i-book"/></svg><h3>Sin cursos aún</h3><p>Crea el primer curso del catálogo SYNOVA con "Nuevo curso".</p></div>`; return; }
+  const mapDesb = mapaDesbloqueo();
   if (__cursoView === 'grid') {
-    cont.innerHTML = `<div class="curso-grid">${lista.map(cursoCardGrid).join('')}</div>`;
+    cont.innerHTML = `<div class="curso-grid">${lista.map(c => cursoCardGrid(c, mapDesb)).join('')}</div>`;
   } else {
-    cont.innerHTML = `<div class="curso-list">${lista.map(cursoCardList).join('')}</div>`;
+    cont.innerHTML = `<div class="curso-list">${lista.map(c => cursoCardList(c, mapDesb)).join('')}</div>`;
   }
   cont.querySelectorAll('[data-edit-curso]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); abrirModalCurso(b.dataset.editCurso); }));
   cont.querySelectorAll('[data-del-curso]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); confirmarBorrarDoc('cursos', b.dataset.delCurso, 'este curso'); }));
   cont.querySelectorAll('[data-toggle-curso]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); toggleCampo('cursos', b.dataset.toggleCurso, 'activo', b.dataset.val !== 'true'); }));
 };
-function cursoCardGrid(c){
+function _badgeDesbloqueo(c, map){
+  if (c.disponibleSiempre) return `<span style="color:#34D399;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Siempre</span>`;
+  const dia = (map && typeof map[c.id] === 'number') ? map[c.id] : null;
+  return dia !== null
+    ? `<span style="color:#FBBF24;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Día ${dia}</span>`
+    : `<span style="color:#9CA3AF;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Progresivo</span>`;
+}
+function cursoCardGrid(c, map){
   const area = c.area || 'General'; const color = AREA_COLORS[area] || 'var(--primary)';
   const activo = c.activo !== false;
-  const cover = c.portada ? `background-image:url('${c.portada.replace(/'/g,"")}')` : '';
+  const port = portadaCurso(c);
+  const cover = `background-image:url('${String(port).replace(/'/g,'%27')}')`;
   return `<div class="curso-card" style="--area-color:${color}">
     <div class="curso-card__cover" style="${cover}">
       <div class="curso-card__cover-overlay"></div>
@@ -1248,7 +1326,7 @@ function cursoCardGrid(c){
     </div>
     <div class="curso-card__body">
       ${c.instructor ? `<div class="curso-card__instructor"><svg class="ic" style="width:12px;height:12px"><use href="#i-user"/></svg>${escHtml(c.instructor)}</div>` : ''}
-      <div class="curso-card__meta">${c.horas ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-clock"/></svg>${c.horas}h</span>` : ''}${c.inscritos ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-users"/></svg>${c.inscritos}</span>` : ''}</div>
+      <div class="curso-card__meta">${c.horas ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-clock"/></svg>${c.horas}h</span>` : ''}${c.inscritos ? `<span class="curso-card__meta-item"><svg class="ic" style="width:11px;height:11px"><use href="#i-users"/></svg>${c.inscritos}</span>` : ''}<span class="curso-card__meta-item">${_badgeDesbloqueo(c, map)}</span></div>
       <div class="curso-card__footer">
         <span class="curso-card__status ${activo?'is-active':'is-inactive'}"><span class="curso-card__status-dot"></span>${activo?'Activo':'Inactivo'}</span>
         <div class="curso-card__actions">
@@ -1260,13 +1338,14 @@ function cursoCardGrid(c){
     </div>
   </div>`;
 }
-function cursoCardList(c){
+function cursoCardList(c, map){
   const area = c.area || 'General'; const color = AREA_COLORS[area] || 'var(--primary)'; const activo = c.activo !== false;
+  const port = portadaCurso(c);
   return `<div class="curso-row" style="--area-color:${color}">
-    <div class="curso-row__thumb" style="${c.portada?`background-image:url('${c.portada.replace(/'/g,"")}')`:''}">${c.portada?'':'<svg class="ic"><use href="#i-book"/></svg>'}</div>
+    <div class="curso-row__thumb" style="background-image:url('${String(port).replace(/'/g,'%27')}')"></div>
     <div class="curso-row__body">
       <div class="curso-row__title">${escHtml(c.nombre||c.titulo||'Sin título')}</div>
-      <div class="curso-row__meta"><span class="tag" style="color:${color};border-color:${color}">${escHtml(area)}</span>${c.nivel?`<span>${escHtml(c.nivel)}</span>`:''}${c.instructor?`<span>· ${escHtml(c.instructor)}</span>`:''}<span class="tag ${activo?'tag--success':'tag--danger'}">${activo?'Activo':'Inactivo'}</span></div>
+      <div class="curso-row__meta"><span class="tag" style="color:${color};border-color:${color}">${escHtml(area)}</span>${c.nivel?`<span>${escHtml(c.nivel)}</span>`:''}${c.instructor?`<span>· ${escHtml(c.instructor)}</span>`:''}<span class="tag ${activo?'tag--success':'tag--danger'}">${activo?'Activo':'Inactivo'}</span>${_badgeDesbloqueo(c, map)}</div>
     </div>
     <div class="curso-row__actions">
       <button class="icon-action" data-edit-curso="${c.id}"><svg class="ic"><use href="#i-edit"/></svg></button>
@@ -1274,8 +1353,70 @@ function cursoCardList(c){
     </div>
   </div>`;
 }
+/* ── Modal curso · flujo OdonTeck completo: datos + disponibilidad + clases (videos) + materiales ── */
+const __mc = { sesiones: [], materiales: [] };
+function _mcRenderSesiones(body){
+  const cont = body.querySelector('#cu-sesiones-list'); if (!cont) return;
+  const arr = __mc.sesiones;
+  if (!arr.length){ cont.innerHTML = `<div style="padding:16px;text-align:center;color:var(--text-3);font-size:12.5px;font-style:italic;">Aún no hay clases. Usa "+ Agregar clase" arriba.</div>`; return; }
+  cont.innerHTML = arr.map((s, idx) => `
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;letter-spacing:.6px;padding:5px 8px;border-radius:6px;flex-shrink:0;margin-top:4px;white-space:nowrap;">CLASE ${idx+1}</span>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;">
+        <input type="text" class="input" placeholder="Título de la clase (opcional)" value="${escHtml(s.titulo||'')}" data-ses-idx="${idx}" data-ses-campo="titulo" style="font-size:13px;padding:8px 11px;">
+        <input type="url" class="input" placeholder="URL del video (Google Drive, YouTube, etc.)" value="${escHtml(s.url||'')}" data-ses-idx="${idx}" data-ses-campo="url" style="font-size:13px;padding:8px 11px;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+        <button type="button" class="curso-card__action" data-ses-mover="${idx}" data-delta="-1" ${idx===0?'disabled':''} title="Subir" style="width:28px;height:24px;${idx===0?'opacity:.4;cursor:not-allowed;':''}">▲</button>
+        <button type="button" class="curso-card__action" data-ses-mover="${idx}" data-delta="1" ${idx===arr.length-1?'disabled':''} title="Bajar" style="width:28px;height:24px;${idx===arr.length-1?'opacity:.4;cursor:not-allowed;':''}">▼</button>
+        <button type="button" class="curso-card__action curso-card__action--danger" data-ses-del="${idx}" title="Eliminar clase" style="width:28px;height:24px;">✕</button>
+      </div>
+    </div>`).join('');
+  cont.querySelectorAll('[data-ses-campo]').forEach(input => input.addEventListener('input', e => {
+    const i = parseInt(input.dataset.sesIdx, 10); if (__mc.sesiones[i]) __mc.sesiones[i][input.dataset.sesCampo] = e.target.value;
+  }));
+  cont.querySelectorAll('[data-ses-mover]').forEach(btn => btn.addEventListener('click', () => {
+    const i = parseInt(btn.dataset.sesMover, 10), d = parseInt(btn.dataset.delta, 10), j = i + d;
+    if (j < 0 || j >= __mc.sesiones.length) return;
+    [__mc.sesiones[i], __mc.sesiones[j]] = [__mc.sesiones[j], __mc.sesiones[i]];
+    _mcRenderSesiones(body);
+  }));
+  cont.querySelectorAll('[data-ses-del]').forEach(btn => btn.addEventListener('click', () => {
+    __mc.sesiones.splice(parseInt(btn.dataset.sesDel, 10), 1); _mcRenderSesiones(body);
+  }));
+}
+function _mcRenderMats(body){
+  const cont = body.querySelector('#cu-mats-list'); if (!cont) return;
+  const arr = __mc.materiales;
+  if (!arr.length){ cont.innerHTML = `<div style="padding:16px;text-align:center;color:var(--text-3);font-size:12.5px;font-style:italic;">Sin materiales por ahora. Usa "+ Agregar material".</div>`; return; }
+  cont.innerHTML = arr.map((m, idx) => `
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <span style="background:color-mix(in srgb,var(--info) 14%,transparent);color:var(--info);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;letter-spacing:.6px;padding:5px 8px;border-radius:6px;flex-shrink:0;margin-top:4px;white-space:nowrap;">MAT ${idx+1}</span>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;">
+        <input type="text" class="input" placeholder="Título (ej. Guía rápida.pdf)" value="${escHtml(m.titulo||'')}" data-mat-idx="${idx}" data-mat-campo="titulo" style="font-size:13px;padding:8px 11px;">
+        <input type="url" class="input" placeholder="URL de descarga (Google Drive, etc.)" value="${escHtml(m.url||'')}" data-mat-idx="${idx}" data-mat-campo="url" style="font-size:13px;padding:8px 11px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text-2);cursor:pointer;margin-top:2px;">
+          <input type="checkbox" data-mat-idx="${idx}" data-mat-siempre="1" ${m.disponibleSiempre ? 'checked' : ''} style="cursor:pointer;">
+          Disponible siempre (sin esperar el desbloqueo del curso)
+        </label>
+      </div>
+      <button type="button" class="curso-card__action curso-card__action--danger" data-mat-del="${idx}" title="Eliminar material" style="width:28px;height:24px;flex-shrink:0;">✕</button>
+    </div>`).join('');
+  cont.querySelectorAll('[data-mat-campo]').forEach(input => input.addEventListener('input', e => {
+    const i = parseInt(input.dataset.matIdx, 10); if (__mc.materiales[i]) __mc.materiales[i][input.dataset.matCampo] = e.target.value;
+  }));
+  cont.querySelectorAll('[data-mat-siempre]').forEach(cb => cb.addEventListener('change', e => {
+    const i = parseInt(cb.dataset.matIdx, 10); if (__mc.materiales[i]) __mc.materiales[i].disponibleSiempre = e.target.checked;
+  }));
+  cont.querySelectorAll('[data-mat-del]').forEach(btn => btn.addEventListener('click', () => {
+    __mc.materiales.splice(parseInt(btn.dataset.matDel, 10), 1); _mcRenderMats(body);
+  }));
+}
 window.abrirModalCurso = function(id){
   const c = id ? Store.cursos.find(x => x.id === id) : null;
+  __mc.sesiones = (c?.sesiones || []).map(s => ({ titulo: s.titulo || '', url: s.url || '' }));
+  __mc.materiales = (c?.materiales || []).map(m => ({ titulo: m.titulo || '', url: m.url || '', portada: m.portada || '', disponibleSiempre: m.disponibleSiempre === true }));
+  const dispSiempre = c?.disponibleSiempre === true;
   const body = document.createElement('div');
   body.innerHTML = `<div class="form-grid">
     <div class="form-field form-field--full"><label class="label">Nombre del curso</label><input class="input" id="cu-nombre" placeholder="Ej. NOM-004-SSA3 · Expediente clínico" value="${escHtml(c?.nombre||c?.titulo||'')}"></div>
@@ -1285,24 +1426,91 @@ window.abrirModalCurso = function(id){
     <div class="form-field"><label class="label">Duración (horas)</label><input type="number" class="input" id="cu-horas" value="${c?.horas||8}"></div>
     <div class="form-field form-field--full"><label class="label">URL de portada (opcional)</label><input class="input" id="cu-portada" placeholder="https://…" value="${escHtml(c?.portada||'')}"></div>
     <div class="form-field form-field--full"><label class="label">Descripción</label><textarea class="textarea" id="cu-desc" rows="3">${escHtml(c?.descripcion||'')}</textarea></div>
+    <div class="form-field form-field--full">
+      <label class="label">Disponibilidad para los miembros</label>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid var(--border-2);border-radius:10px;cursor:pointer;background:var(--surface-2);">
+          <input type="radio" name="cu-disp" value="progresivo" style="margin-top:3px;flex-shrink:0;" ${!dispSiempre ? 'checked' : ''}>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Desbloqueo progresivo (cada ${DRIP_DIAS_ADM} días)</div>
+            <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.4;">El curso aparece según su <strong>orden</strong>: curso 0 → día 0 · curso 1 → día ${DRIP_DIAS_ADM} · curso 2 → día ${DRIP_DIAS_ADM*2} · etc.</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid var(--border-2);border-radius:10px;cursor:pointer;background:var(--surface-2);">
+          <input type="radio" name="cu-disp" value="siempre" style="margin-top:3px;flex-shrink:0;" ${dispSiempre ? 'checked' : ''}>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Disponible ahora (desbloqueo anticipado)</div>
+            <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.4;">El curso se ve <strong>de inmediato</strong>, sin esperar los ${DRIP_DIAS_ADM} días. Puedes regresarlo a progresivo cuando quieras editándolo de nuevo.</div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--surface-2);border:1px solid var(--border-2);border-radius:12px;padding:14px;margin-top:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-size:13.5px;font-weight:700;color:var(--text);">Clases del curso (videos)</div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">Las clases se desbloquean en orden. El alumno completa una para acceder a la siguiente.</div>
+      </div>
+      <button type="button" class="btn btn-outline btn-sm" id="cu-add-sesion" style="font-size:12px;padding:7px 13px;"><svg class="ic" style="width:13px;height:13px;"><use href="#i-plus"/></svg>Agregar clase</button>
+    </div>
+    <div id="cu-sesiones-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+  <div style="background:var(--surface-2);border:1px solid var(--border-2);border-radius:12px;padding:14px;margin-top:12px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <div>
+        <div style="font-size:13.5px;font-weight:700;color:var(--text);">Materiales descargables (PDFs, etc.)</div>
+        <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;">Documentos extra · cada uno con su propia disponibilidad.</div>
+      </div>
+      <button type="button" class="btn btn-outline btn-sm" id="cu-add-mat" style="font-size:12px;padding:7px 13px;"><svg class="ic" style="width:13px;height:13px;"><use href="#i-plus"/></svg>Agregar material</button>
+    </div>
+    <div id="cu-mats-list" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>`;
   const footer = document.createElement('div');
   footer.innerHTML = `<button class="btn btn-outline btn-sm" id="cu-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="cu-guardar"><svg class="ic"><use href="#i-check"/></svg>${c?'Guardar cambios':'Crear curso'}</button>`;
   Modal.open({ title: c ? 'Editar curso' : 'Nuevo curso', subtitle: 'Catálogo SYNOVA', icon: 'i-book', body, footer });
+  _mcRenderSesiones(body); _mcRenderMats(body);
+  body.querySelector('#cu-add-sesion').addEventListener('click', () => { __mc.sesiones.push({ titulo: '', url: '' }); _mcRenderSesiones(body); });
+  body.querySelector('#cu-add-mat').addEventListener('click', () => { __mc.materiales.push({ titulo: '', url: '', disponibleSiempre: false }); _mcRenderMats(body); });
   footer.querySelector('#cu-cancel').addEventListener('click', () => Modal.close());
   footer.querySelector('#cu-guardar').addEventListener('click', async () => {
     const nombre = body.querySelector('#cu-nombre').value.trim();
     if (!nombre) { Toast.error('Falta el nombre del curso'); return; }
+    /* Clases: URL obligatoria, título autogenerado si falta */
+    const sesiones = [];
+    for (let i = 0; i < __mc.sesiones.length; i++){
+      const s = __mc.sesiones[i], tit = (s.titulo||'').trim(), url = (s.url||'').trim();
+      if (!tit && !url) continue;
+      if (!url) { Toast.error(`Clase ${i+1} sin video`, 'Pega la URL del video (el título es opcional)'); return; }
+      try { new URL(url); } catch(e){ Toast.error(`Clase ${i+1}: URL inválida`, 'Verifica el enlace'); return; }
+      sesiones.push({ titulo: tit || `Clase ${sesiones.length+1}`, url, orden: sesiones.length + 1 });
+    }
+    /* Materiales: título Y URL */
+    const materiales = [];
+    for (let i = 0; i < __mc.materiales.length; i++){
+      const m = __mc.materiales[i], tit = (m.titulo||'').trim(), url = (m.url||'').trim();
+      if (!tit && !url) continue;
+      if (!tit || !url) { Toast.error(`Material ${i+1} incompleto`, 'Necesita título Y URL'); return; }
+      try { new URL(url); } catch(e){ Toast.error(`Material ${i+1}: URL inválida`, 'Verifica el enlace'); return; }
+      materiales.push({ titulo: tit, url, portada: m.portada || '', disponibleSiempre: m.disponibleSiempre === true });
+    }
+    const disponibleSiempre = body.querySelector('input[name="cu-disp"]:checked')?.value === 'siempre';
     const datos = {
       nombre, area: body.querySelector('#cu-area').value.trim() || 'General',
       nivel: body.querySelector('#cu-nivel').value, instructor: body.querySelector('#cu-instructor').value.trim(),
-      horas: parseInt(body.querySelector('#cu-horas').value) || 0, portada: body.querySelector('#cu-portada').value.trim(),
-      descripcion: body.querySelector('#cu-desc').value.trim()
+      horas: parseInt(body.querySelector('#cu-horas').value) || Math.max(1, sesiones.length), portada: body.querySelector('#cu-portada').value.trim(),
+      descripcion: body.querySelector('#cu-desc').value.trim(),
+      sesiones, materiales, disponibleSiempre
     };
     try {
       const { doc, updateDoc, addDoc, collection, db, serverTimestamp } = window.__fs;
-      if (c) { await updateDoc(doc(db, 'cursos', c.id), datos); Toast.success('Curso actualizado'); }
-      else { await addDoc(collection(db, 'cursos'), { ...datos, activo: true, inscritos: 0, createdAt: serverTimestamp() }); Toast.success('Curso creado'); }
+      if (c) { await updateDoc(doc(db, 'cursos', c.id), datos); Toast.success('Curso actualizado', disponibleSiempre ? 'Disponible de inmediato para los miembros' : 'Sigue el desbloqueo progresivo'); }
+      else {
+        const ordenes = Store.cursos.map(x => typeof x.orden === 'number' ? x.orden : 0);
+        const orden = (ordenes.length ? Math.max(...ordenes) : 0) + 1;
+        await addDoc(collection(db, 'cursos'), { ...datos, activo: true, inscritos: 0, orden, createdAt: serverTimestamp() });
+        Toast.success('Curso creado', `Aparecerá en orden #${orden}`);
+      }
       Modal.close();
     } catch (e) { Toast.error('Error al guardar', e.message); }
   });
@@ -1440,17 +1648,20 @@ window.abrirModalWebinar = function(id){
 };
 
 /* ═══════════════════ MATERIALES / PDFs ═══════════════════ */
-let __matQ = '', __matCurso = 'todos';
+let __matQ = '', __matCurso = 'todos', __matEstado = 'todos';
 /* Vista agregada estilo OdonTeck: materiales dentro de cada curso + materiales sueltos de la colección */
 PAGES._todosLosMateriales = function(){
   const out = [];
   Store.cursos.forEach(c => {
+    const portCurso = portadaCurso(c);
     (Array.isArray(c.materiales) ? c.materiales : []).forEach((m, idx) => {
-      out.push({ tipo: 'curso', cursoId: c.id, cursoTitulo: c.nombre || c.titulo || 'Sin título', cursoArea: c.area || 'General', idx, titulo: m.titulo || 'Sin título', url: m.url || '' });
+      out.push({ tipo: 'curso', cursoId: c.id, cursoTitulo: c.nombre || c.titulo || 'Sin título', cursoArea: c.area || 'General', idx, titulo: m.titulo || 'Sin título', url: m.url || '',
+        disponibleSiempre: m.disponibleSiempre === true,
+        portada: !esPortadaGenerica(m.portada) ? m.portada : portCurso });
     });
   });
   Store.materiales.forEach(m => {
-    out.push({ tipo: 'suelto', id: m.id, cursoId: null, cursoTitulo: m.categoria || 'General', cursoArea: m.categoria || 'General', titulo: m.titulo || 'Sin título', url: m.url || '', publicado: m.publicado !== false });
+    out.push({ tipo: 'suelto', id: m.id, cursoId: null, cursoTitulo: m.categoria || 'General', cursoArea: m.categoria || 'General', titulo: m.titulo || 'Sin título', url: m.url || '', publicado: m.publicado !== false, disponibleSiempre: true, portada: '' });
   });
   return out;
 };
@@ -1468,11 +1679,20 @@ PAGES.materiales = function(){
       </div>
     </div>
     <div class="curso-pills" id="mat-pills-curso"></div>
+    <div class="curso-pills">
+      <button class="curso-pill" data-mat-estado="todos" data-active="${__matEstado==='todos'?1:''}">Todos</button>
+      <button class="curso-pill" data-mat-estado="disponibles" data-active="${__matEstado==='disponibles'?1:''}"><span class="curso-pill__dot" style="background:#34D399;"></span>Disponibles siempre</button>
+      <button class="curso-pill" data-mat-estado="progresivo" data-active="${__matEstado==='progresivo'?1:''}"><span class="curso-pill__dot" style="background:#FBBF24;"></span>Desbloqueo progresivo</button>
+    </div>
     <div id="mat-container"></div></div>`;
   const inp = document.getElementById('mat-buscar'); const clr = document.getElementById('mat-buscar-clear');
   inp.value = __matQ; clr.style.display = __matQ ? '' : 'none';
   inp.addEventListener('input', e => { __matQ = e.target.value.toLowerCase().trim(); clr.style.display = e.target.value ? '' : 'none'; PAGES._refrescar_materiales(); });
   clr.addEventListener('click', () => { inp.value = ''; __matQ = ''; clr.style.display = 'none'; PAGES._refrescar_materiales(); });
+  page.querySelectorAll('[data-mat-estado]').forEach(btn => btn.addEventListener('click', () => {
+    page.querySelectorAll('[data-mat-estado]').forEach(b => b.removeAttribute('data-active'));
+    btn.setAttribute('data-active','1'); __matEstado = btn.dataset.matEstado; PAGES._refrescar_materiales();
+  }));
   PAGES._refrescar_materiales();
 };
 PAGES._refrescar_materiales = function(){
@@ -1488,14 +1708,15 @@ PAGES._refrescar_materiales = function(){
     return;
   }
   const todos = PAGES._todosLosMateriales();
-  /* KPIs */
-  const enCursos = todos.filter(m => m.tipo === 'curso').length;
-  const sueltos = todos.length - enCursos;
+  /* KPIs · mismos que OdonTeck: total / siempre / progresivo */
+  const sueltos = todos.filter(m => m.tipo === 'suelto').length;
+  const siempre = todos.filter(m => m.disponibleSiempre).length;
+  const progresivo = todos.length - siempre;
   const cursosConMat = new Set(todos.filter(m => m.cursoId).map(m => m.cursoId)).size;
   if (kpiEl) kpiEl.innerHTML = `
     <div class="kpi-card" style="--c1:var(--info);--c2:#60A5FA;"><div class="kpi-card__label">Total materiales</div><div class="kpi-card__value">${todos.length}</div><div class="kpi-card__sub">${cursosConMat} curso${cursosConMat!==1?'s':''} con material</div></div>
-    <div class="kpi-card" style="--c1:var(--success);--c2:#22C55E;"><div class="kpi-card__label">En cursos</div><div class="kpi-card__value">${enCursos}</div><div class="kpi-card__sub">Vinculados al catálogo</div></div>
-    <div class="kpi-card" style="--c1:var(--warning);--c2:#F59E0B;"><div class="kpi-card__label">Generales</div><div class="kpi-card__value">${sueltos}</div><div class="kpi-card__sub">Sin curso asignado</div></div>`;
+    <div class="kpi-card" style="--c1:var(--success);--c2:#22C55E;"><div class="kpi-card__label">Siempre disponibles</div><div class="kpi-card__value">${siempre}</div><div class="kpi-card__sub">Sin esperar desbloqueo</div></div>
+    <div class="kpi-card" style="--c1:var(--warning);--c2:#F59E0B;"><div class="kpi-card__label">Desbloqueo progresivo</div><div class="kpi-card__value">${progresivo}</div><div class="kpi-card__sub">Se liberan con su curso</div></div>`;
   /* Pills por curso */
   if (pillsEl) {
     const cursosCon = Array.from(new Set(todos.filter(m => m.cursoId).map(m => m.cursoId)))
@@ -1518,12 +1739,14 @@ PAGES._refrescar_materiales = function(){
   let mats = todos;
   if (__matCurso === '__general') mats = mats.filter(m => m.tipo === 'suelto');
   else if (__matCurso !== 'todos') mats = mats.filter(m => m.cursoId === __matCurso);
+  if (__matEstado === 'disponibles') mats = mats.filter(m => m.disponibleSiempre);
+  else if (__matEstado === 'progresivo') mats = mats.filter(m => !m.disponibleSiempre);
   if (__matQ) mats = mats.filter(m => ((m.titulo||'') + ' ' + (m.cursoTitulo||'')).toLowerCase().includes(__matQ));
   if (!mats.length) {
     cont.innerHTML = `<div class="curso-empty">
       <div class="curso-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-      <div class="curso-empty__title">${(__matQ || __matCurso !== 'todos') ? 'Sin resultados' : 'Sin materiales aún'}</div>
-      <div class="curso-empty__sub">${(__matQ || __matCurso !== 'todos') ? 'Prueba con otros filtros o búsqueda' : 'Importa el catálogo SYNOVA en Cursos o sube el primero con "Nuevo material"'}</div>
+      <div class="curso-empty__title">${(__matQ || __matCurso !== 'todos' || __matEstado !== 'todos') ? 'Sin resultados' : 'Sin materiales aún'}</div>
+      <div class="curso-empty__sub">${(__matQ || __matCurso !== 'todos' || __matEstado !== 'todos') ? 'Prueba con otros filtros o búsqueda' : 'Importa el catálogo SYNOVA en Cursos o sube el primero con "Nuevo material"'}</div>
     </div>`;
     return;
   }
@@ -1536,10 +1759,16 @@ PAGES._refrescar_materiales = function(){
          <button class="curso-card__action curso-card__action--danger" onclick="borrarMaterialCurso('${m.cursoId}',${m.idx})" title="Eliminar material"><svg class="ic" style="width:14px;height:14px"><use href="#i-trash"/></svg></button>`
       : `<button class="curso-card__action" onclick="abrirModalMaterial('${m.id}')" title="Editar material"><svg class="ic" style="width:14px;height:14px"><use href="#i-edit"/></svg></button>
          <button class="curso-card__action curso-card__action--danger" onclick="confirmarBorrarDoc('materiales','${m.id}','este material')" title="Eliminar material"><svg class="ic" style="width:14px;height:14px"><use href="#i-trash"/></svg></button>`;
+    const thumb = m.portada
+      ? `<div class="curso-row__thumb" style="background-image:url('${String(m.portada).replace(/'/g,'%27')}')"></div>`
+      : `<div class="curso-row__thumb" style="background:color-mix(in srgb,${areaColor} 14%,transparent);color:${areaColor};background-image:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>`;
+    const dispLabel = m.disponibleSiempre
+      ? `<span style="color:#34D399;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Siempre</span>`
+      : `<span style="color:#FBBF24;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">Con su curso</span>`;
     return `<div class="curso-row" style="--area-color:${areaColor};">
-      <div class="curso-row__thumb" style="background:color-mix(in srgb,${areaColor} 14%,transparent);color:${areaColor};background-image:none;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      </div>
+      ${thumb}
       <div class="curso-row__body">
         <div class="curso-row__title">${escHtml(m.titulo)}</div>
         <div class="curso-row__meta">
@@ -1548,6 +1777,7 @@ PAGES._refrescar_materiales = function(){
           ${m.tipo === 'suelto' && !m.publicado ? `<span class="curso-row__nivel">Borrador</span>` : ''}
         </div>
       </div>
+      <div class="curso-row__stats"><div class="curso-row__stat">${dispLabel}</div></div>
       <div class="curso-row__actions">
         ${m.url ? `<a href="${escHtml(m.url)}" target="_blank" rel="noopener noreferrer" class="curso-card__action" title="Abrir enlace" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
         ${acciones}
@@ -1559,11 +1789,31 @@ PAGES._refrescar_materiales = function(){
 window.abrirModalMaterialCurso = function(cursoId, idx){
   const c = Store.cursos.find(x => x.id === cursoId); if (!c) return;
   const m = (c.materiales || [])[idx]; if (!m) return;
+  const dispSiempre = m.disponibleSiempre === true;
   const body = document.createElement('div');
   body.innerHTML = `<div class="form-grid">
     <div class="form-field form-field--full"><label class="label">Título</label><input class="input" id="mc-titulo" value="${escHtml(m.titulo||'')}"></div>
     <div class="form-field form-field--full"><label class="label">URL del archivo</label><input class="input" id="mc-url" value="${escHtml(m.url||'')}" placeholder="https://…"></div>
     <div class="form-field form-field--full"><label class="label">Curso</label><input class="input" value="${escHtml(c.nombre||c.titulo||'')}" disabled style="opacity:.6"></div>
+    <div class="form-field form-field--full">
+      <label class="label">Disponibilidad para los miembros</label>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid var(--border-2);border-radius:10px;cursor:pointer;background:var(--surface-2);">
+          <input type="radio" name="mc-disp" value="curso" style="margin-top:3px;flex-shrink:0;" ${!dispSiempre ? 'checked' : ''}>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Se desbloquea con su curso</div>
+            <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.4;">El material sigue el <strong>desbloqueo progresivo</strong> del curso al que pertenece.</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:10px;padding:11px 13px;border:1px solid var(--border-2);border-radius:10px;cursor:pointer;background:var(--surface-2);">
+          <input type="radio" name="mc-disp" value="siempre" style="margin-top:3px;flex-shrink:0;" ${dispSiempre ? 'checked' : ''}>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);">Disponible siempre (desbloqueo anticipado)</div>
+            <div style="font-size:11.5px;color:var(--text-3);margin-top:2px;line-height:1.4;">Los miembros lo pueden descargar <strong>desde ya</strong>, aunque el curso siga bloqueado. Puedes regresarlo al modo progresivo cuando quieras.</div>
+          </div>
+        </label>
+      </div>
+    </div>
   </div>`;
   const footer = document.createElement('div');
   footer.innerHTML = `<button class="btn btn-outline btn-sm" id="mc-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="mc-guardar"><svg class="ic"><use href="#i-check"/></svg>Guardar cambios</button>`;
@@ -1572,11 +1822,12 @@ window.abrirModalMaterialCurso = function(cursoId, idx){
   footer.querySelector('#mc-guardar').addEventListener('click', async () => {
     const titulo = body.querySelector('#mc-titulo').value.trim();
     if (!titulo) { Toast.error('Falta el título'); return; }
-    const nuevos = (c.materiales || []).map((x,i) => i === idx ? { ...x, titulo, url: body.querySelector('#mc-url').value.trim() } : x);
+    const disponibleSiempre = body.querySelector('input[name="mc-disp"]:checked')?.value === 'siempre';
+    const nuevos = (c.materiales || []).map((x,i) => i === idx ? { ...x, titulo, url: body.querySelector('#mc-url').value.trim(), disponibleSiempre } : x);
     try {
       const { doc, updateDoc, db } = window.__fs;
       await updateDoc(doc(db, 'cursos', cursoId), { materiales: nuevos });
-      Toast.success('Material actualizado'); Modal.close();
+      Toast.success('Material actualizado', disponibleSiempre ? 'Disponible de inmediato' : 'Se desbloquea con su curso'); Modal.close();
     } catch (e) { Toast.error('Error al guardar', e.message); }
   });
 };
@@ -1622,7 +1873,7 @@ window.abrirModalMaterial = function(id){
       } else if (cursoSel) {
         /* Vinculado a un curso: se agrega al array materiales del doc del curso (estilo OdonTeck) */
         const c = Store.cursos.find(x => x.id === cursoSel);
-        const nuevos = [ ...(c?.materiales || []), { titulo, url, portada: c?.portada || '' } ];
+        const nuevos = [ ...(c?.materiales || []), { titulo, url, portada: c?.portada || '', disponibleSiempre: false } ];
         await updateDoc(doc(db, 'cursos', cursoSel), { materiales: nuevos });
         Toast.success('Material agregado al curso');
       } else {

@@ -3905,7 +3905,8 @@ function mountNutricion(c){
     try { cursos = await loadCursos(); } catch(e){ grid.innerHTML = emptyState('i-news','No se pudo cargar el material', e.message); return; }
     const vip = esVip();
     const items = [];
-    cursos.forEach(c => { const ok = cursoDesbloqueado(c); (c.materiales||[]).forEach((m,i) => items.push({ m, c, ok, i })); });
+    /* MODIFICADO: un material con disponibleSiempre (desbloqueo anticipado desde admin) se abre aunque su curso siga bloqueado */
+    cursos.forEach(c => { const ok = cursoDesbloqueado(c); (c.materiales||[]).forEach((m,i) => items.push({ m, c, ok: ok || m.disponibleSiempre === true, i })); });
     if (!items.length){ grid.innerHTML = emptyState('i-news','Sin material por ahora','El material aparecerá aquí junto con los cursos.'); return; }
     grid.className = 'mat-grid';
     grid.innerHTML = items.map((it,k) => {
