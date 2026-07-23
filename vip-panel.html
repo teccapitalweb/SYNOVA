@@ -950,6 +950,63 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   .news-grid{grid-template-columns:1fr}
   .news-card__cover{height:100px}
 }
+
+/* ═══ Splash de bienvenida post-pago · recorrido "película" (flujo OdonTeck) ═══
+   La caja del splash SIEMPRE es oscura (colores fijos), sin depender del tema día/noche */
+#splash-bienvenida{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;animation:bnvFadeIn .4s ease}
+.splash-bnv__overlay{position:absolute;inset:0;background:rgba(3,7,13,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.splash-bnv__box{position:relative;width:100%;max-width:600px;background:linear-gradient(160deg,#101A2C,#0B121F);border:1px solid rgba(95,182,224,.28);border-radius:24px;padding:40px 36px 32px;text-align:center;box-shadow:0 36px 100px rgba(0,0,0,.7),0 0 80px color-mix(in srgb,var(--primary) 28%,transparent),inset 0 0 0 1px rgba(255,255,255,.04);animation:bnvPop .65s cubic-bezier(.22,1.4,.36,1)}
+.splash-bnv__close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#A9BBD1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s ease;z-index:2}
+.splash-bnv__close:hover{background:rgba(255,255,255,.06);color:#EAF2FA}
+.splash-bnv__confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:24px}
+.splash-bnv__bit{position:absolute;top:50%;left:50%;width:9px;height:9px;background:var(--c);border-radius:2px;animation:bnvBurst 1.8s cubic-bezier(.2,.8,.25,1) var(--d) forwards;opacity:0}
+@keyframes bnvBurst{0%{opacity:0;transform:translate(0,0) rotate(0deg) scale(0)}10%{opacity:1;transform:translate(0,0) rotate(30deg) scale(1)}100%{opacity:0;transform:translate(var(--x),360px) rotate(720deg) scale(.4)}}
+.splash-bnv__icon{line-height:1;margin-bottom:8px;display:flex;justify-content:center}
+.splash-svg{width:64px;height:64px;display:inline-block;vertical-align:middle}
+.splash-bnv__icon .splash-svg{width:88px;height:88px}
+.splash-film__feat-ic .splash-svg{width:62px;height:62px;color:var(--primary-soft)}
+.splash-star--vip{color:#2FD1C6;filter:drop-shadow(0 0 16px color-mix(in srgb,#1C6FB0 70%,transparent));animation:starPulse 1.9s ease-in-out infinite}
+@keyframes starPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.splash-bnv__kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2.8px;text-transform:uppercase;font-weight:700;color:#5FB6E0;margin-bottom:12px}
+.splash-bnv__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.9px;line-height:1.15;margin-bottom:14px;color:#EAF2FA}
+.splash-bnv__title em{font-style:italic;display:inline-block;padding:0 .06em;background:linear-gradient(135deg,#5FB6E0,#2FD1C6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.splash-bnv__desc{font-size:14.5px;color:#A9BBD1;line-height:1.65;margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto}
+.splash-bnv__desc strong{color:#EAF2FA;font-weight:700}
+.splash-bnv__btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:13px;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;border:1px solid transparent;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--highlight));color:#fff;letter-spacing:-.1px;box-shadow:0 12px 28px color-mix(in srgb,var(--primary) 35%,transparent);transition:transform .15s ease;width:100%}
+.splash-bnv__btn:hover{transform:translateY(-1px)}
+.splash-bnv__foot{font-size:11.5px;color:#7C8FA8;margin-top:18px}
+.splash-bnv__foot a{color:#5FB6E0;text-decoration:none;font-weight:600}
+.splash-bnv__foot a:hover{text-decoration:underline}
+@keyframes bnvFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes bnvFadeOut{from{opacity:1}to{opacity:0}}
+@keyframes bnvPop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.splash-film{padding-top:34px}
+.splash-film__progress{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.07);border-radius:0;overflow:hidden}
+.splash-film__bar{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--highlight));transition:width .5s cubic-bezier(.4,0,.2,1)}
+.splash-film__stage{min-height:230px;display:flex;align-items:center;justify-content:center}
+.splash-film__slide{width:100%;animation:filmIn .5s cubic-bezier(.22,1,.36,1)}
+@keyframes filmIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+.splash-film__feat{text-align:center;padding:8px 4px}
+.splash-film__feat-ic{line-height:1;margin-bottom:18px;animation:featPop .55s cubic-bezier(.22,1.5,.36,1)}
+@keyframes featPop{from{opacity:0;transform:scale(.4) rotate(-12deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+.splash-film__feat-t{font-family:'Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.6px;color:#EAF2FA;margin-bottom:10px}
+.splash-film__feat-d{font-size:14.5px;color:#A9BBD1;line-height:1.6;max-width:420px;margin:0 auto}
+.splash-film__nav{display:flex;align-items:center;gap:14px;margin-top:24px}
+.splash-film__skip{flex-shrink:0;background:transparent;border:none;color:#7C8FA8;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 2px;transition:color .15s ease}
+.splash-film__skip:hover{color:#A9BBD1;text-decoration:underline}
+.splash-film__dots{flex:1;display:flex;align-items:center;justify-content:center;gap:7px}
+.splash-film__dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.18);cursor:pointer;transition:all .25s ease}
+.splash-film__dot.is-on{background:var(--primary-soft);width:22px;border-radius:4px}
+.splash-film__next{width:auto;flex-shrink:0;padding:13px 22px}
+@media (max-width:560px){.splash-bnv__box{padding:28px 22px 24px;border-radius:18px}.splash-bnv__title{font-size:24px}.splash-film__feat-ic .splash-svg{width:52px;height:52px}.splash-film__feat-t{font-size:22px}.splash-film__nav{flex-wrap:wrap;gap:10px}.splash-film__next{width:100%;order:3}.splash-film__dots{order:1;width:100%}.splash-film__skip{order:2}}
+@media (max-width:420px){
+  #splash-bienvenida{padding:12px}
+  .splash-bnv__title{font-size:21px}
+  .splash-bnv__desc{font-size:13.5px}
+  .splash-film__stage{min-height:200px}
+  .splash-film__feat-ic{margin-bottom:14px}
+  .splash-bnv__icon .splash-svg{width:72px;height:72px}
+}
 </style>
 </head>
 <body style="visibility:hidden">
@@ -1512,7 +1569,14 @@ onAuthStateChanged(auth, async (user) => {
   navigateTo(seccionInicial);
 
   if (params.get('checkout') === 'success') {
-    setTimeout(() => Toast.success('¡Pago recibido!', 'Tu membresía VIP se activa en unos segundos.'), 500);
+    if (window.UserState.modo === 'vip') {
+      // Membresía ya activa → recorrido de bienvenida (flujo OdonTeck)
+      setTimeout(() => { window.__showWelcomeSplash && window.__showWelcomeSplash({ plan: window.UserState.plan }); }, 600);
+    } else {
+      // El webhook aún no procesa el pago → avisamos; al recargar (checkout=success
+      // sigue en la URL) el splash se muestra cuando la membresía ya esté activa.
+      setTimeout(() => Toast.success('¡Pago recibido!', 'Tu membresía VIP se activa en unos segundos.'), 500);
+    }
   }
 
   setupNotificaciones(user.uid);
@@ -1521,6 +1585,172 @@ onAuthStateChanged(auth, async (user) => {
 window.__signOut = async function(){
   try { await signOut(auth); window.location.href = 'vip-auth.html'; }
   catch (e) { Toast.error('No pudimos cerrar sesión', e.message); }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// 🎉 SPLASH DE BIENVENIDA · recorrido cinematográfico (flujo OdonTeck)
+// Se dispara post-pago Stripe (?checkout=success) con la membresía ya activa.
+// opts = { plan }
+// ═══════════════════════════════════════════════════════════════
+window.__showWelcomeSplash = function(opts) {
+  opts = opts || {};
+  const S = window.UserState || {};
+  const nombre = (S.nombre || S.displayName || 'Colega').split(' ')[0];
+  const plan = opts.plan || S.plan || 'mensual';
+
+  // ── Íconos SVG line-art (sin emojis · misma regla de diseño que OdonTeck) ──
+  const _sv = (inner, cls='') => `<svg class="splash-svg ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+  const ICON_VIP = _sv('<path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.4 7.2 16.9l.9-5.4L4.2 7.7l5.4-.8z"/><path d="M9.8 8.9l1.4 1.4 3-3" stroke-width="1.4"/>', 'splash-star splash-star--vip');
+  const SVG_FEAT = {
+    cursos: _sv('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'),
+    clases: _sv('<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>'),
+    tools:  _sv('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+    pdfs:   _sv('<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>'),
+    cert:   _sv('<circle cx="12" cy="8" r="6"/><path d="M15.5 12.9 17 22l-5-3-5 3 1.5-9.1"/>'),
+    comunidad: _sv('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>')
+  };
+
+  // Quitar el query param de la URL (para que al recargar no se re-muestre)
+  if (window.history.replaceState) {
+    const url = new URL(window.location.href);
+    url.searchParams.delete('checkout');
+    url.searchParams.delete('session_id');
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  // ── Portada según el plan ──
+  let kicker, titulo, desc;
+  if (plan === 'anual') {
+    kicker = '¡BIENVENIDO AL CLUB VIP!';
+    titulo = `Bienvenido al <em>club VIP Anual</em>`;
+    desc = `${nombre}, te uniste por todo un año a la comunidad de profesionales de la salud de SYNOVA México. Esto es tuyo:`;
+  } else {
+    kicker = '¡MEMBRESÍA VIP ACTIVA!';
+    titulo = `Bienvenido al <em>club VIP Mensual</em>`;
+    desc = `${nombre}, ya eres parte de la comunidad de profesionales de la salud de SYNOVA México. Esto es tuyo:`;
+  }
+
+  // ── Recorrido "película" · los beneficios del panel ──
+  const beneficios = [
+    { ic:SVG_FEAT.cursos, t:'Cursos clínicos',      d:'Catálogo completo con clases reales que se desbloquean a tu ritmo.' },
+    { ic:SVG_FEAT.clases, t:'Clases en vivo',       d:'Webinars con expertos y acceso a las grabaciones cuando quieras.' },
+    { ic:SVG_FEAT.tools,  t:'Herramientas clínicas', d:'Dosis pediátricas, IMC, anestésicos y receta digital listas para usar.' },
+    { ic:SVG_FEAT.pdfs,   t:'PDFs y material',      d:'Guías NOM, formatos de auditoría y recursos descargables.' },
+    { ic:SVG_FEAT.cert,   t:'Certificados',         d:'Con folio verificable SYNOVA / IPCI para respaldar lo que aprendes.' },
+    { ic:SVG_FEAT.comunidad, t:'Comunidad VIP',     d:'Foro y directorio profesional para conectar con colegas de todo México.' }
+  ];
+
+  // ── Slides: portada → beneficios → cierre ──
+  const slides = [];
+  slides.push({ tipo:'portada', icono: ICON_VIP, kicker, titulo, desc, confetti:true });
+  beneficios.forEach(b => slides.push({ tipo:'beneficio', ic:b.ic, t:b.t, d:b.d }));
+  slides.push({
+    tipo:'cierre',
+    icono: ICON_VIP,
+    kicker: 'TODO LISTO',
+    titulo: `Todo esto <em>ya es tuyo</em>`,
+    desc: 'Explora a tu ritmo. Tu panel completo te está esperando.',
+    confetti:true
+  });
+
+  const TOTAL = slides.length;
+  const AUTO_MS = 2600;
+
+  let splash = document.getElementById('splash-bienvenida');
+  if (splash) splash.remove();
+  splash = document.createElement('div');
+  splash.id = 'splash-bienvenida';
+  splash.innerHTML = `
+    <div class="splash-bnv__overlay"></div>
+    <div class="splash-bnv__box splash-film">
+      <button class="splash-bnv__close" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="splash-film__progress"><span class="splash-film__bar"></span></div>
+      <div class="splash-bnv__confetti" id="splash-confetti"></div>
+      <div class="splash-film__stage" id="splash-stage"></div>
+      <div class="splash-film__nav">
+        <button class="splash-film__skip" id="splash-skip">Saltar e ir al panel</button>
+        <div class="splash-film__dots" id="splash-dots"></div>
+        <button class="splash-bnv__btn splash-film__next" id="splash-next">Siguiente →</button>
+      </div>
+      <div class="splash-bnv__foot">Cualquier duda · <a href="https://synovamexico.com" target="_blank" rel="noopener">contáctanos</a></div>
+    </div>
+  `;
+  document.body.appendChild(splash);
+
+  const stage   = splash.querySelector('#splash-stage');
+  const barEl   = splash.querySelector('.splash-film__bar');
+  const dotsEl  = splash.querySelector('#splash-dots');
+  const nextBtn = splash.querySelector('#splash-next');
+  const confEl  = splash.querySelector('#splash-confetti');
+
+  dotsEl.innerHTML = slides.map((_,i)=>`<span class="splash-film__dot" data-i="${i}"></span>`).join('');
+  const dots = Array.from(dotsEl.querySelectorAll('.splash-film__dot'));
+
+  let cur = -1, timer = null;
+
+  function confetti(){
+    confEl.innerHTML = Array.from({length:32}).map((_,i)=>
+      `<span class="splash-bnv__bit" style="--d:${i*.05}s;--x:${(Math.random()*280-140)|0}px;--c:${['#1C6FB0','#5FB6E0','#2FD1C6','#34D399','#60A5FA','#A78BFA'][i%6]}"></span>`
+    ).join('');
+  }
+
+  function render(i){
+    const s = slides[i];
+    let html = '';
+    if (s.tipo === 'beneficio') {
+      html = `
+        <div class="splash-film__feat">
+          <div class="splash-film__feat-ic">${s.ic}</div>
+          <div class="splash-film__feat-t">${s.t}</div>
+          <div class="splash-film__feat-d">${s.d}</div>
+        </div>`;
+    } else {
+      html = `
+        <div class="splash-bnv__icon">${s.icono}</div>
+        <div class="splash-bnv__kicker">${s.kicker}</div>
+        <h1 class="splash-bnv__title">${s.titulo}</h1>
+        <p class="splash-bnv__desc">${s.desc}</p>`;
+    }
+    stage.innerHTML = `<div class="splash-film__slide">${html}</div>`;
+    if (s.confetti) confetti(); else confEl.innerHTML = '';
+  }
+
+  function paintNav(i){
+    dots.forEach((d,k)=> d.classList.toggle('is-on', k===i));
+    barEl.style.width = (((i+1)/TOTAL)*100) + '%';
+    nextBtn.textContent = (i >= TOTAL-1) ? 'Entrar al panel →' : 'Siguiente →';
+  }
+
+  function goTo(i){
+    if (i < 0) i = 0;
+    if (i > TOTAL-1) { close(); return; }
+    cur = i;
+    render(cur);
+    paintNav(cur);
+    restartAuto();
+  }
+
+  function restartAuto(){
+    if (timer) clearInterval(timer);
+    if (cur >= TOTAL-1) return; // en el cierre no auto-avanza
+    timer = setInterval(() => goTo(cur+1), AUTO_MS);
+  }
+
+  function close(){
+    if (timer) clearInterval(timer);
+    splash.style.animation = 'bnvFadeOut .3s ease forwards';
+    setTimeout(() => splash.remove(), 300);
+  }
+
+  nextBtn.addEventListener('click', () => goTo(cur+1));
+  splash.querySelector('#splash-skip').addEventListener('click', close);
+  splash.querySelector('.splash-bnv__close').addEventListener('click', close);
+  splash.querySelector('.splash-bnv__overlay').addEventListener('click', close);
+  dots.forEach(d => d.addEventListener('click', () => goTo(parseInt(d.dataset.i,10))));
+
+  goTo(0);
 };
 
 /* ══════════════════════ NOTIFICACIONES (colección global · flujo OdonTeck) ══════════════════════ */
@@ -4209,5 +4439,122 @@ function mountNutricion(c){
 })();
 </script>
 
+<!-- ─── Service Worker · permite instalar SYNOVA VIP como app y abrir más rápido ─── -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){ /* silencioso: la app funciona igual */ });
+    });
+  }
+</script>
+<!-- ═══ POPUP PREMIUM: Instalar SYNOVA VIP como app ═══ -->
+<style>
+  #synova-install-pop{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:20px;font-family:'Inter',system-ui,sans-serif}
+  #synova-install-pop.show{display:flex;animation:sipFade .25s ease}
+  #synova-install-pop .sip-overlay{position:absolute;inset:0;background:rgba(3,7,13,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  #synova-install-pop .sip-card{position:relative;width:100%;max-width:380px;background:var(--surface);border:0.5px solid var(--border-2);border-radius:24px;padding:28px 24px 22px;text-align:center;box-shadow:var(--shadow-card);animation:sipPop .35s cubic-bezier(.16,1,.3,1)}
+  #synova-install-pop .sip-glow{position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:120px;background:radial-gradient(ellipse,var(--primary-glow),transparent 70%);pointer-events:none}
+  #synova-install-pop .sip-icon{width:84px;height:84px;border-radius:20px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--primary),var(--highlight));box-shadow:0 10px 28px var(--primary-glow);position:relative}
+  #synova-install-pop .sip-icon img{width:54px;height:54px;object-fit:contain;border-radius:14px}
+  #synova-install-pop .sip-badge{position:absolute;top:-8px;right:-8px;background:var(--highlight);color:var(--bg-deep);font-size:10px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:20px;text-transform:uppercase}
+  #synova-install-pop h3{margin:0 0 8px;font-size:21px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+  #synova-install-pop p{margin:0 0 18px;font-size:13.5px;line-height:1.55;color:var(--text-2)}
+  #synova-install-pop .sip-feats{display:flex;flex-direction:column;gap:9px;text-align:left;margin:0 0 22px;padding:0}
+  #synova-install-pop .sip-feat{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text)}
+  #synova-install-pop .sip-feat svg{width:18px;height:18px;flex-shrink:0;color:var(--primary)}
+  #synova-install-pop .sip-btn{display:block;width:100%;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;box-shadow:0 8px 20px var(--primary-glow);transition:transform .15s,box-shadow .15s}
+  #synova-install-pop .sip-btn:hover{transform:translateY(-1px);box-shadow:0 12px 26px var(--primary-glow)}
+  #synova-install-pop .sip-later{display:block;width:100%;margin-top:10px;background:none;border:none;color:var(--text-3);font-size:13px;font-family:inherit;cursor:pointer;padding:8px}
+  #synova-install-pop .sip-later:hover{color:var(--text-2)}
+  #synova-install-pop .sip-ios{display:none;margin:0 0 14px;padding:12px 14px;background:var(--surface-2);border:0.5px solid var(--border-2);border-radius:12px;font-size:12.5px;line-height:1.6;color:var(--text-2);text-align:left}
+  #synova-install-pop .sip-ios b{color:var(--highlight)}
+  @keyframes sipFade{from{opacity:0}to{opacity:1}}
+  @keyframes sipPop{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+</style>
+<div id="synova-install-pop" role="dialog" aria-modal="true" aria-labelledby="sip-title">
+  <div class="sip-overlay" id="sip-overlay"></div>
+  <div class="sip-card">
+    <div class="sip-glow"></div>
+    <div class="sip-icon">
+      <span class="sip-badge">App</span>
+      <img src="assets/img/synova-icon-192.png" alt="SYNOVA" onerror="this.style.display='none'">
+    </div>
+    <h3 id="sip-title">Instala SYNOVA VIP como app</h3>
+    <p>Entra más rápido, sin la barra del navegador, directo desde tu pantalla de inicio.</p>
+    <div class="sip-ios" id="sip-ios-help">
+      En iPhone/iPad: toca el botón <b>Compartir</b> en Safari y luego <b>“Agregar a inicio”</b>.
+    </div>
+    <div class="sip-feats">
+      <div class="sip-feat"><svg class="ic"><use href="#i-check"/></svg>Acceso directo desde tu pantalla de inicio</div>
+      <div class="sip-feat"><svg class="ic"><use href="#i-check"/></svg>Carga más rápida, como una app nativa</div>
+      <div class="sip-feat"><svg class="ic"><use href="#i-check"/></svg>Pantalla completa, sin distracciones</div>
+    </div>
+    <button class="sip-btn" id="sip-install-btn">Instalar ahora</button>
+    <button class="sip-later" id="sip-later-btn">Ahora no</button>
+  </div>
+</div>
+<script>
+(function(){
+  var STORAGE_KEY = 'synova_install_dismissed';
+  var deferredPrompt = null;
+  var pop = document.getElementById('synova-install-pop');
+  var installBtn = document.getElementById('sip-install-btn');
+  var laterBtn = document.getElementById('sip-later-btn');
+  var overlay = document.getElementById('sip-overlay');
+  var iosHelp = document.getElementById('sip-ios-help');
+
+  if (!pop) return;
+
+  // ¿Ya está instalada (corriendo en modo app)? No mostrar nada.
+  function yaInstalada(){
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+  // ¿El usuario ya la cerró antes? Respetamos su decisión por 14 días.
+  function fueDescartada(){
+    try {
+      var v = localStorage.getItem(STORAGE_KEY);
+      if (!v) return false;
+      var dias = (Date.now() - parseInt(v,10)) / 86400000;
+      return dias < 14;
+    } catch(e){ return false; }
+  }
+  function esIOS(){
+    return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  }
+  function mostrar(){
+    if (yaInstalada() || fueDescartada()) return;
+    pop.classList.add('show');
+  }
+  function ocultar(recordar){
+    pop.classList.remove('show');
+    if (recordar){ try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch(e){} }
+  }
+
+  // Android/Chrome/Edge: capturamos el evento y mostramos NUESTRO popup
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    setTimeout(mostrar, 1200); // pequeño delay para no ser intrusivo al cargar
+  });
+
+  // iOS (Safari) no dispara beforeinstallprompt: mostramos instrucciones manuales
+  if (esIOS() && !yaInstalada()){
+    if (iosHelp) iosHelp.style.display = 'block';
+    if (installBtn) installBtn.style.display = 'none'; // en iOS no hay botón automático
+    setTimeout(mostrar, 1500);
+  }
+
+  // Si ya se instaló, ocultar y recordar
+  window.addEventListener('appinstalled', function(){ ocultar(true); deferredPrompt = null; });
+
+  if (installBtn) installBtn.addEventListener('click', function(){
+    if (!deferredPrompt){ ocultar(true); return; }
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function(){ ocultar(true); deferredPrompt = null; });
+  });
+  if (laterBtn) laterBtn.addEventListener('click', function(){ ocultar(true); });
+  if (overlay) overlay.addEventListener('click', function(){ ocultar(false); });
+})();
+</script>
 </body>
 </html>
