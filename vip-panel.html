@@ -416,6 +416,8 @@ body::after{
 .paywall-modal{position:fixed;inset:0;z-index:99200;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
 .paywall-modal.is-open{display:flex}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes dropFade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.notif-item:hover{background:var(--surface-2)!important}
 .paywall-modal__box{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;max-width:440px;width:100%;padding:32px 28px;text-align:center;position:relative;animation:popIn .25s cubic-bezier(.2,.8,.25,1)}
 @keyframes popIn{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
 .paywall-modal__close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:transparent;border:1px solid var(--border);color:var(--text-3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s ease}
@@ -999,6 +1001,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
 <symbol id="i-messages" viewBox="0 0 24 24"><path d="M21 14l-3 -3h-7a1 1 0 0 1 -1 -1v-6a1 1 0 0 1 1 -1h9a1 1 0 0 1 1 1v10"/><path d="M14 15v2a1 1 0 0 1 -1 1h-7l-3 3v-10a1 1 0 0 1 1 -1h2"/></symbol>
 <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5 -5l-9 9"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></symbol>
 <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9"/></symbol>
 <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2"/></symbol>
 <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/></symbol>
@@ -1520,32 +1523,116 @@ window.__signOut = async function(){
   catch (e) { Toast.error('No pudimos cerrar sesión', e.message); }
 };
 
-/* ══════════════════════ NOTIFICACIONES (colección global) ══════════════════════ */
+/* ══════════════════════ NOTIFICACIONES (colección global · flujo OdonTeck) ══════════════════════ */
+/* Tipos · MISMOS color+icono que envía el admin (consistencia admin↔panel) */
+const NOTIF_TIPOS = {
+  clase:       { icono: 'i-broadcast',   color: '#1C6FB0' },
+  certificado: { icono: 'i-certificate', color: '#34D399' },
+  logro:       { icono: 'i-trophy',      color: '#FBBF24' },
+  sistema:     { icono: 'i-bell',        color: '#3B82F6' },
+  general:     { icono: 'i-bell',        color: '#8B7CF0' }
+};
+window.__notifsState = { items: [] };
 function setupNotificaciones(uid){
   try {
     const q = query(collection(db, 'notificaciones'), orderBy('createdAt', 'desc'), limit(15));
     onSnapshot(q, (snap) => {
       const items = [];
-      snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+      snap.forEach(d => {
+        const data = d.data();
+        const preset = NOTIF_TIPOS[data.tipo] || NOTIF_TIPOS.general;
+        items.push({
+          id: d.id,
+          tipo: data.tipo || 'general',
+          icono: data.icono || preset.icono,
+          color: data.color || preset.color,
+          titulo: data.titulo || 'Sin título',
+          descripcion: data.descripcion || '',
+          createdAtMs: data.createdAt?.toDate?.()?.getTime?.() || data.createdAt?.toMillis?.() || Date.now()
+        });
+      });
+      window.__notifsState.items = items;
       window.__notifs = items;
-      let leidas = [];
-      try { leidas = JSON.parse(localStorage.getItem('synova_notif_read_' + uid) || '[]'); } catch (e) {}
-      const nuevas = items.filter(n => !leidas.includes(n.id)).length;
-      const dot = document.getElementById('notif-dot');
-      if (dot) dot.style.display = nuevas > 0 ? 'block' : 'none';
+      actualizarBadgeNotif();
     }, (err) => console.warn('[SYNOVA] notificaciones:', err.message));
   } catch (e) { console.warn('[SYNOVA] setupNotificaciones error', e.message); }
 }
-document.getElementById('btn-notif')?.addEventListener('click', () => {
-  const items = window.__notifs || [];
-  const uid = window.UserState?.uid;
-  try { localStorage.setItem('synova_notif_read_' + uid, JSON.stringify(items.map(i => i.id))); } catch (e) {}
-  const dot = document.getElementById('notif-dot'); if (dot) dot.style.display = 'none';
-  const html = items.length
-    ? items.map(n => '<div style="padding:12px 0;border-bottom:0.5px solid var(--border)"><b style="font-size:13px">' + escHtml(n.titulo || '') + '</b><p style="font-size:12px;color:var(--text-2);margin-top:3px;line-height:1.5">' + escHtml(n.descripcion || '') + '</p></div>').join('')
-    : '<div class="empty-state"><h3>Sin notificaciones</h3><p>Aquí verás avisos de nuevos cursos, clases en vivo y novedades de SYNOVA.</p></div>';
-  Modal.open({ id: 'modal-notif', title: 'Notificaciones', icon: 'i-bell', size: 'sm', body: '<div style="max-height:360px;overflow-y:auto">' + html + '</div>', footer: '<button class="btn btn--ghost" onclick="Modal.close(\'modal-notif\')">Cerrar</button>' });
-});
+/* Leídas / eliminadas por usuario · solo localStorage (la colección es global, jamás se borra en Firestore) */
+function notifUid(){ return window.UserState?.uid || 'guest'; }
+function getNotifsLeidas(){ try { return JSON.parse(localStorage.getItem('synova_notif_read_' + notifUid()) || '[]'); } catch(e){ return []; } }
+function marcarNotifsLeidas(ids){ const t = Array.from(new Set([...getNotifsLeidas(), ...ids])); try { localStorage.setItem('synova_notif_read_' + notifUid(), JSON.stringify(t)); } catch(e){} }
+function getNotifsEliminadas(){ try { return JSON.parse(localStorage.getItem('synova_notif_del_' + notifUid()) || '[]'); } catch(e){ return []; } }
+function marcarNotifsEliminadas(ids){ const t = Array.from(new Set([...getNotifsEliminadas(), ...ids])); try { localStorage.setItem('synova_notif_del_' + notifUid(), JSON.stringify(t)); } catch(e){} }
+function contarNotifsNuevas(){
+  const leidas = new Set(getNotifsLeidas()), elim = new Set(getNotifsEliminadas());
+  return (window.__notifsState.items || []).filter(n => !elim.has(n.id) && !leidas.has(n.id)).length;
+}
+function actualizarBadgeNotif(){
+  const dot = document.getElementById('notif-dot');
+  if (dot) dot.style.display = contarNotifsNuevas() > 0 ? '' : 'none';
+}
+function formatNotifTime(ms){
+  const diff = Date.now() - ms;
+  const m = Math.floor(diff/60000), h = Math.floor(diff/3600000), d = Math.floor(diff/86400000);
+  if (m < 5) return 'Ahora';
+  if (m < 60) return `Hace ${m} min`;
+  if (h < 24) return d === 0 ? 'Hoy' : `Hace ${h}h`;
+  if (d === 1) return 'Ayer';
+  if (d < 7) return `Hace ${d} días`;
+  if (d < 30) return `Hace ${Math.floor(d/7)} semanas`;
+  return `Hace ${Math.floor(d/30)} meses`;
+}
+window.__toggleNotifDropdown = function(){
+  let dd = document.getElementById('notif-dropdown');
+  if (dd) { dd.remove(); return; }
+  const elim = new Set(getNotifsEliminadas());
+  const notifs = (window.__notifsState.items || []).filter(n => !elim.has(n.id));
+  const leidas = new Set(getNotifsLeidas());
+  const nuevasCount = notifs.filter(n => !leidas.has(n.id)).length;
+  const isMobile = window.innerWidth <= 768;
+  dd = document.createElement('div');
+  dd.id = 'notif-dropdown';
+  dd.style.textAlign = 'left';
+  dd.style.cssText += isMobile
+    ? 'position:fixed;top:64px;left:12px;right:12px;width:auto;background:var(--surface);border:0.5px solid var(--border-2);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.45);z-index:9999;padding:8px;animation:dropFade .18s ease;max-height:calc(100vh - 90px);overflow-y:auto;text-align:left;'
+    : 'position:absolute;top:calc(100% + 8px);right:0;width:360px;max-width:calc(100vw - 32px);background:var(--surface);border:0.5px solid var(--border-2);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.22);z-index:9999;padding:8px;animation:dropFade .18s ease;max-height:480px;overflow-y:auto;text-align:left;';
+  let bodyHTML;
+  if (!notifs.length){
+    bodyHTML = `<div style="padding:32px 16px;text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:color-mix(in srgb,var(--text-3) 14%,transparent);color:var(--text-3);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px"><svg class="ic" style="width:24px;height:24px"><use href="#i-bell"/></svg></div><div style="font-size:13px;color:var(--text-2);font-weight:600;margin-bottom:4px">Sin notificaciones</div><div style="font-size:11.5px;color:var(--text-3);line-height:1.5">Te avisaremos cuando haya clases nuevas, certificados listos o novedades de SYNOVA.</div></div>`;
+  } else {
+    bodyHTML = notifs.map(n => {
+      const nueva = !leidas.has(n.id);
+      return `<div class="notif-item" style="display:flex;gap:11px;padding:11px 12px;border-radius:9px;transition:background .15s;align-items:flex-start;text-align:left;${nueva?'background:color-mix(in srgb,'+n.color+' 6%,transparent);':''}">
+        <div style="width:32px;height:32px;border-radius:8px;background:color-mix(in srgb,${n.color} 14%,transparent);color:${n.color};display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg class="ic" style="width:16px;height:16px"><use href="#${n.icono}"/></svg></div>
+        <div style="flex:1;min-width:0;text-align:left">
+          <div style="font-size:12.5px;font-weight:600;color:var(--text);line-height:1.35;display:flex;align-items:center;gap:6px">${escHtml(n.titulo)} ${nueva?'<span style="width:6px;height:6px;border-radius:50%;background:'+n.color+';flex-shrink:0"></span>':''}</div>
+          <div style="font-size:11.5px;color:var(--text-2);line-height:1.45;margin-top:3px">${escHtml(n.descripcion)}</div>
+          <div style="font-size:10px;color:var(--text-3);margin-top:5px;letter-spacing:.3px;text-transform:uppercase">${formatNotifTime(n.createdAtMs)}</div>
+        </div>
+        <button class="notif-del-btn" data-id="${n.id}" title="Eliminar" style="flex-shrink:0;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;color:var(--text-3);cursor:pointer;padding:0;opacity:.65;transition:opacity .15s,color .15s"><svg class="ic" style="width:13px;height:13px"><use href="#i-x"/></svg></button>
+      </div>`;
+    }).join('');
+  }
+  dd.innerHTML = `<div style="padding:10px 12px 12px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center"><strong style="font-size:13px;font-weight:600">Notificaciones</strong><span style="font-size:10px;color:${nuevasCount>0?'var(--primary)':'var(--text-3)'};letter-spacing:.5px;text-transform:uppercase;font-weight:700">${nuevasCount>0?nuevasCount+' nuevas':'Al día'}</span></div>${bodyHTML}${notifs.length?`<div style="padding:9px 12px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:11px;color:var(--text-3)">Mostrando últimas ${notifs.length}</span>${notifs.length>1?`<button id="notif-del-all" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--danger);background:transparent;border:0;cursor:pointer;font-weight:600;padding:2px 4px;font-family:inherit"><svg class="ic" style="width:13px;height:13px"><use href="#i-trash"/></svg>Eliminar todo</button>`:''}</div>`:''}`;
+  const repintar = () => { dd.remove(); window.__toggleNotifDropdown(); };
+  dd.querySelectorAll('.notif-del-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; btn.style.color = 'var(--danger)'; });
+    btn.addEventListener('mouseleave', () => { btn.style.opacity = '.65'; btn.style.color = 'var(--text-3)'; });
+    btn.addEventListener('click', (e) => { e.stopPropagation(); marcarNotifsEliminadas([btn.dataset.id]); actualizarBadgeNotif(); repintar(); });
+  });
+  const delAll = dd.querySelector('#notif-del-all');
+  if (delAll) delAll.addEventListener('click', (e) => { e.stopPropagation(); marcarNotifsEliminadas(notifs.map(n => n.id)); actualizarBadgeNotif(); repintar(); });
+  const btn = document.getElementById('btn-notif');
+  if (isMobile) { document.body.appendChild(dd); } else { btn.style.position = 'relative'; btn.appendChild(dd); }
+  /* Marcar como leídas tras un momento (para que se vea el punto antes de bajarlo) */
+  if (nuevasCount > 0) setTimeout(() => { marcarNotifsLeidas(notifs.map(n => n.id)); actualizarBadgeNotif(); }, 800);
+  /* Cerrar al click fuera */
+  setTimeout(() => {
+    const handler = (e) => { if (!dd.contains(e.target) && e.target.id !== 'btn-notif' && !e.target.closest('#btn-notif')) { dd.remove(); document.removeEventListener('click', handler); } };
+    document.addEventListener('click', handler);
+  }, 50);
+};
+document.getElementById('btn-notif')?.addEventListener('click', (e) => { e.stopPropagation(); window.__toggleNotifDropdown(); });
 </script>
 <!-- ══════════════════════ SECCIONES · helpers comunes ══════════════════════ -->
 <script>
