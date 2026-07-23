@@ -1877,13 +1877,13 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i=0;i<MIG_COURSES.length;i++){
       const c = MIG_COURSES[i];
       statusEl.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><div class="mig-spin"></div>Subiendo ${i+1}/${MIG_COURSES.length} · <b>${escHtml(c.nombre)}</b></div>`;
-      const portada = svgPortada(c.nombre, c.area);
+      const portada = c.portada || svgPortada(c.nombre, c.area); // Usa URL real si existe, sino genera SVG
       const datos = {
         nombre: c.nombre, area: c.area, nivel: 'Intermedio', instructor: 'Equipo docente SYNOVA',
         horas: estHoras(c.clases.length), portada, descripcion: c.desc,
         sesiones: c.clases.map((s,idx)=>({ titulo: s.titulo, url: s.url, orden: idx+1 })),
-        materiales: c.mats.map(m=>({ titulo: m.titulo, url: m.url, portada })),
-        activo: true, orden: i+1, origen: 'migracion-catalogo-2026'
+        materiales: c.mats.map(m=>({ titulo: m.titulo, url: m.url, portada: m.portada || portada })), // Cada mat usa su portada si existe, sino la del curso
+        activo: true, orden: i+1, origen: 'migracion-catalogo-2026', color: c.color
       };
       try {
         await setDoc(doc(db, 'cursos', 'syn-'+c.slug), { ...datos, createdAt: serverTimestamp() }, { merge: true });
