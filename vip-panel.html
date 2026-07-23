@@ -1688,7 +1688,7 @@ window.__showWelcomeSplash = function(opts) {
   dotsEl.innerHTML = slides.map((_,i)=>`<span class="splash-film__dot" data-i="${i}"></span>`).join('');
   const dots = Array.from(dotsEl.querySelectorAll('.splash-film__dot'));
 
-  let cur = -1, timer = null;
+  let cur = -1, timer = null, autoCierre = null;
 
   function confetti(){
     confEl.innerHTML = Array.from({length:32}).map((_,i)=>
@@ -1734,14 +1734,22 @@ window.__showWelcomeSplash = function(opts) {
 
   function restartAuto(){
     if (timer) clearInterval(timer);
-    if (cur >= TOTAL-1) return; // en el cierre no auto-avanza
+    if (autoCierre) clearTimeout(autoCierre);
+    if (cur >= TOTAL-1) {
+      // Último slide ("Todo esto ya es tuyo"): se cierra solo tras unos
+      // segundos y deja al usuario en su panel, sin obligarlo a dar clic.
+      autoCierre = setTimeout(close, 3800);
+      return;
+    }
     timer = setInterval(() => goTo(cur+1), AUTO_MS);
   }
 
   function close(){
     if (timer) clearInterval(timer);
+    if (autoCierre) clearTimeout(autoCierre);
+    if (!splash || !splash.parentNode) return; // evita doble cierre (auto + clic)
     splash.style.animation = 'bnvFadeOut .3s ease forwards';
-    setTimeout(() => splash.remove(), 300);
+    setTimeout(() => { if (splash && splash.parentNode) splash.remove(); }, 300);
   }
 
   nextBtn.addEventListener('click', () => goTo(cur+1));
