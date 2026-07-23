@@ -2177,7 +2177,7 @@ PAGES._refrescar_foro = function(){
     <div class="foro-admin-card__main">
       <div class="foro-admin-card__head"><span class="foro-admin-card__name">${escHtml(p.nombre||'Miembro')}</span>${p.esAdmin ? '<span class="tag tag--primary">SYNOVA</span>' : ''}<span class="foro-admin-card__time">${fmtShort(p.createdAt)}</span></div>
       <div class="foro-admin-card__text">${escHtml(p.texto||'')}</div>
-      ${p.imagenUrl ? `<img class="foro-admin-card__img" src="${p.imagenUrl}" alt="">` : ''}
+      ${(p.imagen || p.imagenUrl) ? `<img class="foro-admin-card__img" src="${p.imagen || p.imagenUrl}" alt="" style="cursor:zoom-in" onclick="window.open(this.src,'_blank')">` : ''}
       <div class="foro-admin-card__meta">${p.likes||0} reacciones</div>
     </div>
     <button class="foro-admin-card__del" onclick="confirmarBorrarDoc('posts','${p.id}','esta publicación')"><svg class="ic"><use href="#i-trash"/></svg></button>
