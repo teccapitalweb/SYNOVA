@@ -597,6 +597,9 @@ body::after{
 .post__time{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);font-weight:500;margin-left:auto}
 .post__content{font-size:13.5px;line-height:1.55;color:var(--text);margin-top:2px;white-space:pre-wrap;word-break:break-word}
 .post__footer{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);align-items:center}
+.post__expira{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--text-3);display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.post__expira .ic{width:12px;height:12px}
+.post__expira--pronto{color:var(--warn)}
 .post__btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--text-3);transition:color .15s,background .15s}
 .post__btn:hover{color:var(--primary);background:var(--surface-2)}
 .post__btn .ic{width:13px;height:13px}
@@ -2321,6 +2324,15 @@ window.mostrarSplashCompletado = function(curso){
 /* ══════════════════════ FORO VIP ══════════════════════ */
 /* Estado de imagen del composer del foro (base64 optimizado, sin Storage · igual que OdonTeck) */
 let _foroImg = null;
+/* Vida útil de las publicaciones · se auto-borran pasados estos días (igual que OdonTeck) */
+const FORO_DIAS_VIDA = 15;
+/* Días que le restan a un post antes de borrarse solo */
+function foroDiasRestantes(createdAt){
+  const f = tsToDate(createdAt);
+  if (!f) return FORO_DIAS_VIDA;
+  const pasados = Math.floor((Date.now() - f.getTime()) / 86400000);
+  return Math.max(0, FORO_DIAS_VIDA - pasados);
+}
 /* Comprime imagen a máx 900px lado, JPEG, bajando calidad hasta pesar <~240KB */
 function foroComprimirImagen(file){
   return new Promise((resolve, reject) => {
@@ -2359,6 +2371,7 @@ Sections.foro = function(){
   const S = window.UserState;
   document.getElementById('content').innerHTML =
     secHero('Comunidad SYNOVA', 'Foro VIP', 'Comunidad de profesionales de la salud de SYNOVA. Comparte texto e imágenes. Leer es libre; publicar, dar like y comentar es exclusivo para miembros VIP.') +
+    `<div class="foro-aviso"><svg class="ic"><use href="#i-clock"/></svg><span>Las publicaciones se eliminan automáticamente <strong>${FORO_DIAS_VIDA} días</strong> después de publicarse.</span></div>` +
     (toolEsVIP()
       ? `<div class="foro-composer">
           <div class="foro-composer__avatar">${escHtml(S.iniciales || '')}</div>
@@ -2413,9 +2426,20 @@ function suscribirForo(){
     window.__foroUnsub = onSnapshot(query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(40)), (snap) => {
       const list = document.getElementById('foro-list');
       if (!list) return;
-      if (snap.empty) { list.innerHTML = emptyState('i-messages', 'Aún no hay publicaciones', 'Sé el primero en compartir algo con la comunidad de profesionales de SYNOVA.'); return; }
       const S = window.UserState;
-      const posts = []; snap.forEach(d => posts.push({ id: d.id, ...d.data() }));
+      const ahora = Date.now();
+      const posts = [];
+      snap.forEach(d => {
+        const p = { id: d.id, ...d.data() };
+        /* Auto-borrado: si el post ya cumplió su vida útil, lo eliminamos y no lo mostramos (igual que OdonTeck) */
+        const f = tsToDate(p.createdAt);
+        if (f && (ahora - f.getTime()) > FORO_DIAS_VIDA * 86400000) {
+          try { const { doc, deleteDoc } = window.__fs; deleteDoc(doc(db, 'posts', d.id)); } catch (e) {}
+          return;
+        }
+        posts.push(p);
+      });
+      if (!posts.length) { list.innerHTML = emptyState('i-messages', 'Aún no hay publicaciones', 'Sé el primero en compartir algo con la comunidad de profesionales de SYNOVA.'); return; }
       window.__postsCache = posts;
       list.innerHTML = posts.map(p => {
         const color = colorForArea(p.uid || p.nombre);
@@ -2436,6 +2460,7 @@ function suscribirForo(){
             <div class="post__footer">
               <button class="post__btn ${liked ? 'is-liked' : ''}" onclick="toggleLikePost('${p.id}')"><svg class="ic"><use href="#i-heart"/></svg>${p.likes || 0}</button>
               <button class="post__btn" onclick="toggleComentarios('${p.id}')"><svg class="ic"><use href="#i-messages"/></svg>${p.comentariosCount || 0} comentarios</button>
+              ${(() => { const d = foroDiasRestantes(p.createdAt); return `<span class="post__expira ${d <= 2 ? 'post__expira--pronto' : ''}" title="Se elimina en ${d} día${d !== 1 ? 's' : ''}"><svg class="ic"><use href="#i-clock"/></svg>${d} día${d !== 1 ? 's' : ''}</span>`; })()}
             </div>
             <div class="post__comments" id="comments-${p.id}" style="display:none"></div>
           </div>
