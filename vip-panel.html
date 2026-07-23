@@ -1427,7 +1427,7 @@ onAuthStateChanged(auth, async (user) => {
   const email = (user.email || '').toLowerCase();
   const isAdmin = ADMINS.includes(email);
 
-  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null;
+  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaAlta = null;
 
   if (isAdmin) {
     modo = 'vip'; plan = 'admin'; membership = { activo: true, activa: true, plan: 'admin' };
@@ -1436,14 +1436,18 @@ onAuthStateChanged(auth, async (user) => {
     membership = r.membership;
     cancelacionProgramada = r.cancelacionProgramada;
     fechaFinAcceso = r.fechaFinAcceso;
+    const dd = r.docData || {};
+    const fa = dd.fechaAlta || dd.createdAt || dd.fechaActivacion || dd.fechaInicio || null;
+    fechaAlta = fa ? (fa.toDate ? fa.toDate().toISOString() : String(fa)) : null;
     if (membership && (membership.activo || membership.activa)) { modo = 'vip'; plan = membership.plan || 'mensual'; }
   }
+  const memberSince = fechaAlta || (user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toISOString() : null);
 
   window.UserState = {
     uid: user.uid, email, displayName: user.displayName || '',
     nombre: user.displayName || email.split('@')[0],
     iniciales: iniciales(user.displayName, email),
-    isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso
+    isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince
   };
 
   hidratarUI(window.UserState);
@@ -3165,6 +3169,272 @@ function mountNutricion(c){
     window.Sections['tool-nutricion'] = function(){ mountNutricion(document.getElementById('content')); };
   }
   reg();
+})();
+</script>
+
+<!-- ══════════════════════ CURSOS · visor embebido + desbloqueo progresivo (8 días) ══════════════════════ -->
+<style>
+/* Portada 16:9 (antes 114px la recortaba) */
+.curso-card__cover{height:auto;aspect-ratio:16/9;background-size:cover;background-position:center}
+.curso-card__cover svg{opacity:.9}
+/* Chip de días para desbloqueo */
+.drip-lock{position:absolute;inset:0;background:color-mix(in srgb,var(--bg-deep) 82%,transparent);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:inherit;z-index:6;text-align:center;padding:14px}
+.drip-lock__ic{width:44px;height:44px;border-radius:50%;background:color-mix(in srgb,var(--warn) 20%,transparent);border:1px solid var(--warn);display:flex;align-items:center;justify-content:center;color:var(--warn)}
+.drip-lock__ic svg{width:19px;height:19px}
+.drip-lock__t{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);font-weight:700;letter-spacing:.5px}
+.drip-lock__d{font-size:11px;color:var(--text-2);max-width:220px;line-height:1.4}
+/* Visor embebido */
+.visor-ov{position:fixed;inset:0;z-index:99500;background:rgba(3,7,13,.9);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
+.visor-ov.is-open{display:flex}
+.visor-box{width:100%;max-width:1000px;height:88vh;background:var(--surface);border:1px solid var(--border-2);border-radius:18px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.visor-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
+.visor-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14.5px;font-weight:700;letter-spacing:-.2px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.visor-actions{display:flex;gap:8px;flex-shrink:0}
+.visor-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:100px;font-size:11.5px;font-weight:600;border:0.5px solid var(--border-2);color:var(--text-2);background:var(--surface-2);white-space:nowrap;transition:.15s}
+.visor-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.visor-btn .ic{width:13px;height:13px}
+.visor-btn--mark{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;border-color:transparent}
+.visor-btn--mark:disabled{background:color-mix(in srgb,var(--success) 20%,transparent);color:var(--success);border-color:color-mix(in srgb,var(--success) 45%,transparent)}
+.visor-frame-wrap{flex:1;background:#000;position:relative;min-height:0}
+.visor-frame-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+@media(max-width:640px){.visor-box{height:92vh;border-radius:14px}.visor-title{font-size:12.5px}.visor-btn{padding:7px 10px;font-size:11px}}
+/* Lista de clases/materiales con miniatura de portada */
+.leccion{display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid var(--border);border-radius:14px;background:var(--surface);margin-bottom:9px;transition:border-color .2s,transform .2s}
+.leccion:hover{border-color:color-mix(in srgb,var(--primary) 35%,transparent);transform:translateY(-1px)}
+.leccion__thumb{width:64px;height:40px;border-radius:9px;background-size:cover;background-position:center;background-color:var(--surface-3);flex-shrink:0;position:relative;overflow:hidden}
+.leccion__thumb--play::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.28)}
+.leccion__thumb .lp{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2}
+.leccion__thumb .lp svg{width:20px;height:20px;color:#fff;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.leccion__body{flex:1;min-width:0}
+.leccion__title{font-size:13.5px;font-weight:600;line-height:1.3}
+.leccion__meta{font-size:11px;color:var(--text-3);margin-top:2px;display:flex;align-items:center;gap:6px}
+.leccion__go{flex-shrink:0;width:34px;height:34px;border-radius:10px;background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary);display:flex;align-items:center;justify-content:center}
+.leccion__go svg{width:15px;height:15px}
+.leccion.is-done .leccion__go{background:color-mix(in srgb,var(--success) 16%,transparent);color:var(--success)}
+.mat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.mat-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;position:relative;transition:transform .25s,border-color .2s,box-shadow .3s}
+.mat-card:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--primary) 30%,transparent);box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.mat-card__cover{aspect-ratio:16/9;background-size:cover;background-position:center;background-color:var(--surface-3);position:relative}
+.mat-card__cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.5))}
+.mat-card__badge{position:absolute;top:10px;left:10px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.8px;padding:4px 9px;border-radius:100px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);color:#fff;border:1px solid rgba(255,255,255,.2);text-transform:uppercase}
+.mat-card__play{position:absolute;bottom:10px;right:10px;z-index:2;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;color:#fff}
+.mat-card__play svg{width:15px;height:15px}
+.mat-card__body{padding:14px 16px}
+.mat-card__title{font-size:13.5px;font-weight:700;line-height:1.35}
+.mat-card__curso{font-size:11px;color:var(--text-3);margin-top:4px;display:flex;align-items:center;gap:5px}
+.mat-card__curso svg{width:11px;height:11px}
+</style>
+<div class="visor-ov" id="visorOverlay" role="dialog" aria-modal="true">
+  <div class="visor-box">
+    <div class="visor-head">
+      <div class="visor-title" id="visorTitle">Visor</div>
+      <div class="visor-actions">
+        <button class="visor-btn visor-btn--mark" id="visorMark" style="display:none"><svg class="ic"><use href="#i-check"/></svg>Marcar vista</button>
+        <a class="visor-btn" id="visorDownload" target="_blank" rel="noopener" href="#"><svg class="ic"><use href="#i-download"/></svg>Abrir en Drive</a>
+        <button class="visor-btn visor-btn--close" id="visorClose"><svg class="ic"><use href="#i-close"/></svg>Cerrar</button>
+      </div>
+    </div>
+    <div class="visor-frame-wrap"><iframe id="visorFrame" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe></div>
+  </div>
+</div>
+<script>
+(function(){
+  const _p = new URLSearchParams(location.search);
+  const PREVIEW_DIAS = _p.get('dias') !== null ? parseInt(_p.get('dias'),10) : null;
+  const DRIP_DIAS = 8;
+
+  function esAdminReal(){ return !!(window.UserState && window.UserState.isAdmin); }
+  function esVip(){ return !!(window.UserState && (window.UserState.modo === 'vip' || window.UserState.isAdmin)); }
+
+  function diasMembresia(){
+    if (PREVIEW_DIAS !== null && !isNaN(PREVIEW_DIAS)) return PREVIEW_DIAS;
+    const ms = window.UserState && window.UserState.memberSince;
+    if (!ms) return 9999; // sin fecha → no bloquear
+    const t = new Date(ms).getTime();
+    if (isNaN(t)) return 9999;
+    return Math.max(0, Math.floor((Date.now() - t) / 86400000));
+  }
+  function unlockDay(c){ return (c && typeof c._unlockDay === 'number') ? c._unlockDay : 0; }
+  function cursoDesbloqueado(c){ if (esAdminReal()) return true; if (c && c.disponibleSiempre) return true; return diasMembresia() >= unlockDay(c); }
+  function diasRestantes(c){ if (esAdminReal()) return 0; return Math.max(0, unlockDay(c) - diasMembresia()); }
+
+  /* Drive → /preview */
+  function driveEmbed(url){
+    if (!url) return '';
+    if (url.indexOf('drive.google.com/open?id=') >= 0){ const id = url.split('id=')[1].split('&')[0]; return 'https://drive.google.com/file/d/'+id+'/preview'; }
+    return url.replace(/\/view(\?.*)?$/, '/preview').replace(/\/edit(\?.*)?$/, '/preview').replace(/\/preview\?.*$/, '/preview');
+  }
+
+  /* Progreso por curso (clases vistas) */
+  function progKey(){ return 'synova_curso_prog_' + (window.UserState && window.UserState.uid || 'anon'); }
+  function getProg(){ try { return JSON.parse(localStorage.getItem(progKey()) || '{}'); } catch(e){ return {}; } }
+  function setProg(p){ try { localStorage.setItem(progKey(), JSON.stringify(p)); } catch(e){} }
+  function cursoProg(id){ const p = getProg(); return p[id] || { vistas: [] }; }
+  window.__synMarcarVista = function(cursoId, idx){
+    const p = getProg(); if (!p[cursoId]) p[cursoId] = { vistas: [] };
+    if (!p[cursoId].vistas.includes(idx)) p[cursoId].vistas.push(idx);
+    setProg(p);
+    const c = (window.__cursosCache || []).find(x => x.id === cursoId);
+    if (c && Array.isArray(c.sesiones) && c.sesiones.length && p[cursoId].vistas.length >= c.sesiones.length){
+      if (typeof window.marcarCursoCompletado === 'function' && !cursoProg(cursoId).cert){ p[cursoId].cert = true; setProg(p); try { window.marcarCursoCompletado(cursoId); } catch(e){} }
+    }
+  };
+
+  /* ── VISOR ── */
+  const ov = document.getElementById('visorOverlay');
+  const frame = document.getElementById('visorFrame');
+  const vTitle = document.getElementById('visorTitle');
+  const vDl = document.getElementById('visorDownload');
+  const vMark = document.getElementById('visorMark');
+  window.__abrirVisor = function(url, titulo, cursoId, idx){
+    if (!url){ Toast.info('Sin contenido','Este recurso aún no tiene enlace.'); return; }
+    frame.src = driveEmbed(url);
+    vTitle.textContent = titulo || 'Visor';
+    vDl.href = url;
+    if (cursoId != null && idx != null){
+      const vista = cursoProg(cursoId).vistas.includes(idx);
+      vMark.style.display = 'inline-flex';
+      vMark.disabled = vista;
+      vMark.innerHTML = vista ? '<svg class="ic"><use href="#i-check-circle"/></svg>Vista' : '<svg class="ic"><use href="#i-check"/></svg>Marcar vista';
+      vMark.onclick = function(){
+        window.__synMarcarVista(cursoId, idx);
+        vMark.disabled = true; vMark.innerHTML = '<svg class="ic"><use href="#i-check-circle"/></svg>¡Marcada!';
+        if (window.__synRefrescarCurso) setTimeout(()=>window.__synRefrescarCurso(cursoId), 300);
+      };
+    } else { vMark.style.display = 'none'; }
+    ov.classList.add('is-open'); document.body.style.overflow = 'hidden';
+  };
+  function cerrarVisor(){ ov.classList.remove('is-open'); frame.src = ''; document.body.style.overflow = ''; }
+  document.getElementById('visorClose').addEventListener('click', cerrarVisor);
+  ov.addEventListener('click', e => { if (e.target === ov) cerrarVisor(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && ov.classList.contains('is-open')) cerrarVisor(); });
+
+  /* ── Carga de cursos + precálculo de desbloqueo ── */
+  async function loadCursos(force){
+    if (window.__cursosCache && !force) return window.__cursosCache;
+    const { collection, getDocs, db, query, orderBy } = window.__fs;
+    let snap;
+    try { snap = await getDocs(query(collection(db, 'cursos'), orderBy('orden', 'asc'))); }
+    catch(e){ snap = await getDocs(collection(db, 'cursos')); }
+    const cursos = []; snap.forEach(d => cursos.push({ id: d.id, ...d.data() }));
+    cursos.sort((a,b)=>(a.orden||999)-(b.orden||999));
+    let rank = 0;
+    cursos.forEach(c => { if (c.disponibleSiempre) c._unlockDay = 0; else { c._unlockDay = rank * DRIP_DIAS; rank++; } });
+    window.__cursosCache = cursos;
+    return cursos;
+  }
+
+  function portadaDe(c){ return c && c.portada ? String(c.portada) : ''; }
+
+  /* ── SECCIÓN CURSOS ── */
+  window.Sections.cursos = function(){
+    document.getElementById('content').innerHTML =
+      secHero('Catálogo VIP', 'Mis cursos', 'Cursos clínicos SYNOVA VIP. Cada curso se habilita de forma progresiva: uno nuevo cada ' + DRIP_DIAS + ' días desde tu alta.') +
+      '<div id="cursos-grid" class="cursos-grid"></div>';
+    renderCursos();
+  };
+  async function renderCursos(){
+    const grid = document.getElementById('cursos-grid'); if (!grid) return;
+    let cursos;
+    try { cursos = await loadCursos(); } catch(e){ grid.outerHTML = '<div id="cursos-grid">' + emptyState('i-book','No se pudo cargar el catálogo', e.message) + '</div>'; return; }
+    if (!cursos.length){ grid.outerHTML = '<div id="cursos-grid">' + emptyState('i-book','Aún no hay cursos cargados','El equipo SYNOVA está subiendo el catálogo.') + '</div>'; return; }
+    const vip = esVip();
+    grid.innerHTML = cursos.map(c => {
+      const color = c.color || colorForArea(c.area || c.nombre);
+      const nClases = (c.sesiones && c.sesiones.length) || 0;
+      const desbloqueado = cursoDesbloqueado(c);
+      const pend = c.sesiones && c.sesiones.length ? '' : '<span style="color:var(--warn)"> · En preparación</span>';
+      const cover = portadaDe(c) ? ' style="background-image:url(\'' + portadaDe(c).replace(/'/g,'%27') + '\')"' : '';
+      let lock = '';
+      if (!vip) lock = '<div class="lock-overlay"><div class="lock-overlay__ic"><svg class="ic"><use href="#i-shield-check"/></svg></div><div class="lock-overlay__txt">Solo VIP</div></div>';
+      else if (!desbloqueado){ const d = diasRestantes(c); lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div><div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div></div>'; }
+      return '<div class="curso-card" style="--area-color:' + color + '" data-locked="' + (!vip) + '" data-cid="' + c.id + '" data-ok="' + (vip && desbloqueado) + '">' +
+        '<div class="curso-card__cover"' + cover + '>' + (portadaDe(c) ? '' : iconoParaArea()) + '<div class="curso-card__cover-badge">' + escHtml(c.area || 'SYNOVA') + '</div></div>' +
+        '<div class="curso-card__body"><div class="curso-card__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div>' +
+        '<div class="curso-card__desc">' + escHtml(c.descripcion || 'Contenido clínico incluido en tu membresía VIP.') + '</div>' +
+        '<div class="curso-card__meta"><span><svg class="ic"><use href="#i-book"/></svg>' + nClases + ' clase' + (nClases===1?'':'s') + pend + '</span></div></div>' +
+        lock + '</div>';
+    }).join('');
+    grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
+      const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
+      if (!esVip()){ window.__showPaywallModal('Activa tu membresía SYNOVA VIP para ver el contenido de este curso.'); return; }
+      if (!cursoDesbloqueado(c)){ const d = diasRestantes(c); Toast.info('Curso en camino','Se desbloquea en ' + d + (d===1?' día':' días') + '.'); return; }
+      abrirCurso(c.id);
+    }));
+  }
+
+  /* ── DETALLE DE CURSO (clases + materiales embebidos) ── */
+  window.__synRefrescarCurso = function(id){ if (document.getElementById('curso-detalle-body')) abrirCurso(id, true); };
+  function abrirCurso(id, reabrir){
+    const c = (window.__cursosCache||[]).find(x => x.id === id); if (!c) return;
+    const color = c.color || colorForArea(c.area || c.nombre);
+    const prog = cursoProg(id);
+    const sesiones = Array.isArray(c.sesiones) ? c.sesiones : [];
+    const materiales = Array.isArray(c.materiales) ? c.materiales : [];
+    const port = portadaDe(c);
+
+    let clasesHtml = sesiones.length
+      ? '<div class="perfil-card__title" style="margin-top:6px">Clases</div>' + sesiones.map((s,i) => {
+          const vista = prog.vistas.includes(i);
+          return '<div class="leccion ' + (vista?'is-done':'') + '" data-clase="' + i + '">' +
+            '<div class="leccion__thumb leccion__thumb--play"' + (port?(' style="background-image:url(\'' + port.replace(/'/g,'%27') + '\')"'):'') + '><div class="lp"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13 -8z"/></svg></div></div>' +
+            '<div class="leccion__body"><div class="leccion__title">' + escHtml(s.titulo || ('Clase ' + (i+1))) + '</div><div class="leccion__meta">' + (vista?'<svg class="ic" style="width:12px;height:12px;color:var(--success)"><use href="#i-check-circle"/></svg>Vista':'Video · da clic para ver') + '</div></div>' +
+            '<div class="leccion__go"><svg><use href="#' + (vista?'i-check':'i-play') + '"/></svg></div></div>';
+        }).join('')
+      : '<p style="font-size:13px;color:var(--text-2);line-height:1.6;margin-top:8px">Este curso está en preparación. En cuanto el equipo SYNOVA suba las clases las verás aquí.</p>';
+
+    let matsHtml = materiales.length
+      ? '<div class="perfil-card__title" style="margin-top:18px">Material del curso</div>' + materiales.map((m,i) => {
+          const mp = (m.portada || port);
+          return '<div class="leccion" data-mat="' + i + '">' +
+            '<div class="leccion__thumb leccion__thumb--play"' + (mp?(' style="background-image:url(\'' + String(mp).replace(/'/g,'%27') + '\')"'):'') + '><div class="lp"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
+            '<div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material ' + (i+1))) + '</div><div class="leccion__meta">Documento · da clic para abrir</div></div>' +
+            '<div class="leccion__go"><svg><use href="#i-arrow-right"/></svg></div></div>';
+        }).join('')
+      : '';
+
+    const body = '<div id="curso-detalle-body">' +
+      (port ? '<div class="curso-portada-banner" style="background-image:url(\'' + port.replace(/'/g,'%27') + '\')"></div>' : '') +
+      '<div class="detail-hero" style="--area-color:' + color + '"><div class="detail-hero__icon">' + iconoParaArea() + '</div><div style="min-width:0"><div class="detail-hero__tags"><span class="tag tag--new">' + escHtml(c.area || 'SYNOVA') + '</span></div><div class="detail-hero__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div></div></div>' +
+      (c.descripcion ? '<p style="font-size:13.5px;color:var(--text-2);line-height:1.6;margin-bottom:6px">' + escHtml(c.descripcion) + '</p>' : '') +
+      clasesHtml + matsHtml + '</div>';
+
+    Modal.open({ id:'curso-detalle', title: escHtml(c.nombre || 'Curso'), subtitle: escHtml(c.area || ''), icon:'i-book', size:'lg', body,
+      footer: '<button class="btn btn--ghost" onclick="Modal.close(\'curso-detalle\')">Cerrar</button>' });
+    const cont = document.getElementById('curso-detalle-body');
+    cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => { const i = +el.dataset.clase; const s = sesiones[i]; window.__abrirVisor(s.url, s.titulo || ('Clase '+(i+1)), id, i); }));
+    cont.querySelectorAll('[data-mat]').forEach(el => el.addEventListener('click', () => { const i = +el.dataset.mat; const m = materiales[i]; window.__abrirVisor(m.url, m.titulo || ('Material '+(i+1)), null, null); }));
+  }
+
+  /* ── SECCIÓN PDFs Y MATERIAL (derivada de los cursos, embebida, con drip) ── */
+  window.Sections.pdfs = function(){
+    document.getElementById('content').innerHTML =
+      secHero('Biblioteca', 'PDFs y material', 'Guías, presentaciones y material descargable de cada curso. Se habilitan junto con su curso.') +
+      '<div id="pdfs-grid"></div>';
+    renderMateriales();
+  };
+  async function renderMateriales(){
+    const grid = document.getElementById('pdfs-grid'); if (!grid) return;
+    if (!esVip()){ grid.innerHTML = '<div class="empty-state"><div class="empty-state__icon"><svg class="ic ic--lg"><use href="#i-news"/></svg></div><h3>El material es exclusivo VIP</h3><p>Activa tu membresía SYNOVA para acceder a las guías y presentaciones.</p><div style="margin-top:14px"><button class="btn btn--accent" data-section="suscripcion">Ver planes VIP</button></div></div>'; return; }
+    let cursos;
+    try { cursos = await loadCursos(); } catch(e){ grid.innerHTML = emptyState('i-news','No se pudo cargar el material', e.message); return; }
+    const items = [];
+    cursos.forEach(c => { const ok = cursoDesbloqueado(c); (c.materiales||[]).forEach((m,i) => items.push({ m, c, ok, i })); });
+    if (!items.length){ grid.innerHTML = emptyState('i-news','Sin material por ahora','El material aparecerá aquí junto con los cursos.'); return; }
+    grid.className = 'mat-grid';
+    grid.innerHTML = items.map((it,k) => {
+      const port = (it.m.portada || portadaDe(it.c));
+      const cover = port ? ' style="background-image:url(\'' + String(port).replace(/'/g,'%27') + '\')"' : '';
+      if (!it.ok){ const d = diasRestantes(it.c);
+        return '<div class="mat-card" data-locked="true" style="cursor:default"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span></div>' +
+          '<div class="drip-lock" style="position:absolute;top:0;left:0;right:0;aspect-ratio:16/9;border-radius:0"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">En ' + d + (d===1?' día':' días') + '</div></div>' +
+          '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div></div></div>';
+      }
+      return '<div class="mat-card" data-k="' + k + '"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span><div class="mat-card__play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
+        '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div></div></div>';
+    }).join('');
+    grid.querySelectorAll('.mat-card[data-k]').forEach(card => card.addEventListener('click', () => { const it = items[+card.dataset.k]; window.__abrirVisor(it.m.url, it.m.titulo || 'Material', null, null); }));
+  }
 })();
 </script>
 

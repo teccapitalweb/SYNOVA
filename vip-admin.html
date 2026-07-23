@@ -1744,15 +1744,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675">`+
       `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${color}"/><stop offset="1" stop-color="#08131F"/></linearGradient></defs>`+
       `<rect width="1200" height="675" fill="url(#g)"/>`+
-      `<circle cx="1040" cy="130" r="250" fill="#ffffff" fill-opacity="0.05"/>`+
+      `<circle cx="1040" cy="150" r="270" fill="#ffffff" fill-opacity="0.05"/>`+
       `<circle cx="1150" cy="560" r="150" fill="#ffffff" fill-opacity="0.04"/>`+
-      `<path d="M0 300 L360 300 L400 230 L455 400 L505 300 L1200 300" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="4"/>`+
+      // Cruz médica (emblema de salud)
+      `<g fill="#ffffff" fill-opacity="0.08"><rect x="905" y="300" width="200" height="60" rx="18"/><rect x="975" y="230" width="60" height="200" rx="18"/></g>`+
+      // Línea de pulso (ECG)
+      `<path d="M0 470 L380 470 L420 400 L475 560 L525 470 L1200 470" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="5"/>`+
+      // Degradado inferior para legibilidad del título
+      `<rect x="0" y="360" width="1200" height="315" fill="#050C15" fill-opacity="0.34"/>`+
       `<text x="64" y="86" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="800" fill="#ffffff" letter-spacing="1">SYNOVA <tspan fill="#ffffff" fill-opacity="0.55">MÉXICO</tspan></text>`+
-      `<rect x="64" y="112" rx="18" ry="18" width="${aw}" height="42" fill="#ffffff" fill-opacity="0.15"/>`+
+      `<rect x="64" y="112" rx="18" ry="18" width="${aw}" height="42" fill="#ffffff" fill-opacity="0.16"/>`+
       `<text x="${64+aw/2}" y="140" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="#ffffff" letter-spacing="2">${area.toUpperCase().replace(/&/g,'&amp;')}</text>`+
       `<text x="64" y="${startY}" font-family="Arial,Helvetica,sans-serif" font-size="${fs}" font-weight="800" fill="#ffffff" letter-spacing="-0.5">${tspans}</text>`+
       `<rect x="0" y="667" width="1200" height="8" fill="#2FD1C6"/>`+
-      `<text x="1136" y="640" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="600" fill="#ffffff" fill-opacity="0.6">Herramientas · Cursos · Certificación</text>`+
+      `<text x="1136" y="642" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="600" fill="#ffffff" fill-opacity="0.6">Formación clínica · SYNOVA VIP</text>`+
       `</svg>`;
     return 'data:image/svg+xml,'+encodeURIComponent(svg);
   }
