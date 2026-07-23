@@ -1762,6 +1762,37 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'data:image/svg+xml,'+encodeURIComponent(svg);
   }
 
+  /* ─────────── Portadas REALES por curso (fotos médicas Unsplash, mismo patrón que OdonTeck) ───────────
+     La misma imagen del curso se usa en sus clases y en sus materiales/PDFs. */
+  const _IMG = id => 'https://images.unsplash.com/photo-' + id + '?w=900&auto=format&fit=crop&q=80';
+  const PORTADAS_REALES = {
+    'politraumatizado-urgencias':  _IMG('1551601651-2a8555f1a136'),   // equipo quirúrgico en urgencias
+    'peritaje-toxicologico':       _IMG('1532094349884-543bc11b234d'),// laboratorio / química forense
+    'cetoacidosis-diabetica':      _IMG('1576086213369-97a306d36557'),// laboratorio clínico
+    'iaas-seguridad-paciente':     _IMG('1584982751601-97dcc096659c'),// guantes / higiene hospitalaria
+    'electrolifting-plasma-pen':   _IMG('1570172619644-dfd03ed5d881'),// tratamiento facial estético
+    'vigilancia-control-vectores': _IMG('1532187863486-abf9dbad1b69'),// científico con microscopio
+    'deshidratacion-pediatrica':   _IMG('1519689680058-324335c77eba'),// mano de bebé
+    'terapia-infusion-enfermeria': _IMG('1576765608535-5f04d1e3f289'),// personal de enfermería
+    'preparacion-lecho-herida':    _IMG('1584744982491-665216d95f8b'),// personal con EPP / curación
+    'lesiones-por-presion':        _IMG('1586773860418-d37222d8fce3'),// hospital / cama clínica
+    'hipoxemia-ventilacion':       _IMG('1551076805-e1869033e561'),   // monitores UCI / ventilación
+    'paciente-quemado':            _IMG('1516574187841-cb9cc2ca948b'),// cirujanos en quirófano
+    'vacunas-prevencion':          _IMG('1587370560942-ad2a04eabb6d'),// jeringa y vial de vacuna
+    'manejo-ostomias':             _IMG('1579684385127-1ef15d508118'),// consulta médica
+    'heridas-apositos':            _IMG('1603398938378-e54eab446dde'),// material de curación
+    'accesos-vasculares':          _IMG('1538108149393-fbbd81895907'),// quirófano
+    'diabetes-mellitus-2':         _IMG('1576091160399-112ba8d25d1d'),// médico con tableta
+    'fragilidad-vejez':            _IMG('1544126592-807ade215a0b'),   // manos de adulto mayor
+    'terapia-presion-negativa':    _IMG('1584308666744-24d5c474f2ae'),// estetoscopio clínico
+    'sindrome-hellp':              _IMG('1559839734-2b71ea197ec2'),   // doctora
+    'cateteres-implantables':      _IMG('1579154204601-01588f351e67'),// enfermera con equipo
+    'proceso-atencion-enfermeria': _IMG('1584515933487-779824d29309'),// estetoscopio y laptop
+    'sepsis-neonatal':             _IMG('1583911860205-72f8ac8ddcbe'),// pies de recién nacido
+    'accesos-dialisis':            _IMG('1587854692152-cbe660dbde88'),// guantes y jeringa
+    'dieta-cetogenica':            _IMG('1490645935967-10de6ba17061') // alimentación saludable
+  };
+
   /* ─────────── CATÁLOGO (clases y materiales tal cual los enlaces provistos) ─────────── */
   const C = (t,u)=>({ titulo:t, url:u });
   const MIG_COURSES = [
@@ -1877,7 +1908,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i=0;i<MIG_COURSES.length;i++){
       const c = MIG_COURSES[i];
       statusEl.innerHTML = `<div style="display:flex;align-items:center;gap:10px"><div class="mig-spin"></div>Subiendo ${i+1}/${MIG_COURSES.length} · <b>${escHtml(c.nombre)}</b></div>`;
-      const portada = c.portada || svgPortada(c.nombre, c.area); // Usa URL real si existe, sino genera SVG
+      const portada = c.portada || PORTADAS_REALES[c.slug] || svgPortada(c.nombre, c.area); // Imagen REAL por curso; SVG solo como último recurso
       const datos = {
         nombre: c.nombre, area: c.area, nivel: 'Intermedio', instructor: 'Equipo docente SYNOVA',
         horas: estHoras(c.clases.length), portada, descripcion: c.desc,

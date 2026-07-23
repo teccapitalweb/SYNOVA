@@ -3363,6 +3363,68 @@ function mountNutricion(c){
   ov.addEventListener('click', e => { if (e.target === ov) cerrarVisor(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && ov.classList.contains('is-open')) cerrarVisor(); });
 
+  /* ── Portadas reales · pools médicos (Unsplash libres) con rotación, patrón OdonTeck ── */
+  const _IMG = id => 'https://images.unsplash.com/photo-' + id + '?w=900&auto=format&fit=crop&q=80';
+  const PORTADA_POOLS = {
+    urgencias:  ['1551601651-2a8555f1a136','1516574187841-cb9cc2ca948b','1538108149393-fbbd81895907','1551076805-e1869033e561'].map(_IMG),
+    enfermeria: ['1576765608535-5f04d1e3f289','1579684385127-1ef15d508118','1584515933487-779824d29309','1584744982491-665216d95f8b'].map(_IMG),
+    laboratorio:['1532094349884-543bc11b234d','1576086213369-97a306d36557','1532187863486-abf9dbad1b69'].map(_IMG),
+    pediatria:  ['1519689680058-324335c77eba','1583911860205-72f8ac8ddcbe'].map(_IMG),
+    nutricion:  ['1490645935967-10de6ba17061','1512621776951-a57141f2eefd'].map(_IMG),
+    estetica:   ['1570172619644-dfd03ed5d881'].map(_IMG),
+    general:    ['1505751172876-fa1923c5c528','1559839734-2b71ea197ec2','1576091160399-112ba8d25d1d','1584308666744-24d5c474f2ae','1587854692152-cbe660dbde88','1612349317150-e413f6a5b16d'].map(_IMG)
+  };
+  const PORTADA_TEMAS = [
+    ['urgencias',['politraumatiz','urgencia','quemado','reanimac','trauma','cirug','ventilac','hipoxem','sepsis']],
+    ['pediatria',['pediátr','pediatr','neonatal','infantil','niñ','deshidratación pediátrica']],
+    ['nutricion',['nutric','dieta','cetogénic','cetogenic','alimentac']],
+    ['estetica',['estétic','estetic','facial','plasma pen','electrolifting','rejuvenec']],
+    ['laboratorio',['toxicológ','toxicolog','pericial','forense','laboratorio','vector','vigilancia']],
+    ['enfermeria',['enfermer','infusión','infusion','herida','apósito','aposito','ostom','catéter','cateter','vascular','diálisis','dialisis','presión','presion','lecho','vacun','atención','atencion']]
+  ];
+  const PORTADA_DEFAULT = _IMG('1505751172876-fa1923c5c528');
+  /* Portadas fijas por curso del catálogo (imágenes reales relacionadas al tema) */
+  const PORTADAS_CURSO = {
+    'syn-politraumatizado-urgencias':  _IMG('1551601651-2a8555f1a136'),
+    'syn-peritaje-toxicologico':       _IMG('1532094349884-543bc11b234d'),
+    'syn-cetoacidosis-diabetica':      _IMG('1576086213369-97a306d36557'),
+    'syn-iaas-seguridad-paciente':     _IMG('1584982751601-97dcc096659c'),
+    'syn-electrolifting-plasma-pen':   _IMG('1570172619644-dfd03ed5d881'),
+    'syn-vigilancia-control-vectores': _IMG('1532187863486-abf9dbad1b69'),
+    'syn-deshidratacion-pediatrica':   _IMG('1519689680058-324335c77eba'),
+    'syn-terapia-infusion-enfermeria': _IMG('1576765608535-5f04d1e3f289'),
+    'syn-preparacion-lecho-herida':    _IMG('1584744982491-665216d95f8b'),
+    'syn-lesiones-por-presion':        _IMG('1586773860418-d37222d8fce3'),
+    'syn-hipoxemia-ventilacion':       _IMG('1551076805-e1869033e561'),
+    'syn-paciente-quemado':            _IMG('1516574187841-cb9cc2ca948b'),
+    'syn-vacunas-prevencion':          _IMG('1587370560942-ad2a04eabb6d'),
+    'syn-manejo-ostomias':             _IMG('1579684385127-1ef15d508118'),
+    'syn-heridas-apositos':            _IMG('1603398938378-e54eab446dde'),
+    'syn-accesos-vasculares':          _IMG('1538108149393-fbbd81895907'),
+    'syn-diabetes-mellitus-2':         _IMG('1576091160399-112ba8d25d1d'),
+    'syn-fragilidad-vejez':            _IMG('1544126592-807ade215a0b'),
+    'syn-terapia-presion-negativa':    _IMG('1584308666744-24d5c474f2ae'),
+    'syn-sindrome-hellp':              _IMG('1559839734-2b71ea197ec2'),
+    'syn-cateteres-implantables':      _IMG('1579154204601-01588f351e67'),
+    'syn-proceso-atencion-enfermeria': _IMG('1584515933487-779824d29309'),
+    'syn-sepsis-neonatal':             _IMG('1583911860205-72f8ac8ddcbe'),
+    'syn-accesos-dialisis':            _IMG('1587854692152-cbe660dbde88'),
+    'syn-dieta-cetogenica':            _IMG('1490645935967-10de6ba17061')
+  };
+  let _portadaIdx = {};
+  function _resetPortadas(){ _portadaIdx = {}; }
+  function esPortadaGenerica(p){ return !p || String(p).indexOf('data:image/svg') === 0; }
+  function getPortadaCurso(c){
+    if (PORTADAS_CURSO[c.id]) return PORTADAS_CURSO[c.id];
+    if (!esPortadaGenerica(c.portada)) return c.portada;
+    const titulo = ((c.nombre || '') + ' ' + (c.area || '')).toLowerCase();
+    let tema = 'general';
+    for (const [tm, kws] of PORTADA_TEMAS){ if (kws.some(k => titulo.includes(k))){ tema = tm; break; } }
+    const pool = PORTADA_POOLS[tema];
+    const i = _portadaIdx[tema] || 0; _portadaIdx[tema] = i + 1;
+    return pool[i % pool.length] || PORTADA_DEFAULT;
+  }
+
   /* ── Carga de cursos + precálculo de desbloqueo ── */
   async function loadCursos(force){
     if (window.__cursosCache && !force) return window.__cursosCache;
@@ -3372,10 +3434,39 @@ function mountNutricion(c){
     catch(e){ snap = await getDocs(collection(db, 'cursos')); }
     const cursos = []; snap.forEach(d => cursos.push({ id: d.id, ...d.data() }));
     cursos.sort((a,b)=>(a.orden||999)-(b.orden||999));
+    _resetPortadas();
     let rank = 0;
-    cursos.forEach(c => { if (c.disponibleSiempre) c._unlockDay = 0; else { c._unlockDay = rank * DRIP_DIAS; rank++; } });
+    cursos.forEach(c => {
+      if (c.disponibleSiempre) c._unlockDay = 0; else { c._unlockDay = rank * DRIP_DIAS; rank++; }
+      /* Portada real: si la guardada es SVG genérico (o no hay), se asigna imagen real por tema */
+      c._portadaSvg = (c.portada && esPortadaGenerica(c.portada)) ? c.portada : '';
+      c.portada = getPortadaCurso(c);
+      /* Los materiales heredan la MISMA portada de su curso */
+      (c.materiales || []).forEach(m => { if (esPortadaGenerica(m.portada)) m.portada = c.portada; });
+    });
     window.__cursosCache = cursos;
+    _precargarPortadas(cursos);
     return cursos;
+  }
+
+  /* Si una imagen de portada no carga (red / URL caída), revierte al SVG membretado y re-pinta */
+  let _portadaRevalTimer = null;
+  function _precargarPortadas(cursos){
+    cursos.forEach(c => {
+      const url = c.portada;
+      if (!url || url.indexOf('https://') !== 0) return;
+      const im = new Image();
+      im.onerror = function(){
+        c.portada = c._portadaSvg || '';
+        (c.materiales || []).forEach(m => { m.portada = c.portada; });
+        clearTimeout(_portadaRevalTimer);
+        _portadaRevalTimer = setTimeout(function(){
+          try { if (document.getElementById('cursos-grid')) renderCursos(); } catch(e){}
+          try { if (document.getElementById('pdfs-grid')) renderMateriales(); } catch(e){}
+        }, 300);
+      };
+      im.src = url;
+    });
   }
 
   function portadaDe(c){ return c && c.portada ? String(c.portada) : ''; }
@@ -3491,9 +3582,10 @@ function mountNutricion(c){
   };
   async function renderMateriales(){
     const grid = document.getElementById('pdfs-grid'); if (!grid) return;
-    if (!esVip()){ grid.innerHTML = '<div class="empty-state"><div class="empty-state__icon"><svg class="ic ic--lg"><use href="#i-news"/></svg></div><h3>El material es exclusivo VIP</h3><p>Activa tu membresía SYNOVA para acceder a las guías y presentaciones.</p><div style="margin-top:14px"><button class="btn btn--accent" data-section="suscripcion">Ver planes VIP</button></div></div>'; return; }
+    /* Todos ven el catálogo de materiales (VIP o no): si no eres VIP solo no los puedes ABRIR */
     let cursos;
     try { cursos = await loadCursos(); } catch(e){ grid.innerHTML = emptyState('i-news','No se pudo cargar el material', e.message); return; }
+    const vip = esVip();
     const items = [];
     cursos.forEach(c => { const ok = cursoDesbloqueado(c); (c.materiales||[]).forEach((m,i) => items.push({ m, c, ok, i })); });
     if (!items.length){ grid.innerHTML = emptyState('i-news','Sin material por ahora','El material aparecerá aquí junto con los cursos.'); return; }
@@ -3501,15 +3593,24 @@ function mountNutricion(c){
     grid.innerHTML = items.map((it,k) => {
       const port = (it.m.portada || portadaDe(it.c));
       const cover = port ? ' style="background-image:url(\'' + String(port).replace(/'/g,'%27') + '\')"' : '';
+      if (!vip){
+        return '<div class="mat-card" data-k="' + k + '" data-locked="true"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span>' +
+          '<div class="mat-card__play" style="background:rgba(11,18,31,.72)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div></div>' +
+          '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div><div style="margin-top:8px"><span class="tag" style="color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent);background:color-mix(in srgb,var(--warn) 10%,transparent)">Solo VIP</span></div></div></div>';
+      }
       if (!it.ok){ const d = diasRestantes(it.c);
-        return '<div class="mat-card" data-locked="true" style="cursor:default"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span></div>' +
+        return '<div class="mat-card" data-locked="true" data-dias="' + d + '" style="cursor:pointer"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span></div>' +
           '<div class="drip-lock" style="position:absolute;top:0;left:0;right:0;aspect-ratio:16/9;border-radius:0"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">En ' + d + (d===1?' día':' días') + '</div></div>' +
           '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div></div></div>';
       }
       return '<div class="mat-card" data-k="' + k + '"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span><div class="mat-card__play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
         '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div></div></div>';
     }).join('');
-    grid.querySelectorAll('.mat-card[data-k]').forEach(card => card.addEventListener('click', () => { const it = items[+card.dataset.k]; window.__abrirVisor(it.m.url, it.m.titulo || 'Material', null, null); }));
+    grid.querySelectorAll('.mat-card').forEach(card => card.addEventListener('click', () => {
+      if (!vip){ window.__showPaywallModal('Activa tu membresía SYNOVA VIP para abrir las guías y presentaciones.'); return; }
+      if (card.dataset.locked === 'true'){ const d = +card.dataset.dias || 0; Toast.info(d===1?'Disponible mañana':'Disponible en ' + d + ' días','Este material se desbloquea junto con su curso.'); return; }
+      const it = items[+card.dataset.k]; if (it) window.__abrirVisor(it.m.url, it.m.titulo || 'Material', null, null);
+    }));
   }
 })();
 </script>
