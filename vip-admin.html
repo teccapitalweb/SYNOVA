@@ -1098,7 +1098,10 @@ function modalActivarManual(m, plan, dias){
       await updateDoc(doc(db, 'miembros', m.id), {
         activa: true, activo: true, plan, esRegalo: false, estadoSuscripcion: 'activa',
         expiraEn: expira.toISOString(), fechaFinAcceso: expira.toISOString(), cancelacionProgramada: false,
-        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp()
+        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp(),
+        /* Siembra el splash de bienvenida en el panel del miembro (flujo OdonTeck):
+           la próxima vez que abra vip-panel verá el MISMO recorrido que post-pago Stripe */
+        notificacionPendiente: { tipo: 'bienvenida', plan, dias: diasFinal, mostrada: false, creadaEn: new Date().toISOString() }
       });
       Toast.success('¡Activado!', `${nombre} ahora tiene ${planLabel}`); Modal.close();
     } catch (e) { Toast.error('No se pudo activar', e.message); btn.disabled = false; btn.innerHTML = 'Reintentar'; }
@@ -1130,7 +1133,9 @@ function modalRegalar(m){
       await updateDoc(doc(db, 'miembros', m.id), {
         activa: true, activo: true, plan: 'regalo', esRegalo: true, estadoSuscripcion: 'activa',
         expiraEn: expira.toISOString(), fechaFinAcceso: expira.toISOString(), cancelacionProgramada: false,
-        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp()
+        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp(),
+        /* Siembra el splash de REGALO en el panel del miembro (flujo OdonTeck) */
+        notificacionPendiente: { tipo: 'bienvenida_regalo', dias, mostrada: false, creadaEn: new Date().toISOString() }
       });
       Toast.success('Regalo enviado', `${nombre} tiene ${dias} días gratis`); Modal.close();
     } catch (e) { Toast.error('No se pudo regalar', e.message); body.querySelectorAll('[data-days]').forEach(b => b.disabled = false); }

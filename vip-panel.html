@@ -985,6 +985,8 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .splash-film__feat-ic .splash-svg{width:62px;height:62px;color:var(--primary-soft)}
 .splash-star--vip{color:#2FD1C6;filter:drop-shadow(0 0 16px color-mix(in srgb,#1C6FB0 70%,transparent));animation:starPulse 1.9s ease-in-out infinite}
 @keyframes starPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+.splash-star--regalo{color:#A78BFA;filter:drop-shadow(0 0 18px rgba(167,139,250,.7));animation:regaloBounce 1.5s cubic-bezier(.5,1.7,.4,1) infinite}
+@keyframes regaloBounce{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-9px) rotate(4deg)}}
 .splash-bnv__kicker{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2.8px;text-transform:uppercase;font-weight:700;color:#5FB6E0;margin-bottom:12px}
 .splash-bnv__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.9px;line-height:1.15;margin-bottom:14px;color:#EAF2FA}
 .splash-bnv__title em{font-style:italic;display:inline-block;padding:0 .06em;background:linear-gradient(135deg,#5FB6E0,#2FD1C6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
@@ -1582,7 +1584,7 @@ onAuthStateChanged(auth, async (user) => {
   const email = (user.email || '').toLowerCase();
   const isAdmin = ADMINS.includes(email);
 
-  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaAlta = null;
+  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaAlta = null, notifPendiente = null;
 
   if (isAdmin) {
     modo = 'vip'; plan = 'admin'; membership = { activo: true, activa: true, plan: 'admin' };
@@ -1595,6 +1597,9 @@ onAuthStateChanged(auth, async (user) => {
     const fa = dd.fechaAlta || dd.createdAt || dd.fechaActivacion || dd.fechaInicio || null;
     fechaAlta = fa ? (fa.toDate ? fa.toDate().toISOString() : String(fa)) : null;
     if (membership && (membership.activo || membership.activa)) { modo = 'vip'; plan = membership.plan || 'mensual'; }
+    /* Activación manual o regalo desde vip-admin: el admin siembra notificacionPendiente
+       en el doc del miembro; aquí la detectamos para mostrar el splash de bienvenida */
+    notifPendiente = dd.notificacionPendiente || null;
   }
   const memberSince = fechaAlta || (user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toISOString() : null);
 
@@ -1622,6 +1627,19 @@ onAuthStateChanged(auth, async (user) => {
       // sigue en la URL) el splash se muestra cuando la membresía ya esté activa.
       setTimeout(() => Toast.success('¡Pago recibido!', 'Tu membresía VIP se activa en unos segundos.'), 500);
     }
+  } else if (window.UserState.modo === 'vip' && notifPendiente && !notifPendiente.mostrada) {
+    /* ── Splash de activación MANUAL o REGALO (sembrado por el admin) ──
+       Mismo recorrido de bienvenida que post-pago Stripe; si es regalo,
+       con textos de cortesía y los días regalados. Se marca como mostrada
+       para que no se repita en cada carga. */
+    setTimeout(() => {
+      window.__showWelcomeSplash && window.__showWelcomeSplash({
+        tipo: notifPendiente.tipo || null,
+        plan: window.UserState.plan,
+        dias: notifPendiente.dias || null
+      });
+    }, 700);
+    try { updateDoc(doc(db, 'miembros', user.uid), { 'notificacionPendiente.mostrada': true }).catch(() => {}); } catch (e) {}
   }
 
   setupNotificaciones(user.uid);
@@ -1642,10 +1660,14 @@ window.__showWelcomeSplash = function(opts) {
   const S = window.UserState || {};
   const nombre = (S.nombre || S.displayName || 'Colega').split(' ')[0];
   const plan = opts.plan || S.plan || 'mensual';
+  const esRegalo = opts.tipo === 'bienvenida_regalo' || plan === 'regalo';
+  const dias = opts.dias || null;
 
   // ── Íconos SVG line-art (sin emojis · misma regla de diseño que OdonTeck) ──
   const _sv = (inner, cls='') => `<svg class="splash-svg ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
   const ICON_VIP = _sv('<path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.4 7.2 16.9l.9-5.4L4.2 7.7l5.4-.8z"/><path d="M9.8 8.9l1.4 1.4 3-3" stroke-width="1.4"/>', 'splash-star splash-star--vip');
+  const ICON_REGALO = _sv('<polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>', 'splash-star splash-star--regalo');
+  const ICON_PORTADA = esRegalo ? ICON_REGALO : ICON_VIP;
   const SVG_FEAT = {
     cursos: _sv('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'),
     clases: _sv('<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>'),
@@ -1663,9 +1685,13 @@ window.__showWelcomeSplash = function(opts) {
     window.history.replaceState({}, '', url.toString());
   }
 
-  // ── Portada según el plan ──
+  // ── Portada según el caso: regalo / anual / mensual ──
   let kicker, titulo, desc;
-  if (plan === 'anual') {
+  if (esRegalo) {
+    kicker = 'ACCESO DE CORTESÍA';
+    titulo = dias ? `SYNOVA te regaló <em>${dias} días VIP</em>` : `SYNOVA te regaló <em>acceso VIP</em>`;
+    desc = `${nombre}, disfruta acceso completo sin costo durante tu periodo de cortesía. Esto es lo que tienes desbloqueado:`;
+  } else if (plan === 'anual') {
     kicker = '¡BIENVENIDO AL CLUB VIP!';
     titulo = `Bienvenido al <em>club VIP Anual</em>`;
     desc = `${nombre}, te uniste por todo un año a la comunidad de profesionales de la salud de SYNOVA México. Esto es tuyo:`;
@@ -1687,14 +1713,16 @@ window.__showWelcomeSplash = function(opts) {
 
   // ── Slides: portada → beneficios → cierre ──
   const slides = [];
-  slides.push({ tipo:'portada', icono: ICON_VIP, kicker, titulo, desc, confetti:true });
+  slides.push({ tipo:'portada', icono: ICON_PORTADA, kicker, titulo, desc, confetti:true });
   beneficios.forEach(b => slides.push({ tipo:'beneficio', ic:b.ic, t:b.t, d:b.d }));
   slides.push({
     tipo:'cierre',
-    icono: ICON_VIP,
+    icono: ICON_PORTADA,
     kicker: 'TODO LISTO',
-    titulo: `Todo esto <em>ya es tuyo</em>`,
-    desc: 'Explora a tu ritmo. Tu panel completo te está esperando.',
+    titulo: esRegalo ? `Aprovecha tu <em>acceso de cortesía</em>` : `Todo esto <em>ya es tuyo</em>`,
+    desc: esRegalo
+      ? 'Cuando termine tu cortesía podrás volverte miembro VIP para no perder el acceso.'
+      : 'Explora a tu ritmo. Tu panel completo te está esperando.',
     confetti:true
   });
 
