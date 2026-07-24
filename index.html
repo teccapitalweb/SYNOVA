@@ -2,99 +2,654 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SYNOVA MÉXICO | Inicio</title>
-  <meta name="description" content="Sitio oficial de SYNOVA MÉXICO con navegación multipágina y diseño médico profesional." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>SYNOVA MÉXICO | Capacitación clínica especializada</title>
+  <meta name="description" content="SYNOVA MÉXICO — Capacitación clínica especializada para profesionales de la salud. Cursos, certificación con folio verificable y clases en vivo." />
+  <link rel="icon" type="image/jpeg" href="assets/images/brand/logo.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════
+   SYNOVA MÉXICO · Landing 2026 v2
+   Azul claro médico premium · glow selectivo · glass
+   Tipografía: Space Grotesk (display) + Manrope (cuerpo)
+   ══════════════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:hidden}
+:root{
+  --bg:#EAF3FB; --bg-2:#DFEDF9;
+  --surface:#FFFFFF;
+  --ink:#0B2A4A; --ink-2:#3E5975; --ink-3:#7891A8;
+  --primary:#0D5FA0; --primary-soft:#3D8FCB; --primary-deep:#0A3E68;
+  --teal:#12A195; --teal-soft:#2FD1C6;
+  --glass:rgba(255,255,255,.66);
+  --glass-border:rgba(255,255,255,.75);
+  --line:rgba(11,58,102,.10);
+  --glow-teal:0 0 22px rgba(47,209,198,.55);
+  --shadow:0 14px 44px rgba(13,95,160,.12);
+  --radius:22px;
+  --container:min(1180px,calc(100% - 40px));
+}
+body{
+  font-family:'Manrope',system-ui,sans-serif;font-size:15px;line-height:1.6;
+  color:var(--ink);background:var(--bg);overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
+.container{width:var(--container);margin:0 auto}
+
+/* ── Fondo aurora + retícula ── */
+.fx-aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(circle at 16% 20%, rgba(61,143,203,.32), transparent 46%),
+    radial-gradient(circle at 84% 74%, rgba(47,209,198,.22), transparent 50%),
+    radial-gradient(circle at 55% 45%, rgba(95,182,224,.16), transparent 55%);
+  filter:blur(60px);
+  animation:aurora 26s ease-in-out infinite alternate;
+}
+.fx-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(to right,rgba(11,58,102,.045) 1px,transparent 1px),linear-gradient(to bottom,rgba(11,58,102,.045) 1px,transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 72%);
+  mask-image:radial-gradient(ellipse at center,#000 0%,transparent 72%);
+}
+@keyframes aurora{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(2.5%,-2%) scale(1.06)}
+  100%{transform:translate(-1.5%,1.5%) scale(1)}
+}
+
+/* ── Tipos base ── */
+.kicker{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:2.2px;text-transform:uppercase;color:var(--primary);display:inline-flex;align-items:center;gap:8px}
+.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal-soft);box-shadow:var(--glow-teal);animation:dotPulse 2.4s ease-out infinite}
+@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
+h1,h2,h3{font-family:'Space Grotesk','Manrope',sans-serif;letter-spacing:-.02em}
+
+/* ── Header vidrio ── */
+.hd{position:sticky;top:0;z-index:900;transition:background .3s,box-shadow .3s,border-color .3s;border-bottom:1px solid transparent}
+.hd.scrolled{background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);border-bottom:1px solid var(--line);box-shadow:0 8px 30px rgba(13,95,160,.08)}
+.hd__in{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px}
+.hd__brand{display:flex;align-items:center;gap:12px}
+.hd__logo{width:44px;height:44px;border-radius:13px;overflow:hidden;background:#fff;box-shadow:0 4px 14px rgba(13,95,160,.16);border:1px solid rgba(255,255,255,.8)}
+.hd__logo img{width:100%;height:100%;object-fit:cover}
+.hd__name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;letter-spacing:-.3px;line-height:1.05}
+.hd__tag{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:1.8px;color:var(--teal);text-transform:uppercase;font-weight:600}
+.hd__nav{display:flex;align-items:center;gap:4px}
+.hd__link{padding:9px 14px;border-radius:100px;font-size:13.5px;font-weight:600;color:var(--ink-2);transition:background .18s,color .18s}
+.hd__link:hover{background:rgba(13,95,160,.08);color:var(--primary)}
+.hd__link.is-active{background:rgba(13,95,160,.1);color:var(--primary);font-weight:700}
+.hd__cta{margin-left:8px;padding:10px 20px;border-radius:100px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;font-size:13px;font-weight:800;box-shadow:0 8px 22px rgba(13,95,160,.32), 0 0 18px rgba(47,209,198,.25);transition:transform .18s,box-shadow .18s;display:inline-flex;align-items:center;gap:7px}
+.hd__cta:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,95,160,.42), 0 0 26px rgba(47,209,198,.4)}
+.hd__burger{display:none;width:44px;height:44px;border-radius:13px;background:var(--glass);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);align-items:center;justify-content:center;flex-direction:column;gap:5px;box-shadow:0 4px 14px rgba(13,95,160,.1)}
+.hd__burger span{display:block;width:18px;height:2px;border-radius:2px;background:var(--ink)}
+
+/* menú móvil · hoja de vidrio desde la derecha */
+.msheet{position:fixed;inset:0;z-index:950;visibility:hidden;pointer-events:none}
+.msheet.open{visibility:visible;pointer-events:auto}
+.msheet__ov{position:absolute;inset:0;background:rgba(7,25,45,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
+.msheet.open .msheet__ov{opacity:1}
+.msheet__panel{position:absolute;top:0;right:0;bottom:0;width:86%;max-width:340px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);border-left:1px solid var(--glass-border);box-shadow:-24px 0 60px rgba(13,95,160,.2);transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.25,1);display:flex;flex-direction:column;padding:calc(20px + env(safe-area-inset-top)) 20px 28px}
+.msheet.open .msheet__panel{transform:translateX(0)}
+.msheet__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.msheet__close{width:40px;height:40px;border-radius:12px;background:rgba(13,95,160,.08);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink)}
+.msheet__link{display:flex;align-items:center;justify-content:space-between;padding:15px 14px;border-radius:14px;font-size:15px;font-weight:700;color:var(--ink-2);transition:background .18s,color .18s}
+.msheet__link:hover{background:rgba(13,95,160,.08);color:var(--primary)}
+.msheet__link::after{content:"→";opacity:.35;font-weight:400}
+.msheet__cta{margin-top:auto;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;text-align:center;font-weight:800;box-shadow:0 10px 26px rgba(13,95,160,.35), 0 0 20px rgba(47,209,198,.3)}
+
+/* ── HERO ── */
+.hero{padding:60px 0 30px;position:relative}
+.hero__grid{display:grid;grid-template-columns:1.08fr .92fr;gap:48px;align-items:center}
+.hero__title{font-size:clamp(2.4rem,5.2vw,4rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;margin:18px 0 20px}
+.hero__title em{font-style:normal;background:linear-gradient(120deg,var(--primary) 10%,var(--teal) 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero__lead{font-size:clamp(1rem,1.6vw,1.14rem);color:var(--ink-2);max-width:52ch;margin-bottom:30px;font-weight:500}
+.hero__actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:30px}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:100px;font-weight:800;font-size:14.5px;transition:transform .18s,box-shadow .2s,background .2s;min-height:48px;font-family:'Manrope',sans-serif}
+.btn--primary{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;box-shadow:0 12px 30px rgba(13,95,160,.35), 0 0 22px rgba(47,209,198,.28)}
+.btn--primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(13,95,160,.45), 0 0 30px rgba(47,209,198,.45)}
+.btn--ghost{background:var(--glass);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--ink);box-shadow:0 6px 20px rgba(13,95,160,.1)}
+.btn--ghost:hover{transform:translateY(-2px);border-color:rgba(18,161,149,.5);box-shadow:0 10px 28px rgba(13,95,160,.16)}
+.btn:active{transform:translateY(0) scale(.98)}
+.hero__proof{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:100px;background:var(--glass);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:12px;font-weight:700;color:var(--ink-2);box-shadow:0 4px 14px rgba(13,95,160,.08)}
+.chip b{color:var(--teal);font-weight:800}
+
+/* ── Visual hero · electro + tarjetas (sin personas inventadas) ── */
+.hero__visual{position:relative;min-height:470px;display:grid;place-items:center}
+.hero__halo{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(47,209,198,.26),rgba(13,95,160,.14) 45%,transparent 70%);filter:blur(30px);z-index:0;animation:halo 9s ease-in-out infinite alternate}
+@keyframes halo{from{transform:scale(.94)}to{transform:scale(1.08)}}
+.hero__ring{position:absolute;width:500px;height:500px;border:1px dashed rgba(13,95,160,.18);border-radius:50%;z-index:0;animation:spin 60s linear infinite}
+.hero__ring::before,.hero__ring::after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--teal-soft);box-shadow:var(--glow-teal)}
+.hero__ring::before{top:8%;left:14%}
+.hero__ring::after{bottom:6%;right:18%}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Tarjeta central · pulso vital con glow */
+.vitals{width:min(320px,84%);background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);border:1px solid var(--glass-border);border-radius:26px;box-shadow:0 30px 80px rgba(13,95,160,.25), inset 0 1px 0 rgba(255,255,255,.9);padding:22px 20px;position:relative;z-index:2;animation:floatA 7s ease-in-out infinite}
+.vitals__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.vitals__label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.vitals__brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--primary)}
+.vitals__ecg{position:relative;height:84px;border-radius:16px;background:linear-gradient(135deg,rgba(13,95,160,.06),rgba(47,209,198,.08));border:1px solid rgba(18,161,149,.22);overflow:hidden;margin-bottom:14px}
+.vitals__ecg svg{position:absolute;inset:0;width:100%;height:100%}
+.ecg-line{fill:none;stroke:var(--teal-soft);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(47,209,198,.9));stroke-dasharray:640;stroke-dashoffset:640;animation:ecg 3.4s linear infinite}
+@keyframes ecg{0%{stroke-dashoffset:640}62%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
+.vitals__rows{display:grid;gap:9px}
+.vrow{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:14px;padding:11px 13px}
+.vrow__ic{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,rgba(13,95,160,.12),rgba(47,209,198,.16));border:1px solid rgba(18,161,149,.25);display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0}
+.vrow__ic svg{width:17px;height:17px}
+.vrow b{font-size:12px;display:block;font-weight:800}
+.vrow span{font-size:10px;color:var(--ink-3);font-weight:600}
+.vrow__badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:1px;color:var(--teal);font-weight:600;background:rgba(47,209,198,.12);border:1px solid rgba(18,161,149,.3);padding:4px 8px;border-radius:100px;flex-shrink:0}
+.vrow__dot{width:8px;height:8px;border-radius:50%;background:#E5484D;box-shadow:0 0 10px rgba(229,72,77,.8);animation:dotPulse 1.5s ease-out infinite;flex-shrink:0}
+
+/* Tarjetas flotantes (datos del club, no personas) */
+.fcard{position:absolute;background:rgba(255,255,255,.84);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:18px;box-shadow:0 18px 50px rgba(13,95,160,.2);padding:13px 16px;z-index:3}
+.fcard--cert{top:6%;right:0%;animation:floatB 8s .5s ease-in-out infinite}
+.fcard--cert .fcard__t{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800}
+.fcard--cert .fcard__t svg{width:16px;height:16px;color:var(--teal);filter:drop-shadow(0 0 5px rgba(47,209,198,.8))}
+.fcard--cert .fcard__folio{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-3);margin-top:4px;letter-spacing:.5px}
+.fcard--comm{bottom:-2%;left:-1%;animation:floatB 9s 1.2s ease-in-out infinite}
+.fcard--comm .fcard__n{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.4px}
+.fcard--comm .fcard__n em{font-style:normal;color:var(--teal)}
+.fcard--comm .fcard__s{font-size:10px;color:var(--ink-3);font-weight:600}
+@keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes floatB{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(-1.2deg)}}
+
+/* ── Marquee de especialidades ── */
+.marq{padding:26px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.4);overflow:hidden;position:relative}
+.marq::before,.marq::after{content:"";position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
+.marq::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.marq::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent)}
+.marq__track{display:flex;gap:14px;width:max-content;animation:marq 30s linear infinite}
+.marq:hover .marq__track{animation-play-state:paused}
+.marq__item{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-2);display:inline-flex;align-items:center;gap:14px;white-space:nowrap}
+.marq__item::after{content:"✚";color:var(--teal);font-size:11px;filter:drop-shadow(0 0 4px rgba(47,209,198,.7))}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ── Cinta de stats ── */
+.stats{padding:44px 0 10px}
+.stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--radius);padding:26px 24px;box-shadow:0 8px 30px rgba(13,95,160,.09), inset 0 1px 0 rgba(255,255,255,.85);transition:transform .28s cubic-bezier(.2,.8,.25,1),box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
+.stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal-soft),transparent);opacity:.6}
+.stat:hover{transform:translateY(-4px);border-color:rgba(18,161,149,.4);box-shadow:0 18px 46px rgba(13,95,160,.16)}
+.stat b{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,3vw,2.5rem);font-weight:700;letter-spacing:-.04em;display:block;color:var(--primary-deep)}
+.stat b::after{content:attr(data-suffix);font-size:.55em;color:var(--teal);margin-left:2px;font-weight:700}
+.stat span{font-size:12.5px;color:var(--ink-2);font-weight:600;display:block;margin-top:5px}
+
+/* ── Secciones ── */
+.section{padding:84px 0}
+.shead{max-width:680px;margin-bottom:44px}
+.shead--center{margin-left:auto;margin-right:auto;text-align:center}
+.shead--row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;max-width:none}
+.shead h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:700;line-height:1.12;letter-spacing:-.03em;margin-top:14px}
+.shead h2 em{font-style:normal;background:linear-gradient(120deg,var(--primary),var(--teal));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.shead p{color:var(--ink-2);margin-top:12px;font-size:15px;font-weight:500}
+
+/* ── Cursos destacados (estilo tarjetas VIP con foto) ── */
+.courses{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ccard{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 30px rgba(13,95,160,.09), inset 0 1px 0 rgba(255,255,255,.85);transition:transform .3s cubic-bezier(.2,.8,.25,1),box-shadow .32s,border-color .3s;display:flex;flex-direction:column}
+.ccard:hover{transform:translateY(-6px);border-color:rgba(18,161,149,.45);box-shadow:0 24px 60px rgba(13,95,160,.18)}
+.ccard__media{position:relative;aspect-ratio:16/9.4;overflow:hidden}
+.ccard__media img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.25,1)}
+.ccard:hover .ccard__media img{transform:scale(1.06)}
+.ccard__media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,62,104,.08),rgba(10,62,104,.32))}
+.ccard__tag{position:absolute;top:12px;right:12px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#fff;background:rgba(10,42,74,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.28);padding:5px 10px;border-radius:100px}
+.ccard__body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:9px;flex:1}
+.ccard__vip{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--primary);display:inline-flex;align-items:center;gap:7px}
+.ccard__vip svg{width:14px;height:14px;color:var(--teal);filter:drop-shadow(0 0 4px rgba(47,209,198,.7))}
+.ccard h3{font-size:16.5px;font-weight:700;letter-spacing:-.02em;line-height:1.3}
+.ccard p{font-size:13px;color:var(--ink-2);line-height:1.55;font-weight:500;flex:1}
+.ccard__meta{display:flex;align-items:center;gap:14px;font-size:11.5px;color:var(--ink-3);font-weight:700;padding-top:6px;border-top:1px solid var(--line)}
+.ccard__meta svg{width:13px;height:13px;vertical-align:-2px;margin-right:4px}
+
+/* ── Bento de beneficios ── */
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.bcard{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--radius);padding:28px 26px;box-shadow:0 8px 30px rgba(13,95,160,.08), inset 0 1px 0 rgba(255,255,255,.85);transition:transform .28s cubic-bezier(.2,.8,.25,1),box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
+.bcard:hover{transform:translateY(-5px);border-color:rgba(18,161,149,.42);box-shadow:0 20px 52px rgba(13,95,160,.16)}
+.bcard::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-70px;top:-70px;background:radial-gradient(circle,rgba(47,209,198,.16),transparent 70%);transition:transform .4s;pointer-events:none}
+.bcard:hover::after{transform:scale(1.5)}
+.bcard__ic{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(13,95,160,.12),rgba(47,209,198,.16));border:1px solid rgba(18,161,149,.25);display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--primary)}
+.bcard__ic svg{width:24px;height:24px}
+.bcard h3{font-size:16.5px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+.bcard p{font-size:13.5px;color:var(--ink-2);line-height:1.55;font-weight:500}
+
+/* ── Frase editorial ── */
+.quote{padding:60px 0}
+.quote__box{text-align:center;max-width:760px;margin:0 auto}
+.quote h2{font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:600;line-height:1.25;letter-spacing:-.02em}
+.quote h2 em{font-style:normal;background:linear-gradient(120deg,var(--primary),var(--teal));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* ── CTA banner premium ── */
+.cta{padding:30px 0 90px}
+.cta__box{position:relative;overflow:hidden;border-radius:30px;padding:clamp(36px,6vw,60px);background:linear-gradient(135deg,#0B3B66 0%,#0D5FA0 55%,#12A195 130%);color:#fff;display:grid;grid-template-columns:1.4fr .6fr;gap:28px;align-items:center;box-shadow:0 30px 80px rgba(11,59,102,.35)}
+.cta__box::before{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.06) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at center,#000,transparent 80%);mask-image:radial-gradient(ellipse at center,#000,transparent 80%);pointer-events:none}
+.cta__box::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-140px;bottom:-190px;background:radial-gradient(circle,rgba(47,209,198,.45),transparent 65%);filter:blur(20px);animation:halo 8s ease-in-out infinite alternate;pointer-events:none}
+.cta__kicker{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-soft);font-weight:600;text-shadow:0 0 12px rgba(47,209,198,.6)}
+.cta__box h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:12px 0 10px}
+.cta__box p{color:rgba(255,255,255,.85);font-size:14.5px;max-width:48ch;font-weight:500}
+.cta__act{display:flex;justify-content:flex-end;position:relative;z-index:1}
+.btn--white{background:#fff;color:var(--primary-deep);box-shadow:0 14px 36px rgba(0,0,0,.25), 0 0 26px rgba(47,209,198,.35)}
+.btn--white:hover{transform:translateY(-2px);box-shadow:0 18px 44px rgba(0,0,0,.32), 0 0 34px rgba(47,209,198,.5)}
+
+/* ── Footer ── */
+.ft{border-top:1px solid var(--line);background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:52px 0 90px}
+.ft__grid{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:36px}
+.ft h3{font-size:12px;font-family:'JetBrains Mono',monospace;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:14px}
+.ft a{display:block;padding:5px 0;font-size:13.5px;color:var(--ink-2);font-weight:600;transition:color .15s}
+.ft a:hover{color:var(--primary)}
+.ft__brand{display:flex;align-items:center;gap:11px;margin-bottom:12px}
+.ft__brand img{width:40px;height:40px;border-radius:12px;object-fit:cover}
+.ft__brand b{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px}
+.ft p{font-size:13px;color:var(--ink-2);max-width:34ch;font-weight:500}
+.ft__legal{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:600}
+
+/* ── WhatsApp flotante ── */
+.wa{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));right:20px;z-index:800;width:56px;height:56px;border-radius:50%;background:#22C55E;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(34,197,94,.45);transition:transform .2s}
+.wa:hover{transform:translateY(-3px) scale(1.05)}
+.wa svg{width:28px;height:28px;fill:#fff}
+.wa::before{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(34,197,94,.45);animation:waPing 2.2s ease-out infinite}
+@keyframes waPing{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.35);opacity:0}}
+
+/* ── Reveal on scroll ── */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s cubic-bezier(.2,.8,.25,1),transform .6s cubic-bezier(.2,.8,.25,1)}
+.rv.in{opacity:1;transform:translateY(0)}
+.rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.16s}.rv-d3{transition-delay:.24s}.rv-d4{transition-delay:.32s}.rv-d5{transition-delay:.4s}
+
+/* ── Responsive ── */
+@media (max-width:1024px){
+  .hero__grid{grid-template-columns:1fr;gap:36px}
+  .hero__visual{min-height:440px;order:2}
+  .bento,.courses{grid-template-columns:repeat(2,1fr)}
+  .stats__grid{grid-template-columns:repeat(2,1fr)}
+  .cta__box{grid-template-columns:1fr}
+  .cta__act{justify-content:flex-start}
+}
+@media (max-width:760px){
+  .hd__nav{display:none}
+  .hd__burger{display:flex}
+  .hero{padding:36px 0 20px}
+  .hero__actions .btn{flex:1;justify-content:center}
+  .hero__visual{min-height:430px;overflow:visible;max-width:100%}
+  .hero__ring{width:370px;height:370px}
+  .hero__halo{width:310px;height:310px}
+  .fcard--cert{right:2%;top:0%}
+  .fcard--comm{left:2%;bottom:-2%}
+  .bento,.courses{grid-template-columns:1fr}
+  .section{padding:60px 0}
+  .shead--row{flex-direction:column;align-items:flex-start}
+  .ft__grid{grid-template-columns:1fr;gap:26px}
+  .stats__grid{gap:10px}
+  .stat{padding:20px 18px}
+}
+/* ── Accesibilidad ── */
+@media (prefers-reduced-motion:reduce){
+  .fx-aurora,.vitals,.fcard--cert,.fcard--comm,.hero__halo,.hero__ring,.wa::before,.marq__track,.ecg-line{animation:none !important}
+  .rv{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
 </head>
 <body>
-  <div class="page-shell"></div>
-  <header class="site-header">
+<div class="fx-aurora"></div>
+<div class="fx-grid"></div>
 
-
-    <div class="container nav-wrap">
-      <a class="brand" href="index.html" aria-label="SYNOVA MÉXICO">
-        <img src="assets/images/brand/logo.jpg" alt="Logo SYNOVA México" />
+<!-- ═══ HEADER ═══ -->
+<header class="hd" id="hd">
+  <div class="container hd__in">
+    <a class="hd__brand" href="index.html" aria-label="SYNOVA MÉXICO">
+      <span class="hd__logo"><img src="assets/images/brand/logo.jpg" alt="Logo SYNOVA México"></span>
+      <span>
+        <span class="hd__name">SYNOVA MÉXICO</span><br>
+        <span class="hd__tag">Salud · Capacitación</span>
+      </span>
+    </a>
+    <nav class="hd__nav" aria-label="Navegación principal">
+      <a class="hd__link is-active" href="index.html">Inicio</a>
+      <a class="hd__link" href="nosotros.html">Nosotros</a>
+      <a class="hd__link" href="cursos.html">Cursos</a>
+      <a class="hd__link" href="galeria.html">Galería</a>
+      <a class="hd__link" href="opiniones.html">Opiniones</a>
+      <a class="hd__link" href="contacto.html">Contacto</a>
+      <a class="hd__cta" href="vip-auth.html">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L21 9.27l-5 4.62L17.2 21 12 17.77 6.8 21 8 13.89l-5-4.62 6.1-1.01z"/></svg>
+        Club VIP
       </a>
-      
-      <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
-      <nav class="site-nav">
-        <a href="index.html">Inicio</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="cursos.html">Cursos</a>
-        <a href="galeria.html">Galería</a>
-        <a href="opiniones.html">Opiniones</a>
-        <a href="contacto.html">Contacto</a>
-      </nav>
+    </nav>
+    <button class="hd__burger" id="burger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- menú móvil -->
+<div class="msheet" id="msheet" aria-hidden="true">
+  <div class="msheet__ov" id="msheet-ov"></div>
+  <div class="msheet__panel">
+    <div class="msheet__top">
+      <span class="hd__name">SYNOVA</span>
+      <button class="msheet__close" id="msheet-close" aria-label="Cerrar">✕</button>
     </div>
-  </header>
-  <main>
-<section class="hero hero-home section">
-  <div class="container hero-grid">
-    <div class="hero-copy reveal hero-copy-minimal">
-      <h1>SYNOVA MÉXICO</h1>
-      <p class="hero-lead">Capacitación clínica especializada para profesionales de la salud.</p>
-      <div class="hero-actions hero-actions-centered">
-        <a class="btn btn-primary" href="cursos.html">Ver cursos</a>
-        <a class="btn btn-secondary" href="nosotros.html">Conocer SYNOVA</a>
+    <a class="msheet__link" href="index.html">Inicio</a>
+    <a class="msheet__link" href="nosotros.html">Nosotros</a>
+    <a class="msheet__link" href="cursos.html">Cursos</a>
+    <a class="msheet__link" href="galeria.html">Galería</a>
+    <a class="msheet__link" href="opiniones.html">Opiniones</a>
+    <a class="msheet__link" href="contacto.html">Contacto</a>
+    <a class="msheet__cta" href="vip-auth.html">★ Entrar al Club VIP</a>
+  </div>
+</div>
+
+<main>
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="container hero__grid">
+    <div>
+      <span class="kicker">Capacitación clínica especializada</span>
+      <h1 class="hero__title">Formación clínica de <em>alto nivel</em> para tu equipo de salud</h1>
+      <p class="hero__lead">Cursos clínicos, certificación con folio verificable y clases en vivo para profesionales de la salud en México. Formación seria, actualizada y a tu ritmo.</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="cursos.html">
+          Ver cursos
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn--ghost" href="nosotros.html">Conocer SYNOVA</a>
+      </div>
+      <div class="hero__proof">
+        <span class="chip"><b>17</b> cursos clínicos</span>
+        <span class="chip"><b>✓</b> Folio verificable</span>
+        <span class="chip"><b>100%</b> online</span>
+      </div>
+    </div>
+    <div class="hero__visual" aria-hidden="true">
+      <div class="hero__halo"></div>
+      <div class="hero__ring"></div>
+      <div class="vitals">
+        <div class="vitals__top">
+          <span class="vitals__label">Club VIP · En línea</span>
+          <span class="vitals__brand">SYNOVA</span>
+        </div>
+        <div class="vitals__ecg">
+          <svg viewBox="0 0 320 84" preserveAspectRatio="none">
+            <path class="ecg-line" d="M0 46 H56 L68 46 76 30 84 60 92 22 100 66 108 46 H140 L152 46 158 38 165 52 172 46 H210 L222 46 230 26 238 62 246 18 254 68 262 46 H320"/>
+          </svg>
+        </div>
+        <div class="vitals__rows">
+          <div class="vrow">
+            <span class="vrow__dot"></span>
+            <div><b>Clases en vivo</b><span>Con especialistas, cada semana</span></div>
+            <span class="vrow__badge">EN VIVO</span>
+          </div>
+          <div class="vrow">
+            <span class="vrow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+            <div><b>17 cursos clínicos</b><span>Urgencias, heridas, normativa y más</span></div>
+          </div>
+          <div class="vrow">
+            <span class="vrow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg></span>
+            <div><b>Certificación oficial</b><span>Folio único verificable en línea</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="fcard fcard--cert">
+        <div class="fcard__t">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          Certificado verificable
+        </div>
+        <div class="fcard__folio">Folio único · verificar.html</div>
+      </div>
+      <div class="fcard fcard--comm">
+        <div class="fcard__n">+500 <em>profesionales</em></div>
+        <div class="fcard__s">ya se capacitan con SYNOVA</div>
       </div>
     </div>
   </div>
 </section>
-<section class="stats-section">
-  <div class="container stats-grid">
-    <article class="stat-card reveal"><strong data-count="17">0</strong><span>Cursos clínicos</span></article>
-    <article class="stat-card reveal"><strong data-count="500">0</strong><span>Profesionales capacitados</span></article>
-    <article class="stat-card reveal"><strong data-count="10">0</strong><span>Áreas de enfoque</span></article>
-    <article class="stat-card reveal"><strong data-count="100">0</strong><span>Compromiso y calidad</span></article>
+
+<!-- ═══ MARQUEE ESPECIALIDADES ═══ -->
+<div class="marq" aria-hidden="true">
+  <div class="marq__track" id="marq-track">
+    <span class="marq__item">Urgencias</span>
+    <span class="marq__item">Manejo de heridas</span>
+    <span class="marq__item">Triage hospitalario</span>
+    <span class="marq__item">Pie diabético</span>
+    <span class="marq__item">Hemodiálisis</span>
+    <span class="marq__item">Código Mater</span>
+    <span class="marq__item">Cuidados pediátricos</span>
+    <span class="marq__item">Terapias celulares</span>
+    <span class="marq__item">Esterilización</span>
+    <span class="marq__item">Traqueostomía</span>
   </div>
-</section>
-<section class="section section-minimal-message">
-  <div class="container section-head centered-intro reveal">
-    <h2>Un espacio pensado para acompañarte en tu crecimiento profesional.</h2>
+</div>
+
+<!-- ═══ STATS ═══ -->
+<section class="stats">
+  <div class="container stats__grid">
+    <article class="stat rv"><b data-count="17">0</b><span>Cursos clínicos</span></article>
+    <article class="stat rv rv-d1"><b data-count="500" data-suffix="+">0</b><span>Profesionales capacitados</span></article>
+    <article class="stat rv rv-d2"><b data-count="10">0</b><span>Áreas de enfoque</span></article>
+    <article class="stat rv rv-d3"><b data-count="100" data-suffix="%">0</b><span>Compromiso y calidad</span></article>
   </div>
 </section>
 
-<section class="section cta-section">
-  <div class="container cta-box reveal">
-    <div>
-      <span class="section-tag inverse">Atención personalizada</span>
-      <h2>Solicita información y conoce la oferta académica de SYNOVA MÉXICO.</h2>
-      <p>Recibe orientación directa por WhatsApp para cursos, capacitación y asesoría institucional.</p>
+<!-- ═══ CURSOS DESTACADOS ═══ -->
+<section class="section">
+  <div class="container">
+    <div class="shead shead--row rv">
+      <div>
+        <span class="kicker">Oferta académica</span>
+        <h2>Cursos <em>destacados</em></h2>
+      </div>
+      <a class="btn btn--ghost" href="cursos.html">Ver todos los cursos
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
-    <a class="btn btn-white" href="https://wa.me/522381479274" target="_blank" rel="noopener">Inscribirme</a>
+    <div class="courses">
+      <a class="ccard rv" href="cursos.html">
+        <div class="ccard__media">
+          <img src="assets/images/courses/MANEJO DE HERIDAS.jpg" alt="Curso Manejo de heridas" loading="lazy">
+          <span class="ccard__tag">Enfermería</span>
+        </div>
+        <div class="ccard__body">
+          <span class="ccard__vip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Certificado incluido</span>
+          <h3>Manejo de heridas</h3>
+          <p>Valoración, técnica de curación avanzada y selección de apósitos según el tipo de herida.</p>
+          <div class="ccard__meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>100% online</span><span>Folio verificable</span></div>
+        </div>
+      </a>
+      <a class="ccard rv rv-d1" href="cursos.html">
+        <div class="ccard__media">
+          <img src="assets/images/courses/TRIAGE HOSPITALARIO.jpg" alt="Curso Triage hospitalario" loading="lazy">
+          <span class="ccard__tag">Urgencias</span>
+        </div>
+        <div class="ccard__body">
+          <span class="ccard__vip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Certificado incluido</span>
+          <h3>Triage hospitalario</h3>
+          <p>Clasificación de pacientes en urgencias: prioridades, escalas y toma de decisiones bajo presión.</p>
+          <div class="ccard__meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>100% online</span><span>Folio verificable</span></div>
+        </div>
+      </a>
+      <a class="ccard rv rv-d2" href="cursos.html">
+        <div class="ccard__media">
+          <img src="assets/images/courses/PIE DIABETICO.jpg" alt="Curso Pie diabético" loading="lazy">
+          <span class="ccard__tag">Clínica</span>
+        </div>
+        <div class="ccard__body">
+          <span class="ccard__vip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Certificado incluido</span>
+          <h3>Pie diabético</h3>
+          <p>Prevención, valoración y manejo integral del pie diabético para evitar complicaciones.</p>
+          <div class="ccard__meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>100% online</span><span>Folio verificable</span></div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BENEFICIOS ═══ -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="shead shead--center rv">
+      <span class="kicker">Por qué SYNOVA</span>
+      <h2>Formación clínica <em>que sí se nota</em> en tu práctica</h2>
+      <p>Todo lo que necesitas para mantenerte actualizado, en un solo lugar.</p>
+    </div>
+    <div class="bento">
+      <article class="bcard rv">
+        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+        <h3>Cursos clínicos</h3>
+        <p>Programas especializados con enfoque práctico: urgencias, heridas, normativa NOM, calidad de atención y más.</p>
+      </article>
+      <article class="bcard rv rv-d1">
+        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg></div>
+        <h3>Certificación verificable</h3>
+        <p>Cada certificado incluye folio único SYNOVA con verificación pública en línea. Respaldo real para tu CV.</p>
+      </article>
+      <article class="bcard rv rv-d2">
+        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9M16.5 7.5a6.4 6.4 0 0 1 0 9M4.7 4.7a10.4 10.4 0 0 0 0 14.6M19.3 4.7a10.4 10.4 0 0 1 0 14.6"/></svg></div>
+        <h3>Clases en vivo</h3>
+        <p>Webinars y sesiones en tiempo real con especialistas. Pregunta, participa y resuelve casos reales.</p>
+      </article>
+      <article class="bcard rv">
+        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div>
+        <h3>Herramientas clínicas pro</h3>
+        <p>Calculadoras de dosis, recetario, IMC y riesgo, anestésicos y nutrición clínica listos para usar.</p>
+      </article>
+      <article class="bcard rv rv-d1">
+        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Comunidad VIP</h3>
+        <p>Foro profesional, directorio de colegas y canal exclusivo. Conecta con profesionales de todo México.</p>
+      </article>
+      <article class="bcard rv rv-d2">
+        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg></div>
+        <h3>Material descargable</h3>
+        <p>PDFs, guías y plantillas clínicas actualizadas que puedes consultar y descargar cuando las necesites.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FRASE ═══ -->
+<section class="quote">
+  <div class="container quote__box rv">
+    <span class="kicker">Nuestra misión</span>
+    <h2 style="margin-top:14px">Un espacio pensado para <em>acompañarte</em> en tu crecimiento profesional.</h2>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta">
+  <div class="container">
+    <div class="cta__box rv">
+      <div style="position:relative;z-index:1">
+        <span class="cta__kicker">● Atención personalizada</span>
+        <h2>Solicita información y conoce la oferta académica de SYNOVA MÉXICO.</h2>
+        <p>Recibe orientación directa por WhatsApp para cursos, capacitación y asesoría institucional.</p>
+      </div>
+      <div class="cta__act">
+        <a class="btn btn--white" href="https://wa.me/522381479274" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+          Inscribirme
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 </main>
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <p>Capacitación clínica especializada para profesionales de la salud.</p>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="ft">
+  <div class="container ft__grid">
+    <div>
+      <div class="ft__brand">
+        <img src="assets/images/brand/logo.jpg" alt="SYNOVA México">
+        <b>SYNOVA MÉXICO</b>
       </div>
-      <div>
-        <h3>Contacto</h3>
-        <a href="https://wa.me/522381479274" target="_blank" rel="noopener">WhatsApp: +52 238 147 9274</a>
-        <a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a>
-        <a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram: @synovamexico</a>
-        <a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook oficial</a>
-      </div>
-      <div>
-        <h3>Navegación</h3>
-        <a href="index.html">Inicio</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="cursos.html">Cursos</a>
-        <a href="contacto.html">Contacto</a>
-      </div>
+      <p>Capacitación clínica especializada para profesionales de la salud.</p>
     </div>
-  </footer>
-  <a class="whatsapp-float" href="https://wa.me/522381479274" target="_blank" rel="noopener" aria-label="WhatsApp">✚</a>
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">×</button>
-    <img id="lightboxImage" src="" alt="Vista ampliada" />
+    <div>
+      <h3>Contacto</h3>
+      <a href="https://wa.me/522381479274" target="_blank" rel="noopener">WhatsApp: +52 238 147 9274</a>
+      <a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a>
+      <a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram: @synovamexico</a>
+      <a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook oficial</a>
+    </div>
+    <div>
+      <h3>Navegación</h3>
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="verificar.html">Verificar certificado</a>
+      <a href="vip-auth.html">Club VIP</a>
+    </div>
   </div>
-  <script src="assets/js/main.js"></script>
+  <div class="container ft__legal">
+    <span>© 2026 SYNOVA MÉXICO. Todos los derechos reservados.</span>
+    <span>Hecho con orgullo en Tehuacán, Puebla.</span>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/522381479274" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+</a>
+
+<script>
+/* Header con vidrio al hacer scroll */
+(function(){
+  var hd = document.getElementById('hd');
+  function onScroll(){ hd.classList.toggle('scrolled', window.scrollY > 12); }
+  window.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+})();
+
+/* Menú móvil (hoja desde la derecha, scroll bloqueado) */
+(function(){
+  var sheet = document.getElementById('msheet');
+  var abrir = function(){ sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false'); document.body.style.overflow = 'hidden'; };
+  var cerrar = function(){ sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true'); document.body.style.overflow = ''; };
+  document.getElementById('burger').addEventListener('click', abrir);
+  document.getElementById('msheet-close').addEventListener('click', cerrar);
+  document.getElementById('msheet-ov').addEventListener('click', cerrar);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') cerrar(); });
+})();
+
+/* Marquee: duplicar contenido para loop perfecto */
+(function(){
+  var track = document.getElementById('marq-track');
+  if (track) track.innerHTML += track.innerHTML;
+})();
+
+/* Reveal on scroll */
+(function(){
+  var els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)){ els.forEach(function(el){ el.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold:.16 });
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+/* Conteo animado de stats al entrar en vista */
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    document.querySelectorAll('[data-count]').forEach(function(el){ el.textContent = el.getAttribute('data-count'); });
+    return;
+  }
+  function animar(el){
+    var fin = parseInt(el.getAttribute('data-count'), 10) || 0;
+    var t0 = performance.now(), dur = 1100;
+    function paso(t){
+      var p = Math.min(1, (t - t0) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = String(Math.round(fin * eased));
+      if (p < 1) requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if (en.isIntersecting){ animar(en.target); io.unobserve(en.target); } });
+  }, { threshold:.4 });
+  document.querySelectorAll('[data-count]').forEach(function(el){ io.observe(el); });
+})();
+</script>
 </body>
 </html>
