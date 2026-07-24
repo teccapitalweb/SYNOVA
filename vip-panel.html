@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="night">
+<html lang="es" data-theme="day">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -1315,7 +1315,7 @@ const Storage = { pref: {
 } };
 
 const Theme = {
-  init(){ this.apply(Storage.pref.get('theme', 'night')); document.getElementById('theme-toggle')?.addEventListener('click', () => this.toggle()); },
+  init(){ this.apply(Storage.pref.get('theme', 'day')); document.getElementById('theme-toggle')?.addEventListener('click', () => this.toggle()); },
   apply(t){
     if (t !== 'day' && t !== 'night') t = 'night';
     document.documentElement.setAttribute('data-theme', t);
@@ -1501,6 +1501,8 @@ window.navigateTo = function(section){
   const content = document.getElementById('content');
   content.innerHTML = '<div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto 14px"></div></div>';
   try { Sections[section](); } catch (e) { console.error('[SYNOVA] Error renderizando sección', section, e); content.innerHTML = '<div class="empty-state"><h3>Ocurrió un problema al cargar esta sección</h3><p>' + escHtml(e.message) + '</p></div>'; }
+  /* transición sedosa entre secciones (solo capa visual) */
+  content.classList.remove('sec-anim'); void content.offsetWidth; content.classList.add('sec-anim');
   history.replaceState(null, '', location.pathname + '?seccion=' + section);
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (typeof window.__actualizarAside === 'function') window.__actualizarAside();
@@ -4682,6 +4684,152 @@ function mountNutricion(c){
   });
   if (laterBtn) laterBtn.addEventListener('click', function(){ ocultar(true); });
   if (overlay) overlay.addEventListener('click', function(){ ocultar(false); });
+})();
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SYNOVA · Capa visual 2026 — azul claro suave + glass + app-like
+     Solo transforma la presentación. NO toca lógica ni contenido.
+     ══════════════════════════════════════════════════════════════ -->
+<style id="synova-restyle-2026">
+/* ── Paleta día refinada · azul claro bajito, más aire ── */
+:root[data-theme="day"]{
+  --bg:#EAF3FB; --bg-deep:#DAE9F7;
+  --surface:#FFFFFF; --surface-2:#F1F8FE; --surface-3:#E0EEF9;
+  --border:rgba(11,58,102,0.07); --border-2:rgba(11,58,102,0.12);
+  --shadow-card:0 14px 44px rgba(13,95,160,0.12);
+}
+/* Aurora de fondo más presente en día (le da vida al vidrio) */
+:root[data-theme="day"] body::before{
+  background:
+    radial-gradient(circle at 18% 22%, rgba(61,143,203,.30), transparent 48%),
+    radial-gradient(circle at 82% 72%, rgba(21,158,146,.20), transparent 52%),
+    radial-gradient(circle at 55% 45%, rgba(95,182,224,.18), transparent 55%);
+}
+
+/* ── Glassmorphism · tarjetas de vidrio con borde de luz ── */
+:root[data-theme="day"] .kpi-card,
+:root[data-theme="day"] .widget,
+:root[data-theme="day"] .curso-card,
+:root[data-theme="day"] .certb,
+:root[data-theme="day"] .pdf-card,
+:root[data-theme="day"] .webinar-card,
+:root[data-theme="day"] .banner__stat,
+:root[data-theme="day"] .logro-card{
+  background:rgba(255,255,255,.68);
+  -webkit-backdrop-filter:blur(16px) saturate(160%);
+  backdrop-filter:blur(16px) saturate(160%);
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 8px 30px rgba(13,95,160,.09), inset 0 1px 0 rgba(255,255,255,.85);
+}
+:root[data-theme="day"] .banner{
+  background:linear-gradient(135deg, rgba(255,255,255,.82) 0%, rgba(240,248,254,.72) 100%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 10px 38px rgba(13,95,160,.12), inset 0 1px 0 rgba(255,255,255,.9);
+}
+:root[data-theme="day"] .sidebar{
+  background:rgba(255,255,255,.72);
+  -webkit-backdrop-filter:blur(18px) saturate(150%);
+  backdrop-filter:blur(18px) saturate(150%);
+}
+/* Noche: vidrio sutil para no perder el look premium oscuro */
+:root[data-theme="night"] .kpi-card,
+:root[data-theme="night"] .widget{
+  background:color-mix(in srgb, var(--surface) 84%, transparent);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+}
+
+/* ── Hover con vida (elevación + glow teal sutil) ── */
+.kpi-card:hover,.curso-card:hover,.certb:hover,.pdf-card:hover,.webinar-card:hover{
+  transform:translateY(-3px);
+  border-color:color-mix(in srgb, var(--highlight) 38%, transparent);
+  box-shadow:0 16px 44px rgba(13,95,160,.15), 0 0 0 1px color-mix(in srgb, var(--highlight) 22%, transparent);
+}
+.kpi-card,.curso-card,.certb,.pdf-card,.webinar-card{
+  transition:transform .28s cubic-bezier(.2,.8,.25,1), border-color .28s, box-shadow .32s, background .3s;
+}
+
+/* ── Transición sedosa entre secciones (stagger) ── */
+@keyframes secIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+#content.sec-anim > *{animation:secIn .45s cubic-bezier(.2,.8,.25,1) both}
+#content.sec-anim > *:nth-child(2){animation-delay:.05s}
+#content.sec-anim > *:nth-child(3){animation-delay:.1s}
+#content.sec-anim > *:nth-child(4){animation-delay:.15s}
+#content.sec-anim > *:nth-child(5){animation-delay:.2s}
+#content.sec-anim > *:nth-child(6){animation-delay:.25s}
+
+/* ── Tacto tipo app ── */
+body{-webkit-tap-highlight-color:transparent}
+.nav-item,.mobile-nav__item,.mobile-drawer__item,.icon-btn,button{touch-action:manipulation}
+
+/* ── Móvil · dock flotante de vidrio + controles con dedo en mente ── */
+@media (max-width:900px){
+  .mobile-nav{
+    left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
+    border-radius:24px;
+    border:1px solid color-mix(in srgb, var(--border-2) 70%, transparent);
+    background:color-mix(in srgb, var(--surface) 78%, transparent);
+    -webkit-backdrop-filter:blur(20px) saturate(170%);
+    backdrop-filter:blur(20px) saturate(170%);
+    box-shadow:0 14px 44px rgba(13,95,160,.20);
+    padding:7px 6px;
+  }
+  :root[data-theme="night"] .mobile-nav{box-shadow:0 14px 44px rgba(0,0,0,.45)}
+  .mobile-nav__item{
+    min-width:54px; min-height:48px; justify-content:center; gap:3px;
+    font-size:10px; padding:6px 10px; border-radius:15px;
+    transition:background .18s, color .18s, transform .18s;
+  }
+  .mobile-nav__item .ic{width:21px;height:21px}
+  .mobile-nav__item.is-active{background:color-mix(in srgb, var(--primary) 13%, transparent)}
+  .mobile-nav__item:active{transform:scale(.94)}
+  .icon-btn{width:40px;height:40px}
+  .icon-btn .ic{width:18px;height:18px}
+  .theme-toggle{padding:9px 14px 9px 12px;font-size:12px;min-height:40px}
+  .main{padding-bottom:150px}
+  /* stats del banner en cuadrícula 2×2 · nada se corta en pantallas chicas */
+  .banner__stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+  .banner__stat{min-width:0}
+}
+
+/* ── Accesibilidad · quien pide menos movimiento, lo recibe ── */
+@media (prefers-reduced-motion:reduce){
+  body::before,.banner::after{animation:none !important}
+  #content.sec-anim > *{animation:none !important}
+  .kpi-card:hover,.curso-card:hover,.certb:hover,.pdf-card:hover,.webinar-card:hover{transform:none}
+}
+</style>
+<script>
+/* ── KPIs con conteo animado · solo visual, no toca los datos ── */
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var vistos = new WeakSet();
+  function animar(el){
+    if (vistos.has(el)) return;
+    var txt = (el.childNodes[0] && el.childNodes[0].nodeType === 3) ? el.childNodes[0].nodeValue.trim() : el.textContent.trim();
+    if (!/^\d{1,4}$/.test(txt)) return;
+    var fin = parseInt(txt, 10);
+    if (!fin) return;
+    vistos.add(el);
+    var t0 = performance.now(), dur = 700;
+    function paso(t){
+      var p = Math.min(1, (t - t0) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      var val = String(Math.round(fin * eased));
+      if (el.childNodes[0] && el.childNodes[0].nodeType === 3) el.childNodes[0].nodeValue = val;
+      else el.textContent = val;
+      if (p < 1) requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
+  }
+  var obs = new MutationObserver(function(){
+    document.querySelectorAll('.kpi-card__value, .banner__stat-val').forEach(animar);
+  });
+  var content = document.getElementById('content');
+  if (content) obs.observe(content, { childList:true, subtree:true });
 })();
 </script>
 </body>
