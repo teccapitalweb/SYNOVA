@@ -617,7 +617,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/fireba
 import {
   getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
   sendPasswordResetEmail, updateProfile, setPersistence, browserLocalPersistence,
-  onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult
+  onAuthStateChanged, GoogleAuthProvider, signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, doc, setDoc, getDoc, serverTimestamp
@@ -796,41 +796,19 @@ document.getElementById('btn-register').addEventListener('click', async () => {
 const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-/* ¿Corre como app instalada (PWA standalone)? Ahí window.open no funciona
-   y el popup de Google truena — usamos redirect en su lugar. */
-function esStandalone(){
-  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-}
-
-/* Al volver de un signInWithRedirect: recoger el resultado (los errores del
-   flujo de redirect solo se enteran aquí; el éxito lo captura onAuthStateChanged). */
-getRedirectResult(auth).catch(e => {
-  if (e && e.code && e.code !== 'auth/no-auth-event') {
-    showAlert('error', 'No pudimos entrar con Google', translateError(e.code));
-  }
-});
-
 document.querySelectorAll('[data-google]').forEach(btn => {
   btn.addEventListener('click', async () => {
     clearAlert();
     btn.disabled = true;
     try {
-      if (esStandalone()) {
-        /* App instalada: sin popups → redirect (requiere authDomain en el
-           mismo sitio, ver auth.synovamexico.com) */
-        await signInWithRedirect(auth, googleProvider);
-        return;
-      }
+      // El popup hace login/registro · onAuthStateChanged se encarga de
+      // crear el doc en miembros/{uid} (con el nombre de Google) y redirigir.
       await signInWithPopup(auth, googleProvider);
       showAlert('success', '¡Listo!', 'Entrando con Google…');
     } catch (e) {
-      if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') { btn.disabled = false; return; }
-      /* Popup bloqueado o entorno sin soporte (webviews, algunos móviles):
-         reintentar con redirect en vez de rendirnos */
-      if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment' || e.code === 'auth/web-storage-unsupported') {
-        try { await signInWithRedirect(auth, googleProvider); return; } catch (e2) { e = e2; }
-      }
       btn.disabled = false;
+      // Si el usuario solo cerró el popup, no lo regañamos
+      if (e.code === 'auth/popup-closed-by-user' || e.code === 'auth/cancelled-popup-request') return;
       showAlert('error', 'No pudimos entrar con Google', translateError(e.code));
     }
   });
