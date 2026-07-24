@@ -11,11 +11,30 @@
     onScroll();
   }
 
-  /* Menú móvil (hoja desde la derecha, scroll bloqueado) */
+  /* Menú móvil (hoja desde la derecha, scroll bloqueado — fix iOS con position:fixed) */
   var sheet = document.getElementById('msheet');
   if (sheet) {
-    var abrir = function () { sheet.classList.add('open'); sheet.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; };
-    var cerrar = function () { sheet.classList.remove('open'); sheet.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; };
+    var scrollY = 0;
+    var abrir = function () {
+      scrollY = window.scrollY || window.pageYOffset;
+      sheet.classList.add('open'); sheet.setAttribute('aria-hidden', 'false');
+      document.body.style.position = 'fixed';
+      document.body.style.top = (-scrollY) + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+    };
+    var cerrar = function () {
+      sheet.classList.remove('open'); sheet.setAttribute('aria-hidden', 'true');
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.documentElement.style.scrollBehavior = 'auto';
+      window.scrollTo(0, scrollY);
+      document.documentElement.style.scrollBehavior = '';
+    };
     var burger = document.getElementById('burger');
     var closeBtn = document.getElementById('msheet-close');
     var ov = document.getElementById('msheet-ov');
@@ -23,6 +42,10 @@
     if (closeBtn) closeBtn.addEventListener('click', cerrar);
     if (ov) ov.addEventListener('click', cerrar);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+    /* Evitar rebote/arrastre del fondo en iOS con el menú abierto */
+    sheet.addEventListener('touchmove', function (e) {
+      if (!e.target.closest('.msheet__panel')) e.preventDefault();
+    }, { passive: false });
   }
 
   /* Reveal on scroll */
