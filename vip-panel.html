@@ -499,6 +499,24 @@ body::after{
 
 /* CERTIFICADOS */
 .certs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+/* ── Lista de certificados · filas elegantes (mismo layout que OdonTeck/IMDIIL/ICADEM) ── */
+.certs-list{display:flex;flex-direction:column;gap:12px}
+.certb{display:flex;align-items:center;gap:18px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .25s}
+.certb:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--primary) 45%,transparent);box-shadow:0 14px 34px color-mix(in srgb,var(--primary) 14%,rgba(0,0,0,.1))}
+.certb__seal{width:52px;height:52px;flex-shrink:0;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center}
+.certb__seal svg{width:30px;height:34px}
+.certb__main{flex:1;min-width:0}
+.certb__eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--text-3);margin-bottom:4px}
+.certb__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:-.3px;line-height:1.3;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.certb__meta{display:flex;align-items:center;gap:9px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);font-weight:600;flex-wrap:wrap}
+.certb__sep{width:3px;height:3px;border-radius:50%;background:var(--text-3);opacity:.5}
+.certb__folio{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-2);font-weight:600;margin-top:5px}
+.certb__action{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+.certb__verify{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--success);font-weight:700;display:inline-flex;align-items:center;gap:5px}
+.certb__verify::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success)}
+.certb__view{font-size:12.5px;font-weight:700;color:var(--primary-soft);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.certb__view .ic{width:13px;height:13px}
+@media(max-width:560px){.certb{flex-wrap:wrap;gap:12px}.certb__action{flex-direction:row;width:100%;justify-content:space-between;align-items:center;margin-top:4px}.certb__title{white-space:normal}}
 .cert-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;overflow:hidden;cursor:pointer;transition:transform .3s cubic-bezier(.2,.8,.25,1),border-color .25s,box-shadow .35s}
 .cert-card:hover{transform:translateY(-5px);border-color:color-mix(in srgb,var(--highlight) 50%,transparent);box-shadow:0 22px 50px color-mix(in srgb,var(--primary) 18%,rgba(0,0,0,.12))}
 .cert-card__top{background:linear-gradient(135deg,#F3F9FE 0%,#E3EFF9 100%);padding:0;display:block;position:relative;overflow:hidden;border-bottom:1px solid var(--border);min-height:auto;aspect-ratio:1.6/1}
@@ -1330,7 +1348,19 @@ const Modal = (function(){
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && stack.length > 0) { e.preventDefault(); close(stack[stack.length - 1].id); } });
   function open(cfg){
     if (!cfg.id) cfg.id = 'm_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-    const exist = stack.find(s => s.id === cfg.id); if (exist) close(cfg.id);
+    /* Si ya hay un modal abierto con este mismo id (p.ej. se reabre el detalle
+       de un curso mientras el anterior seguía animando su cierre), lo quitamos
+       YA del DOM y del stack en vez de dejar que su cierre animado (250ms) se
+       cruce con este open — dos instancias con el mismo id corriendo a la vez
+       corrompían el índice del stack y el modal quedaba huérfano: seguía
+       visible pero Modal.close() ya no lo encontraba, así que no había forma
+       de cerrarlo. */
+    const existIdx = stack.findIndex(s => s.id === cfg.id);
+    if (existIdx >= 0) {
+      const old = stack[existIdx];
+      old.element.parentNode?.removeChild(old.element);
+      stack.splice(existIdx, 1);
+    }
     const bd = document.createElement('div'); bd.className = 'modal-backdrop'; bd.dataset.modalId = cfg.id; bd.setAttribute('role', 'dialog'); bd.setAttribute('aria-modal', 'true');
     const m = document.createElement('div'); m.className = 'modal' + (cfg.size === 'lg' ? ' modal--lg' : cfg.size === 'sm' ? ' modal--sm' : '');
     if (cfg.title) {
@@ -1350,7 +1380,22 @@ const Modal = (function(){
     requestAnimationFrame(() => requestAnimationFrame(() => bd.classList.add('is-open')));
     return { id: cfg.id, close: () => close(cfg.id) };
   }
-  function close(id){ const i = stack.findIndex(s => s.id === id); if (i < 0) return; const e = stack[i]; e.element.classList.remove('is-open'); setTimeout(() => { e.element.parentNode?.removeChild(e.element); stack.splice(i, 1); if (stack.length === 0) unlockBody(); e.onClose?.(); }, 250); }
+  function close(id){
+    const i = stack.findIndex(s => s.id === id); if (i < 0) return;
+    const e = stack[i]; e.element.classList.remove('is-open');
+    setTimeout(() => {
+      e.element.parentNode?.removeChild(e.element);
+      /* Buscamos el índice OTRA VEZ aquí (no reutilizamos el "i" de arriba):
+         si mientras esperábamos los 250ms el stack cambió (otro modal se
+         cerró antes y corrió los índices), un índice viejo borraría la
+         entrada equivocada — el mismo bug que dejaba modales sin poder
+         cerrarse. Localizamos por referencia al objeto, no por posición. */
+      const j = stack.indexOf(e);
+      if (j >= 0) stack.splice(j, 1);
+      if (stack.length === 0) unlockBody();
+      e.onClose?.();
+    }, 250);
+  }
   return { open, close };
 })();
 window.Modal = Modal;
@@ -2296,8 +2341,8 @@ async function cargarLogros(){
 /* ══════════════════════ CERTIFICADOS ══════════════════════ */
 Sections.certificados = function(){
   document.getElementById('content').innerHTML =
-    secHero('Con folio verificable', 'Certificados', 'Certificados con folio y código QR emitidos a tu nombre al completar cursos de SYNOVA VIP.') +
-    '<div id="certs-grid" class="certs-grid"></div>';
+    secHero('Tu trayectoria', 'Mis certificados', 'Cada certificado SYNOVA tiene folio único <strong style="color:var(--primary-soft);font-family:\'JetBrains Mono\',monospace">SYNOVA-2026-XXXXXX</strong> y código QR verificable. Compártelos en LinkedIn o descárgalos en PDF.') +
+    '<div id="certs-wrap"><div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto"></div></div></div>';
   cargarCertificados();
 };
 
@@ -2305,43 +2350,60 @@ function verifyUrlCert(folio){ return location.origin + location.pathname.replac
 function qrUrlCert(folio){ return 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=' + encodeURIComponent(verifyUrlCert(folio)); }
 
 async function cargarCertificados(){
-  const grid = document.getElementById('certs-grid');
-  if (!grid) return;
+  const wrap = document.getElementById('certs-wrap');
+  if (!wrap) return;
   const S = window.UserState;
   try {
     const { collection, getDocs, db, query, where } = window.__fs;
     const snap = await getDocs(query(collection(db, 'certificados'), where('uid', '==', S.uid)));
-    if (snap.empty) { grid.outerHTML = '<div id="certs-grid">' + emptyState('i-certificate', 'Aún no tienes certificados', 'Completa un curso al 100% desde la sección "Mis cursos" para generar tu certificado con folio y QR verificable.') + '</div>'; return; }
     const certs = []; snap.forEach(d => certs.push({ id: d.id, ...d.data() }));
+    /* Más reciente primero */
+    certs.sort((a, b) => (tsToDate(b.createdAt)?.getTime() || 0) - (tsToDate(a.createdAt)?.getTime() || 0));
     window.__certsCache = certs;
-    grid.innerHTML = certs.map(c => {
-      const fecha = tsToDate(c.createdAt) || new Date();
-      return `<div class="cert-card" data-certid="${c.id}">
-        <div class="cert-card__top">
-          <div class="cert-preview-mini">
-            <div class="cert-preview-mini__head">
-              <div class="cert-preview-mini__logo"><img src="assets/img/synova-logo.png" alt="SYNOVA"></div>
-              <div><div class="cert-preview-mini__brand">SYNOVA</div><div class="cert-preview-mini__brand-sub">CLUB VIP · MÉXICO</div></div>
-              <div class="cert-preview-mini__qr"><img src="${qrUrlCert(c.folio)}" width="34" height="34" alt="QR"></div>
-            </div>
-            <div class="cert-preview-mini__body">
-              <div class="cert-preview-mini__eyebrow">Otorgado a</div>
-              <div class="cert-preview-mini__name">${escHtml(c.nombre || S.nombre)}</div>
-              <div class="cert-preview-mini__por">Por completar: ${escHtml(c.curso || 'Curso SYNOVA')}</div>
-            </div>
-            <div class="cert-preview-mini__sign"><span>${fmtDateLong(fecha)}</span><span class="cert-preview-mini__folio">${escHtml(c.folio || '')}</span></div>
+
+    const totalHoras = certs.reduce((s, c) => s + (Number(c.horas) || 0), 0);
+    const areas = [...new Set(certs.map(c => c.area || 'Salud'))].length;
+
+    /* KPIs arriba · mismo patrón que OdonTeck */
+    const kpis = `<div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-card__label">Certificados</div><div class="kpi-card__value">${certs.length}</div></div>
+      <div class="kpi-card"><div class="kpi-card__label">Horas certificadas</div><div class="kpi-card__value">${totalHoras}</div></div>
+      <div class="kpi-card"><div class="kpi-card__label">Áreas dominadas</div><div class="kpi-card__value">${certs.length ? areas : 0}</div></div>
+      <div class="kpi-card"><div class="kpi-card__label">Verificables</div><div class="kpi-card__value">100<span style="font-size:16px">%</span></div></div>
+    </div>`;
+
+    if (!certs.length){
+      wrap.innerHTML = kpis + emptyState('i-certificate', 'Aún no tienes certificados', 'Completa un curso al 100% desde la sección "Mis cursos" para generar tu certificado con folio y QR verificable.');
+      return;
+    }
+
+    wrap.innerHTML = kpis +
+      `<div class="section-header"><h2 class="section-header__title">Tus ${certs.length} certificado${certs.length !== 1 ? 's' : ''}<span class="section-header__badge">${certs.length} activo${certs.length !== 1 ? 's' : ''}</span></h2></div>` +
+      `<div class="certs-list">${certs.map(c => {
+        const fecha = tsToDate(c.createdAt) || (c.emitido ? new Date(c.emitido) : new Date());
+        const horas = Number(c.horas) || 0;
+        return `<article class="certb" data-certid="${c.id}" tabindex="0">
+          <div class="certb__seal">
+            <svg viewBox="0 0 40 48" fill="none"><circle cx="20" cy="17" r="14" stroke="currentColor" stroke-width="1.6"/><circle cx="20" cy="17" r="9" stroke="currentColor" stroke-width="1" opacity=".5"/><path d="M13 28 L10 46 L20 39 L30 46 L27 28" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
           </div>
-        </div>
-        <div class="cert-card__body">
-          <div class="cert-card__eyebrow">Certificado verificado</div>
-          <div class="cert-card__title">${escHtml(c.curso || 'Curso SYNOVA')}</div>
-          <div class="cert-card__meta"><span><svg class="ic"><use href="#i-calendar"/></svg>${fmtDateLong(fecha)}</span></div>
-          <div class="cert-card__foot"><span class="cert-card__folio">${escHtml(c.folio || '')}</span><span class="cert-card__verify"><svg class="ic" style="width:11px;height:11px"><use href="#i-shield-check"/></svg>Verificado</span></div>
-        </div>
-      </div>`;
-    }).join('');
-    grid.querySelectorAll('.cert-card').forEach(card => card.addEventListener('click', () => abrirCertificadoDetalle(card.dataset.certid)));
-  } catch (e) { grid.outerHTML = '<div id="certs-grid">' + emptyState('i-certificate', 'No se pudieron cargar tus certificados', e.message) + '</div>'; }
+          <div class="certb__main">
+            <div class="certb__eyebrow">Certificado de acreditación</div>
+            <h3 class="certb__title">${escHtml(c.curso || 'Curso SYNOVA')}</h3>
+            <div class="certb__meta">${horas ? `<span>${horas}h</span><span class="certb__sep"></span>` : ''}<span>${escHtml(c.area || 'Salud')}</span><span class="certb__sep"></span><span>${fmtDateLong(fecha)}</span></div>
+            <div class="certb__folio">${escHtml(c.folio || '')}</div>
+          </div>
+          <div class="certb__action">
+            <span class="certb__verify">Verificable</span>
+            <span class="certb__view">Ver certificado <svg class="ic"><use href="#i-arrow-right"/></svg></span>
+          </div>
+        </article>`;
+      }).join('')}</div>`;
+
+    wrap.querySelectorAll('.certb').forEach(el => {
+      el.addEventListener('click', () => abrirCertificadoDetalle(el.dataset.certid));
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') abrirCertificadoDetalle(el.dataset.certid); });
+    });
+  } catch (e) { wrap.innerHTML = emptyState('i-certificate', 'No se pudieron cargar tus certificados', e.message); }
 }
 
 /* ══════ CERTIFICADO PREMIUM · mismo diseño y flujo que OdonTeck, con identidad SYNOVA ══════ */
@@ -4293,6 +4355,10 @@ function mountNutricion(c){
   /* ── DETALLE DE CURSO (clases + materiales embebidos) ── */
   window.__synRefrescarCurso = function(id){
     if (document.getElementById('splash-completado')) return; /* si hay splash de curso completado, no reabrir el modal */
+    /* Si esta clase acaba de completar el curso, el splash de "curso completado"
+       está en camino (esperando el guardado del certificado en Firestore) —
+       no reabrimos el detalle para no pisarnos con el cierre de ese modal. */
+    if (cursoProg(id).cert) return;
     if (document.getElementById('curso-detalle-body')) abrirCurso(id, true);
   };
   function abrirCurso(id, reabrir){
