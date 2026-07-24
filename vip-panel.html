@@ -796,10 +796,11 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 
 /* MOBILE NAV + DRAWER */
 .mobile-nav{display:none}
-.mobile-drawer{position:fixed;inset:0;z-index:99300;display:none}
-.mobile-drawer.is-open{display:block}
-.mobile-drawer__overlay{position:absolute;inset:0;background:rgba(3,7,13,.6);backdrop-filter:blur(4px)}
-.mobile-drawer__panel{position:absolute;top:0;left:0;bottom:0;width:84%;max-width:320px;background:var(--surface);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .3s cubic-bezier(.2,.8,.25,1);overflow-y:auto}
+.mobile-drawer{position:fixed;inset:0;z-index:99300;visibility:hidden;pointer-events:none}
+.mobile-drawer.is-open{visibility:visible;pointer-events:auto}
+.mobile-drawer__overlay{position:absolute;inset:0;background:rgba(3,7,13,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;transition:opacity .3s ease}
+.mobile-drawer.is-open .mobile-drawer__overlay{opacity:1}
+.mobile-drawer__panel{position:absolute;top:0;right:0;bottom:0;width:100%;background:var(--surface);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.25,1);overflow-y:auto}
 .mobile-drawer.is-open .mobile-drawer__panel{transform:translateX(0)}
 .mobile-drawer__header{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;border-bottom:0.5px solid var(--border)}
 .mobile-drawer__brand{display:flex;align-items:center;gap:12px}
@@ -1428,8 +1429,24 @@ document.getElementById('paywall-cta')?.addEventListener('click', () => { docume
 document.getElementById('paywall-modal')?.addEventListener('click', e => { if (e.target.id === 'paywall-modal') e.currentTarget.classList.remove('is-open'); });
 
 /* ══════════════════════ DRAWER MÓVIL ══════════════════════ */
-function abrirDrawer(){ document.getElementById('mobile-drawer').classList.add('is-open'); }
-function cerrarDrawer(){ document.getElementById('mobile-drawer').classList.remove('is-open'); }
+let drawerLock = null;
+function abrirDrawer(){
+  document.getElementById('mobile-drawer').classList.add('is-open');
+  if (drawerLock === null) {
+    drawerLock = { pr: document.body.style.paddingRight, ov: document.body.style.overflow };
+    const sw = window.innerWidth - document.documentElement.clientWidth;
+    if (sw > 0) document.body.style.paddingRight = sw + 'px';
+    document.body.style.overflow = 'hidden';
+  }
+}
+function cerrarDrawer(){
+  document.getElementById('mobile-drawer').classList.remove('is-open');
+  if (drawerLock !== null) {
+    document.body.style.paddingRight = drawerLock.pr;
+    document.body.style.overflow = drawerLock.ov;
+    drawerLock = null;
+  }
+}
 document.getElementById('mobile-nav-more')?.addEventListener('click', abrirDrawer);
 document.getElementById('mobile-drawer-close')?.addEventListener('click', cerrarDrawer);
 document.getElementById('mobile-drawer-overlay')?.addEventListener('click', cerrarDrawer);
