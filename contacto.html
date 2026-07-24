@@ -2,77 +2,129 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>SYNOVA MÉXICO | Contacto</title>
   <meta name="description" content="Contacto e inscripciones de SYNOVA MÉXICO." />
+  <link rel="icon" type="image/x-icon" href="assets/images/brand/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/images/brand/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/synova2026.css" />
 </head>
 <body>
-  <div class="page-shell"></div>
-  <header class="site-header">
+<div class="fx-aurora"></div>
+<div class="fx-grid"></div>
 
-
-    <div class="container nav-wrap">
-      <a class="brand" href="index.html" aria-label="SYNOVA MÉXICO">
-        <img src="assets/images/brand/logo.jpg" alt="Logo SYNOVA México" />
+<header class="hd" id="hd">
+  <div class="container hd__in">
+    <a class="hd__brand" href="index.html" aria-label="SYNOVA MÉXICO">
+      <span class="hd__logo"><img src="assets/images/brand/logo.jpg" alt="Logo SYNOVA México"></span>
+      <span>
+        <span class="hd__name">SYNOVA MÉXICO</span><br>
+        <span class="hd__tag">Salud · Capacitación</span>
+      </span>
+    </a>
+    <nav class="hd__nav" aria-label="Navegación principal">
+      <a class="hd__link" href="index.html">Inicio</a>
+      <a class="hd__link" href="nosotros.html">Nosotros</a>
+      <a class="hd__link" href="cursos.html">Cursos</a>
+      <a class="hd__link" href="galeria.html">Galería</a>
+      <a class="hd__link" href="opiniones.html">Opiniones</a>
+      <a class="hd__link is-active" href="contacto.html">Contacto</a>
+      <a class="hd__cta" href="vip-auth.html">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L21 9.27l-5 4.62L17.2 21 12 17.77 6.8 21 8 13.89l-5-4.62 6.1-1.01z"/></svg>
+        Club VIP
       </a>
-      
-      <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
-      <nav class="site-nav">
-        <a href="index.html">Inicio</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="cursos.html">Cursos</a>
-        <a href="galeria.html">Galería</a>
-        <a href="opiniones.html">Opiniones</a>
-        <a href="contacto.html">Contacto</a>
-      </nav>
+    </nav>
+    <button class="hd__burger" id="burger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="msheet" id="msheet" aria-hidden="true">
+  <div class="msheet__ov" id="msheet-ov"></div>
+  <div class="msheet__panel">
+    <div class="msheet__top">
+      <span class="hd__name">SYNOVA</span>
+      <button class="msheet__close" id="msheet-close" aria-label="Cerrar">✕</button>
     </div>
-  </header>
-  <main>
-<section class="subhero section compact-hero">
-  <div class="container narrow reveal">
-    <span class="section-tag">Contacto</span>
-    <h1>Atención directa para inscripciones, informes y seguimiento.</h1>
-    <p class="hero-text">Estamos listos para ayudarte con información sobre cursos, procesos de inscripción y atención institucional.</p>
+    <a class="msheet__link" href="index.html">Inicio</a>
+    <a class="msheet__link" href="nosotros.html">Nosotros</a>
+    <a class="msheet__link" href="cursos.html">Cursos</a>
+    <a class="msheet__link" href="galeria.html">Galería</a>
+    <a class="msheet__link" href="opiniones.html">Opiniones</a>
+    <a class="msheet__link" href="contacto.html">Contacto</a>
+    <a class="msheet__cta" href="vip-auth.html">★ Entrar al Club VIP</a>
+  </div>
+</div>
+
+<main>
+
+<section class="phero">
+  <div class="container rv in">
+    <span class="kicker">Contacto</span>
+    <h1>Atención directa para inscripciones, <em>informes</em> y seguimiento</h1>
+    <p>Estamos listos para ayudarte con información sobre cursos, procesos de inscripción y atención institucional.</p>
   </div>
 </section>
-<section class="section">
-  <div class="container contact-grid">
-    <article class="contact-card contact-accent reveal"><h3>WhatsApp</h3><p>Atención rápida y personalizada para resolver dudas, inscripciones y seguimiento.</p><div class="contact-actions"><a class="btn btn-primary" href="https://wa.me/522381479274" target="_blank" rel="noopener">Enviar mensaje</a></div></article>
-    <article class="contact-card reveal"><h3>Correo</h3><p>Contacto institucional para solicitar información formal, seguimiento y atención personalizada.</p><div class="contact-actions"><a class="btn btn-secondary color" href="mailto:synovamexico@gmail.com">Enviar correo</a></div></article>
-    <article class="contact-card reveal"><h3>Redes sociales</h3><p>Conoce novedades, presencia y actividad de SYNOVA MÉXICO en sus canales oficiales.</p><div class="contact-actions"><a class="btn btn-secondary color" href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram</a><a class="btn btn-secondary color" href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook</a></div></article>
+<section class="section" style="padding-top:16px">
+  <div class="container contact">
+    <article class="contact__card contact__card--main rv">
+      <span class="contact__ic"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg></span>
+      <h3>WhatsApp</h3>
+      <p>Atención rápida y personalizada para resolver dudas, inscripciones y seguimiento.</p>
+      <div class="contact__acts"><a class="btn btn--white" href="https://wa.me/522381479274" target="_blank" rel="noopener">Enviar mensaje</a></div>
+    </article>
+    <article class="contact__card rv rv-d1">
+      <span class="contact__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2.5 6.5L12 13l9.5-6.5"/></svg></span>
+      <h3>Correo</h3>
+      <p>Contacto institucional para solicitar información formal, seguimiento y atención personalizada.</p>
+      <div class="contact__acts"><a class="btn btn--ghost" href="mailto:synovamexico@gmail.com">Enviar correo</a></div>
+    </article>
+    <article class="contact__card rv rv-d2">
+      <span class="contact__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></span>
+      <h3>Redes sociales</h3>
+      <p>Conoce novedades, presencia y actividad de SYNOVA MÉXICO en sus canales oficiales.</p>
+      <div class="contact__acts"><a class="btn btn--ghost" href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram</a><a class="btn btn--ghost" href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook</a></div>
+    </article>
   </div>
 </section>
 </main>
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <p>Capacitación clínica especializada para profesionales de la salud.</p>
+
+<footer class="ft">
+  <div class="container ft__grid">
+    <div>
+      <div class="ft__brand">
+        <img src="assets/images/brand/logo.jpg" alt="SYNOVA México">
+        <b>SYNOVA MÉXICO</b>
       </div>
-      <div>
-        <h3>Contacto</h3>
-        <a href="https://wa.me/522381479274" target="_blank" rel="noopener">WhatsApp: +52 238 147 9274</a>
-        <a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a>
-        <a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram: @synovamexico</a>
-        <a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook oficial</a>
-      </div>
-      <div>
-        <h3>Navegación</h3>
-        <a href="index.html">Inicio</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="cursos.html">Cursos</a>
-        <a href="contacto.html">Contacto</a>
-      </div>
+      <p>Capacitación clínica especializada para profesionales de la salud.</p>
     </div>
-  </footer>
-  <a class="whatsapp-float" href="https://wa.me/522381479274" target="_blank" rel="noopener" aria-label="WhatsApp">✚</a>
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">×</button>
-    <img id="lightboxImage" src="" alt="Vista ampliada" />
+    <div>
+      <h3>Contacto</h3>
+      <a href="https://wa.me/522381479274" target="_blank" rel="noopener">WhatsApp: +52 238 147 9274</a>
+      <a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a>
+      <a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram: @synovamexico</a>
+      <a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook oficial</a>
+    </div>
+    <div>
+      <h3>Navegación</h3>
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="verificar.html">Verificar certificado</a>
+      <a href="vip-auth.html">Club VIP</a>
+    </div>
   </div>
-  <script src="assets/js/main.js"></script>
+  <div class="container ft__legal">
+    <span>© 2026 SYNOVA MÉXICO. Todos los derechos reservados.</span>
+    <span>Hecho con orgullo en Tehuacán, Puebla.</span>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/522381479274" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg></a>
+
+<script src="assets/js/synova2026.js"></script>
 </body>
 </html>

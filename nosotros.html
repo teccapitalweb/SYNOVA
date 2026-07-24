@@ -2,92 +2,152 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>SYNOVA MÉXICO | Nosotros</title>
   <meta name="description" content="Conoce quién es SYNOVA y su enfoque estratégico en el sector salud." />
+  <link rel="icon" type="image/x-icon" href="assets/images/brand/favicon.ico">
+  <link rel="apple-touch-icon" href="assets/images/brand/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/synova2026.css" />
 </head>
 <body>
-  <div class="page-shell"></div>
-  <header class="site-header">
+<div class="fx-aurora"></div>
+<div class="fx-grid"></div>
 
-
-    <div class="container nav-wrap">
-      <a class="brand" href="index.html" aria-label="SYNOVA MÉXICO">
-        <img src="assets/images/brand/logo.jpg" alt="Logo SYNOVA México" />
+<header class="hd" id="hd">
+  <div class="container hd__in">
+    <a class="hd__brand" href="index.html" aria-label="SYNOVA MÉXICO">
+      <span class="hd__logo"><img src="assets/images/brand/logo.jpg" alt="Logo SYNOVA México"></span>
+      <span>
+        <span class="hd__name">SYNOVA MÉXICO</span><br>
+        <span class="hd__tag">Salud · Capacitación</span>
+      </span>
+    </a>
+    <nav class="hd__nav" aria-label="Navegación principal">
+      <a class="hd__link" href="index.html">Inicio</a>
+      <a class="hd__link is-active" href="nosotros.html">Nosotros</a>
+      <a class="hd__link" href="cursos.html">Cursos</a>
+      <a class="hd__link" href="galeria.html">Galería</a>
+      <a class="hd__link" href="opiniones.html">Opiniones</a>
+      <a class="hd__link" href="contacto.html">Contacto</a>
+      <a class="hd__cta" href="vip-auth.html">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L21 9.27l-5 4.62L17.2 21 12 17.77 6.8 21 8 13.89l-5-4.62 6.1-1.01z"/></svg>
+        Club VIP
       </a>
-      
-      <button class="nav-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
-      <nav class="site-nav">
-        <a href="index.html">Inicio</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="cursos.html">Cursos</a>
-        <a href="galeria.html">Galería</a>
-        <a href="opiniones.html">Opiniones</a>
-        <a href="contacto.html">Contacto</a>
-      </nav>
+    </nav>
+    <button class="hd__burger" id="burger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="msheet" id="msheet" aria-hidden="true">
+  <div class="msheet__ov" id="msheet-ov"></div>
+  <div class="msheet__panel">
+    <div class="msheet__top">
+      <span class="hd__name">SYNOVA</span>
+      <button class="msheet__close" id="msheet-close" aria-label="Cerrar">✕</button>
     </div>
-  </header>
-  <main>
-<section class="subhero section compact-hero">
-  <div class="container narrow centered-intro reveal">
-    <span class="section-tag">¿Quién es SYNOVA?</span>
-    <h1>Una firma especializada en impulsar excelencia, confianza y mejora continua en el sector salud.</h1>
-    <p class="hero-text">SYNOVA acompaña a profesionales e instituciones con soluciones estratégicas, capacitación especializada y una visión enfocada en elevar la calidad de la atención, el cumplimiento normativo y la eficiencia operativa.</p>
+    <a class="msheet__link" href="index.html">Inicio</a>
+    <a class="msheet__link" href="nosotros.html">Nosotros</a>
+    <a class="msheet__link" href="cursos.html">Cursos</a>
+    <a class="msheet__link" href="galeria.html">Galería</a>
+    <a class="msheet__link" href="opiniones.html">Opiniones</a>
+    <a class="msheet__link" href="contacto.html">Contacto</a>
+    <a class="msheet__cta" href="vip-auth.html">★ Entrar al Club VIP</a>
+  </div>
+</div>
+
+<main>
+
+<section class="phero">
+  <div class="container rv in">
+    <span class="kicker">¿Quién es SYNOVA?</span>
+    <h1>Una firma especializada en impulsar <em>excelencia</em> en el sector salud</h1>
+    <p>SYNOVA acompaña a profesionales e instituciones con soluciones estratégicas, capacitación especializada y una visión enfocada en elevar la calidad de la atención, el cumplimiento normativo y la eficiencia operativa.</p>
   </div>
 </section>
-<section class="section about-section">
-  <div class="container about-centered reveal">
-    <h2>Una propuesta pensada para fortalecer tu práctica profesional y respaldar a las organizaciones de salud.</h2>
-    <p>En SYNOVA MÉXICO reunimos consultoría, actualización clínica y acompañamiento estratégico para que médicos, personal de enfermería, estudiantes y equipos hospitalarios encuentren una opción moderna, confiable y alineada con las necesidades reales del sector salud.</p>
-    <div class="bullet-points">
-      <article class="bullet-point"><span class="dot"></span><div><h3>Capacitación clínica aplicada</h3><p>Programas orientados a reforzar habilidades, actualizar conocimientos y aportar valor real al entorno hospitalario.</p></div></article>
-      <article class="bullet-point"><span class="dot"></span><div><h3>Calidad y respaldo institucional</h3><p>Un enfoque que impulsa confianza, profesionalismo y mejora continua en cada proceso formativo y operativo.</p></div></article>
-      <article class="bullet-point"><span class="dot"></span><div><h3>Acompañamiento estratégico</h3><p>Soluciones personalizadas para optimizar procesos, fortalecer el cumplimiento y elevar estándares de excelencia.</p></div></article>
+
+<section class="section" style="padding-top:20px">
+  <div class="container">
+    <div class="shead shead--center rv">
+      <span class="kicker">Nuestra propuesta</span>
+      <h2>Pensada para fortalecer tu práctica y <em>respaldar</em> a las organizaciones de salud</h2>
+      <p>En SYNOVA MÉXICO reunimos consultoría, actualización clínica y acompañamiento estratégico para que médicos, personal de enfermería, estudiantes y equipos hospitalarios encuentren una opción moderna, confiable y alineada con las necesidades reales del sector salud.</p>
+    </div>
+    <div class="abullets">
+      <article class="abullet rv"><span class="abullet__dot"></span><h3>Capacitación clínica aplicada</h3><p>Programas orientados a reforzar habilidades, actualizar conocimientos y aportar valor real al entorno hospitalario.</p></article>
+      <article class="abullet rv rv-d1"><span class="abullet__dot"></span><h3>Calidad y respaldo institucional</h3><p>Un enfoque que impulsa confianza, profesionalismo y mejora continua en cada proceso formativo y operativo.</p></article>
+      <article class="abullet rv rv-d2"><span class="abullet__dot"></span><h3>Acompañamiento estratégico</h3><p>Soluciones personalizadas para optimizar procesos, fortalecer el cumplimiento y elevar estándares de excelencia.</p></article>
     </div>
   </div>
 </section>
-<section class="section preview-section">
-  <div class="container text-points-block reveal">
-    <h2>¿Qué puedes encontrar en SYNOVA MÉXICO?</h2>
-    <p class="lead">Una experiencia enfocada en tu formación, en la confianza institucional y en una atención cercana durante todo tu proceso.</p>
-    <ul class="visitor-points">
-      <li><strong>Enfoque práctico y profesional:</strong> contenidos orientados a utilidad real, actualización continua y mejor toma de decisiones.</li>
-      <li><strong>Confianza y respaldo institucional:</strong> una presencia moderna que transmite profesionalismo, orden y liderazgo en salud.</li>
-      <li><strong>Acompañamiento cercano:</strong> canales directos para resolver dudas, compartir información y facilitar tu inscripción.</li>
-    </ul>
+
+<section class="section" style="padding-top:0">
+  <div class="container" style="max-width:780px">
+    <div class="shead shead--center rv">
+      <span class="kicker">Tu experiencia</span>
+      <h2>¿Qué puedes encontrar en <em>SYNOVA MÉXICO</em>?</h2>
+      <p>Una experiencia enfocada en tu formación, en la confianza institucional y en una atención cercana durante todo tu proceso.</p>
+    </div>
+    <div class="apoints">
+      <div class="apoint rv"><span class="apoint__ic">✓</span><p><strong>Enfoque práctico y profesional:</strong> contenidos orientados a utilidad real, actualización continua y mejor toma de decisiones.</p></div>
+      <div class="apoint rv rv-d1"><span class="apoint__ic">✓</span><p><strong>Confianza y respaldo institucional:</strong> una presencia moderna que transmite profesionalismo, orden y liderazgo en salud.</p></div>
+      <div class="apoint rv rv-d2"><span class="apoint__ic">✓</span><p><strong>Acompañamiento cercano:</strong> canales directos para resolver dudas, compartir información y facilitar tu inscripción.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container">
+    <div class="cta__box rv">
+      <div style="position:relative;z-index:1">
+        <span class="cta__kicker">● Atención personalizada</span>
+        <h2>Conoce la oferta académica de SYNOVA MÉXICO.</h2>
+        <p>Recibe orientación directa por WhatsApp para cursos, capacitación y asesoría institucional.</p>
+      </div>
+      <div class="cta__act">
+        <a class="btn btn--white" href="https://wa.me/522381479274" target="_blank" rel="noopener"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg> Inscribirme</a>
+      </div>
+    </div>
   </div>
 </section>
 </main>
-  <footer class="site-footer">
-    <div class="container footer-grid">
-      <div>
-        <p>Capacitación clínica especializada para profesionales de la salud.</p>
+
+<footer class="ft">
+  <div class="container ft__grid">
+    <div>
+      <div class="ft__brand">
+        <img src="assets/images/brand/logo.jpg" alt="SYNOVA México">
+        <b>SYNOVA MÉXICO</b>
       </div>
-      <div>
-        <h3>Contacto</h3>
-        <a href="https://wa.me/522381479274" target="_blank" rel="noopener">WhatsApp: +52 238 147 9274</a>
-        <a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a>
-        <a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram: @synovamexico</a>
-        <a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook oficial</a>
-      </div>
-      <div>
-        <h3>Navegación</h3>
-        <a href="index.html">Inicio</a>
-        <a href="nosotros.html">Nosotros</a>
-        <a href="cursos.html">Cursos</a>
-        <a href="contacto.html">Contacto</a>
-      </div>
+      <p>Capacitación clínica especializada para profesionales de la salud.</p>
     </div>
-  </footer>
-  <a class="whatsapp-float" href="https://wa.me/522381479274" target="_blank" rel="noopener" aria-label="WhatsApp">✚</a>
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">×</button>
-    <img id="lightboxImage" src="" alt="Vista ampliada" />
+    <div>
+      <h3>Contacto</h3>
+      <a href="https://wa.me/522381479274" target="_blank" rel="noopener">WhatsApp: +52 238 147 9274</a>
+      <a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a>
+      <a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram: @synovamexico</a>
+      <a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook oficial</a>
+    </div>
+    <div>
+      <h3>Navegación</h3>
+      <a href="index.html">Inicio</a>
+      <a href="nosotros.html">Nosotros</a>
+      <a href="cursos.html">Cursos</a>
+      <a href="contacto.html">Contacto</a>
+      <a href="verificar.html">Verificar certificado</a>
+      <a href="vip-auth.html">Club VIP</a>
+    </div>
   </div>
-  <script src="assets/js/main.js"></script>
+  <div class="container ft__legal">
+    <span>© 2026 SYNOVA MÉXICO. Todos los derechos reservados.</span>
+    <span>Hecho con orgullo en Tehuacán, Puebla.</span>
+  </div>
+</footer>
+
+<a class="wa" href="https://wa.me/522381479274" target="_blank" rel="noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg></a>
+
+<script src="assets/js/synova2026.js"></script>
 </body>
 </html>
