@@ -169,7 +169,7 @@ h1,h2,h3{font-family:'Space Grotesk','Manrope',sans-serif;letter-spacing:-.02em}
 .contact__card:hover{transform:translateY(-5px);border-color:rgba(18,161,149,.42);box-shadow:0 20px 52px rgba(13,95,160,.16)}
 .contact__card--main{background:linear-gradient(135deg,#0B3B66 0%,#0D5FA0 60%,#12A195 140%);color:#fff;border:1px solid rgba(255,255,255,.2)}
 .contact__card--main h3{color:#fff}
-.contact__card--main p{color:rgba(255,255,255,.85)}
+.contact__card.contact__card--main p{color:rgba(255,255,255,.92)}
 .contact__ic{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(13,95,160,.12),rgba(47,209,198,.16));border:1px solid rgba(18,161,149,.25);display:flex;align-items:center;justify-content:center;color:var(--primary)}
 .contact__card--main .contact__ic{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff;box-shadow:0 0 20px rgba(47,209,198,.35)}
 .contact__ic svg{width:24px;height:24px}
