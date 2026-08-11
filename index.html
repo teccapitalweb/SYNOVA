@@ -1,679 +1,1396 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>SYNOVA MÉXICO | Capacitación clínica especializada</title>
-  <meta name="description" content="SYNOVA MÉXICO — Capacitación clínica especializada para profesionales de la salud. Cursos, certificación con folio verificable y clases en vivo." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SYNOVA MÉXICO | Formación clínica para profesionales de la salud</title>
+  <meta name="description" content="Cursos online, sesiones en vivo y certificación con folio verificable para profesionales de la salud en México.">
+  <meta property="og:title" content="La práctica clínica exige más. Tu formación también.">
+  <meta property="og:description" content="Formación clínica especializada, clases en vivo y certificados verificables con SYNOVA México.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_MX">
+  <meta property="og:site_name" content="SYNOVA México">
+  <meta property="og:url" content="https://www.synovamexico.com/">
+  <meta property="og:image" content="https://www.synovamexico.com/og.png">
+  <meta property="og:image:width" content="1536">
+  <meta property="og:image:height" content="1024">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SYNOVA México | Formación clínica especializada">
+  <meta name="twitter:description" content="Cursos, clases en vivo y certificados verificables para profesionales de la salud.">
+  <meta name="twitter:image" content="https://www.synovamexico.com/og.png">
   <link rel="icon" type="image/x-icon" href="assets/images/brand/favicon.ico">
   <link rel="apple-touch-icon" href="assets/images/brand/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-<style>
-/* ══════════════════════════════════════════════════════════
-   SYNOVA MÉXICO · Landing 2026 v2
-   Azul claro médico premium · glow selectivo · glass
-   Tipografía: Space Grotesk (display) + Manrope (cuerpo)
-   ══════════════════════════════════════════════════════════ */
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:hidden}
-:root{
-  --bg:#EAF3FB; --bg-2:#DFEDF9;
-  --surface:#FFFFFF;
-  --ink:#0B2A4A; --ink-2:#3E5975; --ink-3:#7891A8;
-  --primary:#0D5FA0; --primary-soft:#3D8FCB; --primary-deep:#0A3E68;
-  --teal:#12A195; --teal-soft:#2FD1C6;
-  --glass:rgba(255,255,255,.66);
-  --glass-border:rgba(255,255,255,.75);
-  --line:rgba(11,58,102,.10);
-  --glow-teal:0 0 22px rgba(47,209,198,.55);
-  --shadow:0 14px 44px rgba(13,95,160,.12);
-  --radius:22px;
-  --container:min(1180px,calc(100% - 40px));
-}
-body{
-  font-family:'Manrope',system-ui,sans-serif;font-size:15px;line-height:1.6;
-  color:var(--ink);background:var(--bg);overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
-}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-button{font:inherit;border:0;background:none;cursor:pointer;color:inherit}
-.container{width:var(--container);margin:0 auto}
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
 
-/* ── Fondo aurora + retícula ── */
-.fx-aurora{position:fixed;inset:0;z-index:-2;pointer-events:none;
-  background:
-    radial-gradient(circle at 16% 20%, rgba(61,143,203,.32), transparent 46%),
-    radial-gradient(circle at 84% 74%, rgba(47,209,198,.22), transparent 50%),
-    radial-gradient(circle at 55% 45%, rgba(95,182,224,.16), transparent 55%);
-  filter:blur(60px);
-  animation:aurora 26s ease-in-out infinite alternate;
-}
-.fx-grid{position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background-image:linear-gradient(to right,rgba(11,58,102,.045) 1px,transparent 1px),linear-gradient(to bottom,rgba(11,58,102,.045) 1px,transparent 1px);
-  background-size:52px 52px;
-  -webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 72%);
-  mask-image:radial-gradient(ellipse at center,#000 0%,transparent 72%);
-}
-@keyframes aurora{
-  0%{transform:translate(0,0) scale(1)}
-  50%{transform:translate(2.5%,-2%) scale(1.06)}
-  100%{transform:translate(-1.5%,1.5%) scale(1)}
+:root {
+  --ink: #071d2e;
+  --ink-soft: #334b5c;
+  --night: #061725;
+  --blue: #0b5483;
+  --aqua: #68ded7;
+  --aqua-deep: #20b8b2;
+  --paper: #f4f1e9;
+  --white: #fffef9;
+  --line: rgba(7, 29, 46, 0.18);
+  --container: min(1216px, calc(100% - 48px));
 }
 
-/* ── Tipos base ── */
-.kicker{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:2.2px;text-transform:uppercase;color:var(--primary);display:inline-flex;align-items:center;gap:8px}
-.kicker::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal-soft);box-shadow:var(--glow-teal);animation:dotPulse 2.4s ease-out infinite}
-@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.75)}}
-h1,h2,h3{font-family:'Space Grotesk','Manrope',sans-serif;letter-spacing:-.02em}
-
-/* ── Header vidrio ── */
-.hd{position:sticky;top:0;z-index:900;transition:background .3s,box-shadow .3s,border-color .3s;border-bottom:1px solid transparent}
-.hd.scrolled{background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);border-bottom:1px solid var(--line);box-shadow:0 8px 30px rgba(13,95,160,.08)}
-.hd__in{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:76px}
-.hd__brand{display:flex;align-items:center;gap:12px}
-.hd__logo{width:44px;height:44px;border-radius:13px;overflow:hidden;background:#fff;box-shadow:0 4px 14px rgba(13,95,160,.16);border:1px solid rgba(255,255,255,.8)}
-.hd__logo img{width:100%;height:100%;object-fit:cover}
-.hd__name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;letter-spacing:-.3px;line-height:1.05}
-.hd__tag{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:1.8px;color:var(--teal);text-transform:uppercase;font-weight:600}
-.hd__nav{display:flex;align-items:center;gap:4px}
-.hd__link{padding:9px 14px;border-radius:100px;font-size:13.5px;font-weight:600;color:var(--ink-2);transition:background .18s,color .18s}
-.hd__link:hover{background:rgba(13,95,160,.08);color:var(--primary)}
-.hd__link.is-active{background:rgba(13,95,160,.1);color:var(--primary);font-weight:700}
-.hd__cta{margin-left:8px;padding:10px 20px;border-radius:100px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;font-size:13px;font-weight:800;box-shadow:0 8px 22px rgba(13,95,160,.32), 0 0 18px rgba(47,209,198,.25);transition:transform .18s,box-shadow .18s;display:inline-flex;align-items:center;gap:7px}
-.hd__cta:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(13,95,160,.42), 0 0 26px rgba(47,209,198,.4)}
-.hd__burger{display:none;width:44px;height:44px;border-radius:13px;background:var(--glass);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);align-items:center;justify-content:center;flex-direction:column;gap:5px;box-shadow:0 4px 14px rgba(13,95,160,.1)}
-.hd__burger span{display:block;width:18px;height:2px;border-radius:2px;background:var(--ink)}
-
-/* menú móvil · hoja de vidrio desde la derecha */
-.msheet{position:fixed;inset:0;z-index:950;visibility:hidden;pointer-events:none}
-.msheet.open{visibility:visible;pointer-events:auto}
-.msheet__ov{position:absolute;inset:0;background:rgba(7,25,45,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
-.msheet.open .msheet__ov{opacity:1}
-.msheet__panel{position:absolute;top:0;right:0;bottom:0;width:86%;overscroll-behavior:contain;touch-action:pan-y;max-width:340px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);border-left:1px solid var(--glass-border);box-shadow:-24px 0 60px rgba(13,95,160,.2);transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.25,1);display:flex;flex-direction:column;padding:calc(20px + env(safe-area-inset-top)) 20px 28px}
-.msheet.open .msheet__panel{transform:translateX(0)}
-.msheet__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.msheet__close{width:40px;height:40px;border-radius:12px;background:rgba(13,95,160,.08);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink)}
-.msheet__link{display:flex;align-items:center;justify-content:space-between;padding:15px 14px;border-radius:14px;font-size:15px;font-weight:700;color:var(--ink-2);transition:background .18s,color .18s}
-.msheet__link:hover{background:rgba(13,95,160,.08);color:var(--primary)}
-.msheet__link::after{content:"→";opacity:.35;font-weight:400}
-.msheet__cta{margin-top:auto;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;text-align:center;font-weight:800;box-shadow:0 10px 26px rgba(13,95,160,.35), 0 0 20px rgba(47,209,198,.3)}
-
-/* ── HERO ── */
-.hero{padding:60px 0 30px;position:relative}
-.hero__grid{display:grid;grid-template-columns:1.08fr .92fr;gap:48px;align-items:center}
-.hero__title{font-size:clamp(2.4rem,5.2vw,4rem);font-weight:700;line-height:1.05;letter-spacing:-.03em;margin:18px 0 20px}
-.hero__title em{font-style:normal;background:linear-gradient(120deg,var(--primary) 10%,var(--teal) 90%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.hero__lead{font-size:clamp(1rem,1.6vw,1.14rem);color:var(--ink-2);max-width:52ch;margin-bottom:30px;font-weight:500}
-.hero__actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:30px}
-.btn{display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:100px;font-weight:800;font-size:14.5px;transition:transform .18s,box-shadow .2s,background .2s;min-height:48px;font-family:'Manrope',sans-serif}
-.btn--primary{background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;box-shadow:0 12px 30px rgba(13,95,160,.35), 0 0 22px rgba(47,209,198,.28)}
-.btn--primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(13,95,160,.45), 0 0 30px rgba(47,209,198,.45)}
-.btn--ghost{background:var(--glass);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--ink);box-shadow:0 6px 20px rgba(13,95,160,.1)}
-.btn--ghost:hover{transform:translateY(-2px);border-color:rgba(18,161,149,.5);box-shadow:0 10px 28px rgba(13,95,160,.16)}
-.btn:active{transform:translateY(0) scale(.98)}
-.hero__proof{display:flex;gap:8px;flex-wrap:wrap}
-.chip{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:100px;background:var(--glass);border:1px solid var(--glass-border);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);font-size:12px;font-weight:700;color:var(--ink-2);box-shadow:0 4px 14px rgba(13,95,160,.08)}
-.chip b{color:var(--teal);font-weight:800}
-
-/* ── Visual hero · electro + tarjetas (sin personas inventadas) ── */
-.hero__visual{position:relative;min-height:470px;display:grid;place-items:center}
-.hero__halo{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(47,209,198,.26),rgba(13,95,160,.14) 45%,transparent 70%);filter:blur(30px);z-index:0;animation:halo 9s ease-in-out infinite alternate}
-@keyframes halo{from{transform:scale(.94)}to{transform:scale(1.08)}}
-.hero__ring{position:absolute;width:500px;height:500px;border:1px dashed rgba(13,95,160,.18);border-radius:50%;z-index:0;animation:spin 60s linear infinite}
-.hero__ring::before,.hero__ring::after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--teal-soft);box-shadow:var(--glow-teal)}
-.hero__ring::before{top:8%;left:14%}
-.hero__ring::after{bottom:6%;right:18%}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Tarjeta central · pulso vital con glow */
-.vitals{width:min(320px,84%);background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);border:1px solid var(--glass-border);border-radius:26px;box-shadow:0 30px 80px rgba(13,95,160,.25), inset 0 1px 0 rgba(255,255,255,.9);padding:22px 20px;position:relative;z-index:2;animation:floatA 7s ease-in-out infinite}
-.vitals__top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.vitals__label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-3);font-weight:600}
-.vitals__brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--primary)}
-.vitals__ecg{position:relative;height:84px;border-radius:16px;background:linear-gradient(135deg,rgba(13,95,160,.06),rgba(47,209,198,.08));border:1px solid rgba(18,161,149,.22);overflow:hidden;margin-bottom:14px}
-.vitals__ecg svg{position:absolute;inset:0;width:100%;height:100%}
-.ecg-line{fill:none;stroke:var(--teal-soft);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px rgba(47,209,198,.9));stroke-dasharray:640;stroke-dashoffset:640;animation:ecg 3.4s linear infinite}
-@keyframes ecg{0%{stroke-dashoffset:640}62%{stroke-dashoffset:0}100%{stroke-dashoffset:0}}
-.vitals__rows{display:grid;gap:9px}
-.vrow{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:14px;padding:11px 13px}
-.vrow__ic{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,rgba(13,95,160,.12),rgba(47,209,198,.16));border:1px solid rgba(18,161,149,.25);display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0}
-.vrow__ic svg{width:17px;height:17px}
-.vrow b{font-size:12px;display:block;font-weight:800}
-.vrow span{font-size:10px;color:var(--ink-3);font-weight:600}
-.vrow__badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:1px;color:var(--teal);font-weight:600;background:rgba(47,209,198,.12);border:1px solid rgba(18,161,149,.3);padding:4px 8px;border-radius:100px;flex-shrink:0}
-.vrow__dot{width:8px;height:8px;border-radius:50%;background:#E5484D;box-shadow:0 0 10px rgba(229,72,77,.8);animation:dotPulse 1.5s ease-out infinite;flex-shrink:0}
-
-/* Tarjetas flotantes (datos del club, no personas) */
-.fcard{position:absolute;background:rgba(255,255,255,.84);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:18px;box-shadow:0 18px 50px rgba(13,95,160,.2);padding:13px 16px;z-index:3}
-.fcard--cert{top:6%;right:0%;animation:floatB 8s .5s ease-in-out infinite}
-.fcard--cert .fcard__t{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800}
-.fcard--cert .fcard__t svg{width:16px;height:16px;color:var(--teal);filter:drop-shadow(0 0 5px rgba(47,209,198,.8))}
-.fcard--cert .fcard__folio{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink-3);margin-top:4px;letter-spacing:.5px}
-.fcard--comm{bottom:-2%;left:-1%;animation:floatB 9s 1.2s ease-in-out infinite}
-.fcard--comm .fcard__n{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;letter-spacing:-.4px}
-.fcard--comm .fcard__n em{font-style:normal;color:var(--teal)}
-.fcard--comm .fcard__s{font-size:10px;color:var(--ink-3);font-weight:600}
-@keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-@keyframes floatB{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(-1.2deg)}}
-
-/* ── Marquee de especialidades ── */
-.marq{padding:26px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.4);overflow:hidden;position:relative}
-.marq::before,.marq::after{content:"";position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
-.marq::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
-.marq::after{right:0;background:linear-gradient(-90deg,var(--bg),transparent)}
-.marq__track{display:flex;gap:14px;width:max-content;animation:marq 30s linear infinite}
-.marq:hover .marq__track{animation-play-state:paused}
-.marq__item{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-2);display:inline-flex;align-items:center;gap:14px;white-space:nowrap}
-.marq__item::after{content:"✚";color:var(--teal);font-size:11px;filter:drop-shadow(0 0 4px rgba(47,209,198,.7))}
-@keyframes marq{to{transform:translateX(-50%)}}
-
-/* ── Cinta de stats ── */
-.stats{padding:44px 0 10px}
-.stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.stat{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--radius);padding:26px 24px;box-shadow:0 8px 30px rgba(13,95,160,.09), inset 0 1px 0 rgba(255,255,255,.85);transition:transform .28s cubic-bezier(.2,.8,.25,1),box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
-.stat::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--teal-soft),transparent);opacity:.6}
-.stat:hover{transform:translateY(-4px);border-color:rgba(18,161,149,.4);box-shadow:0 18px 46px rgba(13,95,160,.16)}
-.stat b{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.9rem,3vw,2.5rem);font-weight:700;letter-spacing:-.04em;display:block;color:var(--primary-deep)}
-.stat b::after{content:attr(data-suffix);font-size:.55em;color:var(--teal);margin-left:2px;font-weight:700}
-.stat span{font-size:12.5px;color:var(--ink-2);font-weight:600;display:block;margin-top:5px}
-
-/* ── Secciones ── */
-.section{padding:84px 0}
-.shead{max-width:680px;margin-bottom:44px}
-.shead--center{margin-left:auto;margin-right:auto;text-align:center}
-.shead--row{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;max-width:none}
-.shead h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:700;line-height:1.12;letter-spacing:-.03em;margin-top:14px}
-.shead h2 em{font-style:normal;background:linear-gradient(120deg,var(--primary),var(--teal));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.shead p{color:var(--ink-2);margin-top:12px;font-size:15px;font-weight:500}
-
-/* ── Cursos destacados (estilo tarjetas VIP con foto) ── */
-.courses{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.ccard{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--radius);overflow:hidden;box-shadow:0 8px 30px rgba(13,95,160,.09), inset 0 1px 0 rgba(255,255,255,.85);transition:transform .3s cubic-bezier(.2,.8,.25,1),box-shadow .32s,border-color .3s;display:flex;flex-direction:column}
-.ccard:hover{transform:translateY(-6px);border-color:rgba(18,161,149,.45);box-shadow:0 24px 60px rgba(13,95,160,.18)}
-.ccard__media{position:relative;aspect-ratio:16/9.4;overflow:hidden}
-.ccard__media img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.8,.25,1)}
-.ccard:hover .ccard__media img{transform:scale(1.06)}
-.ccard__media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,62,104,.08),rgba(10,62,104,.32))}
-.ccard__tag{position:absolute;top:12px;right:12px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:#fff;background:rgba(10,42,74,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.28);padding:5px 10px;border-radius:100px}
-.ccard__body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:9px;flex:1}
-.ccard__vip{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;color:var(--primary);display:inline-flex;align-items:center;gap:7px}
-.ccard__vip svg{width:14px;height:14px;color:var(--teal);filter:drop-shadow(0 0 4px rgba(47,209,198,.7))}
-.ccard h3{font-size:16.5px;font-weight:700;letter-spacing:-.02em;line-height:1.3}
-.ccard p{font-size:13px;color:var(--ink-2);line-height:1.55;font-weight:500;flex:1}
-.ccard__meta{display:flex;align-items:center;gap:14px;font-size:11.5px;color:var(--ink-3);font-weight:700;padding-top:6px;border-top:1px solid var(--line)}
-.ccard__meta svg{width:13px;height:13px;vertical-align:-2px;margin-right:4px}
-
-/* ── Bento de beneficios ── */
-.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.bcard{background:var(--glass);-webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--glass-border);border-radius:var(--radius);padding:28px 26px;box-shadow:0 8px 30px rgba(13,95,160,.08), inset 0 1px 0 rgba(255,255,255,.85);transition:transform .28s cubic-bezier(.2,.8,.25,1),box-shadow .3s,border-color .3s;position:relative;overflow:hidden}
-.bcard:hover{transform:translateY(-5px);border-color:rgba(18,161,149,.42);box-shadow:0 20px 52px rgba(13,95,160,.16)}
-.bcard::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-70px;top:-70px;background:radial-gradient(circle,rgba(47,209,198,.16),transparent 70%);transition:transform .4s;pointer-events:none}
-.bcard:hover::after{transform:scale(1.5)}
-.bcard__ic{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,rgba(13,95,160,.12),rgba(47,209,198,.16));border:1px solid rgba(18,161,149,.25);display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--primary)}
-.bcard__ic svg{width:24px;height:24px}
-.bcard h3{font-size:16.5px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
-.bcard p{font-size:13.5px;color:var(--ink-2);line-height:1.55;font-weight:500}
-
-/* ── Frase editorial ── */
-.quote{padding:60px 0}
-.quote__box{text-align:center;max-width:760px;margin:0 auto}
-.quote h2{font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:600;line-height:1.25;letter-spacing:-.02em}
-.quote h2 em{font-style:normal;background:linear-gradient(120deg,var(--primary),var(--teal));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-
-/* ── CTA banner premium ── */
-.cta{padding:30px 0 90px}
-.cta__box{position:relative;overflow:hidden;border-radius:30px;padding:clamp(36px,6vw,60px);background:linear-gradient(135deg,#0B3B66 0%,#0D5FA0 55%,#12A195 130%);color:#fff;display:grid;grid-template-columns:1.4fr .6fr;gap:28px;align-items:center;box-shadow:0 30px 80px rgba(11,59,102,.35)}
-.cta__box::before{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.06) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at center,#000,transparent 80%);mask-image:radial-gradient(ellipse at center,#000,transparent 80%);pointer-events:none}
-.cta__box::after{content:"";position:absolute;width:420px;height:420px;border-radius:50%;right:-140px;bottom:-190px;background:radial-gradient(circle,rgba(47,209,198,.45),transparent 65%);filter:blur(20px);animation:halo 8s ease-in-out infinite alternate;pointer-events:none}
-.cta__kicker{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-soft);font-weight:600;text-shadow:0 0 12px rgba(47,209,198,.6)}
-.cta__box h2{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:700;letter-spacing:-.02em;line-height:1.15;margin:12px 0 10px}
-.cta__box p{color:rgba(255,255,255,.85);font-size:14.5px;max-width:48ch;font-weight:500}
-.cta__act{display:flex;justify-content:flex-end;position:relative;z-index:1}
-.btn--white{background:#fff;color:var(--primary-deep);box-shadow:0 14px 36px rgba(0,0,0,.25), 0 0 26px rgba(47,209,198,.35)}
-.btn--white:hover{transform:translateY(-2px);box-shadow:0 18px 44px rgba(0,0,0,.32), 0 0 34px rgba(47,209,198,.5)}
-
-/* ── Footer ── */
-.ft{border-top:1px solid var(--line);background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);padding:52px 0 90px}
-.ft__grid{display:grid;grid-template-columns:1.2fr .9fr .9fr;gap:36px}
-.ft h3{font-size:12px;font-family:'JetBrains Mono',monospace;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:14px}
-.ft a{display:block;padding:5px 0;font-size:13.5px;color:var(--ink-2);font-weight:600;transition:color .15s}
-.ft a:hover{color:var(--primary)}
-.ft__brand{display:flex;align-items:center;gap:11px;margin-bottom:12px}
-.ft__brand img{width:40px;height:40px;border-radius:12px;object-fit:cover}
-.ft__brand b{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px}
-.ft p{font-size:13px;color:var(--ink-2);max-width:34ch;font-weight:500}
-.ft__legal{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:600}
-
-/* ── WhatsApp flotante ── */
-.wa{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));right:20px;z-index:800;width:56px;height:56px;border-radius:50%;background:#22C55E;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(34,197,94,.45);transition:transform .2s}
-.wa:hover{transform:translateY(-3px) scale(1.05)}
-.wa svg{width:28px;height:28px;fill:#fff}
-.wa::before{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid rgba(34,197,94,.45);animation:waPing 2.2s ease-out infinite}
-@keyframes waPing{0%{transform:scale(.9);opacity:1}100%{transform:scale(1.35);opacity:0}}
-
-/* ── Reveal on scroll ── */
-.rv{opacity:0;transform:translateY(22px);transition:opacity .6s cubic-bezier(.2,.8,.25,1),transform .6s cubic-bezier(.2,.8,.25,1)}
-.rv.in{opacity:1;transform:translateY(0)}
-.rv-d1{transition-delay:.08s}.rv-d2{transition-delay:.16s}.rv-d3{transition-delay:.24s}.rv-d4{transition-delay:.32s}.rv-d5{transition-delay:.4s}
-
-/* ── Responsive ── */
-@media (max-width:1024px){
-  .hero__grid{grid-template-columns:1fr;gap:36px}
-  .hero__visual{min-height:440px;order:2}
-  .bento,.courses{grid-template-columns:repeat(2,1fr)}
-  .stats__grid{grid-template-columns:repeat(2,1fr)}
-  .cta__box{grid-template-columns:1fr}
-  .cta__act{justify-content:flex-start}
+* {
+  box-sizing: border-box;
 }
-@media (max-width:760px){
-  .hd__nav{display:none}
-  .hd__burger{display:flex}
-  .hero{padding:36px 0 20px}
-  .hero__actions .btn{flex:1;justify-content:center}
-  .hero__visual{min-height:430px;overflow:visible;max-width:100%}
-  .hero__ring{width:370px;height:370px}
-  .hero__halo{width:310px;height:310px}
-  .fcard--cert{right:2%;top:0%}
-  .fcard--comm{left:2%;bottom:-2%}
-  .bento,.courses{grid-template-columns:1fr}
-  .section{padding:60px 0}
-  .shead--row{flex-direction:column;align-items:flex-start}
-  .ft__grid{grid-template-columns:1fr;gap:26px}
-  .stats__grid{gap:10px}
-  .stat{padding:20px 18px}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--paper);
 }
-/* ── Accesibilidad ── */
-@media (prefers-reduced-motion:reduce){
-  .fx-aurora,.vitals,.fcard--cert,.fcard--comm,.hero__halo,.hero__ring,.wa::before,.marq__track,.ecg-line{animation:none !important}
-  .rv{opacity:1;transform:none;transition:none}
-  html{scroll-behavior:auto}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
-</style>
+
+body::selection {
+  background: var(--aqua);
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.site-shell {
+  min-width: 320px;
+  overflow: clip;
+}
+
+.container {
+  width: var(--container);
+  margin-inline: auto;
+}
+
+.announcement {
+  background: var(--aqua);
+  border-bottom: 1px solid rgba(7, 29, 46, 0.16);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.announcement__inner {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.announcement a {
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 1px;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(244, 241, 233, 0.94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+
+.nav-shell {
+  min-height: 82px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 34px;
+}
+
+.nav-brand,
+.brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand__crop {
+  position: relative;
+  width: 154px;
+  height: 46px;
+  overflow: hidden;
+}
+
+.brand__crop img {
+  position: absolute;
+  width: 164px;
+  height: 164px;
+  max-width: none;
+  top: -53px;
+  left: -5px;
+}
+
+.desktop-nav {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.desktop-nav a {
+  position: relative;
+  color: var(--ink-soft);
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
+.desktop-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -7px;
+  height: 1px;
+  background: var(--ink);
+  transition: right 180ms ease;
+}
+
+.desktop-nav a:hover::after {
+  right: 0;
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  border: 1px solid var(--ink);
+  padding: 11px 15px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.nav-cta:hover {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.mobile-menu {
+  display: none;
+  position: relative;
+}
+
+.mobile-menu summary {
+  width: 46px;
+  height: 42px;
+  border: 1px solid var(--ink);
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.mobile-menu summary span {
+  width: 20px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.mobile-menu__panel {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: min(300px, calc(100vw - 48px));
+  padding: 14px;
+  background: var(--white);
+  border: 1px solid var(--ink);
+  box-shadow: 12px 14px 0 var(--aqua);
+}
+
+.mobile-menu__panel a {
+  display: flex;
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(7, 29, 46, 0.12);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mobile-menu__panel a:last-child {
+  margin-top: 10px;
+  background: var(--ink);
+  color: var(--white);
+  border: 0;
+}
+
+.hero {
+  position: relative;
+  background: var(--night);
+  color: var(--white);
+  isolation: isolate;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.2;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, #000, transparent 76%);
+}
+
+.hero__grid {
+  min-height: 710px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(380px, 0.82fr);
+  align-items: center;
+  gap: clamp(50px, 7vw, 110px);
+  padding-block: 72px;
+}
+
+.hero__copy {
+  padding-bottom: 12px;
+}
+
+.eyebrow {
+  max-width: 600px;
+  margin: 0 0 42px;
+  padding-top: 13px;
+  border-top: 1px solid rgba(255, 255, 255, 0.38);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(3.4rem, 6vw, 5.75rem);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 0.93;
+}
+
+.hero h1 em {
+  display: block;
+  margin-top: 10px;
+  color: var(--aqua);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.08em;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+
+.hero__lead {
+  max-width: 620px;
+  margin: 34px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(1rem, 1.5vw, 1.16rem);
+  line-height: 1.75;
+}
+
+.hero__actions {
+  margin-top: 38px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 13px 18px;
+  border: 1px solid currentColor;
+  font-size: 0.77rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button--light {
+  background: var(--aqua);
+  border-color: var(--aqua);
+  color: var(--ink);
+}
+
+.button--light:hover {
+  background: var(--white);
+  border-color: var(--white);
+}
+
+.button--ink {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--white);
+}
+
+.button--ink:hover {
+  background: var(--aqua);
+  border-color: var(--aqua);
+  color: var(--ink);
+}
+
+.text-link {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.text-link--light {
+  color: var(--aqua);
+}
+
+.hero__portrait {
+  position: relative;
+  min-height: 570px;
+}
+
+.hero__portrait::before {
+  content: "";
+  position: absolute;
+  top: -22px;
+  right: -28px;
+  width: 76%;
+  height: 48%;
+  border: 1px solid var(--aqua);
+}
+
+.hero__image-frame {
+  position: absolute;
+  inset: 28px 34px 24px 0;
+  overflow: hidden;
+  background: #7fc8d3;
+}
+
+.hero__image-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(6, 23, 37, 0.05), rgba(6, 23, 37, 0.55));
+  mix-blend-mode: multiply;
+}
+
+.hero__image-frame img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 11% 50%;
+  filter: saturate(0.72) contrast(1.05);
+  transform: scale(1.04);
+}
+
+.hero__vertical {
+  position: absolute;
+  z-index: 2;
+  right: -75px;
+  top: 47%;
+  margin: 0;
+  transform: rotate(90deg);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.hero__seal {
+  position: absolute;
+  z-index: 3;
+  left: -35px;
+  bottom: -5px;
+  width: 148px;
+  height: 148px;
+  padding: 23px;
+  border-radius: 50%;
+  background: var(--aqua);
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  transform: rotate(-8deg);
+}
+
+.hero__seal strong {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 3.6rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.hero__seal span {
+  font-size: 0.63rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.proof {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+
+.proof__grid {
+  min-height: 128px;
+  display: grid;
+  grid-template-columns: repeat(3, 0.78fr) 1.65fr;
+  align-items: stretch;
+}
+
+.proof__grid > div,
+.proof__grid > p {
+  margin: 0;
+  padding: 28px 28px 26px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.proof__grid > div:first-child {
+  border-left: 1px solid var(--line);
+}
+
+.proof__grid strong {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.proof__grid span {
+  margin-top: 7px;
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.proof__grid > p {
+  border: 0;
+  color: var(--ink-soft);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.section {
+  padding-block: 120px;
+}
+
+.section-index {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.section-index--light {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.section-heading--split {
+  display: grid;
+  grid-template-columns: 0.42fr 1fr;
+  align-items: start;
+  gap: 40px;
+  margin-bottom: 58px;
+}
+
+.section-heading h2,
+.ecosystem h2,
+.certificate-card h2,
+.vip-card h2,
+.final-cta h2 {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(2.8rem, 5vw, 5.2rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+
+.section-heading--split > div > p {
+  max-width: 650px;
+  margin: 22px 0 0;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+  grid-template-rows: repeat(2, minmax(285px, auto));
+  gap: 20px;
+}
+
+.course-card {
+  min-height: 285px;
+  display: grid;
+  grid-template-columns: 44% 1fr;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 12px 14px 0 var(--aqua);
+}
+
+.course-card--feature {
+  grid-row: span 2;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(380px, 1fr) auto;
+}
+
+.course-card__image {
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+  background: #c5dce3;
+}
+
+.course-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 450ms ease;
+}
+
+.course-card:hover .course-card__image img {
+  transform: scale(1.025);
+}
+
+.course-card__image > span {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  min-width: 46px;
+  height: 32px;
+  padding-inline: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--aqua);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.course-card__body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.course-card__body > p {
+  margin: 0 0 17px;
+  color: var(--blue);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.course-card h3 {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.course-card__description {
+  margin-top: 14px;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.course-card__link {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.section-action {
+  margin-top: 38px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ecosystem {
+  background: var(--night);
+  color: var(--white);
+}
+
+.ecosystem__grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: clamp(60px, 10vw, 150px);
+}
+
+.ecosystem__intro h2 {
+  margin-top: 35px;
+  color: var(--aqua);
+}
+
+.ecosystem__intro > p:not(.section-index) {
+  max-width: 440px;
+  margin: 26px 0 30px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.ecosystem__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.ecosystem__list li {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 24px;
+  padding: 38px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.ecosystem__list > li > span {
+  color: var(--aqua);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.8rem;
+}
+
+.ecosystem__list h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 600;
+}
+
+.ecosystem__list p {
+  max-width: 600px;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.57);
+}
+
+.certificate-section {
+  background: #e9e2d6;
+}
+
+.certificate-card {
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 0.72fr);
+  min-height: 590px;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.certificate-card__copy {
+  padding: clamp(48px, 7vw, 90px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.certificate-card__copy h2 {
+  max-width: 700px;
+  margin-top: 36px;
+}
+
+.certificate-card__copy > p:not(.section-index) {
+  max-width: 620px;
+  margin: 28px 0 38px;
+  color: var(--ink-soft);
+  font-size: 1rem;
+}
+
+.certificate-card__visual {
+  position: relative;
+  overflow: hidden;
+  padding: 50px;
+  background: var(--aqua);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.certificate-card__visual::before,
+.certificate-card__visual::after {
+  content: "";
+  position: absolute;
+  border: 1px solid rgba(7, 29, 46, 0.3);
+  border-radius: 50%;
+}
+
+.certificate-card__visual::before {
+  width: 430px;
+  height: 430px;
+  top: -170px;
+  right: -160px;
+}
+
+.certificate-card__visual::after {
+  width: 300px;
+  height: 300px;
+  top: -105px;
+  right: -95px;
+}
+
+.certificate-card__monogram {
+  position: absolute;
+  top: 36px;
+  left: 42px;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 11rem;
+  line-height: 1;
+  color: rgba(7, 29, 46, 0.9);
+}
+
+.certificate-card__line {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 22px;
+  background: rgba(7, 29, 46, 0.42);
+}
+
+.certificate-card__visual p {
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 4.2rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+}
+
+.certificate-card__visual strong {
+  margin-top: 25px;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+}
+
+.community-section {
+  background: var(--white);
+}
+
+.section-heading--community {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 70px;
+  align-items: end;
+  margin-bottom: 54px;
+}
+
+.section-heading--community h2 {
+  max-width: 850px;
+  margin-top: 28px;
+}
+
+.section-heading--community > p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.community-gallery {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr 0.75fr;
+  gap: 16px;
+}
+
+.community-gallery figure {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.community-gallery img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: filter 250ms ease, transform 350ms ease;
+}
+
+.community-gallery figure:first-child img {
+  aspect-ratio: 1.26 / 1;
+}
+
+.community-gallery figure:hover img {
+  filter: saturate(0.84);
+  transform: scale(1.015);
+}
+
+.community-gallery figcaption {
+  padding: 13px 14px;
+  color: var(--ink-soft);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.community-link {
+  margin-top: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--ink);
+  display: inline-flex;
+  gap: 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vip-section {
+  padding: 22px 0 0;
+  background: var(--white);
+}
+
+.vip-card {
+  min-height: 390px;
+  padding: clamp(42px, 6vw, 76px);
+  background: var(--blue);
+  color: var(--white);
+  display: grid;
+  grid-template-columns: 0.4fr 1fr auto;
+  align-items: end;
+  gap: 55px;
+}
+
+.vip-card__label {
+  align-self: start;
+  margin: 0;
+  color: var(--aqua);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.vip-card__copy h2 {
+  max-width: 700px;
+}
+
+.vip-card__copy p {
+  max-width: 610px;
+  margin: 23px 0 0;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.final-cta {
+  padding-block: 126px;
+  background: var(--aqua);
+}
+
+.final-cta__inner {
+  display: grid;
+  grid-template-columns: 0.32fr 1.1fr 0.58fr;
+  gap: 55px;
+  align-items: start;
+}
+
+.final-cta h2 {
+  max-width: 760px;
+}
+
+.final-cta__inner > div p {
+  margin: 0 0 28px;
+  color: rgba(7, 29, 46, 0.72);
+}
+
+.site-footer {
+  padding-block: 80px 36px;
+  background: var(--night);
+  color: var(--white);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.55fr 0.8fr 0.7fr;
+  gap: 70px;
+}
+
+.site-footer .brand__crop {
+  background: var(--white);
+}
+
+.footer-brand p {
+  max-width: 360px;
+  margin: 22px 0 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.85rem;
+}
+
+.site-footer h3 {
+  margin: 0 0 18px;
+  color: var(--aqua);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.site-footer a {
+  display: table;
+  margin: 10px 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.82rem;
+}
+
+.site-footer a:hover {
+  color: var(--aqua);
+}
+
+.footer-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.floating-whatsapp {
+  position: fixed;
+  z-index: 35;
+  right: 20px;
+  bottom: 20px;
+  min-height: 48px;
+  padding: 11px 14px 11px 17px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--white);
+  border: 1px solid var(--ink);
+  box-shadow: 6px 7px 0 var(--aqua);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1080px) {
+  .desktop-nav {
+    gap: 18px;
+  }
+
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 0.72fr);
+    gap: 55px;
+  }
+
+  .hero__seal {
+    left: -24px;
+  }
+
+  .proof__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .proof__grid > p {
+    grid-column: 1 / -1;
+    min-height: 86px;
+    border-top: 1px solid var(--line);
+  }
+
+  .vip-card {
+    grid-template-columns: 0.3fr 1fr;
+  }
+
+  .vip-card > .button {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.2fr 0.6fr 0.9fr;
+  }
+
+  .footer-note {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}
+
+@media (max-width: 880px) {
+  :root {
+    --container: min(100% - 36px, 720px);
+  }
+
+  .announcement__inner > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .desktop-nav,
+  .nav-cta {
+    display: none;
+  }
+
+  .nav-shell {
+    grid-template-columns: 1fr auto;
+    min-height: 72px;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
+  .hero__grid {
+    grid-template-columns: 1fr;
+    padding-top: 72px;
+    padding-bottom: 90px;
+  }
+
+  .hero__portrait {
+    width: min(570px, 92%);
+    min-height: 550px;
+    margin-left: auto;
+  }
+
+  .hero__image-frame {
+    right: 0;
+  }
+
+  .hero__vertical {
+    right: -75px;
+  }
+
+  .section {
+    padding-block: 88px;
+  }
+
+  .section-heading--split,
+  .section-heading--community {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .course-card--feature {
+    grid-row: auto;
+    grid-template-rows: minmax(360px, auto) auto;
+  }
+
+  .course-card:not(.course-card--feature) {
+    min-height: 270px;
+    grid-template-columns: 42% 1fr;
+  }
+
+  .ecosystem__grid,
+  .certificate-card {
+    grid-template-columns: 1fr;
+  }
+
+  .certificate-card__visual {
+    min-height: 460px;
+  }
+
+  .community-gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .community-gallery figure:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .vip-card {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .vip-card > .button {
+    grid-column: auto;
+  }
+
+  .final-cta__inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .final-cta__inner > div {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 620px) {
+  :root {
+    --container: calc(100% - 28px);
+  }
+
+  .announcement {
+    font-size: 0.58rem;
+  }
+
+  .announcement__inner {
+    gap: 10px;
+  }
+
+  .announcement a {
+    white-space: nowrap;
+  }
+
+  .brand__crop {
+    width: 140px;
+    height: 42px;
+  }
+
+  .brand__crop img {
+    width: 150px;
+    height: 150px;
+    top: -49px;
+  }
+
+  .hero__grid {
+    min-height: auto;
+    padding-top: 54px;
+  }
+
+  .eyebrow {
+    margin-bottom: 30px;
+  }
+
+  .eyebrow span:last-child {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 15vw, 4.35rem);
+  }
+
+  .hero__lead {
+    margin-top: 27px;
+  }
+
+  .hero__portrait {
+    width: 94%;
+    min-height: 455px;
+    margin-top: 12px;
+  }
+
+  .hero__portrait::before {
+    top: -14px;
+    right: -18px;
+  }
+
+  .hero__image-frame {
+    inset: 18px 0 18px 0;
+  }
+
+  .hero__vertical {
+    display: none;
+  }
+
+  .hero__seal {
+    left: -18px;
+    bottom: -20px;
+    width: 122px;
+    height: 122px;
+    padding: 18px;
+  }
+
+  .hero__seal strong {
+    font-size: 2.8rem;
+  }
+
+  .hero__seal span {
+    font-size: 0.53rem;
+  }
+
+  .proof__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .proof__grid > div {
+    padding: 22px 16px;
+  }
+
+  .proof__grid > div:nth-child(3) {
+    grid-column: 1 / -1;
+    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+  }
+
+  .proof__grid > p {
+    padding: 24px 16px;
+    font-size: 1.18rem;
+  }
+
+  .section {
+    padding-block: 76px;
+  }
+
+  .section-heading h2,
+  .ecosystem h2,
+  .certificate-card h2,
+  .vip-card h2,
+  .final-cta h2 {
+    font-size: clamp(2.55rem, 12vw, 3.8rem);
+  }
+
+  .course-card,
+  .course-card:not(.course-card--feature) {
+    grid-template-columns: 1fr;
+  }
+
+  .course-card--feature {
+    grid-template-rows: auto;
+  }
+
+  .course-card__image,
+  .course-card--feature .course-card__image {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  .course-card__body {
+    min-height: 270px;
+  }
+
+  .ecosystem__list li {
+    grid-template-columns: 48px 1fr;
+    gap: 14px;
+  }
+
+  .certificate-card__copy {
+    padding: 38px 25px 48px;
+  }
+
+  .certificate-card__visual {
+    min-height: 380px;
+    padding: 30px;
+  }
+
+  .certificate-card__monogram {
+    left: 28px;
+    font-size: 8.5rem;
+  }
+
+  .community-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .community-gallery figure:first-child {
+    grid-column: auto;
+  }
+
+  .community-gallery figure:first-child img,
+  .community-gallery img {
+    aspect-ratio: 1 / 1;
+  }
+
+  .vip-card {
+    padding: 38px 26px;
+    gap: 28px;
+  }
+
+  .final-cta {
+    padding-block: 88px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 44px 24px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer-note {
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+  }
+
+  .floating-whatsapp span {
+    display: none;
+  }
+
+  .floating-whatsapp {
+    width: 48px;
+    padding: 0;
+    justify-content: center;
+    box-shadow: 4px 5px 0 var(--aqua);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+  </style>
 </head>
 <body>
-<div class="fx-aurora"></div>
-<div class="fx-grid"></div>
-
-<!-- ═══ HEADER ═══ -->
-<header class="hd" id="hd">
-  <div class="container hd__in">
-    <a class="hd__brand" href="index.html" aria-label="SYNOVA MÉXICO">
-      <span class="hd__logo"><img src="assets/images/brand/logo.jpg" alt="Logo SYNOVA México"></span>
-      <span>
-        <span class="hd__name">SYNOVA MÉXICO</span><br>
-        <span class="hd__tag">Salud · Capacitación</span>
-      </span>
-    </a>
-    <nav class="hd__nav" aria-label="Navegación principal">
-      <a class="hd__link is-active" href="index.html">Inicio</a>
-      <a class="hd__link" href="nosotros.html">Nosotros</a>
-      <a class="hd__link" href="cursos.html">Cursos</a>
-      <a class="hd__link" href="galeria.html">Galería</a>
-      <a class="hd__link" href="opiniones.html">Opiniones</a>
-      <a class="hd__link" href="contacto.html">Contacto</a>
-      <a class="hd__cta" href="vip-auth.html">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L21 9.27l-5 4.62L17.2 21 12 17.77 6.8 21 8 13.89l-5-4.62 6.1-1.01z"/></svg>
-        Club VIP
-      </a>
-    </nav>
-    <button class="hd__burger" id="burger" aria-label="Abrir menú"><span></span><span></span><span></span></button>
-  </div>
-</header>
-
-<!-- menú móvil -->
-<div class="msheet" id="msheet" aria-hidden="true">
-  <div class="msheet__ov" id="msheet-ov"></div>
-  <div class="msheet__panel">
-    <div class="msheet__top">
-      <span class="hd__name">SYNOVA</span>
-      <button class="msheet__close" id="msheet-close" aria-label="Cerrar">✕</button>
-    </div>
-    <a class="msheet__link" href="index.html">Inicio</a>
-    <a class="msheet__link" href="nosotros.html">Nosotros</a>
-    <a class="msheet__link" href="cursos.html">Cursos</a>
-    <a class="msheet__link" href="galeria.html">Galería</a>
-    <a class="msheet__link" href="opiniones.html">Opiniones</a>
-    <a class="msheet__link" href="contacto.html">Contacto</a>
-    <a class="msheet__cta" href="vip-auth.html">★ Entrar al Club VIP</a>
-  </div>
-</div>
-
-<main>
-<!-- ═══ HERO ═══ -->
-<section class="hero">
-  <div class="container hero__grid">
-    <div>
-      <span class="kicker">Capacitación clínica especializada</span>
-      <h1 class="hero__title">Formación clínica de <em>alto nivel</em> para tu equipo de salud</h1>
-      <p class="hero__lead">Cursos clínicos, certificación con folio verificable y clases en vivo para profesionales de la salud en México. Formación seria, actualizada y a tu ritmo.</p>
-      <div class="hero__actions">
-        <a class="btn btn--primary" href="cursos.html">
-          Ver cursos
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a class="btn btn--ghost" href="nosotros.html">Conocer SYNOVA</a>
-      </div>
-      <div class="hero__proof">
-        <span class="chip"><b>17</b> cursos clínicos</span>
-        <span class="chip"><b>✓</b> Folio verificable</span>
-        <span class="chip"><b>100%</b> online</span>
-      </div>
-    </div>
-    <div class="hero__visual" aria-hidden="true">
-      <div class="hero__halo"></div>
-      <div class="hero__ring"></div>
-      <div class="vitals">
-        <div class="vitals__top">
-          <span class="vitals__label">Club VIP · En línea</span>
-          <span class="vitals__brand">SYNOVA</span>
-        </div>
-        <div class="vitals__ecg">
-          <svg viewBox="0 0 320 84" preserveAspectRatio="none">
-            <path class="ecg-line" d="M0 46 H56 L68 46 76 30 84 60 92 22 100 66 108 46 H140 L152 46 158 38 165 52 172 46 H210 L222 46 230 26 238 62 246 18 254 68 262 46 H320"/>
-          </svg>
-        </div>
-        <div class="vitals__rows">
-          <div class="vrow">
-            <span class="vrow__dot"></span>
-            <div><b>Clases en vivo</b><span>Con especialistas, cada semana</span></div>
-            <span class="vrow__badge">EN VIVO</span>
-          </div>
-          <div class="vrow">
-            <span class="vrow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
-            <div><b>17 cursos clínicos</b><span>Urgencias, heridas, normativa y más</span></div>
-          </div>
-          <div class="vrow">
-            <span class="vrow__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg></span>
-            <div><b>Certificación oficial</b><span>Folio único verificable en línea</span></div>
-          </div>
-        </div>
-      </div>
-      <div class="fcard fcard--cert">
-        <div class="fcard__t">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          Certificado verificable
-        </div>
-        <div class="fcard__folio">Folio único · verificar.html</div>
-      </div>
-      <div class="fcard fcard--comm">
-        <div class="fcard__n">+500 <em>profesionales</em></div>
-        <div class="fcard__s">ya se capacitan con SYNOVA</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ MARQUEE ESPECIALIDADES ═══ -->
-<div class="marq" aria-hidden="true">
-  <div class="marq__track" id="marq-track">
-    <span class="marq__item">Urgencias</span>
-    <span class="marq__item">Manejo de heridas</span>
-    <span class="marq__item">Triage hospitalario</span>
-    <span class="marq__item">Pie diabético</span>
-    <span class="marq__item">Hemodiálisis</span>
-    <span class="marq__item">Código Mater</span>
-    <span class="marq__item">Cuidados pediátricos</span>
-    <span class="marq__item">Terapias celulares</span>
-    <span class="marq__item">Esterilización</span>
-    <span class="marq__item">Traqueostomía</span>
-  </div>
-</div>
-
-<!-- ═══ STATS ═══ -->
-<section class="stats">
-  <div class="container stats__grid">
-    <article class="stat rv"><b data-count="17">0</b><span>Cursos clínicos</span></article>
-    <article class="stat rv rv-d1"><b data-count="500" data-suffix="+">0</b><span>Profesionales capacitados</span></article>
-    <article class="stat rv rv-d2"><b data-count="10">0</b><span>Áreas de enfoque</span></article>
-    <article class="stat rv rv-d3"><b data-count="100" data-suffix="%">0</b><span>Compromiso y calidad</span></article>
-  </div>
-</section>
-
-<!-- ═══ CURSOS DESTACADOS ═══ -->
-<section class="section">
-  <div class="container">
-    <div class="shead shead--row rv">
-      <div>
-        <span class="kicker">Oferta académica</span>
-        <h2>Cursos <em>destacados</em></h2>
-      </div>
-      <a class="btn btn--ghost" href="cursos.html">Ver todos los cursos
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
-    <div class="courses">
-      <a class="ccard rv" href="cursos.html">
-        <div class="ccard__media">
-          <img src="assets/images/courses/MANEJO DE HERIDAS.jpg" alt="Curso Manejo de heridas" loading="lazy">
-          <span class="ccard__tag">Enfermería</span>
-        </div>
-        <div class="ccard__body">
-          <span class="ccard__vip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Certificado incluido</span>
-          <h3>Manejo de heridas</h3>
-          <p>Valoración, técnica de curación avanzada y selección de apósitos según el tipo de herida.</p>
-          <div class="ccard__meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>100% online</span><span>Folio verificable</span></div>
-        </div>
-      </a>
-      <a class="ccard rv rv-d1" href="cursos.html">
-        <div class="ccard__media">
-          <img src="assets/images/courses/TRIAGE HOSPITALARIO.jpg" alt="Curso Triage hospitalario" loading="lazy">
-          <span class="ccard__tag">Urgencias</span>
-        </div>
-        <div class="ccard__body">
-          <span class="ccard__vip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Certificado incluido</span>
-          <h3>Triage hospitalario</h3>
-          <p>Clasificación de pacientes en urgencias: prioridades, escalas y toma de decisiones bajo presión.</p>
-          <div class="ccard__meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>100% online</span><span>Folio verificable</span></div>
-        </div>
-      </a>
-      <a class="ccard rv rv-d2" href="cursos.html">
-        <div class="ccard__media">
-          <img src="assets/images/courses/PIE DIABETICO.jpg" alt="Curso Pie diabético" loading="lazy">
-          <span class="ccard__tag">Clínica</span>
-        </div>
-        <div class="ccard__body">
-          <span class="ccard__vip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 4v6c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Certificado incluido</span>
-          <h3>Pie diabético</h3>
-          <p>Prevención, valoración y manejo integral del pie diabético para evitar complicaciones.</p>
-          <div class="ccard__meta"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>100% online</span><span>Folio verificable</span></div>
-        </div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ BENEFICIOS ═══ -->
-<section class="section" style="padding-top:0">
-  <div class="container">
-    <div class="shead shead--center rv">
-      <span class="kicker">Por qué SYNOVA</span>
-      <h2>Formación clínica <em>que sí se nota</em> en tu práctica</h2>
-      <p>Todo lo que necesitas para mantenerte actualizado, en un solo lugar.</p>
-    </div>
-    <div class="bento">
-      <article class="bcard rv">
-        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
-        <h3>Cursos clínicos</h3>
-        <p>Programas especializados con enfoque práctico: urgencias, heridas, normativa NOM, calidad de atención y más.</p>
-      </article>
-      <article class="bcard rv rv-d1">
-        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 13.5L7 22l5-3 5 3-1.5-8.5"/></svg></div>
-        <h3>Certificación verificable</h3>
-        <p>Cada certificado incluye folio único SYNOVA con verificación pública en línea. Respaldo real para tu CV.</p>
-      </article>
-      <article class="bcard rv rv-d2">
-        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.2"/><path d="M7.5 7.5a6.4 6.4 0 0 0 0 9M16.5 7.5a6.4 6.4 0 0 1 0 9M4.7 4.7a10.4 10.4 0 0 0 0 14.6M19.3 4.7a10.4 10.4 0 0 1 0 14.6"/></svg></div>
-        <h3>Clases en vivo</h3>
-        <p>Webinars y sesiones en tiempo real con especialistas. Pregunta, participa y resuelve casos reales.</p>
-      </article>
-      <article class="bcard rv">
-        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div>
-        <h3>Herramientas clínicas pro</h3>
-        <p>Calculadoras de dosis, recetario, IMC y riesgo, anestésicos y nutrición clínica listos para usar.</p>
-      </article>
-      <article class="bcard rv rv-d1">
-        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <h3>Comunidad VIP</h3>
-        <p>Foro profesional, directorio de colegas y canal exclusivo. Conecta con profesionales de todo México.</p>
-      </article>
-      <article class="bcard rv rv-d2">
-        <div class="bcard__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg></div>
-        <h3>Material descargable</h3>
-        <p>PDFs, guías y plantillas clínicas actualizadas que puedes consultar y descargar cuando las necesites.</p>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ FRASE ═══ -->
-<section class="quote">
-  <div class="container quote__box rv">
-    <span class="kicker">Nuestra misión</span>
-    <h2 style="margin-top:14px">Un espacio pensado para <em>acompañarte</em> en tu crecimiento profesional.</h2>
-  </div>
-</section>
-
-<!-- ═══ CTA ═══ -->
-<section class="cta">
-  <div class="container">
-    <div class="cta__box rv">
-      <div style="position:relative;z-index:1">
-        <span class="cta__kicker">● Atención personalizada</span>
-        <h2>Solicita información y conoce la oferta académica de SYNOVA MÉXICO.</h2>
-        <p>Recibe orientación directa por WhatsApp para cursos, capacitación y asesoría institucional.</p>
-      </div>
-      <div class="cta__act">
-        <a class="btn btn--white" href="https://wa.me/522381479274" target="_blank" rel="noopener">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-          Inscribirme
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-</main>
-
-<!-- ═══ FOOTER ═══ -->
-<footer class="ft">
-  <div class="container ft__grid">
-    <div>
-      <div class="ft__brand">
-        <img src="assets/images/brand/logo.jpg" alt="SYNOVA México">
-        <b>SYNOVA MÉXICO</b>
-      </div>
-      <p>Capacitación clínica especializada para profesionales de la salud.</p>
-    </div>
-    <div>
-      <h3>Contacto</h3>
-      <a href="https://wa.me/522381479274" target="_blank" rel="noopener">WhatsApp: +52 238 147 9274</a>
-      <a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a>
-      <a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noopener">Instagram: @synovamexico</a>
-      <a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noopener">Facebook oficial</a>
-    </div>
-    <div>
-      <h3>Navegación</h3>
-      <a href="index.html">Inicio</a>
-      <a href="nosotros.html">Nosotros</a>
-      <a href="cursos.html">Cursos</a>
-      <a href="contacto.html">Contacto</a>
-      <a href="verificar.html">Verificar certificado</a>
-      <a href="vip-auth.html">Club VIP</a>
-    </div>
-  </div>
-  <div class="container ft__legal">
-    <span>© 2026 SYNOVA MÉXICO. Todos los derechos reservados.</span>
-    <span>Hecho con orgullo en Tehuacán, Puebla.</span>
-  </div>
-</footer>
-
-<a class="wa" href="https://wa.me/522381479274" target="_blank" rel="noopener" aria-label="WhatsApp">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.138.563 4.14 1.535 5.874L0 24l6.29-1.508A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.814 9.814 0 0 1-5.058-1.4l-.361-.214-3.735.896.944-3.653-.235-.374A9.817 9.817 0 0 1 2.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
-</a>
-
-<script>
-/* Header con vidrio al hacer scroll */
-(function(){
-  var hd = document.getElementById('hd');
-  function onScroll(){ hd.classList.toggle('scrolled', window.scrollY > 12); }
-  window.addEventListener('scroll', onScroll, { passive:true });
-  onScroll();
-})();
-
-/* Menú móvil (hoja desde la derecha, scroll bloqueado — fix iOS con position:fixed) */
-(function(){
-  var sheet = document.getElementById('msheet');
-  var scrollY = 0;
-  var abrir = function(){
-    scrollY = window.scrollY || window.pageYOffset;
-    sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false');
-    document.body.style.position = 'fixed';
-    document.body.style.top = (-scrollY) + 'px';
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-  };
-  var cerrar = function(){
-    sheet.classList.remove('open'); sheet.setAttribute('aria-hidden','true');
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    document.documentElement.style.scrollBehavior = 'auto';
-    window.scrollTo(0, scrollY);
-    document.documentElement.style.scrollBehavior = '';
-  };
-  document.getElementById('burger').addEventListener('click', abrir);
-  document.getElementById('msheet-close').addEventListener('click', cerrar);
-  document.getElementById('msheet-ov').addEventListener('click', cerrar);
-  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') cerrar(); });
-  /* Evitar rebote/arrastre del fondo en iOS con el menú abierto */
-  sheet.addEventListener('touchmove', function(e){
-    if (!e.target.closest('.msheet__panel')) e.preventDefault();
-  }, { passive:false });
-})();
-
-/* Marquee: duplicar contenido para loop perfecto */
-(function(){
-  var track = document.getElementById('marq-track');
-  if (track) track.innerHTML += track.innerHTML;
-})();
-
-/* Reveal on scroll */
-(function(){
-  var els = document.querySelectorAll('.rv');
-  if (!('IntersectionObserver' in window)){ els.forEach(function(el){ el.classList.add('in'); }); return; }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
-  }, { threshold:.16 });
-  els.forEach(function(el){ io.observe(el); });
-})();
-
-/* Conteo animado de stats al entrar en vista */
-(function(){
-  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    document.querySelectorAll('[data-count]').forEach(function(el){ el.textContent = el.getAttribute('data-count'); });
-    return;
-  }
-  function animar(el){
-    var fin = parseInt(el.getAttribute('data-count'), 10) || 0;
-    var t0 = performance.now(), dur = 1100;
-    function paso(t){
-      var p = Math.min(1, (t - t0) / dur);
-      var eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = String(Math.round(fin * eased));
-      if (p < 1) requestAnimationFrame(paso);
-    }
-    requestAnimationFrame(paso);
-  }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ if (en.isIntersecting){ animar(en.target); io.unobserve(en.target); } });
-  }, { threshold:.4 });
-  document.querySelectorAll('[data-count]').forEach(function(el){ io.observe(el); });
-})();
-</script>
+<div class="site-shell"><div class="announcement"><div class="container announcement__inner"><span>Educación continua para profesionales de la salud</span><a href="verificar.html">Verificar certificado <span aria-hidden="true">↗</span></a></div></div><header class="site-header"><div class="container nav-shell"><a href="index.html" class="nav-brand"><span class="brand" aria-label="SYNOVA México"><span class="brand__crop" aria-hidden="true"><img src="assets/img/synova-logo.png" alt=""/></span></span></a><nav class="desktop-nav" aria-label="Navegación principal"><a href="nosotros.html">Nosotros</a><a href="cursos.html">Cursos</a><a href="galeria.html">Galería</a><a href="opiniones.html">Opiniones</a><a href="contacto.html">Contacto</a></nav><a class="nav-cta" href="vip-auth.html">Club VIP <span aria-hidden="true">↗</span></a><details class="mobile-menu"><summary aria-label="Abrir menú"><span></span><span></span></summary><div class="mobile-menu__panel"><a href="nosotros.html">Nosotros</a><a href="cursos.html">Cursos</a><a href="galeria.html">Galería</a><a href="opiniones.html">Opiniones</a><a href="contacto.html">Contacto</a><a href="vip-auth.html">Entrar al Club VIP</a></div></details></div></header><main><section class="hero"><div class="container hero__grid"><div class="hero__copy"><p class="eyebrow"><span>Formación clínica</span><span>México · 2026</span></p><h1>La práctica clínica exige más.<em>Tu formación también.</em></h1><p class="hero__lead">Cursos online, sesiones en vivo y certificación con folio verificable para profesionales que quieren convertir conocimiento en mejores decisiones.</p><div class="hero__actions"><a class="button button--light" href="cursos.html">Explorar cursos <span aria-hidden="true">→</span></a><a class="text-link" href="https://wa.me/522381479274" target="_blank" rel="noreferrer">Hablar con un asesor <span aria-hidden="true">↗</span></a></div></div><div class="hero__portrait"><div class="hero__image-frame"><img src="assets/images/brand/banner.jpg" alt="Profesionales de la salud y capacitación clínica"/></div><p class="hero__vertical" aria-hidden="true">CURSOS · CAPACITACIONES · ASESORÍAS</p><div class="hero__seal" aria-label="17 cursos clínicos disponibles"><strong>17</strong><span>programas<br/>clínicos</span></div></div></div></section><section class="proof" aria-label="Datos de SYNOVA"><div class="container proof__grid"><div><strong>+500</strong><span>profesionales capacitados</span></div><div><strong>100%</strong><span>formación online</span></div><div><strong>Folio</strong><span>verificable en línea</span></div><p>Formación seria, actualizada y hecha para la realidad clínica.</p></div></section><section class="section courses-section"><div class="container"><div class="section-heading section-heading--split"><p class="section-index">01 / OFERTA ACADÉMICA</p><div><h2>Aprende lo que sí cambia tu práctica.</h2><p>Programas concretos, impartidos por especialistas y pensados para aplicar desde el primer día.</p></div></div><div class="courses-grid"><a class="course-card course-card--feature" href="cursos/triage-hospitalario.html"><div class="course-card__image"><img src="assets/images/courses/TRIAGE HOSPITALARIO.jpg" alt="Portada del curso Triage hospitalario" loading="lazy"/><span>01</span></div><div class="course-card__body"><p>Urgencias · 100% online</p><h3>Triage hospitalario</h3><span class="course-card__description">Clasificación de urgencias, prioridades y toma de decisiones clínicas bajo presión.</span><span class="course-card__link">Ver programa <b aria-hidden="true">↗</b></span></div></a><a class="course-card" href="cursos/manejo-de-heridas.html"><div class="course-card__image"><img src="assets/images/courses/MANEJO DE HERIDAS.jpg" alt="Portada del curso Manejo de heridas" loading="lazy"/><span>02</span></div><div class="course-card__body"><p>Enfermería · Certificado incluido</p><h3>Manejo de heridas</h3><span class="course-card__description">Valoración, curación avanzada y selección responsable de apósitos.</span><span class="course-card__link">Ver programa <b aria-hidden="true">↗</b></span></div></a><a class="course-card" href="cursos/codigo-mater.html"><div class="course-card__image"><img src="assets/images/courses/CODIGO MATER.jpg" alt="Portada del curso Código Mater" loading="lazy"/><span>03</span></div><div class="course-card__body"><p>Obstetricia · Sesión en vivo</p><h3>Código Mater</h3><span class="course-card__description">Herramientas concretas para responder a emergencias obstétricas.</span><span class="course-card__link">Ver programa <b aria-hidden="true">↗</b></span></div></a></div><div class="section-action"><a class="button button--ink" href="cursos.html">Ver los 17 cursos <span aria-hidden="true">→</span></a></div></div></section><section class="section ecosystem"><div class="container ecosystem__grid"><div class="ecosystem__intro"><p class="section-index section-index--light">02 / EXPERIENCIA SYNOVA</p><h2>Mucho más que ver una clase.</h2><p>Una experiencia de aprendizaje que conecta contenido, acompañamiento y comunidad profesional.</p><a href="nosotros.html" class="text-link text-link--light">Conoce SYNOVA <span aria-hidden="true">↗</span></a></div><ol class="ecosystem__list"><li><span>01</span><div><h3>Contenido que aterriza</h3><p>Casos, técnicas y herramientas que hablan el idioma de la práctica diaria.</p></div></li><li><span>02</span><div><h3>Acompañamiento en vivo</h3><p>Sesiones con especialistas para preguntar, contrastar y tomar mejores decisiones.</p></div></li><li><span>03</span><div><h3>Respaldo verificable</h3><p>Certificados con folio único y consulta pública en línea.</p></div></li></ol></div></section><section class="section certificate-section"><div class="container certificate-card"><div class="certificate-card__copy"><p class="section-index">03 / RESPALDO PROFESIONAL</p><h2>Tu formación merece una evidencia real.</h2><p>Cada certificado SYNOVA incluye un folio único que puede consultarse en línea. Una credencial clara para tu expediente, tu institución y tu crecimiento profesional.</p><a class="button button--ink" href="verificar.html">Verificar un certificado <span aria-hidden="true">↗</span></a></div><div class="certificate-card__visual" aria-hidden="true"><span class="certificate-card__monogram">S</span><div class="certificate-card__line"></div><p>CERTIFICADO<br/>VERIFICABLE</p><strong>MX · 2026</strong></div></div></section><section class="section community-section"><div class="container"><div class="section-heading section-heading--community"><div><p class="section-index">04 / COMUNIDAD</p><h2>Personas reales. Aprendizaje que se comparte.</h2></div><p>Profesionales de distintas áreas y ciudades que siguen creciendo, preguntando y compartiendo experiencia clínica.</p></div><div class="community-gallery"><figure><img src="assets/images/gallery/648256852_122200339580786379_3399218322212651607_n.jpg" alt="Participantes del curso de apósitos interactivos de SYNOVA México" loading="lazy"/><figcaption>Sesión en vivo · 01</figcaption></figure><figure><img src="assets/images/gallery/649047964_122200339298786379_2585916070326822505_n.jpg" alt="Participantes del curso de emergencias obstétricas y Código Mater" loading="lazy"/><figcaption>Sesión en vivo · 02</figcaption></figure><figure><img src="assets/images/gallery/645327852_122199367118786379_5032447924297202080_n.jpg" alt="Participantes de una clase en vivo de SYNOVA México" loading="lazy"/><figcaption>Sesión en vivo · 03</figcaption></figure></div><a class="community-link" href="galeria.html">Explorar la comunidad <span aria-hidden="true">→</span></a></div></section><section class="vip-section"><div class="container vip-card"><p class="vip-card__label">SYNOVA / CLUB VIP</p><div class="vip-card__copy"><h2>Tu espacio de actualización clínica, todo el año.</h2><p>Cursos, clases en vivo, herramientas clínicas y una comunidad profesional en un solo lugar.</p></div><a class="button button--light" href="vip-auth.html">Conocer Club VIP <span aria-hidden="true">↗</span></a></div></section><section class="final-cta"><div class="container final-cta__inner"><p class="section-index">HABLEMOS</p><h2>La siguiente decisión clínica empieza con lo que aprendes hoy.</h2><div><p>Cuéntanos qué quieres fortalecer y te ayudamos a encontrar el programa adecuado.</p><a class="button button--ink" href="https://wa.me/522381479274" target="_blank" rel="noreferrer">Escribir por WhatsApp <span aria-hidden="true">↗</span></a></div></div></section></main><footer class="site-footer"><div class="container footer-grid"><div class="footer-brand"><span class="brand" aria-label="SYNOVA México"><span class="brand__crop" aria-hidden="true"><img src="assets/img/synova-logo.png" alt=""/></span></span><p>Capacitación clínica especializada para profesionales de la salud en México.</p></div><div><h3>Explora</h3><a href="cursos.html">Cursos</a><a href="nosotros.html">Nosotros</a><a href="galeria.html">Galería</a><a href="vip-auth.html">Club VIP</a></div><div><h3>Contacto</h3><a href="https://wa.me/522381479274" target="_blank" rel="noreferrer">+52 238 147 9274</a><a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a><a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noreferrer">Instagram</a><a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noreferrer">Facebook</a></div><div class="footer-note"><span>Tehuacán, Puebla</span><span>© 2026 SYNOVA MÉXICO</span></div></div></footer><a class="floating-whatsapp" href="https://wa.me/522381479274" target="_blank" rel="noreferrer" aria-label="Contactar por WhatsApp"><span>WhatsApp</span><b aria-hidden="true">↗</b></a></div><div hidden=""><div hidden=""><title>SYNOVA MÉXICO | Formación clínica para profesionales de la salud</title><meta name="description" content="Cursos online, sesiones en vivo y certificación con folio verificable para profesionales de la salud en México."><meta property="og:title" content="La práctica clínica exige más. Tu formación también."><meta property="og:description" content="Formación clínica especializada, clases en vivo y certificados verificables con SYNOVA México."><meta property="og:site_name" content="SYNOVA México"><meta property="og:type" content="website"><meta property="og:locale" content="es_MX"><meta property="og:image" content="http://localhost:3000/og.png"><meta property="og:image:width" content="1536"><meta property="og:image:height" content="1024"><meta property="og:image:alt" content="SYNOVA México — Formación clínica especializada"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="SYNOVA México | Formación clínica especializada"><meta name="twitter:description" content="Cursos, clases en vivo y certificados verificables para profesionales de la salud."><meta name="twitter:image" content="http://localhost:3000/og.png"><link rel="shortcut icon" href="assets/images/brand/favicon.ico"><link rel="icon" href="assets/images/brand/favicon.png"><link rel="apple-touch-icon" href="assets/images/brand/favicon.png"></div></div>
 </body>
 </html>
