@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SYNOVA MÉXICO | Formación clínica para profesionales de la salud</title>
+  <meta name="description" content="Cursos online, sesiones en vivo y certificación con folio verificable para profesionales de la salud en México.">
+  <meta property="og:title" content="La práctica clínica exige más. Tu formación también.">
+  <meta property="og:description" content="Formación clínica especializada, clases en vivo y certificados verificables con SYNOVA México.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_MX">
+  <meta property="og:site_name" content="SYNOVA México">
+  <meta property="og:url" content="https://www.synovamexico.com/">
+  <meta property="og:image" content="https://www.synovamexico.com/og.png">
+  <meta property="og:image:width" content="1536">
+  <meta property="og:image:height" content="1024">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SYNOVA México | Formación clínica especializada">
+  <meta name="twitter:description" content="Cursos, clases en vivo y certificados verificables para profesionales de la salud.">
+  <meta name="twitter:image" content="https://www.synovamexico.com/og.png">
+  <link rel="icon" type="image/png" href="favicon-synova.png?v=2">
+  <link rel="shortcut icon" type="image/png" href="favicon-synova.png?v=2">
+  <link rel="apple-touch-icon" href="favicon-synova.png?v=2">
+  <style>
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
+
+:root {
+  --ink: #071d2e;
+  --ink-soft: #334b5c;
+  --night: #061725;
+  --blue: #0b5483;
+  --aqua: #68ded7;
+  --aqua-deep: #20b8b2;
+  --paper: #f4f1e9;
+  --white: #fffef9;
+  --line: rgba(7, 29, 46, 0.18);
+  --container: min(1216px, calc(100% - 48px));
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "DM Sans", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::selection {
+  background: var(--aqua);
+  color: var(--ink);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.site-shell {
+  min-width: 320px;
+  overflow: clip;
+}
+
+.container {
+  width: var(--container);
+  margin-inline: auto;
+}
+
+.announcement {
+  background: var(--aqua);
+  border-bottom: 1px solid rgba(7, 29, 46, 0.16);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.announcement__inner {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.announcement a {
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 1px;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(244, 241, 233, 0.94);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+
+.nav-shell {
+  min-height: 82px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 34px;
+}
+
+.nav-brand,
+.brand {
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand__crop {
+  display: flex;
+  align-items: center;
+  width: 170px;
+  height: 54px;
+}
+
+.brand__crop img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.desktop-nav {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.desktop-nav a {
+  position: relative;
+  color: var(--ink-soft);
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
+.desktop-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -7px;
+  height: 1px;
+  background: var(--ink);
+  transition: right 180ms ease;
+}
+
+.desktop-nav a:hover::after {
+  right: 0;
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+  border: 1px solid var(--ink);
+  padding: 11px 15px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.nav-cta:hover {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.mobile-menu {
+  display: none;
+  position: relative;
+}
+
+.mobile-menu summary {
+  width: 46px;
+  height: 42px;
+  border: 1px solid var(--ink);
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.mobile-menu summary span {
+  width: 20px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.mobile-menu__panel {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: min(300px, calc(100vw - 48px));
+  padding: 14px;
+  background: var(--white);
+  border: 1px solid var(--ink);
+  box-shadow: 12px 14px 0 var(--aqua);
+}
+
+.mobile-menu__panel a {
+  display: flex;
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(7, 29, 46, 0.12);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mobile-menu__panel a:last-child {
+  margin-top: 10px;
+  background: var(--ink);
+  color: var(--white);
+  border: 0;
+}
+
+.hero {
+  position: relative;
+  background: var(--night);
+  color: var(--white);
+  isolation: isolate;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.2;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, #000, transparent 76%);
+}
+
+.hero__grid {
+  min-height: 710px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(380px, 0.82fr);
+  align-items: center;
+  gap: clamp(50px, 7vw, 110px);
+  padding-block: 72px;
+}
+
+.hero__copy {
+  padding-bottom: 12px;
+}
+
+.eyebrow {
+  max-width: 600px;
+  margin: 0 0 42px;
+  padding-top: 13px;
+  border-top: 1px solid rgba(255, 255, 255, 0.38);
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(3.4rem, 6vw, 5.75rem);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 0.93;
+}
+
+.hero h1 em {
+  display: block;
+  margin-top: 10px;
+  color: var(--aqua);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.08em;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+
+.hero__lead {
+  max-width: 620px;
+  margin: 34px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(1rem, 1.5vw, 1.16rem);
+  line-height: 1.75;
+}
+
+.hero__actions {
+  margin-top: 38px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 13px 18px;
+  border: 1px solid currentColor;
+  font-size: 0.77rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button--light {
+  background: var(--aqua);
+  border-color: var(--aqua);
+  color: var(--ink);
+}
+
+.button--light:hover {
+  background: var(--white);
+  border-color: var(--white);
+}
+
+.button--ink {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--white);
+}
+
+.button--ink:hover {
+  background: var(--aqua);
+  border-color: var(--aqua);
+  color: var(--ink);
+}
+
+.text-link {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 4px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.text-link--light {
+  color: var(--aqua);
+}
+
+.hero__portrait {
+  position: relative;
+  min-height: 570px;
+}
+
+.hero__portrait::before {
+  content: "";
+  position: absolute;
+  top: -22px;
+  right: -28px;
+  width: 76%;
+  height: 48%;
+  border: 1px solid var(--aqua);
+}
+
+.hero__image-frame {
+  position: absolute;
+  inset: 28px 34px 24px 0;
+  overflow: hidden;
+  background: #7fc8d3;
+}
+
+.hero__image-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(6, 23, 37, 0.05), rgba(6, 23, 37, 0.55));
+  mix-blend-mode: multiply;
+}
+
+.hero__image-frame img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 11% 50%;
+  filter: saturate(0.72) contrast(1.05);
+  transform: scale(1.04);
+}
+
+.hero__vertical {
+  position: absolute;
+  z-index: 2;
+  right: -75px;
+  top: 47%;
+  margin: 0;
+  transform: rotate(90deg);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.hero__seal {
+  position: absolute;
+  z-index: 3;
+  left: -35px;
+  bottom: -5px;
+  width: 148px;
+  height: 148px;
+  padding: 23px;
+  border-radius: 50%;
+  background: var(--aqua);
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px;
+  transform: rotate(-8deg);
+}
+
+.hero__seal strong {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 3.6rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.hero__seal span {
+  font-size: 0.63rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.proof {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+}
+
+.proof__grid {
+  min-height: 128px;
+  display: grid;
+  grid-template-columns: repeat(3, 0.78fr) 1.65fr;
+  align-items: stretch;
+}
+
+.proof__grid > div,
+.proof__grid > p {
+  margin: 0;
+  padding: 28px 28px 26px;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.proof__grid > div:first-child {
+  border-left: 1px solid var(--line);
+}
+
+.proof__grid strong {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.proof__grid span {
+  margin-top: 7px;
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.proof__grid > p {
+  border: 0;
+  color: var(--ink-soft);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.35rem;
+  line-height: 1.25;
+}
+
+.section {
+  padding-block: 120px;
+}
+
+.section-index {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.section-index--light {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.section-heading--split {
+  display: grid;
+  grid-template-columns: 0.42fr 1fr;
+  align-items: start;
+  gap: 40px;
+  margin-bottom: 58px;
+}
+
+.section-heading h2,
+.ecosystem h2,
+.certificate-card h2,
+.vip-card h2,
+.final-cta h2 {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(2.8rem, 5vw, 5.2rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+
+.section-heading--split > div > p {
+  max-width: 650px;
+  margin: 22px 0 0;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+  grid-template-rows: repeat(2, minmax(285px, auto));
+  gap: 20px;
+}
+
+.course-card {
+  min-height: 285px;
+  display: grid;
+  grid-template-columns: 44% 1fr;
+  overflow: hidden;
+  background: var(--white);
+  border: 1px solid var(--line);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 12px 14px 0 var(--aqua);
+}
+
+.course-card--feature {
+  grid-row: span 2;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(380px, 1fr) auto;
+}
+
+.course-card__image {
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+  background: #c5dce3;
+}
+
+.course-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 450ms ease;
+}
+
+.course-card:hover .course-card__image img {
+  transform: scale(1.025);
+}
+
+.course-card__image > span {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  min-width: 46px;
+  height: 32px;
+  padding-inline: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--aqua);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.course-card__body {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.course-card__body > p {
+  margin: 0 0 17px;
+  color: var(--blue);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.course-card h3 {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(1.8rem, 3vw, 3rem);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.course-card__description {
+  margin-top: 14px;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.course-card__link {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 22px;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.section-action {
+  margin-top: 38px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ecosystem {
+  background: var(--night);
+  color: var(--white);
+}
+
+.ecosystem__grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: clamp(60px, 10vw, 150px);
+}
+
+.ecosystem__intro h2 {
+  margin-top: 35px;
+  color: var(--aqua);
+}
+
+.ecosystem__intro > p:not(.section-index) {
+  max-width: 440px;
+  margin: 26px 0 30px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.ecosystem__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.ecosystem__list li {
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 24px;
+  padding: 38px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.ecosystem__list > li > span {
+  color: var(--aqua);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.8rem;
+}
+
+.ecosystem__list h3 {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 600;
+}
+
+.ecosystem__list p {
+  max-width: 600px;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.57);
+}
+
+.certificate-section {
+  background: #e9e2d6;
+}
+
+.certificate-card {
+  display: grid;
+  grid-template-columns: 1fr minmax(320px, 0.72fr);
+  min-height: 590px;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.certificate-card__copy {
+  padding: clamp(48px, 7vw, 90px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.certificate-card__copy h2 {
+  max-width: 700px;
+  margin-top: 36px;
+}
+
+.certificate-card__copy > p:not(.section-index) {
+  max-width: 620px;
+  margin: 28px 0 38px;
+  color: var(--ink-soft);
+  font-size: 1rem;
+}
+
+.certificate-card__visual {
+  position: relative;
+  overflow: hidden;
+  padding: 50px;
+  background: var(--aqua);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.certificate-card__visual::before,
+.certificate-card__visual::after {
+  content: "";
+  position: absolute;
+  border: 1px solid rgba(7, 29, 46, 0.3);
+  border-radius: 50%;
+}
+
+.certificate-card__visual::before {
+  width: 430px;
+  height: 430px;
+  top: -170px;
+  right: -160px;
+}
+
+.certificate-card__visual::after {
+  width: 300px;
+  height: 300px;
+  top: -105px;
+  right: -95px;
+}
+
+.certificate-card__monogram {
+  position: absolute;
+  top: 36px;
+  left: 42px;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 11rem;
+  line-height: 1;
+  color: rgba(7, 29, 46, 0.9);
+}
+
+.certificate-card__line {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 22px;
+  background: rgba(7, 29, 46, 0.42);
+}
+
+.certificate-card__visual p {
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 4.2rem);
+  font-weight: 700;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+}
+
+.certificate-card__visual strong {
+  margin-top: 25px;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+}
+
+.community-section {
+  background: var(--white);
+}
+
+.section-heading--community {
+  display: grid;
+  grid-template-columns: 1.4fr 0.6fr;
+  gap: 70px;
+  align-items: end;
+  margin-bottom: 54px;
+}
+
+.section-heading--community h2 {
+  max-width: 850px;
+  margin-top: 28px;
+}
+
+.section-heading--community > p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.community-gallery {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr 0.75fr;
+  gap: 16px;
+}
+
+.community-gallery figure {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.community-gallery img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  transition: filter 250ms ease, transform 350ms ease;
+}
+
+.community-gallery figure:first-child img {
+  aspect-ratio: 1.26 / 1;
+}
+
+.community-gallery figure:hover img {
+  filter: saturate(0.84);
+  transform: scale(1.015);
+}
+
+.community-gallery figcaption {
+  padding: 13px 14px;
+  color: var(--ink-soft);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.community-link {
+  margin-top: 30px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--ink);
+  display: inline-flex;
+  gap: 18px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.vip-section {
+  padding: 22px 0 0;
+  background: var(--white);
+}
+
+.vip-card {
+  min-height: 390px;
+  padding: clamp(42px, 6vw, 76px);
+  background: var(--blue);
+  color: var(--white);
+  display: grid;
+  grid-template-columns: 0.4fr 1fr auto;
+  align-items: end;
+  gap: 55px;
+}
+
+.vip-card__label {
+  align-self: start;
+  margin: 0;
+  color: var(--aqua);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.vip-card__copy h2 {
+  max-width: 700px;
+}
+
+.vip-card__copy p {
+  max-width: 610px;
+  margin: 23px 0 0;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.final-cta {
+  padding-block: 126px;
+  background: var(--aqua);
+}
+
+.final-cta__inner {
+  display: grid;
+  grid-template-columns: 0.32fr 1.1fr 0.58fr;
+  gap: 55px;
+  align-items: start;
+}
+
+.final-cta h2 {
+  max-width: 760px;
+}
+
+.final-cta__inner > div p {
+  margin: 0 0 28px;
+  color: rgba(7, 29, 46, 0.72);
+}
+
+.site-footer {
+  padding-block: 80px 36px;
+  background: var(--night);
+  color: var(--white);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.55fr 0.8fr 0.7fr;
+  gap: 70px;
+}
+
+.site-footer .brand__crop {
+  background: var(--white);
+  width: 184px;
+  height: 64px;
+  padding: 6px 8px;
+}
+
+.footer-brand p {
+  max-width: 360px;
+  margin: 22px 0 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.85rem;
+}
+
+.site-footer h3 {
+  margin: 0 0 18px;
+  color: var(--aqua);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.site-footer a {
+  display: table;
+  margin: 10px 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.82rem;
+}
+
+.site-footer a:hover {
+  color: var(--aqua);
+}
+
+.footer-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.floating-whatsapp {
+  position: fixed;
+  z-index: 35;
+  right: 20px;
+  bottom: 20px;
+  min-height: 48px;
+  padding: 11px 14px 11px 17px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--white);
+  border: 1px solid var(--ink);
+  box-shadow: 6px 7px 0 var(--aqua);
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1080px) {
+  .desktop-nav {
+    gap: 18px;
+  }
+
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 0.72fr);
+    gap: 55px;
+  }
+
+  .hero__seal {
+    left: -24px;
+  }
+
+  .proof__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .proof__grid > p {
+    grid-column: 1 / -1;
+    min-height: 86px;
+    border-top: 1px solid var(--line);
+  }
+
+  .vip-card {
+    grid-template-columns: 0.3fr 1fr;
+  }
+
+  .vip-card > .button {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1.2fr 0.6fr 0.9fr;
+  }
+
+  .footer-note {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}
+
+@media (max-width: 880px) {
+  :root {
+    --container: min(100% - 36px, 720px);
+  }
+
+  .announcement__inner > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .desktop-nav,
+  .nav-cta {
+    display: none;
+  }
+
+  .nav-shell {
+    grid-template-columns: 1fr auto;
+    min-height: 72px;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
+  .hero__grid {
+    grid-template-columns: 1fr;
+    padding-top: 72px;
+    padding-bottom: 90px;
+  }
+
+  .hero__portrait {
+    width: min(570px, 92%);
+    min-height: 550px;
+    margin-left: auto;
+  }
+
+  .hero__image-frame {
+    right: 0;
+  }
+
+  .hero__vertical {
+    right: -75px;
+  }
+
+  .section {
+    padding-block: 88px;
+  }
+
+  .section-heading--split,
+  .section-heading--community {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .course-card--feature {
+    grid-row: auto;
+    grid-template-rows: minmax(360px, auto) auto;
+  }
+
+  .course-card:not(.course-card--feature) {
+    min-height: 270px;
+    grid-template-columns: 42% 1fr;
+  }
+
+  .ecosystem__grid,
+  .certificate-card {
+    grid-template-columns: 1fr;
+  }
+
+  .certificate-card__visual {
+    min-height: 460px;
+  }
+
+  .community-gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .community-gallery figure:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .vip-card {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .vip-card > .button {
+    grid-column: auto;
+  }
+
+  .final-cta__inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .final-cta__inner > div {
+    max-width: 560px;
+  }
+}
+
+@media (max-width: 620px) {
+  :root {
+    --container: calc(100% - 28px);
+  }
+
+  .announcement {
+    font-size: 0.58rem;
+  }
+
+  .announcement__inner {
+    gap: 10px;
+  }
+
+  .announcement a {
+    white-space: nowrap;
+  }
+
+  .brand__crop {
+    width: 148px;
+    height: 48px;
+  }
+
+  .hero__grid {
+    min-height: auto;
+    padding-top: 54px;
+  }
+
+  .eyebrow {
+    margin-bottom: 30px;
+  }
+
+  .eyebrow span:last-child {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 15vw, 4.35rem);
+  }
+
+  .hero__lead {
+    margin-top: 27px;
+  }
+
+  .hero__portrait {
+    width: 94%;
+    min-height: 455px;
+    margin-top: 12px;
+  }
+
+  .hero__portrait::before {
+    top: -14px;
+    right: -18px;
+  }
+
+  .hero__image-frame {
+    inset: 18px 0 18px 0;
+  }
+
+  .hero__vertical {
+    display: none;
+  }
+
+  .hero__seal {
+    left: -18px;
+    bottom: -20px;
+    width: 122px;
+    height: 122px;
+    padding: 18px;
+  }
+
+  .hero__seal strong {
+    font-size: 2.8rem;
+  }
+
+  .hero__seal span {
+    font-size: 0.53rem;
+  }
+
+  .proof__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .proof__grid > div {
+    padding: 22px 16px;
+  }
+
+  .proof__grid > div:nth-child(3) {
+    grid-column: 1 / -1;
+    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+  }
+
+  .proof__grid > p {
+    padding: 24px 16px;
+    font-size: 1.18rem;
+  }
+
+  .section {
+    padding-block: 76px;
+  }
+
+  .section-heading h2,
+  .ecosystem h2,
+  .certificate-card h2,
+  .vip-card h2,
+  .final-cta h2 {
+    font-size: clamp(2.55rem, 12vw, 3.8rem);
+  }
+
+  .course-card,
+  .course-card:not(.course-card--feature) {
+    grid-template-columns: 1fr;
+  }
+
+  .course-card--feature {
+    grid-template-rows: auto;
+  }
+
+  .course-card__image,
+  .course-card--feature .course-card__image {
+    min-height: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  .course-card__body {
+    min-height: 270px;
+  }
+
+  .ecosystem__list li {
+    grid-template-columns: 48px 1fr;
+    gap: 14px;
+  }
+
+  .certificate-card__copy {
+    padding: 38px 25px 48px;
+  }
+
+  .certificate-card__visual {
+    min-height: 380px;
+    padding: 30px;
+  }
+
+  .certificate-card__monogram {
+    left: 28px;
+    font-size: 8.5rem;
+  }
+
+  .community-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .community-gallery figure:first-child {
+    grid-column: auto;
+  }
+
+  .community-gallery figure:first-child img,
+  .community-gallery img {
+    aspect-ratio: 1 / 1;
+  }
+
+  .vip-card {
+    padding: 38px 26px;
+    gap: 28px;
+  }
+
+  .final-cta {
+    padding-block: 88px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 44px 24px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer-note {
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+  }
+
+  .floating-whatsapp span {
+    display: none;
+  }
+
+  .floating-whatsapp {
+    width: 48px;
+    padding: 0;
+    justify-content: center;
+    box-shadow: 4px 5px 0 var(--aqua);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+<div class="site-shell"><div class="announcement"><div class="container announcement__inner"><span>Educación continua para profesionales de la salud</span><a href="verificar.html">Verificar certificado <span aria-hidden="true">↗</span></a></div></div><header class="site-header"><div class="container nav-shell"><a href="index.html" class="nav-brand"><span class="brand" aria-label="SYNOVA México"><span class="brand__crop" aria-hidden="true"><img src="synova-logo-remastered.png" alt=""/></span></span></a><nav class="desktop-nav" aria-label="Navegación principal"><a href="nosotros.html">Nosotros</a><a href="cursos.html">Cursos</a><a href="galeria.html">Galería</a><a href="opiniones.html">Opiniones</a><a href="contacto.html">Contacto</a></nav><a class="nav-cta" href="vip-auth.html">Club VIP <span aria-hidden="true">↗</span></a><details class="mobile-menu"><summary aria-label="Abrir menú"><span></span><span></span></summary><div class="mobile-menu__panel"><a href="nosotros.html">Nosotros</a><a href="cursos.html">Cursos</a><a href="galeria.html">Galería</a><a href="opiniones.html">Opiniones</a><a href="contacto.html">Contacto</a><a href="vip-auth.html">Entrar al Club VIP</a></div></details></div></header><main><section class="hero"><div class="container hero__grid"><div class="hero__copy"><p class="eyebrow"><span>Formación clínica</span><span>México · 2026</span></p><h1>La práctica clínica exige más.<em>Tu formación también.</em></h1><p class="hero__lead">Cursos online, sesiones en vivo y certificación con folio verificable para profesionales que quieren convertir conocimiento en mejores decisiones.</p><div class="hero__actions"><a class="button button--light" href="cursos.html">Explorar cursos <span aria-hidden="true">→</span></a><a class="text-link" href="https://wa.me/522381479274" target="_blank" rel="noreferrer">Hablar con un asesor <span aria-hidden="true">↗</span></a></div></div><div class="hero__portrait"><div class="hero__image-frame"><img src="assets/images/brand/banner.jpg" alt="Profesionales de la salud y capacitación clínica"/></div><p class="hero__vertical" aria-hidden="true">CURSOS · CAPACITACIONES · ASESORÍAS</p><div class="hero__seal" aria-label="17 cursos clínicos disponibles"><strong>17</strong><span>programas<br/>clínicos</span></div></div></div></section><section class="proof" aria-label="Datos de SYNOVA"><div class="container proof__grid"><div><strong>+500</strong><span>profesionales capacitados</span></div><div><strong>100%</strong><span>formación online</span></div><div><strong>Folio</strong><span>verificable en línea</span></div><p>Formación seria, actualizada y hecha para la realidad clínica.</p></div></section><section class="section courses-section"><div class="container"><div class="section-heading section-heading--split"><p class="section-index">01 / OFERTA ACADÉMICA</p><div><h2>Aprende lo que sí cambia tu práctica.</h2><p>Programas concretos, impartidos por especialistas y pensados para aplicar desde el primer día.</p></div></div><div class="courses-grid"><a class="course-card course-card--feature" href="cursos/triage-hospitalario.html"><div class="course-card__image"><img src="assets/images/courses/TRIAGE HOSPITALARIO.jpg" alt="Portada del curso Triage hospitalario" loading="lazy"/><span>01</span></div><div class="course-card__body"><p>Urgencias · 100% online</p><h3>Triage hospitalario</h3><span class="course-card__description">Clasificación de urgencias, prioridades y toma de decisiones clínicas bajo presión.</span><span class="course-card__link">Ver programa <b aria-hidden="true">↗</b></span></div></a><a class="course-card" href="cursos/manejo-de-heridas.html"><div class="course-card__image"><img src="assets/images/courses/MANEJO DE HERIDAS.jpg" alt="Portada del curso Manejo de heridas" loading="lazy"/><span>02</span></div><div class="course-card__body"><p>Enfermería · Certificado incluido</p><h3>Manejo de heridas</h3><span class="course-card__description">Valoración, curación avanzada y selección responsable de apósitos.</span><span class="course-card__link">Ver programa <b aria-hidden="true">↗</b></span></div></a><a class="course-card" href="cursos/codigo-mater.html"><div class="course-card__image"><img src="assets/images/courses/CODIGO MATER.jpg" alt="Portada del curso Código Mater" loading="lazy"/><span>03</span></div><div class="course-card__body"><p>Obstetricia · Sesión en vivo</p><h3>Código Mater</h3><span class="course-card__description">Herramientas concretas para responder a emergencias obstétricas.</span><span class="course-card__link">Ver programa <b aria-hidden="true">↗</b></span></div></a></div><div class="section-action"><a class="button button--ink" href="cursos.html">Ver los 17 cursos <span aria-hidden="true">→</span></a></div></div></section><section class="section ecosystem"><div class="container ecosystem__grid"><div class="ecosystem__intro"><p class="section-index section-index--light">02 / EXPERIENCIA SYNOVA</p><h2>Mucho más que ver una clase.</h2><p>Una experiencia de aprendizaje que conecta contenido, acompañamiento y comunidad profesional.</p><a href="nosotros.html" class="text-link text-link--light">Conoce SYNOVA <span aria-hidden="true">↗</span></a></div><ol class="ecosystem__list"><li><span>01</span><div><h3>Contenido que aterriza</h3><p>Casos, técnicas y herramientas que hablan el idioma de la práctica diaria.</p></div></li><li><span>02</span><div><h3>Acompañamiento en vivo</h3><p>Sesiones con especialistas para preguntar, contrastar y tomar mejores decisiones.</p></div></li><li><span>03</span><div><h3>Respaldo verificable</h3><p>Certificados con folio único y consulta pública en línea.</p></div></li></ol></div></section><section class="section certificate-section"><div class="container certificate-card"><div class="certificate-card__copy"><p class="section-index">03 / RESPALDO PROFESIONAL</p><h2>Tu formación merece una evidencia real.</h2><p>Cada certificado SYNOVA incluye un folio único que puede consultarse en línea. Una credencial clara para tu expediente, tu institución y tu crecimiento profesional.</p><a class="button button--ink" href="verificar.html">Verificar un certificado <span aria-hidden="true">↗</span></a></div><div class="certificate-card__visual" aria-hidden="true"><span class="certificate-card__monogram">S</span><div class="certificate-card__line"></div><p>CERTIFICADO<br/>VERIFICABLE</p><strong>MX · 2026</strong></div></div></section><section class="section community-section"><div class="container"><div class="section-heading section-heading--community"><div><p class="section-index">04 / COMUNIDAD</p><h2>Personas reales. Aprendizaje que se comparte.</h2></div><p>Profesionales de distintas áreas y ciudades que siguen creciendo, preguntando y compartiendo experiencia clínica.</p></div><div class="community-gallery"><figure><img src="assets/images/gallery/648256852_122200339580786379_3399218322212651607_n.jpg" alt="Participantes del curso de apósitos interactivos de SYNOVA México" loading="lazy"/><figcaption>Sesión en vivo · 01</figcaption></figure><figure><img src="assets/images/gallery/649047964_122200339298786379_2585916070326822505_n.jpg" alt="Participantes del curso de emergencias obstétricas y Código Mater" loading="lazy"/><figcaption>Sesión en vivo · 02</figcaption></figure><figure><img src="assets/images/gallery/645327852_122199367118786379_5032447924297202080_n.jpg" alt="Participantes de una clase en vivo de SYNOVA México" loading="lazy"/><figcaption>Sesión en vivo · 03</figcaption></figure></div><a class="community-link" href="galeria.html">Explorar la comunidad <span aria-hidden="true">→</span></a></div></section><section class="vip-section"><div class="container vip-card"><p class="vip-card__label">SYNOVA / CLUB VIP</p><div class="vip-card__copy"><h2>Tu espacio de actualización clínica, todo el año.</h2><p>Cursos, clases en vivo, herramientas clínicas y una comunidad profesional en un solo lugar.</p></div><a class="button button--light" href="vip-auth.html">Conocer Club VIP <span aria-hidden="true">↗</span></a></div></section><section class="final-cta"><div class="container final-cta__inner"><p class="section-index">HABLEMOS</p><h2>La siguiente decisión clínica empieza con lo que aprendes hoy.</h2><div><p>Cuéntanos qué quieres fortalecer y te ayudamos a encontrar el programa adecuado.</p><a class="button button--ink" href="https://wa.me/522381479274" target="_blank" rel="noreferrer">Escribir por WhatsApp <span aria-hidden="true">↗</span></a></div></div></section></main><footer class="site-footer"><div class="container footer-grid"><div class="footer-brand"><span class="brand" aria-label="SYNOVA México"><span class="brand__crop" aria-hidden="true"><img src="synova-logo-remastered.png" alt=""/></span></span><p>Capacitación clínica especializada para profesionales de la salud en México.</p></div><div><h3>Explora</h3><a href="cursos.html">Cursos</a><a href="nosotros.html">Nosotros</a><a href="galeria.html">Galería</a><a href="vip-auth.html">Club VIP</a></div><div><h3>Contacto</h3><a href="https://wa.me/522381479274" target="_blank" rel="noreferrer">+52 238 147 9274</a><a href="mailto:synovamexico@gmail.com">synovamexico@gmail.com</a><a href="https://www.instagram.com/synovamexico/" target="_blank" rel="noreferrer">Instagram</a><a href="https://www.facebook.com/profile.php?id=61573591396783" target="_blank" rel="noreferrer">Facebook</a></div><div class="footer-note"><span>Tehuacán, Puebla</span><span>© 2026 SYNOVA MÉXICO</span></div></div></footer><a class="floating-whatsapp" href="https://wa.me/522381479274" target="_blank" rel="noreferrer" aria-label="Contactar por WhatsApp"><span>WhatsApp</span><b aria-hidden="true">↗</b></a></div><div hidden=""><div hidden=""><title>SYNOVA MÉXICO | Formación clínica para profesionales de la salud</title><meta name="description" content="Cursos online, sesiones en vivo y certificación con folio verificable para profesionales de la salud en México."><meta property="og:title" content="La práctica clínica exige más. Tu formación también."><meta property="og:description" content="Formación clínica especializada, clases en vivo y certificados verificables con SYNOVA México."><meta property="og:site_name" content="SYNOVA México"><meta property="og:type" content="website"><meta property="og:locale" content="es_MX"><meta property="og:image" content="http://localhost:3000/og.png"><meta property="og:image:width" content="1536"><meta property="og:image:height" content="1024"><meta property="og:image:alt" content="SYNOVA México — Formación clínica especializada"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="SYNOVA México | Formación clínica especializada"><meta name="twitter:description" content="Cursos, clases en vivo y certificados verificables para profesionales de la salud."><meta name="twitter:image" content="http://localhost:3000/og.png"><link rel="shortcut icon" href="favicon-synova.png"><link rel="icon" href="favicon-synova.png"><link rel="apple-touch-icon" href="favicon-synova.png"></div></div>
+</body>
+</html>
