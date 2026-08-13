@@ -1140,6 +1140,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       <a class="nav-item" data-section="pdfs"><svg class="ic"><use href="#i-news"/></svg>PDFs y material</a>
       <a class="nav-item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
       <a class="nav-item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
+      <a class="nav-item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
     </div>
 
     <div class="nav-section">
@@ -1279,6 +1280,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
         <a class="mobile-drawer__item" data-section="pdfs"><svg class="ic"><use href="#i-news"/></svg>PDFs y material</a>
         <a class="mobile-drawer__item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
         <a class="mobile-drawer__item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
+        <a class="mobile-drawer__item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
       </div>
       <div class="mobile-drawer__section">
         <div class="mobile-drawer__label">Herramientas Pro</div>
@@ -3332,9 +3334,11 @@ async function montarStripeCheckout(plan){
   if (window.__synovaCheckout) { try { window.__synovaCheckout.destroy(); } catch (e) {} window.__synovaCheckout = null; }
   mount.innerHTML = '<div class="sub-loading"><div class="sub-loading__spin"></div><div>Cargando plan ' + (plan === 'anual' ? 'anual' : 'mensual') + '…</div></div>';
   try {
+    const idToken = window.__auth.currentUser ? await window.__auth.currentUser.getIdToken() : '';
+    const referralCode = localStorage.getItem('synova_referral_code') || '';
     const r = await fetch(window.__WEBHOOK_URL + '/stripe/checkout', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan, uid: S.uid, email: S.email })
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify({ plan, uid: S.uid, email: S.email, referralCode })
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
@@ -4858,5 +4862,6 @@ body{-webkit-tap-highlight-color:transparent}
   if (content) obs.observe(content, { childList:true, subtree:true });
 })();
 </script>
+<script src="assets/synova-referrals.js"></script>
 </body>
 </html>
