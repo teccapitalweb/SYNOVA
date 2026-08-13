@@ -413,7 +413,7 @@ body::after{
 .lock-overlay__txt{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--primary-soft);font-weight:700;letter-spacing:1px;text-transform:uppercase}
 [data-locked="true"]:hover .lock-overlay{opacity:1}
 [data-locked="true"] .lock-overlay{opacity:.9}
-.paywall-modal{position:fixed;inset:0;z-index:99200;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
+.paywall-modal{position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .2s ease}
 .paywall-modal.is-open{display:flex}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes dropFade{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
@@ -1432,6 +1432,8 @@ window.__showPaywallModal = function(sub){
   const el = document.getElementById('paywall-modal');
   const subEl = document.getElementById('paywall-sub');
   if (sub && subEl) subEl.textContent = sub;
+  // Mantener el paywall por encima del detalle del curso y cualquier otro modal.
+  if (el && el.parentElement !== document.body) document.body.appendChild(el);
   el.classList.add('is-open');
 };
 document.getElementById('paywall-close')?.addEventListener('click', () => document.getElementById('paywall-modal').classList.remove('is-open'));
