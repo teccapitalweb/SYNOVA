@@ -4141,7 +4141,7 @@ function mountNutricion(c){
         <button class="visor-btn visor-btn--close" id="visorClose"><svg class="ic"><use href="#i-close"/></svg>Cerrar</button>
       </div>
     </div>
-    <div class="visor-frame-wrap"><iframe id="visorFrame" allow="autoplay; fullscreen" allowfullscreen referrerpolicy="no-referrer"></iframe></div>
+    <div class="visor-frame-wrap"><iframe id="visorFrame" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
   </div>
 </div>
 <script>
@@ -4235,11 +4235,14 @@ function mountNutricion(c){
   const vTitle = document.getElementById('visorTitle');
   const vDl = document.getElementById('visorDownload');
   const vMark = document.getElementById('visorMark');
-  window.__abrirVisor = function(url, titulo, cursoId, idx){
-    if (!url){ Toast.info('Sin contenido','Este recurso aún no tiene enlace.'); return; }
-    frame.src = driveEmbed(url);
+  window.__abrirVisor = async function(recurso, titulo, cursoId, idx){
+    const esBunny = recurso && typeof recurso === 'object' && recurso.videoId;
+    const url = typeof recurso === 'string' ? recurso : (recurso && recurso.url || '');
+    if (!esBunny && !url){ Toast.info('Sin contenido','Este recurso aún no tiene enlace.'); return; }
+    frame.src = 'about:blank';
     vTitle.textContent = titulo || 'Visor';
-    vDl.href = url;
+    vDl.href = url || '#';
+    vDl.style.display = esBunny ? 'none' : 'inline-flex';
     if (cursoId != null && idx != null){
       const vista = cursoProg(cursoId).vistas.includes(idx);
       vMark.style.display = 'inline-flex';
@@ -4256,6 +4259,29 @@ function mountNutricion(c){
       };
     } else { vMark.style.display = 'none'; }
     ov.classList.add('is-open'); document.body.style.overflow = 'hidden';
+    if (!esBunny) {
+      frame.src = driveEmbed(url);
+      return;
+    }
+    try {
+      const user = window.__auth && window.__auth.currentUser;
+      if (!user) throw new Error('La sesión venció; vuelve a iniciar sesión');
+      vTitle.textContent = 'Cargando · ' + (titulo || 'Clase');
+      const idToken = await user.getIdToken();
+      const response = await fetch(window.__WEBHOOK_URL + '/api/bunny/embed-token', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + idToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId: recurso.videoId })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.embedUrl) throw new Error(data.error || 'No se pudo autorizar la reproducción');
+      frame.src = data.embedUrl;
+      vTitle.textContent = titulo || 'Clase';
+    } catch (error) {
+      console.error('[Bunny player]', error);
+      cerrarVisor();
+      Toast.error('No se pudo abrir la clase', error.message || 'Intenta nuevamente');
+    }
   };
   function cerrarVisor(){ ov.classList.remove('is-open'); frame.src = ''; document.body.style.overflow = ''; }
   window.__cerrarVisorSynova = cerrarVisor;
@@ -4521,7 +4547,7 @@ function mountNutricion(c){
         return;
       }
       const s = sesiones[i];
-      window.__abrirVisor(s.url, s.titulo || ('Clase '+(i+1)), id, i);
+      window.__abrirVisor(s.videoId ? s : s.url, s.titulo || ('Clase '+(i+1)), id, i);
     }));
     cont.querySelectorAll('[data-mat]').forEach(el => el.addEventListener('click', () => { const i = +el.dataset.mat; const m = materiales[i]; window.__abrirVisor(m.url, m.titulo || ('Material '+(i+1)), null, null); }));
   }

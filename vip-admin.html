@@ -558,6 +558,7 @@ window.__cerrarSesion = cerrarSesion;
 async function tokenAdmin(){ return window.__auth.currentUser ? await window.__auth.currentUser.getIdToken() : null; }
 window.__tokenAdmin = tokenAdmin;
 </script>
+<script src="assets/synova-bunny-catalog.js"></script>
 
 <!-- ICONOS SVG -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -1339,7 +1340,7 @@ PAGES.cursos = function(){
         <span class="sec-hero__eyebrow">Contenido</span>
         <h1 class="sec-hero__title">Cursos</h1>
         <p class="sec-hero__sub">Catálogo de cursos de procesos, normas y calidad de atención en salud.</p>
-        <div class="sec-hero__actions"><button class="btn btn-outline" onclick="abrirMigracionCursos()"><svg class="ic"><use href="#i-download"/></svg>Importar catálogo SYNOVA</button><button class="btn btn-primary" onclick="abrirModalCurso()"><svg class="ic"><use href="#i-plus"/></svg>Nuevo curso</button></div>
+        <div class="sec-hero__actions"><button class="btn btn-outline" onclick="sincronizarBunnySynova()" id="sync-bunny-btn"><svg class="ic"><use href="#i-broadcast"/></svg>Sincronizar 100 videos Bunny</button><button class="btn btn-outline" onclick="abrirMigracionCursos()"><svg class="ic"><use href="#i-download"/></svg>Importar catálogo SYNOVA</button><button class="btn btn-primary" onclick="abrirModalCurso()"><svg class="ic"><use href="#i-plus"/></svg>Nuevo curso</button></div>
       </div>
       <div class="curso-toolbar">
         <div class="curso-search-wrap"><svg class="ic curso-search__icon"><use href="#i-search"/></svg><input class="curso-search__input" id="cu-buscar" placeholder="Buscar curso o instructor…"></div>
@@ -1356,6 +1357,99 @@ PAGES.cursos = function(){
   page.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { __cursoView = b.dataset.view; PAGES._refrescar_cursos(true); }));
   PAGES._refrescar_cursos(true);
 };
+
+function _normalizarTituloBunny(valor){
+  return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+function _similitudTituloBunny(a, b){
+  const stop = new Set(['de','del','la','las','los','el','en','para','por','y','con']);
+  const tokens = valor => new Set(_normalizarTituloBunny(valor).split(' ').filter(x => x && !stop.has(x)));
+  const aa = tokens(a), bb = tokens(b);
+  if (!aa.size || !bb.size) return 0;
+  let iguales = 0; aa.forEach(x => { if (bb.has(x)) iguales++; });
+  return iguales / Math.max(aa.size, bb.size);
+}
+function _slugTituloBunny(valor){
+  return _normalizarTituloBunny(valor).replace(/\s+/g, '-').slice(0, 90) || ('curso-' + Date.now());
+}
+
+// Importación idempotente: puede repetirse sin duplicar los cursos ya vinculados.
+// Sustituye solamente las sesiones de video y conserva portadas, materiales,
+// descripción, orden, disponibilidad progresiva y demás datos editoriales.
+window.sincronizarBunnySynova = async function(){
+  const catalogo = window.SYNOVA_BUNNY_CATALOG;
+  const fb = window.__fs;
+  const btn = document.getElementById('sync-bunny-btn');
+  if (!Array.isArray(catalogo) || catalogo.length !== 24) {
+    Toast.error('Catálogo Bunny no disponible', 'No se encontró el mapa de los 100 videos');
+    return;
+  }
+  if (!fb?.setDoc || !fb?.getDocs || !fb?.collection || !fb?.doc || !fb?.db) {
+    Toast.info('Firestore está cargando', 'Espera unos segundos e intenta de nuevo');
+    return;
+  }
+  const totalVideos = catalogo.reduce((n, c) => n + c.sesiones.length, 0);
+  if (!confirm(`Se vincularán ${totalVideos} videos de Bunny con ${catalogo.length} cursos.\n\nLas clases anteriores serán reemplazadas, pero se conservarán portadas, descripciones, materiales, orden y disponibilidad.\n\n¿Continuar?`)) return;
+
+  if (btn) { btn.disabled = true; btn.style.opacity = '.65'; btn.textContent = 'Sincronizando…'; }
+  try {
+    const snap = await fb.getDocs(fb.collection(fb.db, 'cursos'));
+    const existentes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const usados = new Set();
+    const ordenes = existentes.map(c => Number.isFinite(c.orden) ? c.orden : 0);
+    let siguienteOrden = (ordenes.length ? Math.max(...ordenes) : -1) + 1;
+    let actualizados = 0, creados = 0;
+
+    for (const item of catalogo) {
+      const tituloCurso = c => c.nombre || c.titulo || '';
+      const exacto = existentes.find(c => !usados.has(c.id) && _normalizarTituloBunny(tituloCurso(c)) === _normalizarTituloBunny(item.titulo));
+      const previo = exacto || existentes
+        .filter(c => !usados.has(c.id))
+        .map(c => ({ curso: c, score: _similitudTituloBunny(tituloCurso(c), item.titulo) }))
+        .filter(x => x.score >= 0.75).sort((a,b) => b.score - a.score)[0]?.curso || null;
+      const docId = previo?.id || `bunny-${_slugTituloBunny(item.titulo)}`;
+      if (previo) usados.add(previo.id);
+
+      const data = {
+        sesiones: item.sesiones.map((s, i) => ({
+          numero: i + 1,
+          orden: i + 1,
+          titulo: s.titulo || `Clase ${i + 1}`,
+          provider: 'bunny',
+          videoId: s.videoId
+        })),
+        videoProvider: 'bunny',
+        bunnyLibraryId: 725255,
+        bunnyCollectionId: item.collectionId,
+        migradoDesdeDrive: true,
+        actualizadoEn: fb.serverTimestamp()
+      };
+      if (!previo) {
+        Object.assign(data, {
+          nombre: item.titulo,
+          descripcion: '', area: 'Salud', nivel: 'Intermedio',
+          instructor: 'Equipo SYNOVA', horas: Math.max(1, item.sesiones.length),
+          materiales: [], disponibleSiempre: false, activo: true,
+          orden: siguienteOrden++, inscritos: 0, createdAt: fb.serverTimestamp()
+        });
+        creados++;
+      } else actualizados++;
+
+      await fb.setDoc(fb.doc(fb.db, 'cursos', docId), data, { merge: true });
+    }
+    Toast.success('Catálogo Bunny sincronizado', `${totalVideos} videos · ${actualizados} cursos actualizados · ${creados} creados`);
+  } catch (error) {
+    console.error('[migración Bunny]', error);
+    Toast.error('No se pudo sincronizar', error.message || 'Revisa permisos y conexión');
+  } finally {
+    if (btn) {
+      btn.disabled = false; btn.style.opacity = '';
+      btn.innerHTML = '<svg class="ic"><use href="#i-broadcast"/></svg>Sincronizar 100 videos Bunny';
+    }
+  }
+};
+
 PAGES._refrescar_cursos = function(rebindView){
   if (rebindView) { document.querySelectorAll('.curso-view__btn').forEach(b => b.dataset.active = b.dataset.view === __cursoView ? '1' : '0'); }
   const areas = [...new Set(Store.cursos.map(c => c.area || 'General'))];
@@ -1469,7 +1563,8 @@ function _mcRenderSesiones(body){
       <span style="background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;letter-spacing:.6px;padding:5px 8px;border-radius:6px;flex-shrink:0;margin-top:4px;white-space:nowrap;">CLASE ${idx+1}</span>
       <div style="flex:1;display:flex;flex-direction:column;gap:6px;min-width:0;">
         <input type="text" class="input" placeholder="Título de la clase (opcional)" value="${escHtml(s.titulo||'')}" data-ses-idx="${idx}" data-ses-campo="titulo" style="font-size:13px;padding:8px 11px;">
-        <input type="url" class="input" placeholder="URL del video (Google Drive, YouTube, etc.)" value="${escHtml(s.url||'')}" data-ses-idx="${idx}" data-ses-campo="url" style="font-size:13px;padding:8px 11px;">
+        <input type="text" class="input" placeholder="Bunny Video ID (UUID)" value="${escHtml(s.videoId||'')}" data-ses-idx="${idx}" data-ses-campo="videoId" style="font-size:13px;padding:8px 11px;font-family:'JetBrains Mono',monospace;">
+        <input type="url" class="input" placeholder="URL antigua (solo compatibilidad con Drive)" value="${escHtml(s.url||'')}" data-ses-idx="${idx}" data-ses-campo="url" style="font-size:13px;padding:8px 11px;">
       </div>
       <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
         <button type="button" class="curso-card__action" data-ses-mover="${idx}" data-delta="-1" ${idx===0?'disabled':''} title="Subir" style="width:28px;height:24px;${idx===0?'opacity:.4;cursor:not-allowed;':''}">▲</button>
@@ -1519,7 +1614,7 @@ function _mcRenderMats(body){
 }
 window.abrirModalCurso = function(id){
   const c = id ? Store.cursos.find(x => x.id === id) : null;
-  __mc.sesiones = (c?.sesiones || []).map(s => ({ titulo: s.titulo || '', url: s.url || '' }));
+  __mc.sesiones = (c?.sesiones || []).map(s => ({ titulo: s.titulo || '', provider: s.provider || (s.videoId ? 'bunny' : 'drive'), videoId: s.videoId || '', url: s.url || '' }));
   __mc.materiales = (c?.materiales || []).map(m => ({ titulo: m.titulo || '', url: m.url || '', portada: m.portada || '', disponibleSiempre: m.disponibleSiempre === true }));
   const dispSiempre = c?.disponibleSiempre === true;
   const body = document.createElement('div');
@@ -1575,20 +1670,23 @@ window.abrirModalCurso = function(id){
   footer.innerHTML = `<button class="btn btn-outline btn-sm" id="cu-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="cu-guardar"><svg class="ic"><use href="#i-check"/></svg>${c?'Guardar cambios':'Crear curso'}</button>`;
   Modal.open({ title: c ? 'Editar curso' : 'Nuevo curso', subtitle: 'Catálogo SYNOVA', icon: 'i-book', body, footer });
   _mcRenderSesiones(body); _mcRenderMats(body);
-  body.querySelector('#cu-add-sesion').addEventListener('click', () => { __mc.sesiones.push({ titulo: '', url: '' }); _mcRenderSesiones(body); });
+  body.querySelector('#cu-add-sesion').addEventListener('click', () => { __mc.sesiones.push({ titulo: '', provider: 'bunny', videoId: '', url: '' }); _mcRenderSesiones(body); });
   body.querySelector('#cu-add-mat').addEventListener('click', () => { __mc.materiales.push({ titulo: '', url: '', disponibleSiempre: false }); _mcRenderMats(body); });
   footer.querySelector('#cu-cancel').addEventListener('click', () => Modal.close());
   footer.querySelector('#cu-guardar').addEventListener('click', async () => {
     const nombre = body.querySelector('#cu-nombre').value.trim();
     if (!nombre) { Toast.error('Falta el nombre del curso'); return; }
-    /* Clases: URL obligatoria, título autogenerado si falta */
+    /* Clases: Bunny usa videoId; URL queda solo para videos antiguos. */
     const sesiones = [];
     for (let i = 0; i < __mc.sesiones.length; i++){
-      const s = __mc.sesiones[i], tit = (s.titulo||'').trim(), url = (s.url||'').trim();
-      if (!tit && !url) continue;
-      if (!url) { Toast.error(`Clase ${i+1} sin video`, 'Pega la URL del video (el título es opcional)'); return; }
-      try { new URL(url); } catch(e){ Toast.error(`Clase ${i+1}: URL inválida`, 'Verifica el enlace'); return; }
-      sesiones.push({ titulo: tit || `Clase ${sesiones.length+1}`, url, orden: sesiones.length + 1 });
+      const s = __mc.sesiones[i], tit = (s.titulo||'').trim(), videoId = (s.videoId||'').trim().toLowerCase(), url = (s.url||'').trim();
+      if (!tit && !videoId && !url) continue;
+      if (!videoId && !url) { Toast.error(`Clase ${i+1} sin video`, 'Pega el Video ID de Bunny o una URL antigua'); return; }
+      if (videoId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(videoId)) {
+        Toast.error(`Clase ${i+1}: Video ID inválido`, 'Copia el GUID completo desde Bunny Stream'); return;
+      }
+      if (!videoId) { try { new URL(url); } catch(e){ Toast.error(`Clase ${i+1}: URL inválida`, 'Verifica el enlace'); return; } }
+      sesiones.push({ titulo: tit || `Clase ${sesiones.length+1}`, provider: videoId ? 'bunny' : 'drive', videoId, url: videoId ? '' : url, orden: sesiones.length + 1 });
     }
     /* Materiales: título Y URL */
     const materiales = [];
