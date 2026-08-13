@@ -1438,7 +1438,17 @@ window.__showPaywallModal = function(sub){
 };
 document.getElementById('paywall-close')?.addEventListener('click', () => document.getElementById('paywall-modal').classList.remove('is-open'));
 document.getElementById('paywall-dismiss')?.addEventListener('click', () => document.getElementById('paywall-modal').classList.remove('is-open'));
-document.getElementById('paywall-cta')?.addEventListener('click', () => { document.getElementById('paywall-modal').classList.remove('is-open'); navigateTo('suscripcion'); });
+document.getElementById('paywall-cta')?.addEventListener('click', () => {
+  const paywall = document.getElementById('paywall-modal');
+  const detalle = document.querySelector('.modal-backdrop.is-open[data-modal-id="curso-detalle"]');
+  if (detalle) Modal.close('curso-detalle');
+  const mostrarPlanes = () => {
+    navigateTo('suscripcion');
+    paywall.classList.remove('is-open');
+  };
+  if (detalle) setTimeout(mostrarPlanes, 270);
+  else mostrarPlanes();
+});
 document.getElementById('paywall-modal')?.addEventListener('click', e => { if (e.target.id === 'paywall-modal') e.currentTarget.classList.remove('is-open'); });
 
 /* ══════════════════════ DRAWER MÓVIL ══════════════════════ */
