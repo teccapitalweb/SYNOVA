@@ -475,6 +475,37 @@ function toolRequiereVIP(nombre){
   });
   return false;
 }
+
+/* ── El resultado ES lo que se cobra ─────────────────────────────────────
+   El usuario sin membresía puede explorar la herramienta y capturar todos
+   sus datos. Cuando el cálculo ya iba a entregarle el número, se detiene
+   aquí y se le ofrece la membresía. El PDF sigue con su propio candado. */
+function toolGateResultado(nombre, refs){
+  if (window.toolEsVIP && window.toolEsVIP()) return true;
+  refs = refs || {};
+  if (refs.val){
+    refs.val.innerHTML = '<span style="font-size:.42em;font-weight:800;letter-spacing:1px;opacity:.8">SOLO VIP</span>';
+    refs.val.style.color = 'var(--text-3)';
+  }
+  if (refs.note) refs.note.textContent = 'Ya capturaste los datos: activa tu membresía para ver el resultado.';
+  [refs.mini, refs.extra1, refs.extra2].forEach(function(el){ if (el && el.style) el.style.display = 'none'; });
+  if (refs.alert){
+    refs.alert.innerHTML = '<div class="bn-alert bn-alert--warn">' +
+      '<svg class="ic"><use href="#i-crown"/></svg>' +
+      '<div><b>Resultado exclusivo para miembros VIP.</b> Capturaste todo bien; para ver ' +
+      escHtml(nombre || 'el cálculo') + ' y descargar el reporte en PDF necesitas una membresía activa.' +
+      '<div style="margin-top:10px"><button type="button" class="btn btn--accent btn--sm" data-tool-paywall="' +
+      escHtml(nombre || '') + '">Hazte VIP</button></div></div></div>';
+  }
+  /* El modal salta una sola vez por sesión: el aviso de arriba queda fijo. */
+  if (!window.__toolPaywallVisto){ window.__toolPaywallVisto = true; toolRequiereVIP(nombre); }
+  return false;
+}
+document.addEventListener('click', function(ev){
+  var b = ev.target && ev.target.closest && ev.target.closest('[data-tool-paywall]');
+  if (b){ ev.preventDefault(); toolRequiereVIP(b.getAttribute('data-tool-paywall')); }
+});
+
 document.getElementById('paywall-close')?.addEventListener('click', () => document.getElementById('paywall-modal').classList.remove('is-open'));
 document.getElementById('paywall-dismiss')?.addEventListener('click', () => document.getElementById('paywall-modal').classList.remove('is-open'));
 document.getElementById('paywall-modal')?.addEventListener('click', e => { if (e.target.id === 'paywall-modal') e.currentTarget.classList.remove('is-open'); });
@@ -552,7 +583,7 @@ function qrDataURL(text, size){
 /* Shell común de cada herramienta */
 function toolShell(container, cfg){
   const lock = (!toolEsVIP())
-    ? `<div class="bn-viplock"><div class="bn-viplock__ic"><svg class="ic"><use href="#i-crown"/></svg></div><div class="bn-viplock__txt"><div class="bn-viplock__t">Herramienta Pro · exclusiva para miembros VIP</div><div class="bn-viplock__d">Puedes explorarla y capturar datos, pero el resultado y el reporte PDF requieren una membresía activa.</div></div><a class="btn btn--accent btn--sm bn-viplock-btn" href="vip-panel.html?seccion=suscripcion">Hazte VIP</a></div>`
+    ? `<div class="bn-viplock"><div class="bn-viplock__ic"><svg class="ic"><use href="#i-crown"/></svg></div><div class="bn-viplock__txt"><div class="bn-viplock__t">Herramienta Pro · exclusiva para miembros VIP</div><div class="bn-viplock__d">Captura los datos que quieras: el resultado y el reporte PDF se abren con tu membresía activa.</div></div><a class="btn btn--accent btn--sm bn-viplock-btn" href="vip-panel.html?seccion=suscripcion">Hazte VIP</a></div>`
     : '';
   container.innerHTML = `
     <div class="bn-tool fade-up">
@@ -725,6 +756,7 @@ window.addEventListener('synova:ready', bootTools);
       q('dp-m-basis').textContent = f.basis==='dia' ? 'por día' : 'por dosis';
       q('dp-m-rango').textContent = (f.min===f.max?fmt(f.min,2):fmt(f.min,2)+'–'+fmt(f.max,2))+' mg/kg';
       if (peso===null || peso<=0){ val.textContent='—'; esq.textContent='Captura el peso para calcular.'; mini.style.display='none'; alert.innerHTML=''; last=null; return; }
+      if (!toolGateResultado('la calculadora de dosis', { val: val, note: esq, mini: mini, alert: alert })){ last=null; return; }
 
       let perMin, perMax, diaMin, diaMax;
       if (f.basis==='dia'){
@@ -1050,6 +1082,10 @@ window.addEventListener('synova:ready', bootTools);
       const sis=num(q('ic-sis').value), dia=num(q('ic-dia').value);
       const imcEl=q('ic-imc'), clsEl=q('ic-imc-cls'), mini=q('ic-mini'), reco=q('ic-reco');
 
+      /* Con cualquier dato real ya habría resultado en pantalla: aquí se corta */
+      if ((peso>0 || tallaCm>0 || cint>0 || cad>0 || sis>0 || dia>0) &&
+          !toolGateResultado('la calculadora de IMC', { val: imcEl, note: clsEl, mini: mini, alert: reco })){ last=null; return; }
+
       let imc=null, cls=null;
       if (peso>0 && tallaCm>0){
         const t=tallaCm/100; imc=peso/(t*t); cls=clasificarIMC(imc);
@@ -1211,6 +1247,7 @@ window.addEventListener('synova:ready', bootTools);
       epiCard.style.display = a.epiMgml>0 ? '' : 'none';
 
       if (peso===null || peso<=0){ val.textContent='—'; note.textContent='Captura el peso para calcular.'; mini.style.display='none'; alert.innerHTML=''; last=null; return; }
+      if (!toolGateResultado('la calculadora de anestésicos', { val: val, note: note, mini: mini, alert: alert })){ last=null; return; }
 
       const maxByKg = peso*a.maxKg;
       const maxAnes = Math.min(maxByKg, a.maxAbs);
@@ -1368,6 +1405,7 @@ window.addEventListener('synova:ready', bootTools);
       const o=OBJ[q('nu-obj').value];
       const kcalEl=q('nu-kcal'), note=q('nu-note'), miniE=q('nu-mini-e'), macroCard=q('nu-macro-card');
       if (!(peso>0 && tallaCm>0 && edad>0)){ kcalEl.textContent='—'; note.textContent='Captura peso, talla y edad.'; miniE.style.display='none'; macroCard.style.display='none'; last=null; return; }
+      if (!toolGateResultado('la calculadora de nutrición', { val: kcalEl, note: note, mini: miniE, extra1: macroCard })){ last=null; return; }
 
       const mifflin = sexo==='M' ? (10*peso + 6.25*tallaCm - 5*edad + 5) : (10*peso + 6.25*tallaCm - 5*edad - 161);
       const hb = sexo==='M' ? (88.362 + 13.397*peso + 4.799*tallaCm - 5.677*edad) : (447.593 + 9.247*peso + 3.098*tallaCm - 4.330*edad);

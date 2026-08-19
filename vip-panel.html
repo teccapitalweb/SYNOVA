@@ -3664,6 +3664,37 @@ function noticiaTiempoRel(ts){
     else if (window.Toast) Toast.info('Solo VIP','Activa tu membresía para usar esta función.');
     return false;
   }
+
+  /* ── El resultado ES lo que se cobra ─────────────────────────────────────
+     El usuario sin membresía puede explorar la herramienta y capturar todos
+     sus datos. Cuando el cálculo ya iba a entregarle el número, se detiene
+     aquí y se le ofrece la membresía. El PDF sigue con su propio candado. */
+  function toolGateResultado(nombre, refs){
+    if (window.toolEsVIP && window.toolEsVIP()) return true;
+    refs = refs || {};
+    if (refs.val){
+      refs.val.innerHTML = '<span style="font-size:.42em;font-weight:800;letter-spacing:1px;opacity:.8">SOLO VIP</span>';
+      refs.val.style.color = 'var(--text-3)';
+    }
+    if (refs.note) refs.note.textContent = 'Ya capturaste los datos: activa tu membresía para ver el resultado.';
+    [refs.mini, refs.extra1, refs.extra2].forEach(function(el){ if (el && el.style) el.style.display = 'none'; });
+    if (refs.alert){
+      refs.alert.innerHTML = '<div class="bn-alert bn-alert--warn">' +
+        '<svg class="ic"><use href="#i-crown"/></svg>' +
+        '<div><b>Resultado exclusivo para miembros VIP.</b> Capturaste todo bien; para ver ' +
+        escHtml(nombre || 'el cálculo') + ' y descargar el reporte en PDF necesitas una membresía activa.' +
+        '<div style="margin-top:10px"><button type="button" class="btn btn--accent btn--sm" data-tool-paywall="' +
+        escHtml(nombre || '') + '">Hazte VIP</button></div></div></div>';
+    }
+    /* El modal salta una sola vez por sesión: el aviso de arriba queda fijo. */
+    if (!window.__toolPaywallVisto){ window.__toolPaywallVisto = true; toolRequiereVIP(nombre); }
+    return false;
+  }
+  document.addEventListener('click', function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest('[data-tool-paywall]');
+    if (b){ ev.preventDefault(); toolRequiereVIP(b.getAttribute('data-tool-paywall')); }
+  });
+  
   const esVIP = () => !!(window.toolEsVIP && window.toolEsVIP());
 
   /* ── PDF membrete SYNOVA ── */
@@ -3716,7 +3747,7 @@ function noticiaTiempoRel(ts){
   /* Shell común */
   function toolShell(container, cfg){
     const lock = (!esVIP())
-      ? '<div class="bn-viplock"><div class="bn-viplock__ic"><svg class="ic"><use href="#i-crown"/></svg></div><div class="bn-viplock__txt"><div class="bn-viplock__t">Herramienta Pro · exclusiva para miembros VIP</div><div class="bn-viplock__d">Puedes explorarla y capturar datos, pero el resultado y el reporte PDF requieren una membresía activa.</div></div><button class="btn btn--accent btn--sm bn-viplock-btn" data-section="suscripcion">Hazte VIP</button></div>'
+      ? '<div class="bn-viplock"><div class="bn-viplock__ic"><svg class="ic"><use href="#i-crown"/></svg></div><div class="bn-viplock__txt"><div class="bn-viplock__t">Herramienta Pro · exclusiva para miembros VIP</div><div class="bn-viplock__d">Captura los datos que quieras: el resultado y el reporte PDF se abren con tu membresía activa.</div></div><button class="btn btn--accent btn--sm bn-viplock-btn" data-section="suscripcion">Hazte VIP</button></div>'
       : '';
     container.innerHTML =
       '<div class="bn-tool fade-up">' +
@@ -3781,6 +3812,7 @@ function mountDosis(c){
     q('dp-m-basis').textContent=f.basis==='dia'?'por día':'por dosis';
     q('dp-m-rango').textContent=(f.min===f.max?fmt(f.min,2):fmt(f.min,2)+'–'+fmt(f.max,2))+' mg/kg';
     if(peso===null||peso<=0){ val.textContent='—'; esq.textContent='Captura el peso para calcular.'; mini.style.display='none'; alert.innerHTML=''; last=null; return; }
+    if(!toolGateResultado('la calculadora de dosis',{val:val,note:esq,mini:mini,alert:alert})){ last=null; return; }
     let perMin,perMax,diaMin,diaMax;
     if(f.basis==='dia'){ diaMin=peso*f.min; diaMax=peso*f.max; if(f.maxDia){diaMin=Math.min(diaMin,f.maxDia);diaMax=Math.min(diaMax,f.maxDia);} perMin=diaMin/freq; perMax=diaMax/freq; }
     else { perMin=peso*f.min; perMax=peso*f.max; if(f.maxDosis){perMin=Math.min(perMin,f.maxDosis);perMax=Math.min(perMax,f.maxDosis);} diaMin=perMin*freq; diaMax=perMax*freq; if(f.maxDia){diaMin=Math.min(diaMin,f.maxDia);diaMax=Math.min(diaMax,f.maxDia);} }
@@ -3888,7 +3920,7 @@ function mountImc(c){
   toolShell(c,{ icon:'i-heart', title:'IMC y riesgo cardiometabólico', sub:'Índice de masa corporal con clasificación OMS, circunferencia de cintura, índices cintura/cadera y cintura/talla, y clasificación de presión arterial en un solo tablero.',
     actions:'<button class="btn btn--accent btn--sm" id="ic-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>',
     body:'<div class="bn-card"><div class="bn-card__t"><svg class="ic"><use href="#i-user"/></svg>Datos antropométricos</div><div class="bn-grid">'+
-        '<div class="bn-field"><label>Sexo</label><div class="bn-seg" id="ic-sexo"><button data-v="M" class="is-on">Hombre</button><button data-v="F">Mujer</button></div><div class="bn-field__hint">Ajusta los puntos de corte</div></div>'+
+        '<div class="bn-field"><label>Sexo</label><div class="bn-seg" id="ic-sexo"><button data-v="M" class="is-on">Hombre</button><button data-v="F">Mujer</button></div><div class="bn-field__hint">Ajusta los puntos de corte de riesgo</div></div>'+
         '<div class="bn-field"><label>Edad</label><input class="input" id="ic-edad" inputmode="numeric" placeholder="años"><div class="bn-field__hint">Opcional</div></div>'+
         '<div class="bn-field"><label>Peso</label><input class="input" id="ic-peso" inputmode="decimal" placeholder="ej. 78"><div class="bn-field__hint">kg</div></div>'+
         '<div class="bn-field"><label>Talla</label><input class="input" id="ic-talla" inputmode="decimal" placeholder="ej. 172"><div class="bn-field__hint">cm</div></div>'+
@@ -3913,6 +3945,8 @@ function mountImc(c){
   function calc(){
     const peso=num(q('ic-peso').value),tallaCm=num(q('ic-talla').value),cint=num(q('ic-cint').value),cad=num(q('ic-cad').value),sis=num(q('ic-sis').value),dia=num(q('ic-dia').value);
     const imcEl=q('ic-imc'),clsEl=q('ic-imc-cls'),mini=q('ic-mini'),reco=q('ic-reco');
+    /* Con cualquier dato real ya habría resultado en pantalla: aquí se corta */
+    if((peso>0||tallaCm>0||cint>0||cad>0||sis>0||dia>0) && !toolGateResultado('la calculadora de IMC',{val:imcEl,note:clsEl,mini:mini,alert:reco})){ last=null; return; }
     let imc=null,cls=null;
     if(peso>0&&tallaCm>0){ const t=tallaCm/100; imc=peso/(t*t); cls=clasImc(imc); imcEl.textContent=fmt(imc,1); imcEl.style.color=cls.b==='ok'?'var(--success)':cls.b==='mid'?'var(--warn)':'var(--danger)'; clsEl.innerHTML='<span class="bn-badge bn-badge--'+cls.b+'">'+cls.t.toUpperCase()+'</span>'; q('ic-pesoideal').textContent=fmt(18.5*t*t,0)+'–'+fmt(24.9*t*t,0)+' kg'; }
     else { imcEl.textContent='—'; imcEl.style.color=''; clsEl.textContent='Captura peso y talla.'; }
@@ -3989,6 +4023,7 @@ function mountAnest(c){
     const val=q('an-val'),note=q('an-note'),mini=q('an-mini'),alert=q('an-alert'),epiCard=q('an-epi-card');
     epiCard.style.display=a.epiMgml>0?'':'none';
     if(peso===null||peso<=0){ val.textContent='—'; note.textContent='Captura el peso para calcular.'; mini.style.display='none'; alert.innerHTML=''; last=null; return; }
+    if(!toolGateResultado('la calculadora de anestésicos',{val:val,note:note,mini:mini,alert:alert})){ last=null; return; }
     const maxByKg=peso*a.maxKg, maxAnes=Math.min(maxByKg,a.maxAbs), cartMg=a.mgml*CART_ML, maxCartAnes=maxAnes/cartMg;
     let maxCartEpi=Infinity,epiLim=null,maxCartFinal=maxCartAnes,limitante='anestésico';
     if(a.epiMgml>0){ epiLim=estado==='cardio'?0.04:0.2; maxCartEpi=epiLim/(a.epiMgml*CART_ML); if(maxCartEpi<maxCartAnes){maxCartFinal=maxCartEpi;limitante='vasoconstrictor';} }
@@ -4002,7 +4037,7 @@ function mountAnest(c){
     let al='';
     if(peso*a.maxKg>a.maxAbs)al+='<div class="bn-alert bn-alert--info"><svg class="ic"><use href="#i-info"/></svg><div>El cálculo por peso ('+fmt(peso*a.maxKg,0)+' mg) excede el tope absoluto del fármaco; se aplicó el máximo de <b>'+a.maxAbs+' mg</b>.</div></div>';
     if(limitante==='vasoconstrictor')al+='<div class="bn-alert bn-alert--warn"><svg class="ic"><use href="#i-alert-triangle"/></svg><div><b>El vasoconstrictor es el factor limitante.</b> En este paciente '+(estado==='cardio'?'cardiópata':'sano')+', la epinefrina limita a <b>'+fmt(maxCartFinal,1)+' cartuchos</b> antes que el propio anestésico.</div></div>';
-    if(cartUsa>0){ if(cartUsa>maxCartFinal)al+='<div class="bn-alert bn-alert--danger"><svg class="ic"><use href="#i-alert-triangle"/></svg><div><b>Excede el máximo seguro.</b> Planeas '+fmt(cartUsa,1)+' cartuchos ('+fmt(cartUsa*cartMg,0)+' mg) y el límite es '+fmt(maxCartFinal,1)+' ('+fmt(maxMgFinal,0)+' mg). Reduce la dosis.</div></div>'; else al+='<div class="bn-alert bn-alert--ok"><svg class="ic"><use href="#i-check-circle"/></svg><div><b>Dentro del margen seguro.</b> '+fmt(cartUsa,1)+' cartuchos = '+fmt(cartUsa*cartMg,0)+' mg ('+fmt(cartUsa/maxCartFinal*100,0)+'% del máximo).</div></div>'; }
+    if(cartUsa>0){ if(cartUsa>maxCartFinal)al+='<div class="bn-alert bn-alert--danger"><svg class="ic"><use href="#i-alert-triangle"/></svg><div><b>⚠ Excede el máximo seguro.</b> Planeas '+fmt(cartUsa,1)+' cartuchos ('+fmt(cartUsa*cartMg,0)+' mg) y el límite es '+fmt(maxCartFinal,1)+' ('+fmt(maxMgFinal,0)+' mg). Reduce la dosis.</div></div>'; else al+='<div class="bn-alert bn-alert--ok"><svg class="ic"><use href="#i-check-circle"/></svg><div><b>Dentro del margen seguro.</b> '+fmt(cartUsa,1)+' cartuchos = '+fmt(cartUsa*cartMg,0)+' mg ('+fmt(cartUsa/maxCartFinal*100,0)+'% del máximo).</div></div>'; }
     alert.innerHTML=al;
     last={a,peso,estado,maxMgFinal,maxVolFinal,maxCartFinal,maxAnes,epiLim,limitante,cartUsa};
   }
@@ -4055,6 +4090,7 @@ function mountNutricion(c){
     const peso=num(q('nu-peso').value),tallaCm=num(q('nu-talla').value),edad=num(q('nu-edad').value),act=parseFloat(q('nu-act').value)||1.55,o=NU_OBJ[q('nu-obj').value];
     const kcalEl=q('nu-kcal'),note=q('nu-note'),miniE=q('nu-mini-e'),macroCard=q('nu-macro-card');
     if(!(peso>0&&tallaCm>0&&edad>0)){ kcalEl.textContent='—'; note.textContent='Captura peso, talla y edad.'; miniE.style.display='none'; macroCard.style.display='none'; last=null; return; }
+    if(!toolGateResultado('la calculadora de nutrición',{val:kcalEl,note:note,mini:miniE,extra1:macroCard})){ last=null; return; }
     const mifflin=sexo==='M'?(10*peso+6.25*tallaCm-5*edad+5):(10*peso+6.25*tallaCm-5*edad-161);
     const hb=sexo==='M'?(88.362+13.397*peso+4.799*tallaCm-5.677*edad):(447.593+9.247*peso+3.098*tallaCm-4.330*edad);
     const get=mifflin*act, objetivo=o.tipo==='factor'?(mifflin*o.aj):(get+o.aj);
