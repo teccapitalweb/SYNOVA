@@ -56,7 +56,7 @@
 
   MembershipTour.prototype.hasBlockingDialog = function () {
     var self = this;
-    return Array.prototype.some.call(document.querySelectorAll('[role="dialog"],#name-modal,.modal-backdrop,.splash-bnv,.splash-cmp,.welcome-splash'), function (el) {
+    return Array.prototype.some.call(document.querySelectorAll('[role="dialog"],#name-modal,#splash-bienvenida,#splash-completado,#cancel-success-splash,.modal-backdrop,.splash-bnv,.splash-cmp,.welcome-splash'), function (el) {
       return el !== self.root && !el.closest('.membership-tour') && self.isVisible(el) && el.getAttribute('aria-hidden') !== 'true';
     });
   };
