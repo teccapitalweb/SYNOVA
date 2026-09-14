@@ -1102,7 +1102,7 @@ function modalActivarManual(m, plan, dias){
       await updateDoc(doc(db, 'miembros', m.id), {
         activa: true, activo: true, plan, esRegalo: false, estadoSuscripcion: 'activa',
         expiraEn: expira.toISOString(), fechaFinAcceso: expira.toISOString(), cancelacionProgramada: false,
-        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp(),
+        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), fechaVipDesde: serverTimestamp(), updatedAt: serverTimestamp(),
         /* Siembra el splash de bienvenida en el panel del miembro (flujo OdonTeck):
            la próxima vez que abra vip-panel verá el MISMO recorrido que post-pago Stripe */
         notificacionPendiente: { tipo: 'bienvenida', plan, dias: diasFinal, mostrada: false, creadaEn: new Date().toISOString() }
@@ -1123,7 +1123,7 @@ function modalRegalar(m){
     <div class="grid grid-2" style="margin-bottom:14px">
       ${[3,7,10,30].map(d => `<button class="mb-opt" data-days="${d}" style="justify-content:center;text-align:center;flex-direction:column"><span style="font-size:20px;font-weight:800;color:var(--accent)">${d} días</span></button>`).join('')}
     </div>
-    <div class="info-strip">El miembro recibirá acceso completo por cortesía. Al expirar vuelve a "Sin pagar".</div>`;
+    <div class="info-strip">El miembro recibirá acceso VIP por cortesía y sus cursos se liberarán cada 6 días. Al expirar vuelve a "Sin pagar".</div>`;
   const footer = document.createElement('div');
   footer.innerHTML = `<button class="btn btn-outline btn-sm" id="rg-cancel">Cancelar</button>`;
   Modal.open({ title: 'Regalar acceso', subtitle: 'Cortesía temporal', icon: 'i-users', body, footer });
@@ -1137,7 +1137,7 @@ function modalRegalar(m){
       await updateDoc(doc(db, 'miembros', m.id), {
         activa: true, activo: true, plan: 'regalo', esRegalo: true, estadoSuscripcion: 'activa',
         expiraEn: expira.toISOString(), fechaFinAcceso: expira.toISOString(), cancelacionProgramada: false,
-        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), updatedAt: serverTimestamp(),
+        activadoPor: window.AdminUser.email, fechaActivacionManual: serverTimestamp(), fechaVipDesde: serverTimestamp(), updatedAt: serverTimestamp(),
         /* Siembra el splash de REGALO en el panel del miembro (flujo OdonTeck) */
         notificacionPendiente: { tipo: 'bienvenida_regalo', dias, mostrada: false, creadaEn: new Date().toISOString() }
       });
@@ -1324,10 +1324,10 @@ function precargarPortadasAdm(lista){
     im.src = url;
   });
 }
-/* Día de desbloqueo por curso · mismo cálculo que el panel (rank × 8 según orden, saltando los "siempre") */
-const DRIP_DIAS_ADM = 8;
+/* Día de desbloqueo por curso · mismo cálculo que el panel (rank × 6 según orden, saltando los "siempre") */
+const DRIP_DIAS_ADM = 6;
 function mapaDesbloqueo(){
-  const orden = Store.cursos.slice().sort((a,b)=>(a.orden||999)-(b.orden||999));
+  const orden = Store.cursos.filter(c => c.activo !== false && c.publicado !== false && c.marcarProximamente !== true).sort((a,b)=>((Number(a.orden)||999)-(Number(b.orden)||999)) || String(a.id).localeCompare(String(b.id)));
   const map = {}; let rank = 0;
   orden.forEach(c => { if (c.disponibleSiempre) map[c.id] = 0; else { map[c.id] = rank * DRIP_DIAS_ADM; rank++; } });
   return map;

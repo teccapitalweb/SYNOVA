@@ -78,6 +78,13 @@ body::after{
   50%{transform:translate(2%,-2%) scale(1.05)}
   100%{transform:translate(-1%,1%) scale(1)}
 }
+.member-offer-bar{display:none;position:sticky;top:0;z-index:1200;min-height:46px;padding:8px 18px;align-items:center;justify-content:center;gap:14px;text-align:center;background:linear-gradient(90deg,#5D9FD0 0%,#72C2C4 100%);color:#071525;border-bottom:1px solid rgba(255,255,255,.22);font-size:12.5px;font-weight:750;box-shadow:0 5px 18px rgba(3,16,31,.16)}
+.member-offer-bar.is-visible{display:flex}
+.member-offer-bar__star{color:#FFD64A;font-size:17px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
+.member-offer-bar__cta{border:0;border-radius:10px;background:#08213A;color:#8BC9F7;padding:7px 14px;font:700 11px 'Inter',sans-serif;cursor:pointer;white-space:nowrap}
+.member-offer-bar__cta:hover{background:#0C2E50;color:#fff}
+.member-offer-bar.is-visible + .app{min-height:calc(100vh - 46px)}
+.member-offer-bar.is-visible + .app .sidebar,.member-offer-bar.is-visible + .app .aside{top:46px;height:calc(100vh - 46px)}
 .app{position:relative;z-index:1}
 .ic{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .ic--sm{width:13px;height:13px}.ic--lg{width:22px;height:22px}.ic--xl{width:28px;height:28px}
@@ -879,6 +886,12 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   .cert-card__top{aspect-ratio:1.5/1}
   .cert-preview-mini__name{font-size:15px}
 }
+@media (max-width:560px){
+  .member-offer-bar{min-height:52px;padding:7px 9px;gap:7px;font-size:10.5px;line-height:1.3}
+  .member-offer-bar__star{font-size:14px}
+  .member-offer-bar__cta{padding:6px 9px;font-size:9.5px}
+  .member-offer-bar.is-visible + .app{min-height:calc(100vh - 52px)}
+}
 @media (max-width:420px){
   .banner{padding:18px}
   .banner__stat{min-width:0;flex:1;padding:10px 12px}
@@ -1120,6 +1133,12 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
 </defs>
 </svg>
+
+<div class="member-offer-bar" id="member-offer-bar" role="status" aria-live="polite">
+  <span class="member-offer-bar__star" aria-hidden="true">★</span>
+  <span>Tu primera clase y tu primer material son gratis.</span>
+  <button class="member-offer-bar__cta" type="button" onclick="window.navigateTo && window.navigateTo('suscripcion')">Suscribirme →</button>
+</div>
 
 <div class="app">
   <!-- SIDEBAR -->
@@ -1619,6 +1638,8 @@ function hidratarUI(S){
   document.getElementById('drawer-plan-badge').textContent = planTxt;
   const topPill = document.getElementById('topbar-pill-text'); if (topPill) topPill.textContent = S.nombre.split(' ')[0];
   document.getElementById('nav-badge-cursos').textContent = '';
+  const offerBar = document.getElementById('member-offer-bar');
+  if (offerBar) offerBar.classList.toggle('is-visible', !S.isAdmin && S.modo !== 'vip');
 }
 
 onAuthStateChanged(auth, async (user) => {
@@ -1626,7 +1647,7 @@ onAuthStateChanged(auth, async (user) => {
   const email = (user.email || '').toLowerCase();
   const isAdmin = ADMINS.includes(email);
 
-  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaAlta = null, notifPendiente = null;
+  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaMembresia = null, notifPendiente = null;
 
   if (isAdmin) {
     modo = 'vip'; plan = 'admin'; membership = { activo: true, activa: true, plan: 'admin' };
@@ -1636,14 +1657,14 @@ onAuthStateChanged(auth, async (user) => {
     cancelacionProgramada = r.cancelacionProgramada;
     fechaFinAcceso = r.fechaFinAcceso;
     const dd = r.docData || {};
-    const fa = dd.fechaAlta || dd.createdAt || dd.fechaActivacion || dd.fechaInicio || null;
-    fechaAlta = fa ? (fa.toDate ? fa.toDate().toISOString() : String(fa)) : null;
+    const fa = dd.fechaVipDesde || dd.fechaActivacionManual || dd.fechaActivacion || dd.fechaInicio || dd.fechaAlta || dd.createdAt || null;
+    fechaMembresia = fa ? (fa.toDate ? fa.toDate().toISOString() : String(fa)) : null;
     if (membership && (membership.activo || membership.activa)) { modo = 'vip'; plan = membership.plan || 'mensual'; }
     /* Activación manual o regalo desde vip-admin: el admin siembra notificacionPendiente
        en el doc del miembro; aquí la detectamos para mostrar el splash de bienvenida */
     notifPendiente = dd.notificacionPendiente || null;
   }
-  const memberSince = fechaAlta || (user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toISOString() : null);
+  const memberSince = fechaMembresia || (modo === 'vip' && user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toISOString() : null);
 
   window.UserState = {
     uid: user.uid, email, displayName: user.displayName || '',
@@ -1732,7 +1753,7 @@ window.__showWelcomeSplash = function(opts) {
   if (esRegalo) {
     kicker = 'ACCESO DE CORTESÍA';
     titulo = dias ? `SYNOVA te regaló <em>${dias} días VIP</em>` : `SYNOVA te regaló <em>acceso VIP</em>`;
-    desc = `${nombre}, disfruta acceso completo sin costo durante tu periodo de cortesía. Esto es lo que tienes desbloqueado:`;
+    desc = `${nombre}, disfruta acceso VIP sin costo durante tu periodo de cortesía. Tu primer curso ya está disponible y los siguientes se liberan cada 6 días:`;
   } else if (plan === 'anual') {
     kicker = '¡BIENVENIDO AL CLUB VIP!';
     titulo = `Bienvenido al <em>club VIP Anual</em>`;
@@ -2082,7 +2103,11 @@ async function cargarCursos(){
     try { snap = await getDocs(query(collection(db, 'cursos'), orderBy('orden', 'asc'))); }
     catch (e) { snap = await getDocs(collection(db, 'cursos')); }
     if (snap.empty) { grid.outerHTML = '<div id="cursos-grid">' + emptyState('i-book', 'Aún no hay cursos cargados', 'El equipo SYNOVA está subiendo el catálogo de cursos clínicos. Vuelve pronto.') + '</div>'; return; }
-    const cursos = []; snap.forEach(d => cursos.push({ id: d.id, ...d.data() }));
+    const cursos = [];
+    snap.forEach(d => {
+      const curso = { id: d.id, ...d.data() };
+      if (curso.activo !== false && curso.publicado !== false) cursos.push(curso);
+    });
     window.__cursosCache = cursos;
     const progreso = getProgreso();
     const esVip = toolEsVIP();
@@ -3398,7 +3423,7 @@ function renderSuscripcionVIP(){
         <div class="perfil-card__title">${S.cancelacionProgramada ? 'Cancelación programada' : 'Cancelar suscripción'}</div>
         <div style="padding:2px 0 8px;font-size:13px;color:var(--text-2);line-height:1.55">
           ${S.cancelacionProgramada
-            ? `Tu membresía se cancelará el <strong style="color:var(--text)">${S.fechaFinAcceso ? fmtDateLong(new Date(S.fechaFinAcceso)) : prox}</strong>. Hasta esa fecha mantienes acceso completo.`
+            ? `Tu membresía se cancelará el <strong style="color:var(--text)">${S.fechaFinAcceso ? fmtDateLong(new Date(S.fechaFinAcceso)) : prox}</strong>. Hasta esa fecha mantienes tu acceso VIP y los desbloqueos programados.`
             : 'Mantendrás acceso hasta el final del periodo pagado, después no se te cobra más.'}
         </div>
         ${S.cancelacionProgramada
@@ -4131,7 +4156,7 @@ function mountNutricion(c){
 })();
 </script>
 
-<!-- ══════════════════════ CURSOS · visor embebido + desbloqueo progresivo (8 días) ══════════════════════ -->
+<!-- ══════════════════════ CURSOS · visor embebido + desbloqueo progresivo (6 días) ══════════════════════ -->
 <style>
 /* Portada 16:9 (antes 114px la recortaba) */
 .curso-card__cover{height:auto;aspect-ratio:16/9;background-size:cover;background-position:center}
@@ -4200,7 +4225,7 @@ function mountNutricion(c){
 (function(){
   const _p = new URLSearchParams(location.search);
   const PREVIEW_DIAS = _p.get('dias') !== null ? parseInt(_p.get('dias'),10) : null;
-  const DRIP_DIAS = 8;
+  const DRIP_DIAS = 6;
 
   function esAdminReal(){ return !!(window.UserState && window.UserState.isAdmin); }
   function esVip(){ return !!(window.UserState && (window.UserState.modo === 'vip' || window.UserState.isAdmin)); }
@@ -4208,14 +4233,19 @@ function mountNutricion(c){
   function diasMembresia(){
     if (PREVIEW_DIAS !== null && !isNaN(PREVIEW_DIAS)) return PREVIEW_DIAS;
     const ms = window.UserState && window.UserState.memberSince;
-    if (!ms) return 9999; // sin fecha → no bloquear
+    if (!ms) return 0; // sin fecha verificable → empieza por el primer curso
     const t = new Date(ms).getTime();
-    if (isNaN(t)) return 9999;
+    if (isNaN(t)) return 0;
     return Math.max(0, Math.floor((Date.now() - t) / 86400000));
   }
   function unlockDay(c){ return (c && typeof c._unlockDay === 'number') ? c._unlockDay : 0; }
-  function cursoDesbloqueado(c){ if (esAdminReal()) return true; if (c && c.marcarProximamente === true) return false; return true; }
-  function diasRestantes(c){ return 0; }
+  function cursoDesbloqueado(c){
+    if (esAdminReal()) return true;
+    if (c && c.marcarProximamente === true) return false;
+    if (!esVip()) return true;
+    return diasMembresia() >= unlockDay(c);
+  }
+  function diasRestantes(c){ return Math.max(0, unlockDay(c) - diasMembresia()); }
 
   /* Drive → /preview */
   function driveEmbed(url){
@@ -4236,6 +4266,19 @@ function mountNutricion(c){
   }
   function esClaseGratisGlobal(cursoId, indexClase){
     return indexClase === 0 && String(cursoId) === primerCursoGratisId();
+  }
+
+  function primerMaterialGratisRef(){
+    const cursos = window.__cursosCache || [];
+    for (const c of cursos){
+      if (c.activo === false || c.publicado === false || c.marcarProximamente === true) continue;
+      if (Array.isArray(c.materiales) && c.materiales.length) return { cursoId:String(c.id), index:0 };
+    }
+    return null;
+  }
+  function esMaterialGratisGlobal(cursoId, indexMaterial){
+    const primero = primerMaterialGratisRef();
+    return !!primero && primero.cursoId === String(cursoId) && primero.index === indexMaterial;
   }
 
   /* Sin pago solo se permite una clase global: la primera del primer curso. */
@@ -4299,9 +4342,7 @@ function mountNutricion(c){
     const url = typeof recurso === 'string' ? recurso : (recurso && recurso.url || '');
     if (!esBunny && !url){ Toast.info('Sin contenido','Este recurso aún no tiene enlace.'); return; }
     if (esBunny && !claseDesbloqueada(cursoId, idx)) {
-      const cursoBloqueado = (window.__cursosCache || []).find(c => String(c.id) === String(cursoId));
-      const totalMateriales = Array.isArray(cursoBloqueado?.materiales) ? cursoBloqueado.materiales.length : 0;
-      window.__showPaywallModal(`Disfruta gratis la primera clase. Activa tu membresía para abrir las demás clases${totalMateriales ? ` y ${totalMateriales} material${totalMateriales !== 1 ? 'es' : ''} del curso` : ''}.`);
+      window.__showPaywallModal('Tu primera clase y tu primer material son gratis. Activa tu membresía para abrir el resto del contenido del curso.');
       return;
     }
     frame.src = 'about:blank';
@@ -4426,11 +4467,13 @@ function mountNutricion(c){
     try { snap = await getDocs(query(collection(db, 'cursos'), orderBy('orden', 'asc'))); }
     catch(e){ snap = await getDocs(collection(db, 'cursos')); }
     const cursos = []; snap.forEach(d => cursos.push({ id: d.id, ...d.data() }));
-    cursos.sort((a,b)=>(a.orden||999)-(b.orden||999));
+    cursos.sort((a,b)=>((Number(a.orden)||999)-(Number(b.orden)||999)) || String(a.id).localeCompare(String(b.id)));
     _resetPortadas();
     let rank = 0;
     cursos.forEach(c => {
-      if (c.disponibleSiempre) c._unlockDay = 0; else { c._unlockDay = rank * DRIP_DIAS; rank++; }
+      if (c.marcarProximamente === true) c._unlockDay = Number.MAX_SAFE_INTEGER;
+      else if (c.disponibleSiempre) c._unlockDay = 0;
+      else { c._unlockDay = rank * DRIP_DIAS; rank++; }
       /* Portada real: si la guardada es SVG genérico (o no hay), se asigna imagen real por tema */
       c._portadaSvg = (c.portada && esPortadaGenerica(c.portada)) ? c.portada : '';
       c.portada = getPortadaCurso(c);
@@ -4467,7 +4510,7 @@ function mountNutricion(c){
   /* ── SECCIÓN CURSOS ── */
   window.Sections.cursos = function(){
     document.getElementById('content').innerHTML =
-      secHero('Catálogo VIP', 'Mis cursos', 'Disfruta gratis la primera clase del catálogo. Activa tu membresía para desbloquear todos los cursos, clases y materiales.') +
+      secHero('Catálogo VIP', 'Mis cursos', 'Tu primera clase y tu primer material son gratis. Activa tu membresía para desbloquear cursos completos progresivamente cada 6 días.') +
       '<div id="cursos-grid" class="cursos-grid"></div>';
     renderCursos();
   };
@@ -4484,7 +4527,10 @@ function mountNutricion(c){
       const pend = c.sesiones && c.sesiones.length ? '' : '<span style="color:var(--warn)"> · En preparación</span>';
       const cover = portadaDe(c) ? ' style="background-image:url(\'' + portadaDe(c).replace(/'/g,'%27') + '\')"' : '';
       let lock = '';
-      if (vip && !desbloqueado){ const d = diasRestantes(c); lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div><div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div></div>'; }
+      if (vip && !desbloqueado){
+        if (c.marcarProximamente === true) lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Próximamente</div><div class="drip-lock__d">Te avisaremos cuando este curso esté listo.</div></div>';
+        else { const d = diasRestantes(c); lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div><div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div></div>'; }
+      }
       return '<div class="curso-card" style="--area-color:' + color + '" data-locked="false" data-cid="' + c.id + '" data-ok="' + desbloqueado + '">' +
         '<div class="curso-card__cover"' + cover + '>' + (portadaDe(c) ? '' : iconoParaArea()) + '<div class="curso-card__cover-badge">' + escHtml(c.area || 'SYNOVA') + '</div></div>' +
         '<div class="curso-card__body"><div class="curso-card__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div>' +
@@ -4540,17 +4586,19 @@ function mountNutricion(c){
         }).join('')
       : '<p style="font-size:13px;color:var(--text-2);line-height:1.6;margin-top:8px">Este curso está en preparación. En cuanto el equipo SYNOVA suba las clases las verás aquí.</p>';
 
-    let matsHtml = esVip() && materiales.length
-      ? '<div class="perfil-card__title" style="margin-top:18px">Material del curso</div>' + materiales.map((m,i) => {
+    const materialesAccesibles = materiales.map((m,i) => ({m,i})).filter(({i}) => esVip() || esMaterialGratisGlobal(id, i));
+    let matsHtml = materialesAccesibles.length
+      ? '<div class="perfil-card__title" style="margin-top:18px">Material del curso</div>' + materialesAccesibles.map(({m,i}) => {
           const mp = (m.portada || port);
           return '<div class="leccion" data-mat="' + i + '">' +
             '<div class="leccion__thumb leccion__thumb--play"' + (mp?(' style="background-image:url(\'' + String(mp).replace(/'/g,'%27') + '\')"'):'') + '><div class="lp"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
-            '<div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material ' + (i+1))) + '</div><div class="leccion__meta">Documento · da clic para abrir</div></div>' +
+            '<div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material ' + (i+1))) + '</div><div class="leccion__meta">Documento · da clic para abrir' + (!esVip() ? ' · GRATIS' : '') + '</div></div>' +
             '<div class="leccion__go"><svg><use href="#i-arrow-right"/></svg></div></div>';
         }).join('')
-      : (!esVip() && materiales.length
-        ? '<div style="margin-top:18px;padding:18px;border:1px solid var(--border-2);border-radius:14px;background:var(--surface-2);text-align:center"><b style="color:var(--text)">🔒 Material exclusivo para miembros</b><p style="font-size:12px;color:var(--text-2);line-height:1.55;margin:7px 0 12px">La clase 1 es gratis. Activa tu membresía para abrir las demás clases y materiales del curso.</p><button class="btn btn--accent" onclick="Modal.close(\'curso-detalle\');window.navigateTo(\'suscripcion\')">Desbloquear curso completo</button></div>'
-        : '');
+      : '';
+    if (!esVip() && materiales.length > materialesAccesibles.length){
+      matsHtml += '<div style="margin-top:18px;padding:18px;border:1px solid var(--border-2);border-radius:14px;background:var(--surface-2);text-align:center"><b style="color:var(--text)">🔒 Más material exclusivo para miembros</b><p style="font-size:12px;color:var(--text-2);line-height:1.55;margin:7px 0 12px">Tu primer material es gratis. Activa tu membresía para abrir el resto del contenido del curso.</p><button class="btn btn--accent" onclick="Modal.close(\'curso-detalle\');window.navigateTo(\'suscripcion\')">Desbloquear curso completo</button></div>';
+    }
 
     /* ── Hero estilo OdonTeck: portada de fondo + tags + meta ── */
     const desbloq = cursoDesbloqueado(c);
@@ -4576,7 +4624,14 @@ function mountNutricion(c){
     const descHtml = c.descripcion ? '<p style="font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:18px">' + escHtml(c.descripcion) + '</p>' : '';
 
     let contenidoHtml;
-    if (!desbloq){
+    if (!desbloq && c.marcarProximamente === true){
+      contenidoHtml =
+        '<div class="empty-state" style="background:var(--surface-2);border:1px solid var(--border-2);border-radius:14px;padding:32px 24px;text-align:center;">' +
+          '<div class="empty-state__icon" style="margin:0 auto 12px"><svg class="ic ic--xl" style="color:var(--primary)"><use href="#i-clock"/></svg></div>' +
+          '<h3 style="color:var(--primary);margin-bottom:8px">Próximamente</h3>' +
+          '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Este curso está en preparación. Te avisaremos cuando esté disponible.</p>' +
+        '</div>';
+    } else if (!desbloq){
       /* Aviso elegante de desbloqueo próximo (estilo OdonTeck) */
       contenidoHtml =
         '<div class="empty-state" style="background:var(--surface-2);border:1px solid var(--border-2);border-radius:14px;padding:32px 24px;text-align:center;">' +
@@ -4610,8 +4665,7 @@ function mountNutricion(c){
     cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => {
       const i = +el.dataset.clase;
       if (!claseDesbloqueada(id, i, sesiones.length)) {
-        const totalMateriales = materiales.length;
-        window.__showPaywallModal(`Disfruta gratis la primera clase. Activa tu membresía para abrir las demás clases${totalMateriales ? ` y ${totalMateriales} material${totalMateriales !== 1 ? 'es' : ''} del curso` : ''}.`);
+        window.__showPaywallModal(`Tu primera clase y tu primer material son gratis. Activa tu membresía para abrir el resto del contenido del curso.`);
         return;
       }
       const s = sesiones[i];
@@ -4623,7 +4677,7 @@ function mountNutricion(c){
   /* ── SECCIÓN PDFs Y MATERIAL (derivada de los cursos, embebida, con drip) ── */
   window.Sections.pdfs = function(){
     document.getElementById('content').innerHTML =
-      secHero('Biblioteca', 'PDFs y material', 'Guías, presentaciones y material descargable de cada curso. Se habilitan junto con su curso.') +
+      secHero('Biblioteca', 'PDFs y material', 'Tu primer material es gratis. Los demás se habilitan junto con su curso conforme avanza tu membresía.') +
       '<div id="pdfs-grid"></div>';
     renderMateriales();
   };
@@ -4641,22 +4695,27 @@ function mountNutricion(c){
     grid.innerHTML = items.map((it,k) => {
       const port = (it.m.portada || portadaDe(it.c));
       const cover = port ? ' style="background-image:url(\'' + String(port).replace(/'/g,'%27') + '\')"' : '';
-      if (!vip){
+      const gratis = esMaterialGratisGlobal(it.c.id, it.i);
+      if (!vip && !gratis){
         return '<div class="mat-card" data-k="' + k + '" data-locked="true"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span>' +
           '<div class="mat-card__play" style="background:rgba(11,18,31,.72)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div></div>' +
           '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div><div style="margin-top:8px"><span class="tag" style="color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent);background:color-mix(in srgb,var(--warn) 10%,transparent)">Solo VIP</span></div></div></div>';
       }
-      if (!it.ok){ const d = diasRestantes(it.c);
-        return '<div class="mat-card" data-locked="true" data-dias="' + d + '" style="cursor:pointer"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span></div>' +
-          '<div class="drip-lock" style="position:absolute;top:0;left:0;right:0;aspect-ratio:16/9;border-radius:0"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">En ' + d + (d===1?' día':' días') + '</div></div>' +
+      if (!it.ok){ const d = diasRestantes(it.c); const proximamente = it.c.marcarProximamente === true;
+        return '<div class="mat-card" data-locked="true" data-upcoming="' + proximamente + '" data-dias="' + d + '" style="cursor:pointer"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span></div>' +
+          '<div class="drip-lock" style="position:absolute;top:0;left:0;right:0;aspect-ratio:16/9;border-radius:0"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">' + (proximamente ? 'Próximamente' : ('En ' + d + (d===1?' día':' días'))) + '</div></div>' +
           '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div></div></div>';
       }
-      return '<div class="mat-card" data-k="' + k + '"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span><div class="mat-card__play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
-        '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div></div></div>';
+      return '<div class="mat-card" data-k="' + k + '" data-free="' + gratis + '"><div class="mat-card__cover"' + cover + '><span class="mat-card__badge">' + escHtml(it.c.area||'') + '</span><div class="mat-card__play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
+        '<div class="mat-card__body"><div class="mat-card__title">' + escHtml(it.m.titulo||'Material') + '</div><div class="mat-card__curso"><svg class="ic"><use href="#i-book"/></svg>' + escHtml(it.c.nombre||'') + '</div>' + (gratis && !vip ? '<div style="margin-top:8px"><span class="tag" style="color:#071018;border-color:var(--success);background:var(--success);font-weight:800">GRATIS</span></div>' : '') + '</div></div>';
     }).join('');
     grid.querySelectorAll('.mat-card').forEach(card => card.addEventListener('click', () => {
-      if (!vip){ window.__showPaywallModal('Activa tu membresía SYNOVA VIP para abrir las guías y presentaciones.'); return; }
-      if (card.dataset.locked === 'true'){ const d = +card.dataset.dias || 0; Toast.info(d===1?'Disponible mañana':'Disponible en ' + d + ' días','Este material se desbloquea junto con su curso.'); return; }
+      if (!vip && card.dataset.free !== 'true'){ window.__showPaywallModal('Tu primer material es gratis. Activa tu membresía SYNOVA VIP para abrir las demás guías y presentaciones.'); return; }
+      if (card.dataset.locked === 'true'){
+        if (card.dataset.upcoming === 'true') Toast.info('Próximamente','Te avisaremos cuando este material esté listo.');
+        else { const d = +card.dataset.dias || 0; Toast.info(d===1?'Disponible mañana':'Disponible en ' + d + ' días','Este material se desbloquea junto con su curso.'); }
+        return;
+      }
       const it = items[+card.dataset.k]; if (it) window.__abrirVisor(it.m.url, it.m.titulo || 'Material', null, null);
     }));
   }
