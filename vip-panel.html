@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/onboarding-tour.css?v=1">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -1162,7 +1163,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       <a class="nav-item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
     </div>
 
-    <div class="nav-section">
+    <div class="nav-section" data-tour="tools">
       <div class="nav-label">Herramientas Pro</div>
       <a class="nav-item" data-section="tool-dosis"><svg class="ic"><use href="#i-pill"/></svg>Dosis por peso</a>
       <a class="nav-item" data-section="tool-receta"><svg class="ic"><use href="#i-file-text"/></svg>Receta médica</a>
@@ -1193,6 +1194,9 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
         <span class="pill" id="topbar-pill"><svg class="ic"><use href="#i-user"/></svg><span id="topbar-pill-text">Miembro</span></span>
       </div>
       <div class="topbar__right">
+        <button class="icon-btn" id="btn-tour-help" data-tour-restart type="button" aria-label="Volver a ver el recorrido guiado" title="Recorrido guiado">
+          <span class="tour-help-icon" aria-hidden="true">?</span>
+        </button>
         <button class="icon-btn" id="btn-notif" aria-label="Notificaciones">
           <svg class="ic"><use href="#i-bell"/></svg>
           <span class="dot" id="notif-dot" style="display:none"></span>
@@ -1301,7 +1305,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
         <a class="mobile-drawer__item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
         <a class="mobile-drawer__item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
       </div>
-      <div class="mobile-drawer__section">
+      <div class="mobile-drawer__section" data-tour="tools">
         <div class="mobile-drawer__label">Herramientas Pro</div>
         <a class="mobile-drawer__item" data-section="tool-dosis"><svg class="ic"><use href="#i-pill"/></svg>Dosis por peso</a>
         <a class="mobile-drawer__item" data-section="tool-receta"><svg class="ic"><use href="#i-file-text"/></svg>Receta médica</a>
@@ -3286,6 +3290,7 @@ Sections.perfil = function(){
         </div>
       </div>
       <button class="btn btn--ghost" data-section="directorio"><svg class="ic"><use href="#i-users"/></svg>Mi tarjeta del directorio</button>
+      <button class="btn btn--ghost" data-tour-restart type="button"><span class="tour-help-icon" aria-hidden="true">?</span>Ver recorrido guiado</button>
     </section>
     <div class="perfil-grid">
       <div class="perfil-card">
@@ -4986,5 +4991,69 @@ body{-webkit-tap-highlight-color:transparent}
 })();
 </script>
 <script src="assets/synova-referrals.js"></script>
+<script src="assets/onboarding-tour.js?v=1"></script>
+<script>
+window.SynovaOnboarding = new window.MembershipTour({
+  namespace: 'synova',
+  version: 'v1',
+  brand: 'Guía SYNOVA',
+  readyEvent: 'synova:ready',
+  autoDelay: 1500,
+  identity: function(){
+    var state = window.UserState || {};
+    return state.uid || state.email || '';
+  },
+  ready: function(){
+    var state = window.UserState || {};
+    return !!(state.uid || state.email) && !!state.modo && getComputedStyle(document.body).visibility !== 'hidden';
+  },
+  steps: [
+    {
+      desktopSelectors: '.sidebar .brand',
+      mobileSelectors: '.topbar__left',
+      title: 'Bienvenido a SYNOVA',
+      copy: 'Este es tu espacio de formación y actualización clínica. Te mostraremos los accesos principales para aprovechar cursos, recursos y herramientas en tu práctica profesional.'
+    },
+    {
+      desktopSelectors: '.sidebar .nav-item[data-section="cursos"]',
+      mobileSelectors: '.mobile-nav .mobile-nav__item[data-section="cursos"]',
+      title: 'Tus cursos clínicos',
+      copy: 'En Mis cursos encontrarás contenidos de atención clínica, enfermería, calidad y seguridad, junto con tu avance y los certificados que vayas obteniendo.'
+    },
+    {
+      desktopSelectors: '.sidebar .nav-item[data-section="pdfs"]',
+      mobileSelectors: '.mobile-drawer .mobile-drawer__item[data-section="pdfs"]',
+      mobileDrawer: true,
+      title: 'Biblioteca de apoyo',
+      copy: 'Consulta guías, checklists, formatos y materiales descargables para aplicar protocolos y buenas prácticas en consultorio, clínica o institución.'
+    },
+    {
+      desktopSelectors: '.sidebar .nav-item[data-section="webinars"]',
+      mobileSelectors: '.mobile-nav .mobile-nav__item[data-section="webinars"]',
+      title: 'Clases en vivo',
+      copy: 'Aquí verás las próximas sesiones con profesionales de la salud, sus fechas y el acceso para participar cuando comience la transmisión.'
+    },
+    {
+      desktopSelectors: '.sidebar [data-tour="tools"]',
+      mobileSelectors: '.mobile-drawer [data-tour="tools"]',
+      mobileDrawer: true,
+      title: 'Herramientas para la práctica clínica',
+      copy: 'Tienes accesos para calcular dosis, preparar recetas, valorar IMC y riesgo, revisar anestésicos locales y apoyar decisiones de nutrición clínica.'
+    },
+    {
+      desktopSelectors: '.sidebar .nav-item[data-section="perfil"]',
+      mobileSelectors: '.mobile-drawer .mobile-drawer__item[data-section="perfil"]',
+      mobileDrawer: true,
+      title: 'Perfil y configuración de tu cuenta',
+      copy: 'Desde Mi perfil puedes consultar tus datos y el estado de tu membresía. En Suscripción podrás revisar y gestionar el plan asociado a tu cuenta.'
+    },
+    {
+      selectors: '#btn-tour-help',
+      title: 'La guía siempre estará disponible',
+      copy: 'Pulsa este botón de ayuda para repetir el recorrido cuando quieras. También encontrarás la misma opción dentro de Mi perfil.'
+    }
+  ]
+});
+</script>
 </body>
 </html>
