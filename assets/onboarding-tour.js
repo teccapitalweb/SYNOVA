@@ -165,6 +165,7 @@
     if (this.active || !this.steps.length || (!force && this.wasSeen())) return;
     this.build();
     this.active = true;
+    window.dispatchEvent(new CustomEvent('membership-tour:start', { detail: { namespace: this.config.namespace || 'membership' } }));
     this.previousFocus = document.activeElement;
     this.root.setAttribute('aria-hidden', 'false');
     document.body.classList.add('membership-tour-open');
@@ -295,6 +296,7 @@
     await this.setDrawer(false);
     if (this.previousFocus && this.previousFocus.isConnected && typeof this.previousFocus.focus === 'function') this.previousFocus.focus({ preventScroll: true });
     if (completed && typeof this.config.onFinish === 'function') this.config.onFinish();
+    window.dispatchEvent(new CustomEvent('membership-tour:end', { detail: { namespace: this.config.namespace || 'membership', completed: !!completed } }));
   };
 
   window.MembershipTour = MembershipTour;

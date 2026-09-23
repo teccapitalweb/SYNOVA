@@ -5558,6 +5558,10 @@ function mountNutricion(c){
     if (recordar){ try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch(e){} }
   }
 
+  // Las experiencias de primera visita se presentan una por una.
+  window.addEventListener('membership-tour:start', function(){ ocultar(false); });
+  window.addEventListener('membership-tour:end', function(){ setTimeout(function(){ mostrar(0); }, 800); });
+
   // Android/Chrome/Edge: capturamos el evento y mostramos NUESTRO popup
   window.addEventListener('beforeinstallprompt', function(e){
     e.preventDefault();
@@ -5731,7 +5735,7 @@ body{-webkit-tap-highlight-color:transparent}
 })();
 </script>
 <script src="assets/synova-referrals.js"></script>
-<script src="assets/onboarding-tour.js?v=2"></script>
+<script src="assets/onboarding-tour.js?v=3"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({
   namespace: 'synova',
