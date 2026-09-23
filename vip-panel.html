@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=1">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -559,6 +560,8 @@ body::after{
 .ficha-inicial{position:fixed;inset:0;z-index:2147482500;display:grid;place-items:center;padding:20px;font-family:inherit}
 .ficha-inicial__veil{position:absolute;inset:0;background:rgba(5,14,28,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .ficha-inicial__panel{position:relative;width:min(760px,100%);max-height:min(780px,calc(100vh - 40px));overflow:auto;background:var(--surface);border:1px solid color-mix(in srgb,var(--primary) 32%,var(--border));border-radius:28px;box-shadow:0 34px 110px rgba(2,12,26,.5);padding:0;animation:fichaEntrada .48s cubic-bezier(.16,1,.3,1)}
+.ficha-inicial__close{position:absolute;z-index:4;top:16px;right:16px;width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(10,52,92,.12);border-radius:50%;background:rgba(255,255,255,.82);color:#163C60;box-shadow:0 6px 20px rgba(8,43,76,.12);cursor:pointer;transition:transform .16s,background .16s}
+.ficha-inicial__close:hover{transform:scale(1.05);background:#fff}.ficha-inicial__close .ic{width:17px;height:17px}
 .ficha-inicial__head{position:relative;overflow:hidden;padding:30px 32px 26px;background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 17%,var(--surface)),color-mix(in srgb,var(--highlight) 10%,var(--surface)))}
 .ficha-inicial__head::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-90px;top:-135px;background:color-mix(in srgb,var(--highlight) 20%,transparent)}
 .ficha-inicial__identity{position:relative;z-index:1;display:flex;align-items:center;gap:16px}
@@ -580,7 +583,7 @@ body::after{
 .ficha-inicial__actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:22px}
 .ficha-inicial__error{display:none;margin-top:12px;color:var(--danger);font-size:12px;font-weight:650}
 @keyframes fichaEntrada{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
-@media(max-width:640px){.ficha-inicial{padding:0;place-items:end center}.ficha-inicial__panel{width:100%;max-height:94dvh;border-radius:24px 24px 0 0;border-bottom:0}.ficha-inicial__head{padding:22px 20px 20px}.ficha-inicial__avatar{width:58px;height:58px}.ficha-inicial__body{padding:20px}.ficha-inicial__grid{grid-template-columns:1fr;gap:13px}.ficha-inicial__field--wide{grid-column:auto}.ficha-inicial__actions{flex-direction:column-reverse}.ficha-inicial__actions .btn{width:100%}}
+@media(max-width:640px){.ficha-inicial{padding:0;place-items:end center}.ficha-inicial__panel{width:100%;max-height:94dvh;border-radius:24px 24px 0 0;border-bottom:0}.ficha-inicial__close{top:12px;right:12px;width:36px;height:36px}.ficha-inicial__head{padding:22px 58px 20px 20px}.ficha-inicial__identity{align-items:flex-start}.ficha-inicial__avatar{width:54px;height:54px}.ficha-inicial h2{font-size:21px}.ficha-inicial__intro{font-size:12px}.ficha-inicial__body{padding:18px 20px calc(20px + env(safe-area-inset-bottom))}.ficha-inicial__grid{grid-template-columns:1fr;gap:13px}.ficha-inicial__field--wide{grid-column:auto}.ficha-inicial__input{min-height:48px;font-size:16px}.ficha-inicial__actions{flex-direction:column-reverse}.ficha-inicial__actions .btn{width:100%;min-height:48px}}
 @media(prefers-reduced-motion:reduce){.celebracion-confetti{display:none}.ficha-inicial__panel{animation:none}}
 
 /* CERTIFICADOS */
@@ -2574,7 +2577,7 @@ async function cargarMateriales(){
 /* ══════════════════════ MIS LOGROS ══════════════════════ */
 function retosKey(){ return 'synova_retos_' + (window.UserState?.uid || 'anon'); }
 function getRetosState(){
-  const base = { xp: 0, correctas: 0, respondidas: 0, mejor: 0, racha: 0, ultimoDia: '', diarios: [], casos: 0 };
+  const base = { xp: 0, correctas: 0, respondidas: 0, mejor: 0, racha: 0, ultimoDia: '', diarios: [], casos: 0, quizBest: 0, quizzes: 0, flash: {}, flashEstudiadas: 0, flashDominadas: 0, historia: [], casosResueltos: [], semana: '', quizSemana: 0, flashSemana: 0 };
   try { return { ...base, ...JSON.parse(localStorage.getItem(retosKey()) || '{}') }; } catch (e) { return base; }
 }
 function setRetosState(s){ try { localStorage.setItem(retosKey(), JSON.stringify(s)); } catch (e) {} }
@@ -3207,95 +3210,287 @@ const RETOS_PREGUNTAS = [
   { area:'Sepsis', tipo:'caso', caso:'Adulto con sospecha de infección, confusión nueva, FR 28 y PAS 88 mmHg.', q:'¿Qué acción debe ocurrir primero?', o:['Esperar resultados completos antes de intervenir','Activar protocolo de sepsis, valorar perfusión y obtener acceso para manejo inmediato','Enviar a domicilio con antibiótico oral','Solicitar únicamente radiografía'], a:1, exp:'La hipotensión, taquipnea y alteración mental sugieren sepsis de alto riesgo; el protocolo debe activarse sin demora.' }
 ];
 
+const RETOS_EXTRA = [
+  { area:'Seguridad del paciente', tipo:'quiz', q:'Antes de un procedimiento, ¿qué práctica fortalece la identificación segura?', o:['Usar el número de habitación','Confirmar al menos dos identificadores definidos por la institución','Preguntar únicamente el apellido','Reconocer visualmente al paciente'], a:1, exp:'La identificación debe apoyarse en al menos dos datos válidos; el número de habitación no identifica a una persona.' },
+  { area:'Seguridad del paciente', tipo:'quiz', q:'Si una orden parece ambigua o incompleta, la respuesta más segura es:', o:['Interpretarla según costumbre','Ejecutarla y aclarar después','Detenerse y confirmar con el profesional responsable por el canal institucional','Pedir al paciente que decida'], a:2, exp:'Las órdenes ambiguas requieren aclaración antes de actuar y documentación conforme a la política institucional.' },
+  { area:'Seguridad del paciente', tipo:'quiz', q:'¿Cuál es el propósito principal de una pausa de seguridad antes de un procedimiento?', o:['Reducir el tiempo de preparación','Confirmar paciente, procedimiento, sitio y equipo con el equipo presente','Sustituir el consentimiento informado','Evitar documentar cambios'], a:1, exp:'La pausa alinea al equipo y permite detectar discrepancias antes de iniciar.' },
+  { area:'Seguridad del paciente', tipo:'quiz', q:'Un evento casi ocurrido debe reportarse porque:', o:['No causó daño y puede ignorarse','Permite analizar barreras y prevenir un evento futuro','Solo sirve para sancionar','Reemplaza la atención clínica'], a:1, exp:'Los cuasi eventos revelan fallas del sistema y oportunidades de mejora antes de que exista daño.' },
+  { area:'Control de infecciones', tipo:'quiz', q:'El uso de guantes modifica los momentos de higiene de manos:', o:['Sí, elimina la higiene posterior','No; los guantes no sustituyen la higiene de manos','Solo en áreas críticas','Solo cuando hay sangre visible'], a:1, exp:'La OMS señala que los guantes no sustituyen la higiene de manos y deben retirarse cuando corresponda.' },
+  { area:'Control de infecciones', tipo:'quiz', q:'Antes de preparar medicamentos inyectables conviene usar:', o:['Cualquier superficie disponible','Un área limpia designada y separada de fuentes de contaminación','La mesa junto al lavabo','El carro de ropa usada'], a:1, exp:'CDC recomienda preparar medicamentos en un área limpia designada, separada de agua u otras fuentes potenciales de contaminación.' },
+  { area:'Control de infecciones', tipo:'quiz', q:'Una jeringa que ya se conectó al sistema intravenoso de un paciente:', o:['Puede reutilizarse si se cambia la aguja','Se considera contaminada y no debe usarse para otro paciente','Puede entrar nuevamente a un vial multidosis común','Solo se desecha si tiene sangre visible'], a:1, exp:'Agujas y jeringas son de un solo uso por paciente; cambiar únicamente la aguja no vuelve segura la jeringa.' },
+  { area:'Control de infecciones', tipo:'quiz', q:'¿Qué acción es correcta con un vial de dosis única?', o:['Usarlo para varios pacientes si queda medicamento','Reservar el sobrante para el turno siguiente','Usarlo para un solo paciente y no combinar sobrantes','Guardarlo en el área inmediata del paciente'], a:2, exp:'Los viales de dosis única no deben compartirse ni conservar sobrantes para uso posterior.' },
+  { area:'Medicamentos', tipo:'quiz', q:'En una conciliación de medicamentos se debe comparar:', o:['Solo medicamentos prescritos en el hospital','La lista que usa la persona con las órdenes actuales y cambios de transición','Únicamente suplementos','Solo fármacos de alto costo'], a:1, exp:'La conciliación busca discrepancias entre el tratamiento habitual y las nuevas órdenes durante transiciones de atención.' },
+  { area:'Medicamentos', tipo:'quiz', q:'¿Qué dato debe expresarse con claridad antes de administrar un medicamento PRN?', o:['La marca comercial preferida','La indicación y los criterios de uso definidos','La opinión del acompañante','El color de la tableta'], a:1, exp:'La indicación y los criterios permiten valorar si corresponde administrar y evaluar después la respuesta.' },
+  { area:'Medicamentos', tipo:'quiz', q:'Tras administrar un medicamento de alto riesgo, una acción esencial es:', o:['Omitir vigilancia si la dosis fue correcta','Monitorizar respuesta y eventos adversos conforme al protocolo','Desechar la orden','Esperar hasta el siguiente turno'], a:1, exp:'La administración segura incluye vigilancia clínica y documentación de la respuesta.' },
+  { area:'Medicamentos', tipo:'quiz', q:'Para reducir errores por nombres parecidos de medicamentos es útil:', o:['Abreviar todos los nombres','Separar almacenamiento y usar alertas de diferenciación institucionales','Retirar las etiquetas','Ordenarlos solo por color'], a:1, exp:'La separación, el etiquetado diferenciado y las alertas ayudan a reducir confusiones por nombres o envases similares.' },
+  { area:'Triage', tipo:'quiz', q:'En una valoración inicial, el enfoque ABCDE ayuda a:', o:['Establecer primero el diagnóstico definitivo','Priorizar amenazas vitales en una secuencia estructurada','Evitar reevaluaciones','Sustituir los signos vitales'], a:1, exp:'ABCDE ordena la búsqueda y atención de amenazas inmediatas, seguida de reevaluación.' },
+  { area:'Triage', tipo:'quiz', q:'¿Cuál combinación sugiere perfusión comprometida?', o:['Llenado capilar normal y piel tibia','Alteración del estado mental, piel fría y llenado capilar prolongado','Dolor leve aislado','Frecuencia respiratoria normal'], a:1, exp:'Los cambios neurológicos y periféricos pueden indicar hipoperfusión y requieren valoración prioritaria.' },
+  { area:'Triage', tipo:'quiz', q:'Después de una intervención inicial en urgencias se debe:', o:['Esperar al alta para volver a valorar','Reevaluar respuesta y documentar cambios','Conservar la primera prioridad aunque cambie el estado','Evitar repetir signos vitales'], a:1, exp:'La priorización es dinámica; la respuesta a la intervención puede modificar el nivel de riesgo.' },
+  { area:'Accesos vasculares', tipo:'quiz', q:'Dolor, eritema y un trayecto venoso palpable alrededor de un catéter periférico orientan a:', o:['Infiltración','Flebitis','Oclusión arterial','Hipoglucemia'], a:1, exp:'El dolor, eritema, calor y cordón venoso son hallazgos compatibles con flebitis; debe actuarse según protocolo.' },
+  { area:'Accesos vasculares', tipo:'quiz', q:'Antes de manipular una conexión intravenosa es esencial:', o:['Soplarla para secarla','Higiene de manos y desinfección del punto de acceso según protocolo','Tocarla para comprobar temperatura','Cubrirla sin inspección'], a:1, exp:'La técnica aséptica y la desinfección del conector reducen el riesgo de contaminación.' },
+  { area:'Heridas', tipo:'quiz', q:'Una lesión por presión con piel intacta y eritema no blanqueable corresponde a:', o:['Estadio 1','Estadio 2','Estadio 3','No clasificable'], a:0, exp:'El estadio 1 presenta piel intacta con eritema no blanqueable; requiere alivio de presión y valoración integral.' },
+  { area:'Heridas', tipo:'quiz', q:'Para prevenir lesiones por presión, la estrategia más completa combina:', o:['Solo masaje sobre prominencias','Valoración de riesgo, inspección de piel, movilidad, superficies y control de humedad','Reposo absoluto','Aplicación rutinaria de antiséptico'], a:1, exp:'La prevención es multifactorial y debe individualizarse según riesgo y condición clínica.' },
+  { area:'Calidad y comunicación', tipo:'quiz', q:'Una entrega clínica estructurada debe comunicar primero:', o:['Información irrelevante para completar tiempo','Situación actual, antecedentes pertinentes, valoración y recomendación','Solo el diagnóstico','Únicamente tareas pendientes'], a:1, exp:'Una estructura como SBAR facilita información prioritaria y reduce omisiones en las transiciones.' },
+  { area:'Calidad y comunicación', tipo:'quiz', q:'Al registrar una nota clínica, la práctica correcta es:', o:['Documentar de memoria al final de la semana','Ser oportuno, objetivo, legible y coherente con lo observado','Copiar notas previas sin revisar','Usar abreviaturas no autorizadas'], a:1, exp:'La documentación debe ser oportuna, objetiva y trazable, siguiendo normas y políticas locales.' },
+  { area:'Calidad y comunicación', tipo:'quiz', q:'Cuando un paciente no comprende una indicación, una técnica útil es:', o:['Repetirla más rápido','Pedirle que la explique con sus propias palabras','Entregar más texto sin comprobar','Solicitar que firme'], a:1, exp:'La técnica de teach-back permite confirmar comprensión sin culpabilizar a la persona.' },
+  { area:'Calidad y comunicación', tipo:'quiz', q:'¿Qué caracteriza a una cultura de seguridad?', o:['Ocultar errores sin daño','Aprender de riesgos, favorecer el reporte y mejorar sistemas','Centrarse solo en culpables','Evitar la participación del paciente'], a:1, exp:'Una cultura de seguridad combina responsabilidad, aprendizaje y mejora de procesos.' },
+  { area:'Esterilización', tipo:'quiz', q:'Un paquete estéril húmedo o con integridad comprometida debe:', o:['Usarse primero','Considerarse no seguro y reprocesarse según política','Secarse con una toalla','Abrirse para revisar el contenido'], a:1, exp:'La humedad o daño del empaque comprometen la barrera estéril; el material debe manejarse según el protocolo institucional.' },
+  { area:'Esterilización', tipo:'quiz', q:'La limpieza antes de desinfección o esterilización es importante porque:', o:['Solo mejora la apariencia','La materia orgánica puede interferir con el proceso posterior','Sustituye todos los procesos posteriores','Elimina la necesidad de equipo de protección'], a:1, exp:'La remoción de residuos es un paso previo indispensable para que el procesamiento posterior sea eficaz.' },
+  { area:'Urgencias', tipo:'caso', caso:'Persona adulta con dolor torácico opresivo, diaforesis y náusea de inicio súbito.', q:'¿Cuál es la respuesta inicial más segura?', o:['Indicar que espere a que ceda','Activar valoración urgente, monitorización y protocolo institucional','Ofrecer alimentos','Programar consulta de rutina'], a:1, exp:'El cuadro puede representar una emergencia tiempo-dependiente y requiere activación inmediata del protocolo.' },
+  { area:'Neurológico', tipo:'caso', caso:'Paciente con desviación facial, dificultad súbita para hablar y debilidad de un brazo iniciadas hace 25 minutos.', q:'¿Qué dato es especialmente importante registrar y comunicar?', o:['La última comida','La hora de última vez visto bien y el inicio de síntomas','La talla de calzado','El número de visitas previas'], a:1, exp:'La hora de última vez visto bien orienta decisiones en una posible emergencia cerebrovascular.' },
+  { area:'Medicamentos', tipo:'caso', caso:'Antes de administrar insulina, la glucosa medida no coincide con el estado clínico y la orden parece inusual.', q:'¿Qué haces primero?', o:['Administrar para no retrasar','Repetir/verificar la medición y aclarar la orden antes de administrar','Duplicar la dosis','Omitir cualquier registro'], a:1, exp:'Una discrepancia clínica o una orden inusual exige verificación y aclaración antes de administrar un medicamento de alto riesgo.' },
+  { area:'Control de infecciones', tipo:'caso', caso:'Tras retirar guantes luego de contacto con secreciones, debes atender a otro paciente.', q:'¿Cuál es el siguiente paso?', o:['Colocar guantes nuevos sin más','Realizar higiene de manos antes del siguiente contacto','Limpiar solo el uniforme','Continuar porque no hubo contacto directo'], a:1, exp:'La higiene de manos se realiza después del riesgo de fluidos y tras retirar guantes, antes de atender a otra persona.' },
+  { area:'Pediatría', tipo:'caso', caso:'Niño somnoliento, con mucosas secas, taquicardia y disminución marcada de orina.', q:'¿Cómo debe interpretarse?', o:['Datos leves sin urgencia','Posible deshidratación significativa que requiere valoración prioritaria','Respuesta normal al sueño','Solo falta de apetito'], a:1, exp:'La alteración del estado, taquicardia y oliguria son señales de compromiso que requieren valoración urgente.' },
+  { area:'Materno', tipo:'caso', caso:'Paciente en puerperio presenta sangrado abundante, mareo y taquicardia.', q:'¿Qué acción corresponde?', o:['Esperar a cuantificar al final del turno','Activar respuesta obstétrica urgente y medidas iniciales según protocolo','Ofrecer deambulación','Programar seguimiento'], a:1, exp:'El sangrado posparto con signos de compromiso hemodinámico es una emergencia y requiere respuesta inmediata.' },
+  { area:'Accesos vasculares', tipo:'caso', caso:'Durante una infusión, el sitio se vuelve frío, edematoso y doloroso; la bomba marca presión.', q:'¿Cuál es la prioridad?', o:['Aumentar el flujo','Detener la infusión, valorar el sitio y seguir el protocolo para infiltración/extravasación','Cubrir el sitio y continuar','Masajear con fuerza'], a:1, exp:'La infusión debe detenerse y el sitio valorarse de inmediato; el manejo posterior depende de la solución y del protocolo.' },
+  { area:'Calidad y comunicación', tipo:'caso', caso:'Durante el cambio de turno, notas que falta informar una alergia documentada.', q:'¿Qué conducta reduce mejor el riesgo?', o:['Suponer que ya la conocen','Comunicarla de inmediato, verificar su registro y usar una entrega estructurada','Esperar al siguiente turno','Borrar la nota incompleta'], a:1, exp:'Las alergias son información crítica y deben verificarse y comunicarse oportunamente.' }
+];
+
+const RETOS_FLASHCARDS = [
+  ['Seguridad del paciente','Dos identificadores','Confirmar al menos dos identificadores válidos antes de atención, medicación o procedimiento.'],
+  ['Seguridad del paciente','Pausa de seguridad','Confirmación activa de paciente, procedimiento, sitio, equipo y dudas antes de comenzar.'],
+  ['Seguridad del paciente','Cuasi evento','Incidente que no alcanzó al paciente; se reporta para aprender y fortalecer barreras.'],
+  ['Control de infecciones','Momento 1 de higiene','Antes de tocar al paciente.'],
+  ['Control de infecciones','Momento 2 de higiene','Inmediatamente antes de una tarea limpia o aséptica.'],
+  ['Control de infecciones','Momento 3 de higiene','Después del riesgo de exposición a fluidos y tras retirar guantes.'],
+  ['Control de infecciones','Momento 4 de higiene','Después de tocar al paciente.'],
+  ['Control de infecciones','Momento 5 de higiene','Después de tocar el entorno inmediato del paciente.'],
+  ['Control de infecciones','Inyección segura','Una aguja, una jeringa, un paciente y una sola vez.'],
+  ['Control de infecciones','Vial de dosis única','Se destina a un solo paciente; no se combinan sobrantes.'],
+  ['Medicamentos','Conciliación','Comparar el tratamiento habitual con las órdenes actuales durante transiciones.'],
+  ['Medicamentos','Medicamento de alto riesgo','Requiere barreras reforzadas, verificación y monitorización según política.'],
+  ['Medicamentos','PRN seguro','Debe tener indicación y criterios claros, además de evaluación de respuesta.'],
+  ['Triage','ABCDE','Secuencia para identificar y atender amenazas vitales de forma estructurada.'],
+  ['Triage','Reevaluación','La prioridad cambia con el estado y con la respuesta a las intervenciones.'],
+  ['Triage','Perfusión comprometida','Puede manifestarse con alteración mental, piel fría y llenado capilar prolongado.'],
+  ['Accesos vasculares','Infiltración','Edema, palidez, frío, dolor o disminución del flujo alrededor del acceso.'],
+  ['Accesos vasculares','Flebitis','Dolor, eritema, calor y posible trayecto venoso palpable.'],
+  ['Heridas','Lesión por presión estadio 1','Piel intacta con eritema no blanqueable.'],
+  ['Heridas','Lesión por presión estadio 3','Pérdida total del grosor de piel con adiposo visible, sin exposición de fascia o músculo.'],
+  ['Esterilización','Indicador biológico','Ayuda a evaluar la eficacia del proceso mediante microorganismos altamente resistentes.'],
+  ['Esterilización','Barrera estéril','Un empaque húmedo, abierto o dañado se considera comprometido.'],
+  ['Calidad y comunicación','SBAR','Situación, antecedentes, valoración y recomendación para una entrega estructurada.'],
+  ['Calidad y comunicación','Teach-back','Pedir a la persona explicar con sus palabras para confirmar comprensión.'],
+  ['Calidad y comunicación','Documentación segura','Oportuna, objetiva, legible, completa y coherente con lo observado.'],
+  ['Urgencias','Última vez visto bien','Dato temporal clave ante signos neurológicos súbitos.'],
+  ['Urgencias','Sepsis de alto riesgo','Hipotensión, alteración mental y taquipnea exigen activación inmediata del protocolo.'],
+  ['Materno','Hipertensión severa con síntomas','Requiere atención obstétrica urgente y protocolo institucional.'],
+  ['Pediatría','Deterioro respiratorio','Tiraje, quejido y perfusión alterada requieren atención prioritaria.'],
+  ['Calidad y comunicación','Cultura de seguridad','Promueve reporte, aprendizaje, responsabilidad justa y mejora de sistemas.']
+].map((x,i)=>({ id:'fc'+i, area:x[0], frente:x[1], reverso:x[2] }));
+
+const RETOS_MUNDOS = [
+  { id:'seguridad', titulo:'Turno seguro', subtitulo:'Identificación, comunicación y barreras antes de actuar.', area:['Seguridad del paciente','Calidad y comunicación'], icon:'i-shield-check', color:'#2D89C8' },
+  { id:'infecciones', titulo:'Rompe la cadena', subtitulo:'Higiene, técnica aséptica e inyecciones seguras.', area:['Control de infecciones','Esterilización'], icon:'i-syringe', color:'#159E92' },
+  { id:'medicamentos', titulo:'Dosis con criterio', subtitulo:'Verificación, conciliación y vigilancia de respuesta.', area:['Medicamentos'], icon:'i-pill', color:'#7A67C7' },
+  { id:'urgencias', titulo:'Los primeros minutos', subtitulo:'Prioriza riesgos y detecta deterioro a tiempo.', area:['Triage','Urgencias','Neurológico','Sepsis'], icon:'i-activity', color:'#D17847' },
+  { id:'procedimientos', titulo:'Cuidado sin atajos', subtitulo:'Accesos, heridas y procesamiento seguro.', area:['Accesos vasculares','Heridas','Esterilización','Hemodiálisis'], icon:'i-stethoscope', color:'#C08A2D' },
+  { id:'familia', titulo:'Atención por etapas', subtitulo:'Decisiones seguras en materno y pediatría.', area:['Materno','Pediatría'], icon:'i-heart', color:'#C35488' }
+];
+
+const BANCO_RETOS = [...RETOS_PREGUNTAS, ...RETOS_EXTRA];
+
 let RetoSession = null;
+let RetoTimer = null;
+let FlashSession = null;
 const fechaReto = () => new Date().toLocaleDateString('en-CA');
 const mezclarRetos = a => [...a].sort(() => Math.random() - .5);
+const RETOS_NIVELES = [
+  { nombre:'Aprendiz', xp:0 }, { nombre:'Bronce', xp:200 }, { nombre:'Plata', xp:600 },
+  { nombre:'Oro', xp:1400 }, { nombre:'Platino', xp:3000 }, { nombre:'Maestro SYNOVA', xp:6000 }
+];
+
+function semanaReto(){
+  const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate() - ((d.getDay()+6)%7));
+  return d.toLocaleDateString('en-CA');
+}
+function estadoRetos(){
+  const s = getRetosState();
+  s.diarios = Array.isArray(s.diarios) ? s.diarios : [];
+  s.historia = Array.isArray(s.historia) ? s.historia : [];
+  s.casosResueltos = Array.isArray(s.casosResueltos) ? s.casosResueltos : [];
+  s.flash = s.flash && typeof s.flash === 'object' ? s.flash : {};
+  if (s.semana !== semanaReto()) { s.semana=semanaReto(); s.quizSemana=0; s.flashSemana=0; setRetosState(s); }
+  return s;
+}
+function nivelReto(xp){
+  let indice=0;
+  RETOS_NIVELES.forEach((n,i)=>{ if(xp>=n.xp) indice=i; });
+  const actual=RETOS_NIVELES[indice], siguiente=RETOS_NIVELES[indice+1];
+  const pct=siguiente ? Math.max(0,Math.min(100,Math.round((xp-actual.xp)/(siguiente.xp-actual.xp)*100))) : 100;
+  return { indice, actual, siguiente, pct };
+}
+function inicialesReto(nombre){ return (nombre||'S').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
+function avatarReto(p){
+  return p.foto ? `<span class="syn-rank-avatar"><img src="${escHtml(p.foto)}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>` : `<span class="syn-rank-avatar">${escHtml(inicialesReto(p.nombre))}</span>`;
+}
+function iconoAreaReto(area){
+  if (/infe|ester/i.test(area)) return 'i-syringe';
+  if (/medic/i.test(area)) return 'i-pill';
+  if (/triage|urgenc|neurol|sepsis/i.test(area)) return 'i-activity';
+  if (/mater|pedi/i.test(area)) return 'i-heart';
+  if (/acceso|herida|hemo/i.test(area)) return 'i-stethoscope';
+  return 'i-shield-check';
+}
+function retoFuente(){
+  return `<div class="syn-source-note"><svg class="ic"><use href="#i-info"/></svg><span>Entrenamiento educativo: sigue siempre los protocolos de tu institución y la valoración del equipo responsable. Referencias marco: <a href="https://www.who.int/publications/m/item/five-moments-for-hand-hygiene" target="_blank" rel="noopener">OMS</a>, <a href="https://www.cdc.gov/injection-safety/hcp/clinical-guidance/index.html" target="_blank" rel="noopener">CDC</a> y <a href="https://www.jointcommission.org/en-us/standards/national-performance-goals" target="_blank" rel="noopener">Joint Commission</a>.</span></div>`;
+}
+function frenarTimerReto(){ if(RetoTimer){ clearInterval(RetoTimer); RetoTimer=null; } }
 
 Sections.retos = function(){ pintarHubRetos(); };
-
-function pintarHubRetos(){
-  const s = getRetosState();
-  const hoyHecho = s.diarios.includes(fechaReto());
-  const metas = [1,5,10,20];
-  document.getElementById('content').innerHTML =
-    secHero('Entrenamiento aplicado', 'Retos clínicos', 'Fortalece criterio, seguridad y toma de decisiones con ejercicios breves inspirados en escenarios reales de atención.') +
-    `<div class="retos-dashboard">
-      <div class="retos-score"><div class="retos-score__eyebrow">Tu desempeño clínico</div><div class="retos-score__xp">${s.xp} XP</div><div class="retos-score__meta"><span>${s.correctas} respuestas correctas</span><span>Mejor sesión ${s.mejor}%</span><span>${s.casos} guardias completadas</span></div></div>
-      <div class="retos-streak"><div class="retos-streak__ic"><svg class="ic ic--lg"><use href="#i-bolt"/></svg></div><div><strong>${s.racha} día${s.racha===1?'':'s'}</strong><span>Racha de práctica clínica</span></div></div>
+window.pintarHubRetos = function(){
+  frenarTimerReto(); RetoSession=null; FlashSession=null;
+  const s=estadoRetos(), nivel=nivelReto(s.xp), hoy=s.diarios.includes(fechaReto());
+  const misiones=[hoy,s.quizSemana>0,s.flashSemana>=5], misionPct=Math.round(misiones.filter(Boolean).length/3*100);
+  document.getElementById('content').innerHTML = `<div class="syn-league">
+    <section class="syn-league-hero">
+      <div class="syn-league-hero__copy"><span class="syn-kicker"><svg class="ic"><use href="#i-trophy"/></svg>Liga clínica SYNOVA</span><h1>Aprende. Practica. <em>Eleva tu criterio.</em></h1><p>Cada decisión, caso y repaso fortalece habilidades esenciales para una atención más segura.</p>
+        <div class="syn-level"><span class="syn-level__icon"><svg class="ic"><use href="#i-certificate"/></svg></span><div class="syn-level__body"><span>Nivel ${nivel.indice+1}</span><strong>${nivel.actual.nombre}</strong><div class="syn-level__bar"><span style="width:${nivel.pct}%"></span></div><small>${nivel.siguiente ? `${s.xp} XP · ${nivel.siguiente.xp-s.xp} para ${nivel.siguiente.nombre}` : `${s.xp} XP · nivel máximo`}</small></div></div>
+      </div>
+      <div class="syn-rank-card"><span class="syn-rank-card__label">Tu posición</span><strong id="syn-rank-num">—</strong><span id="syn-rank-total">Calculando la liga…</span><div class="syn-rank-card__mini"><span><b>${s.xp}</b>XP</span><span><b>${s.correctas}</b>aciertos</span><span><b>${s.racha}</b>racha</span></div></div>
+    </section>
+    <div class="syn-league-dashboard">
+      <main class="syn-league-main">
+        <div class="syn-section-head"><div><span class="syn-eyebrow">Entrena tus conocimientos</span><h2>Zona de retos</h2></div><span>${BANCO_RETOS.length} decisiones + ${RETOS_FLASHCARDS.length} tarjetas</span></div>
+        <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Nueva experiencia · modo historia</span><h2>Domina la <em>ruta segura.</em></h2><p>Avanza por seis mundos, resuelve situaciones y construye criterio desde lo esencial.</p><span class="btn btn--light">Comenzar historia <svg class="ic"><use href="#i-arrow-right"/></svg></span></span><span class="syn-story-entry__art"><span><svg class="ic"><use href="#i-stethoscope"/></svg></span></span></button>
+        <button class="syn-daily" ${hoy?'disabled':''} onclick="iniciarRetoClinico('diario')"><span class="syn-daily__ic"><svg class="ic"><use href="#${hoy?'i-check':'i-calendar'}"/></svg></span><span class="syn-daily__tx"><strong>${hoy?'Reto diario completado':'Reto diario'}</strong><span>${hoy?'Vuelve mañana para una nueva decisión':'Una pregunta rápida · hasta 30 XP'}</span></span><svg class="ic"><use href="#i-arrow-right"/></svg></button>
+        <div class="syn-game-grid">
+          <button class="syn-game" style="--game:#2D89C8" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Quiz Relámpago</strong><span>Modos, categorías y sesiones rápidas contra reloj.</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#7A67C7" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Casos de decisión</strong><span>${s.casosResueltos.length}/${BANCO_RETOS.filter(x=>x.tipo==='caso').length} escenarios resueltos.</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#159E92" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Flashcards</strong><span>${s.flashDominadas}/${RETOS_FLASHCARDS.length} dominadas con repaso espaciado.</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+        </div>
+        <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Avance verificado</span><h2>Clasificación de la comunidad</h2></div><span class="syn-live"><svg class="ic"><use href="#i-shield-check"/></svg>Solo progreso</span></div><p class="syn-ranking__intro">Aquí se reconoce la práctica constante. La clasificación muestra únicamente nombre, foto y avance en Retos; nunca datos de contacto.</p><div id="syn-ranking-content"><div class="empty-note">Cargando liga…</div></div></section>
+        ${retoFuente()}
+      </main>
+      <aside class="syn-league-side">
+        <section class="syn-panel syn-weekly"><div class="syn-weekly__head"><span><svg class="ic"><use href="#i-trophy"/></svg></span><div><small>Misión semanal</small><strong>${misionPct}% completada</strong></div></div><div class="syn-weekly__bar"><span style="width:${misionPct}%"></span></div><ul>${[['Reto diario','Resuelve la decisión de hoy'],['Práctica activa','Completa un quiz esta semana'],['Memoria clínica','Repasa 5 flashcards']].map((x,i)=>`<li class="${misiones[i]?'is-done':''}"><span><svg class="ic"><use href="#i-${misiones[i]?'check':'clock'}"/></svg></span><div><strong>${x[0]}</strong><small>${x[1]}</small></div></li>`).join('')}</ul><div class="syn-weekly__reward"><svg class="ic"><use href="#i-crown"/></svg>Completa las 3 para dominar la semana</div></section>
+        <section class="syn-panel syn-path"><span class="syn-eyebrow">Camino a maestro</span><h3>Seis niveles de dominio</h3><ol>${RETOS_NIVELES.map((n,i)=>`<li class="${i<nivel.indice?'is-done':i===nivel.indice?'is-current':''}"><span>${i+1}</span><div><strong>${n.nombre}</strong><small>${n.xp.toLocaleString('es-MX')} XP</small></div>${i===nivel.indice?'<em>Estás aquí</em>':''}</li>`).join('')}</ol></section>
+        <section class="syn-panel syn-board"><span class="syn-eyebrow">Tu tablero</span><div><span><svg class="ic"><use href="#i-bolt"/></svg><b>${s.quizBest}%</b><small>récord quiz</small></span><span><svg class="ic"><use href="#i-stethoscope"/></svg><b>${s.casosResueltos.length}</b><small>casos</small></span><span><svg class="ic"><use href="#i-book"/></svg><b>${s.flashDominadas}</b><small>dominadas</small></span></div></section>
+      </aside>
     </div>
-    <div class="retos-grid">
-      ${tarjetaReto('diario','i-calendar','Reto diario','Una decisión breve cada día para mantener activo tu criterio.','1 pregunta · hasta 30 XP','#2D89C8',hoyHecho)}
-      ${tarjetaReto('quiz','i-bolt','Guardia relámpago','Seis decisiones de seguridad, procedimientos y atención prioritaria.','6 preguntas · puntuación final','#159E92',false)}
-      ${tarjetaReto('casos','i-stethoscope','Casos de decisión','Analiza signos, prioriza riesgos y elige la conducta más segura.','3 casos clínicos guiados','#7A67C7',false)}
-    </div>
-    <section class="reto-roadmap"><div class="reto-roadmap__head"><h2>Ruta de criterio clínico</h2><span>${s.correctas} decisiones correctas acumuladas</span></div><div class="reto-roadmap__steps">${metas.map((m,i)=>`<div class="reto-step ${s.correctas>=m?'is-done':''}"><span>Etapa ${i+1}</span><strong>${['Observador seguro','Profesional constante','Analista clínico','Referente SYNOVA'][i]}</strong>${Math.min(s.correctas,m)}/${m} correctas</div>`).join('')}</div></section>
-    <div class="foro-aviso"><svg class="ic"><use href="#i-info"/></svg><span>Contenido educativo. Los retos no sustituyen protocolos institucionales, valoración clínica ni juicio profesional.</span></div>`;
+  </div>`;
+  cargarRankingRetos();
 };
 
-function tarjetaReto(id, icon, titulo, texto, meta, color, hecho){
-  return `<button class="reto-card ${hecho?'is-done':''}" style="--reto-color:${color}" onclick="iniciarRetoClinico('${id}')"><div class="reto-card__icon"><svg class="ic ic--lg"><use href="#${icon}"/></svg></div><span class="reto-card__tag">${hecho?'Completado hoy':'Entrenamiento SYNOVA'}</span><h3>${titulo}</h3><p>${texto}</p><div class="reto-card__foot"><span>${meta}</span><span class="reto-card__go"><svg class="ic"><use href="#${hecho?'i-check':'i-arrow-right'}"/></svg></span></div></button>`;
-}
+window.abrirQuizSynova = function(){
+  const s=estadoRetos(), areas=[...new Set(BANCO_RETOS.filter(x=>x.tipo==='quiz').map(x=>x.area))];
+  document.getElementById('content').innerHTML=`<div class="syn-challenge"><button class="btn btn--ghost btn--sm syn-back" onclick="pintarHubRetos()">← Volver a la liga</button><section class="syn-challenge-hero" style="--game:#2D89C8"><div class="syn-challenge-hero__copy"><span class="syn-kicker">Entrenamiento rápido</span><h1>Quiz Relámpago</h1><p>Practica decisiones breves, recibe explicación inmediata y mejora tu récord.</p><div class="syn-challenge-hero__stats"><span><b>${BANCO_RETOS.filter(x=>x.tipo==='quiz').length}</b> preguntas</span><span><b>${s.quizBest}%</b> mejor sesión</span><span><b>${s.quizzes}</b> sesiones</span></div></div><div class="syn-challenge-hero__art"><span><svg class="ic"><use href="#i-bolt"/></svg></span></div></section>
+    <div class="syn-section-head"><div><span class="syn-eyebrow">Elige cómo practicar</span><h2>Modos de juego</h2></div></div><div class="syn-mode-grid">
+      <button class="syn-mode" style="--mode:#2D89C8" onclick="iniciarRetoClinico('quiz','', 'reloj')"><span><svg class="ic"><use href="#i-clock"/></svg></span><strong>Contra reloj</strong><p>Ocho decisiones mixtas con 20 segundos por pregunta.</p><small>Hasta 200 XP</small></button>
+      <button class="syn-mode" style="--mode:#159E92" onclick="iniciarRetoClinico('quiz','', 'guiado')"><span><svg class="ic"><use href="#i-book"/></svg></span><strong>Práctica guiada</strong><p>Diez preguntas sin presión y con explicación inmediata.</p><small>Aprende a tu ritmo</small></button>
+      <button class="syn-mode" style="--mode:#7A67C7" onclick="iniciarRetoClinico('quiz','Seguridad del paciente','guiado')"><span><svg class="ic"><use href="#i-shield-check"/></svg></span><strong>Seguridad esencial</strong><p>Identificación, barreras, comunicación y cultura de seguridad.</p><small>Ruta recomendada</small></button>
+    </div><div class="syn-section-head"><div><span class="syn-eyebrow">Biblioteca clínica</span><h2>Practica por tema</h2></div></div><div class="syn-deck-grid">${areas.map((a,i)=>`<button class="syn-deck" style="--deck:${['#2D89C8','#159E92','#7A67C7','#D17847','#C35488'][i%5]}" onclick="iniciarRetoClinico('quiz','${escHtml(a)}','guiado')"><span class="syn-deck__icon"><svg class="ic"><use href="#${iconoAreaReto(a)}"/></svg></span><span><strong>${escHtml(a)}</strong><small>${BANCO_RETOS.filter(x=>x.tipo==='quiz'&&x.area===a).length} preguntas</small></span><i>→</i></button>`).join('')}</div>${retoFuente()}</div>`;
+};
 
-window.iniciarRetoClinico = function(tipo){
-  const s = getRetosState();
-  if (tipo === 'diario' && s.diarios.includes(fechaReto())) { pintarResultadoReto({ tipo, correctas:1, total:1, xp:0, repetido:true }); return; }
-  if (tipo !== 'diario' && !toolEsVIP()) { window.__showPaywallModal('Los retos completos de Guardia y Casos clínicos son exclusivos para miembros VIP. El reto diario está abierto para todos.'); return; }
-  let preguntas;
-  if (tipo === 'diario') {
-    const semilla = Number(fechaReto().replace(/-/g,''));
-    preguntas = [RETOS_PREGUNTAS[semilla % RETOS_PREGUNTAS.length]];
-  } else if (tipo === 'casos') preguntas = mezclarRetos(RETOS_PREGUNTAS.filter(p=>p.tipo==='caso')).slice(0,3);
-  else preguntas = mezclarRetos(RETOS_PREGUNTAS).slice(0,6);
-  RetoSession = { tipo, preguntas, idx:0, correctas:0, respondida:false };
+window.abrirCasosSynova = function(){
+  const s=estadoRetos(), casos=BANCO_RETOS.filter(x=>x.tipo==='caso');
+  document.getElementById('content').innerHTML=`<div class="syn-challenge"><button class="btn btn--ghost btn--sm syn-back" onclick="pintarHubRetos()">← Volver a la liga</button><section class="syn-challenge-hero" style="--game:#7A67C7"><div class="syn-challenge-hero__copy"><span class="syn-kicker">Simulación clínica</span><h1>Casos de decisión</h1><p>Lee el escenario, identifica el riesgo y elige la prioridad más segura.</p><div class="syn-challenge-hero__stats"><span><b>${casos.length}</b> casos</span><span><b>${s.casosResueltos.length}</b> resueltos</span><span><b>${s.correctas}</b> aciertos totales</span></div></div><div class="syn-challenge-hero__art"><span><svg class="ic"><use href="#i-stethoscope"/></svg></span></div></section><div class="syn-section-head"><div><span class="syn-eyebrow">Guardias guiadas</span><h2>Biblioteca de escenarios</h2></div></div><div class="syn-case-grid">${casos.map((c,i)=>{const id='caso-'+BANCO_RETOS.indexOf(c),done=s.casosResueltos.includes(id);return `<button class="syn-case ${done?'is-done':''}" style="--world:${['#7A67C7','#D17847','#159E92','#2D89C8'][i%4]}" onclick="iniciarCasoSynova(${BANCO_RETOS.indexOf(c)})"><span class="syn-case__icon"><svg class="ic"><use href="#${iconoAreaReto(c.area)}"/></svg></span><strong>${escHtml(c.area)}</strong><p>${escHtml(c.caso)}</p><small>${done?'Completado · volver a practicar':'Resolver caso'} →</small></button>`;}).join('')}</div>${retoFuente()}</div>`;
+};
+
+window.abrirHistoriaSynova = function(){
+  const s=estadoRetos();
+  document.getElementById('content').innerHTML=`<div class="syn-challenge"><button class="btn btn--ghost btn--sm syn-back" onclick="pintarHubRetos()">← Volver a la liga</button><section class="syn-challenge-hero" style="--game:#159E92"><div class="syn-challenge-hero__copy"><span class="syn-kicker">Modo historia</span><h1>Ruta de atención segura</h1><p>Seis mundos para practicar desde las barreras básicas hasta los primeros minutos de una urgencia.</p><div class="syn-challenge-hero__stats"><span><b>${s.historia.length}/6</b> mundos superados</span><span><b>${s.xp}</b> XP acumulados</span></div></div><div class="syn-challenge-hero__art"><span><svg class="ic"><use href="#i-certificate"/></svg></span></div></section><div class="syn-section-head"><div><span class="syn-eyebrow">Tu recorrido</span><h2>Elige un mundo</h2></div></div><div class="syn-story-worlds">${RETOS_MUNDOS.map((m,i)=>`<button class="syn-world ${s.historia.includes(m.id)?'is-done':''}" style="--world:${m.color}" onclick="iniciarMundoSynova('${m.id}')"><span class="syn-world__num">${s.historia.includes(m.id)?'<svg class="ic"><use href="#i-check"/></svg>':i+1}</span><strong>${escHtml(m.titulo)}</strong><p>${escHtml(m.subtitulo)}</p><small>${s.historia.includes(m.id)?'Mundo superado · repetir':'5 decisiones · comenzar'} →</small></button>`).join('')}</div>${retoFuente()}</div>`;
+};
+
+window.iniciarCasoSynova = function(indice){ window.iniciarRetoClinico('casos',String(indice),'caso'); };
+window.iniciarMundoSynova = function(id){ window.iniciarRetoClinico('historia',id,'historia'); };
+window.iniciarRetoClinico = function(tipo,filtro='',modo='guiado'){
+  const s=estadoRetos();
+  if(tipo==='diario'&&s.diarios.includes(fechaReto())){ pintarResultadoReto({tipo,correctas:1,total:1,xp:0,pct:100,repetido:true}); return; }
+  let preguntas=[];
+  if(tipo==='diario'){
+    const semilla=Number(fechaReto().replace(/-/g,'')); preguntas=[BANCO_RETOS[semilla%BANCO_RETOS.length]];
+  } else if(tipo==='casos'&&modo==='caso') preguntas=[BANCO_RETOS[Number(filtro)]].filter(Boolean);
+  else if(tipo==='historia'){
+    const mundo=RETOS_MUNDOS.find(x=>x.id===filtro); preguntas=mezclarRetos(BANCO_RETOS.filter(p=>mundo?.area.includes(p.area))).slice(0,5);
+  } else {
+    let base=BANCO_RETOS.filter(p=>p.tipo==='quiz'&&(!filtro||p.area===filtro));
+    preguntas=mezclarRetos(base).slice(0,modo==='reloj'?8:10);
+  }
+  if(!preguntas.length){ Toast.error('Aún no hay material', 'Prueba con otra categoría.'); return; }
+  RetoSession={tipo,filtro,modo,preguntas,idx:0,correctas:0,respondida:false,casoId:tipo==='casos'?'caso-'+filtro:'',inicio:Date.now()};
   pintarPreguntaReto();
 };
 
 function pintarPreguntaReto(){
-  const r = RetoSession, p = r.preguntas[r.idx];
-  const pct = Math.round(r.idx / r.preguntas.length * 100);
-  document.getElementById('content').innerHTML = `<div class="reto-play">
-    <div class="reto-play__top"><button class="btn btn--ghost btn--sm" onclick="pintarHubRetos()">Salir</button><div class="reto-play__progress"><span style="width:${pct}%"></span></div><span style="font-size:11px;color:var(--text-3)">${r.idx+1}/${r.preguntas.length}</span></div>
-    <article class="reto-question"><span class="pill">${escHtml(p.area)}</span>${p.caso?`<div class="reto-question__case"><strong>Escenario clínico</strong><br>${escHtml(p.caso)}</div>`:''}<h2>${escHtml(p.q)}</h2><div class="reto-options">${p.o.map((o,i)=>`<button class="reto-option" data-reto-op="${i}" onclick="responderRetoClinico(${i})"><strong>${String.fromCharCode(65+i)}.</strong> ${escHtml(o)}</button>`).join('')}</div><div id="reto-feedback"></div></article>
-  </div>`;
-};
+  frenarTimerReto();
+  const r=RetoSession,p=r?.preguntas[r.idx]; if(!p){ pintarHubRetos(); return; }
+  const pct=Math.round(r.idx/r.preguntas.length*100), conReloj=r.modo==='reloj';
+  document.getElementById('content').innerHTML=`<div class="reto-play"><div class="reto-play__top"><button class="btn btn--ghost btn--sm" onclick="pintarHubRetos()">Salir</button><div class="reto-play__progress"><span style="width:${pct}%"></span></div><span style="font-size:11px;color:var(--text-3)">${r.idx+1}/${r.preguntas.length}</span></div>${conReloj?'<div class="reto-play__progress" aria-label="Tiempo restante"><span id="reto-timer-bar" style="width:100%;background:var(--warn)"></span></div>':''}<article class="reto-question"><span class="pill">${escHtml(p.area)}</span>${p.caso?`<div class="reto-question__case"><strong>Escenario clínico</strong><br>${escHtml(p.caso)}</div>`:''}<h2>${escHtml(p.q)}</h2><div class="reto-options">${p.o.map((o,i)=>`<button class="reto-option" data-reto-op="${i}" onclick="responderRetoClinico(${i})"><strong>${String.fromCharCode(65+i)}.</strong> ${escHtml(o)}</button>`).join('')}</div><div id="reto-feedback"></div></article>${retoFuente()}</div>`;
+  if(conReloj){ let restante=20; RetoTimer=setInterval(()=>{restante-=.1;const bar=document.getElementById('reto-timer-bar');if(bar)bar.style.width=Math.max(0,restante/20*100)+'%';if(restante<=0){frenarTimerReto();window.responderRetoClinico(-1);}},100); }
+}
 
 window.responderRetoClinico = function(i){
-  const r = RetoSession; if (!r || r.respondida) return;
-  r.respondida = true;
-  const p = r.preguntas[r.idx], ok = i === p.a;
-  if (ok) r.correctas++;
-  if (ok) window.celebrarSynova('sutil');
-  document.querySelectorAll('[data-reto-op]').forEach((b,j)=>{ b.disabled=true; if(j===p.a)b.classList.add('is-correct'); if(j===i&&!ok)b.classList.add('is-wrong'); });
-  const fin = r.idx >= r.preguntas.length-1;
-  document.getElementById('reto-feedback').innerHTML = `<div class="reto-feedback"><strong>${ok?'Decisión correcta':'Revisemos la prioridad'}</strong>${escHtml(p.exp)}<br><button class="btn btn--accent btn--sm" onclick="siguienteRetoClinico()">${fin?'Ver resultado':'Siguiente decisión'} <svg class="ic"><use href="#i-arrow-right"/></svg></button></div>`;
+  const r=RetoSession; if(!r||r.respondida)return; frenarTimerReto(); r.respondida=true;
+  const p=r.preguntas[r.idx],ok=i===p.a;if(ok)r.correctas++;
+  document.querySelectorAll('[data-reto-op]').forEach((b,j)=>{b.disabled=true;if(j===p.a)b.classList.add('is-correct');if(j===i&&!ok)b.classList.add('is-wrong');});
+  const fin=r.idx>=r.preguntas.length-1, fb=document.getElementById('reto-feedback');
+  if(fb)fb.innerHTML=`<div class="reto-feedback"><strong>${ok?'Decisión correcta':i<0?'Tiempo agotado':'Revisemos la prioridad'}</strong>${escHtml(p.exp)}<br><button class="btn btn--accent btn--sm" onclick="siguienteRetoClinico()">${fin?'Ver resultado':'Siguiente decisión'} <svg class="ic"><use href="#i-arrow-right"/></svg></button></div>`;
+  if(ok)window.celebrarSynova('sutil');
 };
 
 window.siguienteRetoClinico = function(){
-  const r = RetoSession; if (!r) return;
-  if (r.idx < r.preguntas.length-1) { r.idx++; r.respondida=false; pintarPreguntaReto(); return; }
-  const s = getRetosState();
-  const hoy = fechaReto();
-  const total = r.preguntas.length;
-  const pct = Math.round(r.correctas/total*100);
-  let xp = r.correctas*20;
-  if (r.tipo==='diario') {
-    xp = r.correctas ? 30 : 10;
-    const ayer = new Date(); ayer.setDate(ayer.getDate()-1);
-    const ayerKey = ayer.toLocaleDateString('en-CA');
-    s.racha = s.ultimoDia===ayerKey ? s.racha+1 : 1;
-    s.ultimoDia = hoy;
-    if (!s.diarios.includes(hoy)) s.diarios.push(hoy);
-  }
-  if (r.tipo==='casos') s.casos += total;
-  s.xp += xp; s.correctas += r.correctas; s.respondidas += total; s.mejor = Math.max(s.mejor,pct);
-  setRetosState(s);
-  pintarResultadoReto({ tipo:r.tipo, correctas:r.correctas, total, xp, pct });
+  const r=RetoSession;if(!r)return;
+  if(r.idx<r.preguntas.length-1){r.idx++;r.respondida=false;pintarPreguntaReto();return;}
+  const s=estadoRetos(),hoy=fechaReto(),total=r.preguntas.length,pct=Math.round(r.correctas/total*100);
+  let xp=r.correctas*(r.modo==='reloj'?25:20);
+  if(r.tipo==='diario'){
+    xp=r.correctas?30:10;const ayer=new Date();ayer.setDate(ayer.getDate()-1);const ayerKey=ayer.toLocaleDateString('en-CA');
+    s.racha=s.ultimoDia===ayerKey?s.racha+1:(s.ultimoDia===hoy?s.racha:1);s.ultimoDia=hoy;if(!s.diarios.includes(hoy))s.diarios.push(hoy);
+  } else if(r.tipo==='quiz'){s.quizzes++;s.quizSemana++;s.quizBest=Math.max(s.quizBest,pct);}
+  else if(r.tipo==='casos'){s.casos++;if(r.casoId&&!s.casosResueltos.includes(r.casoId))s.casosResueltos.push(r.casoId);}
+  else if(r.tipo==='historia'&&pct>=60&&!s.historia.includes(r.filtro)){s.historia.push(r.filtro);xp+=50;}
+  s.xp+=xp;s.correctas+=r.correctas;s.respondidas+=total;s.mejor=Math.max(s.mejor,pct);setRetosState(s);sincronizarProgresoReto(s);
+  pintarResultadoReto({tipo:r.tipo,filtro:r.filtro,modo:r.modo,correctas:r.correctas,total,xp,pct});
 };
 
 function pintarResultadoReto(res){
-  const titulo = res.repetido ? 'Reto diario completado' : res.pct>=80 ? 'Excelente criterio clínico' : res.pct>=50 ? 'Buen avance' : 'Cada decisión enseña';
-  document.getElementById('content').innerHTML = `<div class="reto-play"><div class="reto-result"><div class="reto-result__icon"><svg class="ic ic--xl"><use href="#${res.repetido?'i-check-circle':'i-trophy'}"/></svg></div><h2>${titulo}</h2><p>${res.repetido?'Vuelve mañana para una nueva decisión clínica.':`${res.correctas} de ${res.total} correctas · +${res.xp} XP`}</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn--accent" onclick="pintarHubRetos()">Volver a Retos</button>${!res.repetido&&res.tipo!=='diario'?`<button class="btn btn--ghost" onclick="iniciarRetoClinico('${res.tipo}')">Intentar de nuevo</button>`:''}</div></div></div>`;
-  if (!res.repetido) setTimeout(function(){ window.celebrarSynova(res.pct >= 80 ? 'grande' : 'normal'); }, 120);
+  frenarTimerReto();const titulo=res.repetido?'Reto diario completado':res.pct>=80?'Excelente criterio clínico':res.pct>=60?'Ruta superada':'Cada decisión enseña';
+  const repetir=res.tipo==='historia'?`iniciarMundoSynova('${res.filtro}')`:res.tipo==='casos'?`iniciarCasoSynova(${String(res.filtro).replace(/[^0-9]/g,'')||0})`:`iniciarRetoClinico('${res.tipo}','${escHtml(res.filtro||'')}','${escHtml(res.modo||'guiado')}')`;
+  document.getElementById('content').innerHTML=`<div class="reto-play"><div class="reto-result"><div class="reto-result__icon"><svg class="ic ic--xl"><use href="#${res.repetido?'i-check-circle':'i-trophy'}"/></svg></div><h2>${titulo}</h2><p>${res.repetido?'Vuelve mañana para una nueva decisión clínica.':`${res.correctas} de ${res.total} correctas · +${res.xp} XP`}</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn--accent" onclick="pintarHubRetos()">Volver a Retos</button>${!res.repetido?`<button class="btn btn--ghost" onclick="${repetir}">Intentar de nuevo</button>`:''}</div></div>${retoFuente()}</div>`;
+  if(!res.repetido)setTimeout(()=>window.celebrarSynova(res.pct>=80?'grande':'normal'),120);
+}
+
+window.abrirFlashSynova = function(){
+  const s=estadoRetos(),areas=[...new Set(RETOS_FLASHCARDS.map(x=>x.area))],pendientes=RETOS_FLASHCARDS.filter(c=>!s.flash[c.id]||!s.flash[c.id].due||s.flash[c.id].due<=fechaReto()).length;
+  document.getElementById('content').innerHTML=`<div class="syn-challenge"><button class="btn btn--ghost btn--sm syn-back" onclick="pintarHubRetos()">← Volver a la liga</button><section class="syn-challenge-hero" style="--game:#159E92"><div class="syn-challenge-hero__copy"><span class="syn-kicker">Memoria activa</span><h1>Flashcards clínicas</h1><p>Recuerda lo esencial con sesiones breves y repetición espaciada.</p><div class="syn-challenge-hero__stats"><span><b>${RETOS_FLASHCARDS.length}</b> tarjetas</span><span><b>${s.flashDominadas}</b> dominadas</span><span><b>${pendientes}</b> para hoy</span></div></div><div class="syn-challenge-hero__art"><span><svg class="ic"><use href="#i-book"/></svg></span></div></section><div class="syn-section-head"><div><span class="syn-eyebrow">Elige una sesión</span><h2>Mazos de repaso</h2></div></div><div class="syn-deck-grid"><button class="syn-deck" style="--deck:#159E92" onclick="iniciarFlashSynova('')"><span class="syn-deck__icon"><svg class="ic"><use href="#i-activity"/></svg></span><span><strong>Repaso inteligente</strong><small>Hasta 12 tarjetas vencidas o nuevas</small></span><i>→</i></button>${areas.map((a,i)=>`<button class="syn-deck" style="--deck:${['#2D89C8','#7A67C7','#D17847','#C35488'][i%4]}" onclick="iniciarFlashSynova('${escHtml(a)}')"><span class="syn-deck__icon"><svg class="ic"><use href="#${iconoAreaReto(a)}"/></svg></span><span><strong>${escHtml(a)}</strong><small>${RETOS_FLASHCARDS.filter(x=>x.area===a).length} tarjetas</small></span><i>→</i></button>`).join('')}</div>${retoFuente()}</div>`;
+};
+
+window.iniciarFlashSynova = function(area=''){
+  const s=estadoRetos(),hoy=fechaReto();let base=RETOS_FLASHCARDS.filter(c=>(!area||c.area===area)&&(!s.flash[c.id]||!s.flash[c.id].due||s.flash[c.id].due<=hoy));
+  if(!base.length)base=RETOS_FLASHCARDS.filter(c=>!area||c.area===area);
+  FlashSession={area,tarjetas:mezclarRetos(base).slice(0,12),idx:0,volteada:false,dominadas:0};pintarFlashReto();
+};
+function pintarFlashReto(){
+  const f=FlashSession,c=f?.tarjetas[f.idx];if(!c){abrirFlashSynova();return;}const pct=Math.round(f.idx/f.tarjetas.length*100);
+  document.getElementById('content').innerHTML=`<div class="syn-challenge"><button class="btn btn--ghost btn--sm syn-back" onclick="abrirFlashSynova()">← Salir del repaso</button><div class="syn-flash"><div class="syn-section-head"><div><span class="syn-eyebrow">${escHtml(c.area)}</span><h2>${f.idx+1} de ${f.tarjetas.length}</h2></div><span>${f.dominadas} dominadas en esta sesión</span></div><div class="syn-flash__progress"><span style="width:${pct}%"></span></div><div class="syn-flash-card" id="syn-flash-card" onclick="voltearFlashSynova()"><div class="syn-flash-card__face syn-flash-card__front"><span class="syn-eyebrow">Toca para revelar</span><p>${escHtml(c.frente)}</p></div><div class="syn-flash-card__face syn-flash-card__back"><span class="syn-kicker">Respuesta</span><p>${escHtml(c.reverso)}</p></div></div><div id="syn-flash-actions"><button class="btn btn--accent" style="width:100%" onclick="voltearFlashSynova()">Mostrar respuesta</button></div></div>${retoFuente()}</div>`;
+}
+window.voltearFlashSynova = function(){
+  const f=FlashSession;if(!f)return;f.volteada=true;document.getElementById('syn-flash-card')?.classList.add('is-flipped');const a=document.getElementById('syn-flash-actions');if(a)a.innerHTML='<div class="syn-flash-actions"><button class="btn btn--ghost" onclick="calificarFlashSynova(false)">Repasar pronto</button><button class="btn btn--accent" onclick="calificarFlashSynova(true)">Lo dominé</button></div>';
+};
+window.calificarFlashSynova = function(dominada){
+  const f=FlashSession;if(!f||!f.volteada)return;const c=f.tarjetas[f.idx],s=estadoRetos(),prev=s.flash[c.id]||{reps:0};const reps=dominada?Math.min(5,(prev.reps||0)+1):0,dias=dominada?[1,3,7,16,35][reps-1]:0;const due=new Date();due.setDate(due.getDate()+dias);
+  s.flash[c.id]={reps,due:due.toLocaleDateString('en-CA')};s.flashEstudiadas++;s.flashSemana++;if(dominada){f.dominadas++;s.xp+=3;}
+  s.flashDominadas=Object.values(s.flash).filter(x=>x.reps>=3).length;setRetosState(s);
+  if(f.idx>=f.tarjetas.length-1){sincronizarProgresoReto(s);document.getElementById('content').innerHTML=`<div class="reto-play"><div class="reto-result"><div class="reto-result__icon"><svg class="ic ic--xl"><use href="#i-book"/></svg></div><h2>Repaso completado</h2><p>${f.tarjetas.length} tarjetas vistas · ${f.dominadas} recordadas</p><button class="btn btn--accent" onclick="pintarHubRetos()">Volver a Retos</button></div></div>`;window.celebrarSynova(f.dominadas>=Math.ceil(f.tarjetas.length*.7)?'grande':'normal');return;}
+  f.idx++;f.volteada=false;pintarFlashReto();
+};
+
+async function sincronizarProgresoReto(s){
+  try{
+    const S=window.UserState,{doc,getDoc,setDoc,db,serverTimestamp}=window.__fs;if(!S?.uid||!db)return;
+    const ref=doc(db,'directorio',S.uid),snap=await getDoc(ref);if(!snap.exists())return;
+    await setDoc(ref,{retoXp:s.xp,retoNivel:nivelReto(s.xp).actual.nombre,retoCorrectas:s.correctas,retoUpdatedAt:serverTimestamp()},{merge:true});
+    window.__dirFotos=null;
+  }catch(e){console.warn('[SYNOVA] progreso de retos:',e.message);}
+}
+async function cargarRankingRetos(){
+  const box=document.getElementById('syn-ranking-content');if(!box)return;const S=window.UserState,s=estadoRetos();let items=[];
+  try{const {collection,getDocs,db}=window.__fs,snap=await getDocs(collection(db,'directorio'));snap.forEach(d=>{const p=d.data();if(Number(p.retoXp)>0)items.push({uid:p.uid||d.id,nombre:p.nombre||'Miembro SYNOVA',foto:p.foto||'',xp:Number(p.retoXp)||0,nivel:p.retoNivel||nivelReto(Number(p.retoXp)||0).actual.nombre});});}catch(e){console.warn('[SYNOVA] ranking:',e.message);}
+  const yo=items.find(x=>x.uid===S?.uid);if(yo){yo.xp=Math.max(yo.xp,s.xp);yo.nivel=nivelReto(yo.xp).actual.nombre;yo.foto=yo.foto||S.foto||'';}else if(S?.uid)items.push({uid:S.uid,nombre:S.nombre||'Tú',foto:S.foto||'',xp:s.xp,nivel:nivelReto(s.xp).actual.nombre});
+  items.sort((a,b)=>b.xp-a.xp||a.nombre.localeCompare(b.nombre));const pos=Math.max(1,items.findIndex(x=>x.uid===S?.uid)+1);const num=document.getElementById('syn-rank-num'),total=document.getElementById('syn-rank-total');if(num)num.textContent='#'+pos;if(total)total.textContent=`de ${items.length} en la liga`;
+  if(!box)return;const top=items.slice(0,3),orden=top.length>=3?[top[1],top[0],top[2]]:top;
+  box.innerHTML=`<div class="syn-podium">${orden.map(p=>{const real=items.indexOf(p)+1;return `<div class="syn-podium__place place-${real} ${p.uid===S?.uid?'is-you':''}"><span class="syn-podium__medal">#${real}</span>${avatarReto(p)}<strong>${escHtml(p.nombre)}</strong><small>${escHtml(p.nivel)}</small><b>${p.xp} XP</b></div>`;}).join('')}</div><div class="syn-ranking-table">${items.slice(3,15).map((p,i)=>`<div class="syn-ranking-row ${p.uid===S?.uid?'is-you':''}"><span class="syn-ranking-row__rank">${i+4}</span>${avatarReto(p)}<span class="syn-ranking-row__name"><strong>${escHtml(p.nombre)}${p.uid===S?.uid?' · Tú':''}</strong><span>${escHtml(p.nivel)}</span></span><b>${p.xp} XP</b></div>`).join('')}</div><div class="syn-privacy"><svg class="ic"><use href="#i-shield-check"/></svg> Solo se comparte avance educativo; nunca teléfono ni correo.</div>`;
 }
 
 async function asegurarFotosDirectorio(){
@@ -5206,8 +5401,9 @@ function mountNutricion(c){
     ficha.setAttribute('role', 'dialog');
     ficha.setAttribute('aria-modal', 'true');
     ficha.setAttribute('aria-labelledby', 'ficha-inicial-titulo');
-    ficha.innerHTML = '<div class="ficha-inicial__veil"></div>' +
+    ficha.innerHTML = '<div class="ficha-inicial__veil" id="fi-veil"></div>' +
       '<section class="ficha-inicial__panel">' +
+        '<button class="ficha-inicial__close" id="fi-cerrar" type="button" aria-label="Cerrar y completar después"><svg class="ic"><use href="#i-x"/></svg></button>' +
         '<header class="ficha-inicial__head"><div class="ficha-inicial__identity">' +
           '<div class="ficha-inicial__avatar">' + foto + '</div><div><div class="ficha-inicial__kicker">Tu espacio profesional</div>' +
           '<h2 id="ficha-inicial-titulo">Bienvenido a SYNOVA, ' + escHtml((S.nombre || 'colega').split(' ')[0]) + '</h2></div></div>' +
@@ -5227,6 +5423,9 @@ function mountNutricion(c){
         '</form></section>';
     document.body.appendChild(ficha);
     document.getElementById('fi-omitir').addEventListener('click', function(){ cerrar(true); });
+    document.getElementById('fi-cerrar').addEventListener('click', function(){ cerrar(true); });
+    document.getElementById('fi-veil').addEventListener('click', function(){ cerrar(true); });
+    ficha.addEventListener('keydown', function(event){ if (event.key === 'Escape') cerrar(true); });
     document.getElementById('ficha-inicial-form').addEventListener('submit', async function(event){
       event.preventDefault();
       var btn = document.getElementById('fi-guardar');
