@@ -485,25 +485,70 @@ body::after{
 .pdf-card__tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:auto;padding-top:10px;border-top:1px solid var(--border)}
 
 /* LOGROS */
-.logro-hero{background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);border:1px solid var(--border-2);border-radius:22px;padding:26px 28px;margin-bottom:24px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
-.logro-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 25%,color-mix(in srgb,var(--primary) 18%,transparent),transparent 50%),radial-gradient(circle at 20% 80%,color-mix(in srgb,var(--highlight) 14%,transparent),transparent 55%);filter:blur(50px);pointer-events:none;animation:aurora 22s ease-in-out infinite alternate}
-.logro-hero__row{display:flex;align-items:center;gap:18px;flex-wrap:wrap;position:relative;z-index:1}
-.logro-hero__icon{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 12px 32px var(--primary-glow),inset 0 1px 0 rgba(255,255,255,.18)}
-.logro-hero__lbl{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3)}
-.logro-hero__name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.8px;line-height:1.05;margin-top:4px;background:linear-gradient(135deg,var(--text),color-mix(in srgb,var(--text) 55%,transparent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.logro-hero__racha{margin-left:auto;display:inline-flex;align-items:center;gap:9px;background:color-mix(in srgb,var(--primary) 14%,transparent);border:1px solid color-mix(in srgb,var(--primary) 35%,transparent);padding:10px 18px;border-radius:100px;box-shadow:0 6px 18px var(--primary-glow)}
-.logro-hero__racha-num{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:16px;font-weight:800;color:var(--primary-soft);letter-spacing:-.3px}
-.logro-hero__racha-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--primary-soft);letter-spacing:.9px;text-transform:uppercase;font-weight:700}
-.logros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.logro{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px 12px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;cursor:pointer;transition:transform .25s cubic-bezier(.2,.8,.25,1),border-color .25s,box-shadow .3s,opacity .2s}
-.logro:hover{transform:translateY(-3px);border-color:var(--border-strong);box-shadow:0 10px 26px rgba(0,0,0,.12)}
-.logro.is-locked{opacity:.45;filter:grayscale(.4)}
-.logro.is-locked:hover{opacity:.85}
-.logro__icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--cat-color,var(--primary)) 14%,transparent);color:var(--cat-color,var(--primary));border:1px solid color-mix(in srgb,var(--cat-color,var(--primary)) 22%,transparent)}
-.logro.is-unlocked .logro__icon{background:linear-gradient(135deg,var(--cat-color,var(--primary)),color-mix(in srgb,var(--cat-color,var(--primary)) 60%,#000));color:#fff;border-color:transparent;box-shadow:0 6px 18px color-mix(in srgb,var(--cat-color,var(--primary)) 30%,transparent),inset 0 1px 0 rgba(255,255,255,.2)}
-.logro__name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:12px;font-weight:700;line-height:1.25}
-.logro__xp{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);font-weight:700;letter-spacing:.4px}
-.logro.is-unlocked .logro__xp{color:var(--highlight)}
+.logro-hero{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px 24px;margin-bottom:28px;display:flex;flex-direction:column;gap:16px}
+.logro-hero__row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logro-hero__icon{width:52px;height:52px;border-radius:50%;background:var(--surface-2);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border)}
+.logro-hero__lbl{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3)}
+.logro-hero__name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:25px;font-weight:800;letter-spacing:-.7px;line-height:1.1;margin-top:3px;color:var(--text)}
+.logro-hero__racha{margin-left:auto;display:flex;align-items:center;gap:20px;padding:8px 0}
+.logro-hero__stat{text-align:right}
+.logro-hero__racha-num{display:block;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:18px;font-weight:800;color:var(--text)}
+.logro-hero__racha-lbl{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-3);letter-spacing:.9px;text-transform:uppercase;font-weight:700;margin-top:2px}
+.logro-hero__xp-bar{height:7px;background:var(--surface-2);border-radius:999px;overflow:hidden;border:1px solid var(--border)}
+.logro-hero__xp-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--primary),var(--highlight));transition:width .5s ease}
+.logro-hero__xp-text{display:flex;justify-content:space-between;font-size:11px;color:var(--text-3)}
+.logro-section{margin-bottom:28px}
+.logro-section__head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.logro-section__head h2{font-size:16px;letter-spacing:-.3px}
+.logro-section__head span{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);background:var(--surface-2);border:1px solid var(--border);padding:4px 9px;border-radius:999px}
+.logros-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.logro{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:22px;min-height:158px;display:grid;grid-template-columns:52px 1fr;grid-template-rows:auto 1fr auto;gap:4px 15px;align-items:start;transition:transform .22s,border-color .22s,box-shadow .25s}
+.logro:hover{transform:translateY(-2px);border-color:var(--border-strong);box-shadow:0 12px 30px rgba(0,0,0,.08)}
+.logro.is-locked{background:color-mix(in srgb,var(--surface) 82%,var(--surface-2));color:var(--text-3)}
+.logro__icon{grid-row:1/4;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--text-3);border:1px solid var(--border)}
+.logro.is-unlocked .logro__icon{background:color-mix(in srgb,var(--cat-color,var(--primary)) 12%,var(--surface));color:var(--cat-color,var(--primary));border-color:color-mix(in srgb,var(--cat-color,var(--primary)) 24%,var(--border))}
+.logro__name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:14px;font-weight:800;line-height:1.25;color:var(--text)}
+.logro__desc{font-size:12px;color:var(--text-2);line-height:1.45;margin-top:3px}
+.logro__foot{display:flex;align-items:center;gap:10px;margin-top:12px}
+.logro__progress{flex:1;height:6px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+.logro__progress span{display:block;height:100%;border-radius:inherit;background:var(--cat-color,var(--primary))}
+.logro__xp{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);font-weight:700;white-space:nowrap}
+.logro.is-unlocked .logro__xp{color:var(--cat-color,var(--primary))}
+
+/* RETOS CLÍNICOS */
+.retos-dashboard{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-bottom:22px}
+.retos-score{background:linear-gradient(135deg,var(--primary-deep),#123C63);color:#fff;border-radius:22px;padding:26px;position:relative;overflow:hidden}
+.retos-score::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;right:-55px;top:-70px;background:rgba(255,255,255,.08)}
+.retos-score__eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.3px;text-transform:uppercase;opacity:.72}
+.retos-score__xp{font-family:'Plus Jakarta Sans',sans-serif;font-size:38px;font-weight:800;letter-spacing:-1.4px;margin:5px 0}
+.retos-score__meta{display:flex;gap:18px;font-size:12px;opacity:.8;flex-wrap:wrap}
+.retos-streak{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:24px;display:flex;align-items:center;gap:16px}
+.retos-streak__ic{width:52px;height:52px;border-radius:50%;background:color-mix(in srgb,var(--highlight) 15%,var(--surface));color:var(--highlight);display:flex;align-items:center;justify-content:center}
+.retos-streak strong{display:block;font-size:22px;font-family:'Plus Jakarta Sans',sans-serif}
+.retos-streak span{font-size:12px;color:var(--text-3)}
+.retos-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:26px}
+.reto-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px;text-align:left;display:flex;flex-direction:column;min-height:230px;transition:.22s;position:relative;overflow:hidden}
+.reto-card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--reto-color,var(--primary)) 45%,var(--border));box-shadow:0 16px 34px color-mix(in srgb,var(--reto-color,var(--primary)) 12%,transparent)}
+.reto-card__icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--reto-color,var(--primary)) 13%,var(--surface));color:var(--reto-color,var(--primary));margin-bottom:20px}
+.reto-card__tag{font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-3);font-weight:700}
+.reto-card h3{font-size:17px;margin:5px 0 8px;letter-spacing:-.35px}
+.reto-card p{font-size:12.5px;line-height:1.55;color:var(--text-2);margin-bottom:18px}
+.reto-card__foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:var(--text-3)}
+.reto-card__go{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--text)}
+.reto-card.is-done{border-color:color-mix(in srgb,var(--success) 36%,var(--border))}
+.reto-roadmap{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px;margin-bottom:24px}
+.reto-roadmap__head{display:flex;justify-content:space-between;gap:12px;margin-bottom:18px}.reto-roadmap__head h2{font-size:16px}.reto-roadmap__head span{font-size:11px;color:var(--text-3)}
+.reto-roadmap__steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.reto-step{padding:14px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border);font-size:11px;color:var(--text-3)}
+.reto-step strong{display:block;color:var(--text);font-size:12.5px;margin:5px 0}.reto-step.is-done{background:color-mix(in srgb,var(--success) 9%,var(--surface));border-color:color-mix(in srgb,var(--success) 28%,var(--border))}
+.reto-play{max-width:820px;margin:0 auto}
+.reto-play__top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.reto-play__progress{height:7px;background:var(--surface-2);border-radius:99px;overflow:hidden;flex:1}.reto-play__progress span{display:block;height:100%;background:var(--primary);border-radius:inherit}
+.reto-question{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:28px}.reto-question__case{font-size:12.5px;line-height:1.6;color:var(--text-2);background:var(--surface-2);border-radius:14px;padding:14px 16px;margin:14px 0}.reto-question h2{font-size:21px;line-height:1.35;letter-spacing:-.45px;margin:10px 0 18px}
+.reto-options{display:grid;gap:10px}.reto-option{width:100%;text-align:left;padding:14px 16px;border-radius:13px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;color:var(--text);transition:.16s}.reto-option:hover:not(:disabled){border-color:var(--primary);transform:translateX(2px)}.reto-option.is-correct{background:color-mix(in srgb,var(--success) 11%,var(--surface));border-color:var(--success)}.reto-option.is-wrong{background:color-mix(in srgb,var(--danger) 10%,var(--surface));border-color:var(--danger)}
+.reto-feedback{margin-top:16px;padding:16px;border-radius:14px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;line-height:1.55}.reto-feedback strong{display:block;margin-bottom:4px}.reto-feedback .btn{margin-top:12px}
+.reto-result{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:42px 28px}.reto-result__icon{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:color-mix(in srgb,var(--primary) 13%,var(--surface));color:var(--primary)}.reto-result h2{font-size:28px}.reto-result p{color:var(--text-2);margin:8px 0 20px}
+@media(max-width:900px){.logros-grid,.retos-dashboard{grid-template-columns:1fr}.retos-grid{grid-template-columns:1fr}.reto-roadmap__steps{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.logro{grid-template-columns:44px 1fr;padding:17px;min-height:140px}.logro__icon{width:44px;height:44px}.logro-hero__racha{width:100%;justify-content:space-between}.reto-roadmap__steps{grid-template-columns:1fr}.reto-question{padding:20px}}
 
 /* CERTIFICADOS */
 .certs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
@@ -853,7 +898,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   .kpi-card{padding:12px 14px}
   .kpi-card__value{font-size:20px}
   .cursos-grid,.certs-grid,.webinars-grid{grid-template-columns:1fr;gap:12px}
-  .logros-grid{grid-template-columns:repeat(3,1fr)}
+  .logros-grid{grid-template-columns:1fr}
   .webinar-hero{grid-template-columns:1fr;gap:18px;padding:20px 22px}
   .webinar-hero__countdown{align-self:stretch;justify-content:stretch}
   .webinar-hero__cd-box{padding:10px 6px}
@@ -898,7 +943,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   .banner{padding:18px}
   .banner__stat{min-width:0;flex:1;padding:10px 12px}
   .banner__stat-val{font-size:18px}
-  .logros-grid{grid-template-columns:repeat(2,1fr)}
+  .logros-grid{grid-template-columns:1fr}
 }
 
 /* NOTICIAS (mismo diseño que IMDIIL/ICADEM) */
@@ -1159,6 +1204,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       <a class="nav-item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Mis cursos<span class="nav-item__badge" id="nav-badge-cursos">—</span></a>
       <a class="nav-item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Clases en vivo</a>
       <a class="nav-item" data-section="pdfs"><svg class="ic"><use href="#i-news"/></svg>PDFs y material</a>
+      <a class="nav-item" data-section="retos"><svg class="ic"><use href="#i-bolt"/></svg>Retos clínicos</a>
       <a class="nav-item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
       <a class="nav-item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
       <a class="nav-item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
@@ -1302,6 +1348,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
         <a class="mobile-drawer__item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Mis cursos</a>
         <a class="mobile-drawer__item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Clases en vivo</a>
         <a class="mobile-drawer__item" data-section="pdfs"><svg class="ic"><use href="#i-news"/></svg>PDFs y material</a>
+        <a class="mobile-drawer__item" data-section="retos"><svg class="ic"><use href="#i-bolt"/></svg>Retos clínicos</a>
         <a class="mobile-drawer__item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
         <a class="mobile-drawer__item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
         <a class="mobile-drawer__item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
@@ -2413,15 +2460,26 @@ async function cargarMateriales(){
 }
 
 /* ══════════════════════ MIS LOGROS ══════════════════════ */
+function retosKey(){ return 'synova_retos_' + (window.UserState?.uid || 'anon'); }
+function getRetosState(){
+  const base = { xp: 0, correctas: 0, respondidas: 0, mejor: 0, racha: 0, ultimoDia: '', diarios: [], casos: 0 };
+  try { return { ...base, ...JSON.parse(localStorage.getItem(retosKey()) || '{}') }; } catch (e) { return base; }
+}
+function setRetosState(s){ try { localStorage.setItem(retosKey(), JSON.stringify(s)); } catch (e) {} }
+
 const LOGROS_DEF = [
-  { id: 'primer-curso', name: 'Primer curso', xp: 50, cat: 'Formación', color: '#1C6FB0', icon: 'i-book', check: st => st.cursosCompletados >= 1 },
-  { id: 'tres-cursos', name: '3 cursos completados', xp: 120, cat: 'Formación', color: '#1C6FB0', icon: 'i-trophy', check: st => st.cursosCompletados >= 3 },
-  { id: 'primer-cert', name: 'Primer certificado', xp: 80, cat: 'Certificación', color: '#159E92', icon: 'i-certificate', check: st => st.certificados >= 1 },
-  { id: 'tres-cert', name: '3 certificados SYNOVA', xp: 200, cat: 'Certificación', color: '#159E92', icon: 'i-certificate', check: st => st.certificados >= 3 },
-  { id: 'primer-post', name: 'Primera publicación', xp: 40, cat: 'Comunidad', color: '#5FB6E0', icon: 'i-messages', check: st => st.posts >= 1 },
-  { id: 'activo-foro', name: 'Miembro activo del foro', xp: 100, cat: 'Comunidad', color: '#5FB6E0', icon: 'i-messages', check: st => st.posts >= 5 },
-  { id: 'tarjeta-dir', name: 'Tarjeta de directorio creada', xp: 60, cat: 'Comunidad', color: '#5FB6E0', icon: 'i-users', check: st => st.tieneDirectorio },
-  { id: 'miembro-vip', name: 'Miembro VIP SYNOVA', xp: 30, cat: 'Membresía', color: '#2FD1C6', icon: 'i-crown', check: () => toolEsVIP() }
+  { id:'primer-paso', name:'Primer paso', desc:'Completa tu primera clase dentro de SYNOVA.', xp:30, cat:'Constancia', color:'#2D89C8', icon:'i-play', value:s=>s.clasesVistas, goal:1 },
+  { id:'en-marcha', name:'En marcha', desc:'Avanza en cinco clases de tu ruta clínica.', xp:60, cat:'Constancia', color:'#2D89C8', icon:'i-bolt', value:s=>s.clasesVistas, goal:5 },
+  { id:'constante', name:'Constante', desc:'Mantén una racha de tres retos diarios.', xp:90, cat:'Constancia', color:'#2D89C8', icon:'i-calendar', value:s=>s.retos.racha, goal:3 },
+  { id:'imparable', name:'Imparable', desc:'Siete días consecutivos resolviendo retos.', xp:180, cat:'Constancia', color:'#2D89C8', icon:'i-activity', value:s=>s.retos.racha, goal:7 },
+  { id:'certificado', name:'Certificado', desc:'Obtén tu primer certificado verificable.', xp:80, cat:'Clínica', color:'#159E92', icon:'i-certificate', value:s=>s.certificados, goal:1 },
+  { id:'especialista', name:'Especialista', desc:'Completa tres cursos de actualización.', xp:160, cat:'Clínica', color:'#159E92', icon:'i-stethoscope', value:s=>s.cursosCompletados, goal:3 },
+  { id:'criterio-clinico', name:'Criterio clínico', desc:'Responde correctamente diez decisiones clínicas.', xp:140, cat:'Especialización', color:'#7A67C7', icon:'i-clipboard-check', value:s=>s.retos.correctas, goal:10 },
+  { id:'multidisciplinar', name:'Multidisciplinar', desc:'Completa formación en tres áreas de salud.', xp:220, cat:'Especialización', color:'#7A67C7', icon:'i-tools', value:s=>s.areasCompletadas, goal:3 },
+  { id:'casos', name:'Resolutor de casos', desc:'Finaliza tres guardias clínicas simuladas.', xp:180, cat:'Maestría', color:'#C08A2D', icon:'i-shield-check', value:s=>s.retos.casos, goal:3 },
+  { id:'maestro', name:'Maestro SYNOVA', desc:'Alcanza diez cursos completados.', xp:400, cat:'Maestría', color:'#C08A2D', icon:'i-crown', value:s=>s.cursosCompletados, goal:10 },
+  { id:'voz', name:'Voz de la comunidad', desc:'Publica tu primer aporte en el Foro VIP.', xp:50, cat:'Comunidad', color:'#4C9FD1', icon:'i-messages', value:s=>s.posts, goal:1 },
+  { id:'red-profesional', name:'Red profesional', desc:'Publica tu tarjeta en el Directorio VIP.', xp:60, cat:'Comunidad', color:'#4C9FD1', icon:'i-users', value:s=>s.tieneDirectorio?1:0, goal:1 }
 ];
 
 Sections.logros = function(){
@@ -2433,7 +2491,7 @@ Sections.logros = function(){
 
 async function calcularEstadoActividad(){
   const S = window.UserState;
-  const out = { cursosCompletados: 0, certificados: 0, posts: 0, tieneDirectorio: false, cursosTotal: 0 };
+  const out = { cursosCompletados: 0, certificados: 0, posts: 0, tieneDirectorio: false, cursosTotal: 0, clasesVistas: 0, areasCompletadas: 0, retos: getRetosState() };
   if (!S || !S.uid) return out;
   try {
     const { collection, getDocs, getDoc, doc, db, query, where } = window.__fs;
@@ -2449,6 +2507,10 @@ async function calcularEstadoActividad(){
     out.tieneDirectorio = dirSnap.exists();
     const progreso = getProgreso();
     out.cursosCompletados = Object.values(progreso).filter(p => p && p.completado).length || out.certificados;
+    const progresoClases = (() => { try { return JSON.parse(localStorage.getItem('synova_curso_prog_' + S.uid) || '{}'); } catch (e) { return {}; } })();
+    out.clasesVistas = Object.values(progresoClases).reduce((n, p) => n + (Array.isArray(p?.vistas) ? p.vistas.length : 0), 0);
+    const terminados = new Set(Object.entries(progreso).filter(([,p]) => p?.completado).map(([id]) => id));
+    out.areasCompletadas = new Set((window.__cursosCache || []).filter(c => terminados.has(String(c.id))).map(c => c.area).filter(Boolean)).size;
   } catch (e) { console.warn('[SYNOVA] calcularEstadoActividad:', e.message); }
   return out;
 }
@@ -2457,39 +2519,40 @@ async function cargarLogros(){
   const wrap = document.getElementById('logros-wrap');
   if (!wrap) return;
   const st = await calcularEstadoActividad();
-  const unlocked = LOGROS_DEF.filter(l => l.check(st));
-  const xpTotal = unlocked.reduce((a, l) => a + l.xp, 0);
-  const xpMax = LOGROS_DEF.reduce((a, l) => a + l.xp, 0);
-  const pct = Math.round((xpTotal / xpMax) * 100);
+  const unlocked = LOGROS_DEF.filter(l => Number(l.value(st)) >= l.goal);
+  const xpLogros = unlocked.reduce((a, l) => a + l.xp, 0);
+  const xpTotal = xpLogros + Number(st.retos.xp || 0);
+  const pct = Math.round((unlocked.length / LOGROS_DEF.length) * 100);
+  const nivel = Math.max(1, Math.floor(xpTotal / 250) + 1);
 
   const cats = [...new Set(LOGROS_DEF.map(l => l.cat))];
   const gridsHtml = cats.map(cat => {
     const items = LOGROS_DEF.filter(l => l.cat === cat);
-    return `<div style="margin-bottom:26px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700">${escHtml(cat)}</div>
-        <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);padding:3px 10px;border-radius:100px;background:var(--surface-2);border:1px solid var(--border)">${items.filter(l => unlocked.includes(l)).length}/${items.length}</span>
-      </div>
+    return `<section class="logro-section">
+      <div class="logro-section__head"><h2>${escHtml(cat)}</h2><span>${items.filter(l => unlocked.includes(l)).length}/${items.length}</span></div>
       <div class="logros-grid">${items.map(l => {
         const isUnlocked = unlocked.includes(l);
+        const valor = Math.max(0, Number(l.value(st)) || 0);
+        const progreso = Math.min(100, Math.round(valor / l.goal * 100));
         return `<div class="logro ${isUnlocked ? 'is-unlocked' : 'is-locked'}" style="--cat-color:${l.color}">
           <div class="logro__icon"><svg class="ic"><use href="#${l.icon}"/></svg></div>
           <div class="logro__name">${escHtml(l.name)}</div>
-          <div class="logro__xp">${isUnlocked ? '+' + l.xp + ' XP' : l.xp + ' XP'}</div>
+          <div class="logro__desc">${escHtml(l.desc)}</div>
+          <div class="logro__foot"><div class="logro__progress"><span style="width:${progreso}%"></span></div><div class="logro__xp">${Math.min(valor,l.goal)}/${l.goal} · ${l.xp} XP</div></div>
         </div>`;
       }).join('')}</div>
-    </div>`;
+    </section>`;
   }).join('');
 
   wrap.innerHTML = `
     <div class="logro-hero fade-up">
       <div class="logro-hero__row">
         <div class="logro-hero__icon"><svg class="ic ic--xl"><use href="#i-trophy"/></svg></div>
-        <div><div class="logro-hero__lbl">Progreso SYNOVA</div><div class="logro-hero__name">${xpTotal} XP</div></div>
-        <div class="logro-hero__racha"><div><div class="logro-hero__racha-num">${unlocked.length}/${LOGROS_DEF.length}</div><div class="logro-hero__racha-lbl">Logros</div></div></div>
+        <div><div class="logro-hero__lbl">Progreso SYNOVA</div><div class="logro-hero__name">Nivel ${nivel} · ${xpTotal} XP</div></div>
+        <div class="logro-hero__racha"><div class="logro-hero__stat"><span class="logro-hero__racha-num">${unlocked.length}/${LOGROS_DEF.length}</span><span class="logro-hero__racha-lbl">Logros</span></div><div class="logro-hero__stat"><span class="logro-hero__racha-num">${st.retos.racha || 0}</span><span class="logro-hero__racha-lbl">Racha diaria</span></div></div>
       </div>
       <div class="logro-hero__xp-bar"><div class="logro-hero__xp-fill" style="width:${pct}%"></div></div>
-      <div class="logro-hero__xp-text"><span>Nivel de participación</span><strong>${pct}%</strong></div>
+      <div class="logro-hero__xp-text"><span>Trayectoria completada</span><strong>${pct}%</strong></div>
     </div>
     ${gridsHtml}
   `;
@@ -3018,6 +3081,109 @@ function suscribirForo(){
   } catch (e) { console.warn('[SYNOVA] suscribirForo error', e.message); }
 }
 
+/* ══════════════════════ RETOS CLÍNICOS ══════════════════════ */
+const RETOS_PREGUNTAS = [
+  { area:'Seguridad del paciente', tipo:'quiz', q:'Antes de administrar un medicamento de alto riesgo, ¿qué acción reduce mejor un error prevenible?', o:['Confirmar solo el nombre del fármaco','Aplicar los correctos de medicación y doble verificación independiente','Preguntar al acompañante si reconoce el medicamento','Administrarlo y documentar al terminar'], a:1, exp:'La doble verificación independiente y los correctos de medicación reducen errores de paciente, dosis, vía, horario y fármaco.' },
+  { area:'Control de infecciones', tipo:'quiz', q:'¿En qué momento es indispensable realizar higiene de manos según los cinco momentos de la OMS?', o:['Solo al iniciar el turno','Antes de tocar al paciente y después del contacto con su entorno','Únicamente si no se usaron guantes','Después de documentar'], a:1, exp:'Los guantes no sustituyen la higiene de manos. Debe realizarse antes y después del contacto indicado.' },
+  { area:'Heridas', tipo:'quiz', q:'Una lesión con pérdida total del grosor de la piel y tejido adiposo visible, sin exposición de fascia o músculo, corresponde a:', o:['Lesión por presión estadio 1','Estadio 2','Estadio 3','Estadio 4'], a:2, exp:'En estadio 3 hay pérdida total de piel y puede observarse tejido adiposo, sin exposición de estructuras profundas.' },
+  { area:'Triage', tipo:'quiz', q:'¿Qué hallazgo exige priorización inmediata en un paciente que llega a urgencias?', o:['Dolor crónico sin cambios','Saturación de oxígeno de 82% con dificultad respiratoria','Solicitud de receta habitual','Fiebre aislada de 37.8 °C'], a:1, exp:'La hipoxemia con dificultad respiratoria amenaza la vida y requiere evaluación e intervención inmediata.' },
+  { area:'Accesos vasculares', tipo:'quiz', q:'Durante la vigilancia de un acceso periférico aparece edema, palidez y disminución del flujo. ¿Qué debes sospechar primero?', o:['Flebitis química','Infiltración','Infección sistémica','Embolia aérea'], a:1, exp:'Edema, palidez, frío y disminución del flujo son hallazgos típicos de infiltración.' },
+  { area:'Esterilización', tipo:'quiz', q:'¿Qué indicador confirma de manera más directa que un ciclo de esterilización logró destruir microorganismos resistentes?', o:['Cinta testigo externa','Registro de temperatura','Indicador biológico','Color del empaque'], a:2, exp:'El indicador biológico utiliza esporas altamente resistentes y es la referencia para evaluar la eficacia del proceso.' },
+  { area:'Hemodiálisis', tipo:'caso', caso:'Paciente en hemodiálisis presenta hipotensión, náusea y diaforesis durante la sesión.', q:'¿Cuál es la prioridad inicial?', o:['Aumentar la ultrafiltración','Colocar al paciente en posición segura, valorar signos vitales y detener o reducir ultrafiltración según protocolo','Administrar alimento sólido','Retirar inmediatamente el acceso'], a:1, exp:'La hipotensión intradialítica requiere valoración inmediata, posición segura y ajuste de ultrafiltración conforme al protocolo.' },
+  { area:'Materno', tipo:'caso', caso:'Paciente embarazada con TA 168/112 mmHg, cefalea intensa y fosfenos.', q:'¿Qué conducta es la más segura?', o:['Citarla en 48 horas','Indicar reposo en casa','Activar atención obstétrica urgente y protocolo de trastorno hipertensivo','Administrar analgésico y observar'], a:2, exp:'La hipertensión severa con síntomas neurológicos sugiere preeclampsia con datos de severidad y requiere atención urgente.' },
+  { area:'Pediatría', tipo:'caso', caso:'Lactante con tiraje intercostal, quejido respiratorio y llenado capilar de 4 segundos.', q:'¿Qué interpretación es correcta?', o:['Cuadro estable para sala de espera','Signos de deterioro respiratorio y perfusión comprometida','Respuesta normal al llanto','Solo requiere hidratación oral'], a:1, exp:'El trabajo respiratorio aumentado y el llenado capilar prolongado son señales de deterioro que exigen atención prioritaria.' },
+  { area:'Sepsis', tipo:'caso', caso:'Adulto con sospecha de infección, confusión nueva, FR 28 y PAS 88 mmHg.', q:'¿Qué acción debe ocurrir primero?', o:['Esperar resultados completos antes de intervenir','Activar protocolo de sepsis, valorar perfusión y obtener acceso para manejo inmediato','Enviar a domicilio con antibiótico oral','Solicitar únicamente radiografía'], a:1, exp:'La hipotensión, taquipnea y alteración mental sugieren sepsis de alto riesgo; el protocolo debe activarse sin demora.' }
+];
+
+let RetoSession = null;
+const fechaReto = () => new Date().toLocaleDateString('en-CA');
+const mezclarRetos = a => [...a].sort(() => Math.random() - .5);
+
+Sections.retos = function(){ pintarHubRetos(); };
+
+function pintarHubRetos(){
+  const s = getRetosState();
+  const hoyHecho = s.diarios.includes(fechaReto());
+  const metas = [1,5,10,20];
+  document.getElementById('content').innerHTML =
+    secHero('Entrenamiento aplicado', 'Retos clínicos', 'Fortalece criterio, seguridad y toma de decisiones con ejercicios breves inspirados en escenarios reales de atención.') +
+    `<div class="retos-dashboard">
+      <div class="retos-score"><div class="retos-score__eyebrow">Tu desempeño clínico</div><div class="retos-score__xp">${s.xp} XP</div><div class="retos-score__meta"><span>${s.correctas} respuestas correctas</span><span>Mejor sesión ${s.mejor}%</span><span>${s.casos} guardias completadas</span></div></div>
+      <div class="retos-streak"><div class="retos-streak__ic"><svg class="ic ic--lg"><use href="#i-bolt"/></svg></div><div><strong>${s.racha} día${s.racha===1?'':'s'}</strong><span>Racha de práctica clínica</span></div></div>
+    </div>
+    <div class="retos-grid">
+      ${tarjetaReto('diario','i-calendar','Reto diario','Una decisión breve cada día para mantener activo tu criterio.','1 pregunta · hasta 30 XP','#2D89C8',hoyHecho)}
+      ${tarjetaReto('quiz','i-bolt','Guardia relámpago','Seis decisiones de seguridad, procedimientos y atención prioritaria.','6 preguntas · puntuación final','#159E92',false)}
+      ${tarjetaReto('casos','i-stethoscope','Casos de decisión','Analiza signos, prioriza riesgos y elige la conducta más segura.','3 casos clínicos guiados','#7A67C7',false)}
+    </div>
+    <section class="reto-roadmap"><div class="reto-roadmap__head"><h2>Ruta de criterio clínico</h2><span>${s.correctas} decisiones correctas acumuladas</span></div><div class="reto-roadmap__steps">${metas.map((m,i)=>`<div class="reto-step ${s.correctas>=m?'is-done':''}"><span>Etapa ${i+1}</span><strong>${['Observador seguro','Profesional constante','Analista clínico','Referente SYNOVA'][i]}</strong>${Math.min(s.correctas,m)}/${m} correctas</div>`).join('')}</div></section>
+    <div class="foro-aviso"><svg class="ic"><use href="#i-info"/></svg><span>Contenido educativo. Los retos no sustituyen protocolos institucionales, valoración clínica ni juicio profesional.</span></div>`;
+};
+
+function tarjetaReto(id, icon, titulo, texto, meta, color, hecho){
+  return `<button class="reto-card ${hecho?'is-done':''}" style="--reto-color:${color}" onclick="iniciarRetoClinico('${id}')"><div class="reto-card__icon"><svg class="ic ic--lg"><use href="#${icon}"/></svg></div><span class="reto-card__tag">${hecho?'Completado hoy':'Entrenamiento SYNOVA'}</span><h3>${titulo}</h3><p>${texto}</p><div class="reto-card__foot"><span>${meta}</span><span class="reto-card__go"><svg class="ic"><use href="#${hecho?'i-check':'i-arrow-right'}"/></svg></span></div></button>`;
+}
+
+window.iniciarRetoClinico = function(tipo){
+  const s = getRetosState();
+  if (tipo === 'diario' && s.diarios.includes(fechaReto())) { pintarResultadoReto({ tipo, correctas:1, total:1, xp:0, repetido:true }); return; }
+  if (tipo !== 'diario' && !toolEsVIP()) { window.__showPaywallModal('Los retos completos de Guardia y Casos clínicos son exclusivos para miembros VIP. El reto diario está abierto para todos.'); return; }
+  let preguntas;
+  if (tipo === 'diario') {
+    const semilla = Number(fechaReto().replace(/-/g,''));
+    preguntas = [RETOS_PREGUNTAS[semilla % RETOS_PREGUNTAS.length]];
+  } else if (tipo === 'casos') preguntas = mezclarRetos(RETOS_PREGUNTAS.filter(p=>p.tipo==='caso')).slice(0,3);
+  else preguntas = mezclarRetos(RETOS_PREGUNTAS).slice(0,6);
+  RetoSession = { tipo, preguntas, idx:0, correctas:0, respondida:false };
+  pintarPreguntaReto();
+};
+
+function pintarPreguntaReto(){
+  const r = RetoSession, p = r.preguntas[r.idx];
+  const pct = Math.round(r.idx / r.preguntas.length * 100);
+  document.getElementById('content').innerHTML = `<div class="reto-play">
+    <div class="reto-play__top"><button class="btn btn--ghost btn--sm" onclick="pintarHubRetos()">Salir</button><div class="reto-play__progress"><span style="width:${pct}%"></span></div><span style="font-size:11px;color:var(--text-3)">${r.idx+1}/${r.preguntas.length}</span></div>
+    <article class="reto-question"><span class="pill">${escHtml(p.area)}</span>${p.caso?`<div class="reto-question__case"><strong>Escenario clínico</strong><br>${escHtml(p.caso)}</div>`:''}<h2>${escHtml(p.q)}</h2><div class="reto-options">${p.o.map((o,i)=>`<button class="reto-option" data-reto-op="${i}" onclick="responderRetoClinico(${i})"><strong>${String.fromCharCode(65+i)}.</strong> ${escHtml(o)}</button>`).join('')}</div><div id="reto-feedback"></div></article>
+  </div>`;
+};
+
+window.responderRetoClinico = function(i){
+  const r = RetoSession; if (!r || r.respondida) return;
+  r.respondida = true;
+  const p = r.preguntas[r.idx], ok = i === p.a;
+  if (ok) r.correctas++;
+  document.querySelectorAll('[data-reto-op]').forEach((b,j)=>{ b.disabled=true; if(j===p.a)b.classList.add('is-correct'); if(j===i&&!ok)b.classList.add('is-wrong'); });
+  const fin = r.idx >= r.preguntas.length-1;
+  document.getElementById('reto-feedback').innerHTML = `<div class="reto-feedback"><strong>${ok?'Decisión correcta':'Revisemos la prioridad'}</strong>${escHtml(p.exp)}<br><button class="btn btn--accent btn--sm" onclick="siguienteRetoClinico()">${fin?'Ver resultado':'Siguiente decisión'} <svg class="ic"><use href="#i-arrow-right"/></svg></button></div>`;
+};
+
+window.siguienteRetoClinico = function(){
+  const r = RetoSession; if (!r) return;
+  if (r.idx < r.preguntas.length-1) { r.idx++; r.respondida=false; pintarPreguntaReto(); return; }
+  const s = getRetosState();
+  const hoy = fechaReto();
+  const total = r.preguntas.length;
+  const pct = Math.round(r.correctas/total*100);
+  let xp = r.correctas*20;
+  if (r.tipo==='diario') {
+    xp = r.correctas ? 30 : 10;
+    const ayer = new Date(); ayer.setDate(ayer.getDate()-1);
+    const ayerKey = ayer.toLocaleDateString('en-CA');
+    s.racha = s.ultimoDia===ayerKey ? s.racha+1 : 1;
+    s.ultimoDia = hoy;
+    if (!s.diarios.includes(hoy)) s.diarios.push(hoy);
+  }
+  if (r.tipo==='casos') s.casos += total;
+  s.xp += xp; s.correctas += r.correctas; s.respondidas += total; s.mejor = Math.max(s.mejor,pct);
+  setRetosState(s);
+  pintarResultadoReto({ tipo:r.tipo, correctas:r.correctas, total, xp, pct });
+};
+
+function pintarResultadoReto(res){
+  const titulo = res.repetido ? 'Reto diario completado' : res.pct>=80 ? 'Excelente criterio clínico' : res.pct>=50 ? 'Buen avance' : 'Cada decisión enseña';
+  document.getElementById('content').innerHTML = `<div class="reto-play"><div class="reto-result"><div class="reto-result__icon"><svg class="ic ic--xl"><use href="#${res.repetido?'i-check-circle':'i-trophy'}"/></svg></div><h2>${titulo}</h2><p>${res.repetido?'Vuelve mañana para una nueva decisión clínica.':`${res.correctas} de ${res.total} correctas · +${res.xp} XP`}</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn--accent" onclick="pintarHubRetos()">Volver a Retos</button>${!res.repetido&&res.tipo!=='diario'?`<button class="btn btn--ghost" onclick="iniciarRetoClinico('${res.tipo}')">Intentar de nuevo</button>`:''}</div></div></div>`;
+}
+
 async function asegurarFotosDirectorio(){
   if (window.__dirFotos) return window.__dirFotos;
   if (window.__dirFotosPromise) return window.__dirFotosPromise;
@@ -3130,22 +3296,54 @@ window.borrarComentario = async function(postId, comId){
 <script>
 /* ══════════════════════ DIRECTORIO VIP ══════════════════════ */
 Sections.directorio = function(){
+  const S = window.UserState;
   document.getElementById('content').innerHTML =
     secHero('Networking', 'Directorio VIP', 'Profesionales de la salud aliados de SYNOVA. Crea tu tarjeta profesional y conecta con la comunidad.') +
     `<div class="dir-bar">
       <div class="dir-search"><svg class="ic"><use href="#i-search"/></svg><input id="dir-buscar" placeholder="Buscar por nombre, puesto o sector…"></div>
+      ${S.isAdmin ? `<button class="btn btn--ghost btn--sm" id="dir-sync-fotos"><svg class="ic"><use href="#i-image"/></svg>Sincronizar fotos</button>` : ''}
       ${toolEsVIP() ? `<button class="btn btn--accent btn--sm" id="dir-mi-tarjeta"><svg class="ic"><use href="#i-edit"/></svg>Mi tarjeta</button>` : ''}
     </div>
     <div id="dir-grid" class="dir-grid"></div>`;
   cargarDirectorio();
   document.getElementById('dir-mi-tarjeta')?.addEventListener('click', abrirEditorTarjeta);
   document.getElementById('dir-buscar')?.addEventListener('input', (e) => pintarDirectorio(e.target.value));
+  document.getElementById('dir-sync-fotos')?.addEventListener('click', async () => {
+    const r = await sincronizarFotosGoogleDirectorio(false);
+    if (r) cargarDirectorio();
+  });
 };
+
+async function sincronizarFotosGoogleDirectorio(silencioso){
+  const S = window.UserState;
+  if (!S?.isAdmin || window.__dirPhotoSyncRunning) return null;
+  window.__dirPhotoSyncRunning = true;
+  try {
+    const token = await window.__auth.currentUser.getIdToken();
+    const r = await fetch(window.__WEBHOOK_URL + '/admin/sincronizar-fotos-directorio', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || 'No se pudieron sincronizar las fotos');
+    window.__dirFotos = null;
+    if (!silencioso) Toast.success('Fotos sincronizadas', `${data.actualizadas || 0} tarjetas actualizadas; las fotos personales se conservaron.`);
+    return data;
+  } catch (e) {
+    if (!silencioso) Toast.error('No se pudieron sincronizar las fotos', e.message);
+    return null;
+  } finally { window.__dirPhotoSyncRunning = false; }
+}
 
 async function cargarDirectorio(){
   const grid = document.getElementById('dir-grid');
   if (!grid) return;
   try {
+    if (window.UserState?.isAdmin && !window.__dirPhotoSyncDone) {
+      window.__dirPhotoSyncDone = true;
+      await sincronizarFotosGoogleDirectorio(true);
+    }
     const { collection, getDocs, db } = window.__fs;
     const snap = await getDocs(collection(db, 'directorio'));
     const items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
