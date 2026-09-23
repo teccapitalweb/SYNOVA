@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=3">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=4">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -2584,18 +2584,18 @@ function getRetosState(){
 function setRetosState(s){ try { localStorage.setItem(retosKey(), JSON.stringify(s)); } catch (e) {} }
 
 const LOGROS_DEF = [
-  { id:'primer-paso', name:'Primer paso', desc:'Completa tu primera clase.', xp:30, cat:'Constancia', color:'#2F6F7B', icon:'i-play', value:s=>s.clasesVistas, goal:1 },
-  { id:'en-marcha', name:'En marcha', desc:'Avanza en cinco clases.', xp:60, cat:'Constancia', color:'#2F6F7B', icon:'i-bolt', value:s=>s.clasesVistas, goal:5 },
-  { id:'constante', name:'Constante', desc:'Mantén tres días de práctica.', xp:90, cat:'Constancia', color:'#2F6F7B', icon:'i-calendar', value:s=>s.retos.racha, goal:3 },
-  { id:'imparable', name:'Imparable', desc:'Alcanza una racha de siete días.', xp:180, cat:'Constancia', color:'#2F6F7B', icon:'i-activity', value:s=>s.retos.racha, goal:7 },
-  { id:'certificado', name:'Certificado', desc:'Obtén tu primer certificado.', xp:80, cat:'Clínica', color:'#28766B', icon:'i-certificate', value:s=>s.certificados, goal:1 },
-  { id:'especialista', name:'Especialista', desc:'Completa tres cursos.', xp:160, cat:'Clínica', color:'#28766B', icon:'i-stethoscope', value:s=>s.cursosCompletados, goal:3 },
-  { id:'criterio-clinico', name:'Criterio clínico', desc:'Acierta diez decisiones clínicas.', xp:140, cat:'Especialización', color:'#3E637B', icon:'i-clipboard-check', value:s=>s.retos.correctas, goal:10 },
-  { id:'multidisciplinar', name:'Multidisciplinar', desc:'Domina tres áreas de salud.', xp:220, cat:'Especialización', color:'#3E637B', icon:'i-tools', value:s=>s.areasCompletadas, goal:3 },
-  { id:'casos', name:'Resolutor de casos', desc:'Finaliza tres casos clínicos.', xp:180, cat:'Maestría', color:'#A77837', icon:'i-shield-check', value:s=>s.retos.casos, goal:3 },
-  { id:'maestro', name:'Maestro SYNOVA', desc:'Completa diez cursos.', xp:400, cat:'Maestría', color:'#A77837', icon:'i-crown', value:s=>s.cursosCompletados, goal:10 },
-  { id:'voz', name:'Voz de la comunidad', desc:'Publica tu primer aporte.', xp:50, cat:'Comunidad', color:'#4C7680', icon:'i-messages', value:s=>s.posts, goal:1 },
-  { id:'red-profesional', name:'Red profesional', desc:'Crea tu tarjeta profesional.', xp:60, cat:'Comunidad', color:'#4C7680', icon:'i-users', value:s=>s.tieneDirectorio?1:0, goal:1 }
+  { id:'primer-paso', name:'Primer paso', desc:'Completa tu primera clase.', xp:30, cat:'Constancia', color:'#0D5FA0', icon:'i-play', value:s=>s.clasesVistas, goal:1 },
+  { id:'en-marcha', name:'En marcha', desc:'Avanza en cinco clases.', xp:60, cat:'Constancia', color:'#0D5FA0', icon:'i-bolt', value:s=>s.clasesVistas, goal:5 },
+  { id:'constante', name:'Constante', desc:'Mantén tres días de práctica.', xp:90, cat:'Constancia', color:'#0D5FA0', icon:'i-calendar', value:s=>s.retos.racha, goal:3 },
+  { id:'imparable', name:'Imparable', desc:'Alcanza una racha de siete días.', xp:180, cat:'Constancia', color:'#0D5FA0', icon:'i-activity', value:s=>s.retos.racha, goal:7 },
+  { id:'certificado', name:'Certificado', desc:'Obtén tu primer certificado.', xp:80, cat:'Clínica', color:'#0D5FA0', icon:'i-certificate', value:s=>s.certificados, goal:1 },
+  { id:'especialista', name:'Especialista', desc:'Completa tres cursos.', xp:160, cat:'Clínica', color:'#0D5FA0', icon:'i-stethoscope', value:s=>s.cursosCompletados, goal:3 },
+  { id:'criterio-clinico', name:'Criterio clínico', desc:'Acierta diez decisiones clínicas.', xp:140, cat:'Especialización', color:'#0D5FA0', icon:'i-clipboard-check', value:s=>s.retos.correctas, goal:10 },
+  { id:'multidisciplinar', name:'Multidisciplinar', desc:'Domina tres áreas de salud.', xp:220, cat:'Especialización', color:'#0D5FA0', icon:'i-tools', value:s=>s.areasCompletadas, goal:3 },
+  { id:'casos', name:'Resolutor de casos', desc:'Finaliza tres casos clínicos.', xp:180, cat:'Maestría', color:'#0D5FA0', icon:'i-shield-check', value:s=>s.retos.casos, goal:3 },
+  { id:'maestro', name:'Maestro SYNOVA', desc:'Completa diez cursos.', xp:400, cat:'Maestría', color:'#0D5FA0', icon:'i-crown', value:s=>s.cursosCompletados, goal:10 },
+  { id:'voz', name:'Voz de la comunidad', desc:'Publica tu primer aporte.', xp:50, cat:'Comunidad', color:'#0D5FA0', icon:'i-messages', value:s=>s.posts, goal:1 },
+  { id:'red-profesional', name:'Red profesional', desc:'Crea tu tarjeta profesional.', xp:60, cat:'Comunidad', color:'#0D5FA0', icon:'i-users', value:s=>s.tieneDirectorio?1:0, goal:1 }
 ];
 
 Sections.logros = function(){
@@ -3350,9 +3350,9 @@ window.pintarHubRetos = function(){
         <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Modo historia</span><h2>Ruta segura.</h2><p>Seis mundos de decisión clínica.</p><span class="btn btn--light">Comenzar <svg class="ic"><use href="#i-arrow-right"/></svg></span></span><span class="syn-story-entry__art"><span><svg class="ic"><use href="#i-stethoscope"/></svg></span></span></button>
         <button class="syn-daily" ${hoy?'disabled':''} onclick="iniciarRetoClinico('diario')"><span class="syn-daily__ic"><svg class="ic"><use href="#${hoy?'i-check':'i-calendar'}"/></svg></span><span class="syn-daily__tx"><strong>${hoy?'Reto diario completado':'Reto diario'}</strong><span>${hoy?'Vuelve mañana para una nueva decisión':'Una pregunta rápida · hasta 30 XP'}</span></span><svg class="ic"><use href="#i-arrow-right"/></svg></button>
         <div class="syn-game-grid">
-          <button class="syn-game" style="--game:#2F6F7B" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Quiz</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" style="--game:#3E637B" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Casos</strong><span>${s.casosResueltos.length} resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" style="--game:#28766B" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Flashcards</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Quiz</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Casos</strong><span>${s.casosResueltos.length} resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Flashcards</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
         </div>
         <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Comunidad</span><h2>Clasificación</h2></div></div><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
       </main>
