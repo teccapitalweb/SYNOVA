@@ -636,9 +636,13 @@ async function ensureMiembroDoc(user, displayName, origen) {
     const snap = await getDoc(ref);
     if (snap.exists()) {
       const data = snap.data();
-      if (data.activa !== true && displayName && !data.nombre) {
-        await setDoc(ref, { nombre: displayName, displayName: displayName, lastUpdatedAt: serverTimestamp() }, { merge: true });
-      }
+      const sync = {
+        email: (user.email || '').toLowerCase(),
+        lastUpdatedAt: serverTimestamp()
+      };
+      if (displayName && !data.nombre) Object.assign(sync, { nombre: displayName, displayName });
+      if (user.photoURL) sync.fotoGoogle = user.photoURL;
+      await setDoc(ref, sync, { merge: true });
       return { ok: true, action: 'exists', uid: user.uid };
     }
     await setDoc(ref, {
@@ -646,6 +650,7 @@ async function ensureMiembroDoc(user, displayName, origen) {
       email: (user.email || '').toLowerCase(),
       nombre: displayName || user.displayName || (user.email || '').split('@')[0] || 'Sin nombre',
       displayName: displayName || user.displayName || '',
+      fotoGoogle: user.photoURL || null,
       activa: false,
       plan: null,
       fechaRegistro: serverTimestamp(),

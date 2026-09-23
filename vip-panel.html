@@ -138,7 +138,7 @@ body::after{
 .theme-toggle .ic{width:14px;height:14px}
 
 .avatar{display:flex;align-items:center;gap:9px;padding:5px 11px 5px 5px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2)}
-.avatar__circle{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.3px}
+.avatar__circle{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.3px;overflow:hidden}
 .avatar__info{display:flex;flex-direction:column;line-height:1.1}
 .avatar__name{font-size:11px;font-weight:600}
 .avatar__plan{font-size:9px;font-weight:600;color:var(--primary);letter-spacing:.5px}
@@ -580,7 +580,7 @@ body::after{
 
 /* FORO VIP */
 .foro-composer{background:var(--surface);border:0.5px solid var(--border-2);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
-.foro-composer__avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-.3px;flex-shrink:0}
+.foro-composer__avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:-.3px;flex-shrink:0;overflow:hidden}
 .foro-composer__main{flex:1;min-width:0}
 .foro-composer__input{width:100%;background:transparent;border:none;resize:none;font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.5;color:var(--text);min-height:42px;padding:6px 0}
 .foro-composer__input:focus{outline:none}
@@ -617,7 +617,7 @@ body::after{
 .posts-list{display:flex;flex-direction:column;gap:10px}
 .post{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;gap:12px;transition:transform .15s,border-color .2s,box-shadow .25s}
 .post:hover{transform:translateY(-1px);border-color:var(--border-2);box-shadow:0 6px 22px rgba(0,0,0,.08)}
-.post__avatar{width:42px;height:42px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:700;letter-spacing:-.3px;flex-shrink:0}
+.post__avatar{width:42px;height:42px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:700;letter-spacing:-.3px;flex-shrink:0;overflow:hidden}
 .post__main{flex:1;min-width:0}
 .post__header{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
 .post__author{font-size:13.5px;font-weight:700;letter-spacing:-.2px}
@@ -640,7 +640,8 @@ body::after{
 .post__comments{margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)}
 .com-list{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
 .com{display:flex;gap:9px}
-.com__avatar{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.com__avatar{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;overflow:hidden}
+.avatar__circle img,.foro-composer__avatar img,.post__avatar img,.com__avatar img,.perfil-hero__avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
 .com__body{flex:1;min-width:0;background:var(--surface-2);border-radius:10px;padding:8px 11px}
 .com__head{display:flex;align-items:center;gap:8px;margin-bottom:2px}
 .com__author{font-weight:700;font-size:12.5px}
@@ -742,7 +743,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 /* MI PERFIL */
 .perfil-hero{background:var(--surface);border:0.5px solid var(--border);border-radius:18px;padding:24px;margin-bottom:14px;display:flex;gap:22px;align-items:center;position:relative;overflow:hidden;flex-wrap:wrap}
 .perfil-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 90% 50%,var(--primary-glow),transparent 50%);filter:blur(50px);pointer-events:none;opacity:.5}
-.perfil-hero__avatar{width:84px;height:84px;border-radius:24px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;letter-spacing:-1.5px;flex-shrink:0;position:relative;z-index:1;box-shadow:0 10px 28px var(--primary-glow)}
+.perfil-hero__avatar{width:84px;height:84px;border-radius:24px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:700;letter-spacing:-1.5px;flex-shrink:0;position:relative;z-index:1;box-shadow:0 10px 28px var(--primary-glow);overflow:hidden}
 .perfil-hero__info{position:relative;z-index:1;flex:1;min-width:200px}
 .perfil-hero__name{font-size:22px;font-weight:700;letter-spacing:-.6px;background:linear-gradient(135deg,var(--text),color-mix(in srgb,var(--text) 60%,transparent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .perfil-hero__email{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-2);margin-top:4px;font-weight:500}
@@ -1553,7 +1554,7 @@ document.addEventListener('click', (e) => {
 <!-- ══════════════════════ FIREBASE + LÓGICA DE MEMBRESÍA ══════════════════════ -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, addDoc, deleteDoc,
   query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp
@@ -1606,6 +1607,13 @@ function iniciales(nombre, email){
   return base.slice(0, 2).toUpperCase();
 }
 
+function avatarHtml(foto, texto, alt){
+  return foto
+    ? `<img src="${escHtml(foto)}" alt="${escHtml(alt || '')}" referrerpolicy="no-referrer" loading="lazy">`
+    : escHtml(texto || '??');
+}
+window.__avatarHtml = avatarHtml;
+
 async function resolverMembresia(uid){
   let membership = null;
   try {
@@ -1634,7 +1642,7 @@ async function resolverMembresia(uid){
 }
 
 function hidratarUI(S){
-  document.getElementById('avatar-circle').textContent = S.iniciales;
+  document.getElementById('avatar-circle').innerHTML = avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`);
   document.getElementById('avatar-name').textContent = S.nombre;
   document.getElementById('avatar-plan').textContent = S.isAdmin ? 'ADMIN' : (S.modo === 'vip' ? (S.plan === 'anual' ? 'VIP ANUAL' : 'VIP MENSUAL') : 'SIN PLAN');
   const planTxt = S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? ('VIP ' + (S.plan === 'anual' ? 'Anual' : 'Mensual')) : 'Sin membresía');
@@ -1651,7 +1659,7 @@ onAuthStateChanged(auth, async (user) => {
   const email = (user.email || '').toLowerCase();
   const isAdmin = ADMINS.includes(email);
 
-  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaMembresia = null, notifPendiente = null;
+  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaMembresia = null, notifPendiente = null, datosMiembro = {};
 
   if (isAdmin) {
     modo = 'vip'; plan = 'admin'; membership = { activo: true, activa: true, plan: 'admin' };
@@ -1661,6 +1669,7 @@ onAuthStateChanged(auth, async (user) => {
     cancelacionProgramada = r.cancelacionProgramada;
     fechaFinAcceso = r.fechaFinAcceso;
     const dd = r.docData || {};
+    datosMiembro = dd;
     const fa = dd.fechaVipDesde || dd.fechaActivacionManual || dd.fechaActivacion || dd.fechaInicio || dd.fechaAlta || dd.createdAt || null;
     fechaMembresia = fa ? (fa.toDate ? fa.toDate().toISOString() : String(fa)) : null;
     if (membership && (membership.activo || membership.activa)) { modo = 'vip'; plan = membership.plan || 'mensual'; }
@@ -1669,13 +1678,37 @@ onAuthStateChanged(auth, async (user) => {
     notifPendiente = dd.notificacionPendiente || null;
   }
   const memberSince = fechaMembresia || (modo === 'vip' && user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toISOString() : null);
+  const foto = user.photoURL || datosMiembro.fotoGoogle || '';
 
   window.UserState = {
     uid: user.uid, email, displayName: user.displayName || '',
     nombre: user.displayName || email.split('@')[0],
     iniciales: iniciales(user.displayName, email),
+    foto,
     isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince
   };
+
+  /* Conserva la identidad de Google en Firestore para poder reutilizarla
+     en perfiles y contenido nuevo, igual que en Élite Pecuario. */
+  try {
+    const perfilCuenta = {
+      uid: user.uid,
+      email,
+      nombre: user.displayName || email.split('@')[0],
+      displayName: user.displayName || '',
+      lastUpdatedAt: serverTimestamp()
+    };
+    if (foto) perfilCuenta.fotoGoogle = foto;
+    setDoc(doc(db, 'miembros', user.uid), perfilCuenta, { merge: true }).catch(() => {});
+    if (foto) {
+      const tarjetaRef = doc(db, 'directorio', user.uid);
+      getDoc(tarjetaRef).then((tarjetaSnap) => {
+        if (tarjetaSnap.exists() && !tarjetaSnap.data().foto) {
+          return setDoc(tarjetaRef, { foto, email, updatedAt: serverTimestamp() }, { merge: true });
+        }
+      }).catch(() => {});
+    }
+  } catch (e) {}
 
   hidratarUI(window.UserState);
   document.body.style.visibility = 'visible';
@@ -1711,6 +1744,33 @@ onAuthStateChanged(auth, async (user) => {
 
   setupNotificaciones(user.uid);
 });
+
+window.__guardarPerfilCuenta = async function(nombre){
+  const user = auth.currentUser;
+  const S = window.UserState;
+  const limpio = String(nombre || '').trim();
+  if (!user || !S) throw new Error('No hay una sesión activa.');
+  if (limpio.length < 2) throw new Error('Escribe tu nombre completo.');
+  await updateProfile(user, { displayName: limpio });
+  await setDoc(doc(db, 'miembros', user.uid), {
+    nombre: limpio,
+    displayName: limpio,
+    email: (user.email || '').toLowerCase(),
+    ...(user.photoURL ? { fotoGoogle: user.photoURL } : {}),
+    lastUpdatedAt: serverTimestamp()
+  }, { merge: true });
+  const tarjetaRef = doc(db, 'directorio', user.uid);
+  const tarjetaSnap = await getDoc(tarjetaRef);
+  if (tarjetaSnap.exists()) {
+    await setDoc(tarjetaRef, { nombre: limpio, email: S.email, updatedAt: serverTimestamp() }, { merge: true });
+  }
+  S.nombre = limpio;
+  S.displayName = limpio;
+  S.iniciales = iniciales(limpio, S.email);
+  if (user.photoURL) S.foto = user.photoURL;
+  hidratarUI(S);
+  return S;
+};
 
 window.__signOut = async function(){
   try { await signOut(auth); window.location.href = 'vip-auth.html'; }
@@ -2860,7 +2920,7 @@ Sections.foro = function(){
     `<div class="foro-aviso"><svg class="ic"><use href="#i-clock"/></svg><span>Las publicaciones se eliminan automáticamente <strong>${FORO_DIAS_VIDA} días</strong> después de publicarse.</span></div>` +
     (toolEsVIP()
       ? `<div class="foro-composer">
-          <div class="foro-composer__avatar">${escHtml(S.iniciales || '')}</div>
+          <div class="foro-composer__avatar">${avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`)}</div>
           <div class="foro-composer__main">
             <textarea id="foro-texto" class="foro-composer__input" placeholder="Comparte un caso, una duda o una buena práctica con la comunidad…" maxlength="1500"></textarea>
             <div id="foro-img-preview" class="foro-img-preview" style="display:none">
@@ -2909,10 +2969,11 @@ function suscribirForo(){
   try {
     const { collection, query, orderBy, limit, onSnapshot, db } = window.__fs;
     if (window.__foroUnsub) { try { window.__foroUnsub(); } catch (e) {} }
-    window.__foroUnsub = onSnapshot(query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(40)), (snap) => {
+    window.__foroUnsub = onSnapshot(query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(40)), async (snap) => {
       const list = document.getElementById('foro-list');
       if (!list) return;
       const S = window.UserState;
+      const fotosDirectorio = await asegurarFotosDirectorio();
       const ahora = Date.now();
       const posts = [];
       snap.forEach(d => {
@@ -2932,8 +2993,9 @@ function suscribirForo(){
         const liked = !!(p.likedBy && S && p.likedBy[S.uid]);
         const esMio = S && p.uid === S.uid;
         const fecha = tsToDate(p.createdAt);
+        const fotoAutor = p.foto || fotosDirectorio[p.uid] || (esMio ? S.foto : '');
         return `<div class="post" data-postid="${p.id}">
-          <div class="post__avatar" style="background:${color}">${escHtml(p.iniciales || '??')}</div>
+          <div class="post__avatar" style="background:${color}">${avatarHtml(fotoAutor, p.iniciales, `Foto de ${p.nombre || 'Miembro SYNOVA'}`)}</div>
           <div class="post__main">
             <div class="post__header">
               <span class="post__author">${escHtml(p.nombre || 'Miembro SYNOVA')}</span>
@@ -2956,6 +3018,26 @@ function suscribirForo(){
   } catch (e) { console.warn('[SYNOVA] suscribirForo error', e.message); }
 }
 
+async function asegurarFotosDirectorio(){
+  if (window.__dirFotos) return window.__dirFotos;
+  if (window.__dirFotosPromise) return window.__dirFotosPromise;
+  window.__dirFotosPromise = (async () => {
+    const fotos = {};
+    try {
+      const { collection, getDocs, db } = window.__fs;
+      const snap = await getDocs(collection(db, 'directorio'));
+      snap.forEach(d => {
+        const p = d.data();
+        if (p && p.uid && p.foto) fotos[p.uid] = p.foto;
+      });
+    } catch (e) { console.warn('[SYNOVA] fotos del directorio:', e.message); }
+    window.__dirFotos = fotos;
+    window.__dirFotosPromise = null;
+    return fotos;
+  })();
+  return window.__dirFotosPromise;
+}
+
 window.publicarPost = async function(){
   const S = window.UserState;
   if (!toolEsVIP()) return;
@@ -2964,7 +3046,7 @@ window.publicarPost = async function(){
   const { collection, addDoc, db, serverTimestamp } = window.__fs;
   try {
     await addDoc(collection(db, 'posts'), {
-      uid: S.uid, nombre: S.nombre, iniciales: S.iniciales, esAdmin: S.isAdmin,
+      uid: S.uid, nombre: S.nombre, iniciales: S.iniciales, foto: S.foto || null, esAdmin: S.isAdmin,
       texto: txt, imagen: _foroImg || null, likes: 0, likedBy: {}, comentariosCount: 0, createdAt: serverTimestamp()
     });
     document.getElementById('foro-texto').value = '';
@@ -3004,13 +3086,15 @@ window.toggleComentarios = async function(postId){
     const { collection, query, orderBy, getDocs, db } = window.__fs;
     const snap = await getDocs(query(collection(db, 'posts', postId, 'comentarios'), orderBy('createdAt', 'asc')));
     const S = window.UserState;
+    const fotosDirectorio = await asegurarFotosDirectorio();
     let html = '<div class="com-list">';
     if (snap.empty) html += '<div style="font-size:12px;color:var(--text-3);padding:6px 0">Sin comentarios todavía.</div>';
     snap.forEach(d => {
       const c = d.data();
       const color = colorForArea(c.uid || c.nombre);
       const fecha = tsToDate(c.createdAt);
-      html += `<div class="com"><div class="com__avatar" style="background:${color}">${escHtml(c.iniciales || '??')}</div><div class="com__body"><div class="com__head"><span class="com__author">${escHtml(c.nombre || 'Miembro')}</span><span class="com__time">${fecha ? fecha.toLocaleDateString('es-MX') : ''}</span>${S && c.uid === S.uid ? `<button class="com__del" onclick="borrarComentario('${postId}','${d.id}')">×</button>` : ''}</div><div class="com__text">${escHtml(c.texto || '')}</div></div></div>`;
+      const fotoAutor = c.foto || fotosDirectorio[c.uid] || (S && c.uid === S.uid ? S.foto : '');
+      html += `<div class="com"><div class="com__avatar" style="background:${color}">${avatarHtml(fotoAutor, c.iniciales, `Foto de ${c.nombre || 'Miembro'}`)}</div><div class="com__body"><div class="com__head"><span class="com__author">${escHtml(c.nombre || 'Miembro')}</span><span class="com__time">${fecha ? fecha.toLocaleDateString('es-MX') : ''}</span>${S && c.uid === S.uid ? `<button class="com__del" onclick="borrarComentario('${postId}','${d.id}')">×</button>` : ''}</div><div class="com__text">${escHtml(c.texto || '')}</div></div></div>`;
     });
     html += '</div>';
     html += toolEsVIP() ? `<div class="com-form"><input class="com-input" id="com-input-${postId}" placeholder="Escribe un comentario…"><button class="btn btn--accent btn--sm" onclick="enviarComentario('${postId}')">Enviar</button></div>` : '';
@@ -3026,7 +3110,7 @@ window.enviarComentario = async function(postId){
   if (!txt) return;
   try {
     const { collection, addDoc, doc, updateDoc, increment, db, serverTimestamp } = window.__fs;
-    await addDoc(collection(db, 'posts', postId, 'comentarios'), { uid: S.uid, nombre: S.nombre, iniciales: S.iniciales, texto: txt, createdAt: serverTimestamp() });
+    await addDoc(collection(db, 'posts', postId, 'comentarios'), { uid: S.uid, nombre: S.nombre, iniciales: S.iniciales, foto: S.foto || null, texto: txt, createdAt: serverTimestamp() });
     await updateDoc(doc(db, 'posts', postId), { comentariosCount: increment(1) });
     if (input) input.value = '';
     window.toggleComentarios(postId); window.toggleComentarios(postId);
@@ -3066,6 +3150,7 @@ async function cargarDirectorio(){
     const snap = await getDocs(collection(db, 'directorio'));
     const items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
     window.__dirCache = items;
+    window.__dirFotos = Object.fromEntries(items.filter(p => p.uid && p.foto).map(p => [p.uid, p.foto]));
     pintarDirectorio('');
   } catch (e) { grid.innerHTML = emptyState('i-users', 'No se pudo cargar el directorio', e.message); }
 }
@@ -3082,8 +3167,9 @@ function pintarDirectorio(filtro){
     const color = colorForArea(p.nombre || p.id);
     const esMia = S && p.uid === S.uid;
     const iniciales = (p.nombre || '?').trim().split(' ').filter(Boolean).slice(0, 2).map(s => s[0]).join('').toUpperCase();
-    const foto = p.foto
-      ? `<img src="${p.foto}" alt="${escHtml(p.nombre || '')}" class="dir-card__foto">`
+    const fotoUrl = p.foto || (esMia ? S.foto : '');
+    const foto = fotoUrl
+      ? `<img src="${escHtml(fotoUrl)}" alt="${escHtml(p.nombre || '')}" class="dir-card__foto" referrerpolicy="no-referrer" loading="lazy">`
       : `<div class="dir-card__foto dir-card__foto--ini" style="background:${color}">${escHtml(iniciales)}</div>`;
     return `<div class="dir-card ${esMia ? 'dir-card--mia' : ''}" data-pid="${p.id}">
       ${esMia ? '<div class="dir-card__badge-mia">Tú</div>' : ''}
@@ -3108,8 +3194,10 @@ function abrirTarjetaDetalle(id){
   if (!p) return;
   const color = colorForArea(p.nombre || id);
   const iniciales = (p.nombre || '?').trim().split(' ').filter(Boolean).slice(0, 2).map(s => s[0]).join('').toUpperCase();
-  const fotoDet = p.foto
-    ? `<img src="${p.foto}" alt="" class="dir-det__foto">`
+  const esMia = window.UserState && p.uid === window.UserState.uid;
+  const fotoUrl = p.foto || (esMia ? window.UserState.foto : '');
+  const fotoDet = fotoUrl
+    ? `<img src="${escHtml(fotoUrl)}" alt="" class="dir-det__foto" referrerpolicy="no-referrer">`
     : `<div class="dir-det__foto dir-det__foto--ini" style="background:${color}">${escHtml(iniciales)}</div>`;
   const body = `
     <div class="dir-det">
@@ -3157,7 +3245,7 @@ function abrirEditorTarjeta(){
   const S = window.UserState;
   const mia = (window.__dirCache || []).find(x => x.uid === S.uid) || {};
   _dirFotoTmp = undefined;
-  const fotoActual = mia.foto || '';
+  const fotoActual = mia.foto || S.foto || '';
   const body = `
     <div class="dir-form">
       <div class="dir-form__foto-wrap">
@@ -3166,9 +3254,10 @@ function abrirEditorTarjeta(){
         </div>
         <div class="dir-form__foto-acts">
           <button class="btn btn--ghost btn--sm" type="button" id="df-foto-btn"><svg class="ic"><use href="#i-image"/></svg>Subir foto</button>
-          <button class="btn btn--ghost btn--sm" type="button" id="df-foto-quitar" style="${fotoActual ? '' : 'display:none'}">Quitar</button>
+          <button class="btn btn--ghost btn--sm" type="button" id="df-foto-quitar" style="${mia.foto ? '' : 'display:none'}">Usar foto de Google</button>
           <input type="file" id="df-foto-file" accept="image/*" style="display:none">
         </div>
+        <div style="font-size:11px;color:var(--text-3);text-align:center">Si no subes una foto, usaremos la imagen de tu cuenta de Google.</div>
       </div>
       <label class="dir-form__lbl">Nombre completo</label><input class="dir-form__in" id="df-nombre" value="${escHtml(mia.nombre || S.nombre || '')}">
       <label class="dir-form__lbl">Puesto</label><input class="dir-form__in" id="df-puesto" placeholder="Ej. Médico general, Coordinadora de calidad…" value="${escHtml(mia.puesto || '')}">
@@ -3195,7 +3284,9 @@ function abrirEditorTarjeta(){
   });
   document.getElementById('df-foto-quitar')?.addEventListener('click', () => {
     _dirFotoTmp = null;
-    document.getElementById('df-foto-prev').innerHTML = `<svg class="ic"><use href="#i-user"/></svg>`;
+    document.getElementById('df-foto-prev').innerHTML = S.foto
+      ? `<img src="${escHtml(S.foto)}" alt="" referrerpolicy="no-referrer">`
+      : `<svg class="ic"><use href="#i-user"/></svg>`;
     document.getElementById('df-foto-quitar').style.display = 'none';
   });
 }
@@ -3217,8 +3308,10 @@ window.guardarTarjeta = async function(){
       linkedin: document.getElementById('df-linkedin').value.trim(),
       updatedAt: serverTimestamp()
     };
-    if (_dirFotoTmp !== undefined) data.foto = _dirFotoTmp;       // string nueva o null (quitar)
-    else if (mia.foto) data.foto = mia.foto;                      // conservar la existente
+    if (_dirFotoTmp === null) data.foto = S.foto || null;          // volver a la foto de Google
+    else if (_dirFotoTmp !== undefined) data.foto = _dirFotoTmp;   // foto personalizada nueva
+    else if (mia.foto) data.foto = mia.foto;                       // conservar la existente
+    else if (S.foto) data.foto = S.foto;                           // autollenado desde Google
     await setDoc(doc(db, 'directorio', S.uid), data, { merge: true });
     Modal.close('dir-editor');
     Toast.success('Tarjeta guardada', 'Ya apareces en el Directorio VIP.');
@@ -3281,7 +3374,7 @@ Sections.perfil = function(){
   document.getElementById('content').innerHTML =
     secHero('Tu cuenta', 'Mi perfil', 'Tus datos personales y el estado de tu membresía SYNOVA.') +
     `<section class="perfil-hero">
-      <div class="perfil-hero__avatar">${escHtml(S.iniciales)}</div>
+      <div class="perfil-hero__avatar">${window.__avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`)}</div>
       <div class="perfil-hero__info">
         <h2 class="perfil-hero__name">${escHtml(S.nombre)}</h2>
         <div class="perfil-hero__email">${escHtml(S.email)}</div>
@@ -3289,13 +3382,14 @@ Sections.perfil = function(){
           <span class="pill"><svg class="ic"><use href="#i-crown"/></svg>${S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? ('VIP ' + (S.plan === 'anual' ? 'Anual' : 'Mensual')) : 'Sin membresía')}</span>
         </div>
       </div>
+      <button class="btn btn--accent" id="perfil-editar"><svg class="ic"><use href="#i-edit"/></svg>Editar datos</button>
       <button class="btn btn--ghost" data-section="directorio"><svg class="ic"><use href="#i-users"/></svg>Mi tarjeta del directorio</button>
       <button class="btn btn--ghost" data-tour-restart type="button"><span class="tour-help-icon" aria-hidden="true">?</span>Ver recorrido guiado</button>
     </section>
     <div class="perfil-grid">
       <div class="perfil-card">
         <div class="perfil-card__title">Datos de la cuenta</div>
-        <div class="perfil-field"><span class="perfil-field__lbl">Nombre</span><span class="perfil-field__val">${escHtml(S.nombre)}</span></div>
+        <div class="perfil-field"><span class="perfil-field__lbl">Nombre</span><span class="perfil-field__val">${escHtml(S.nombre)}</span><button class="perfil-field__edit" id="perfil-editar-nombre" aria-label="Editar nombre"><svg class="ic"><use href="#i-edit"/></svg></button></div>
         <div class="perfil-field"><span class="perfil-field__lbl">Email</span><span class="perfil-field__val">${escHtml(S.email)}</span></div>
         <div class="perfil-field"><span class="perfil-field__lbl">UID</span><span class="perfil-field__val" style="font-family:'JetBrains Mono',monospace;font-size:11px">${escHtml(S.uid)}</span></div>
       </div>
@@ -3306,6 +3400,31 @@ Sections.perfil = function(){
         <div class="perfil-field" style="border-bottom:none;padding-top:10px"><button class="btn btn--accent btn--sm" data-section="suscripcion" style="width:100%">Gestionar suscripción</button></div>
       </div>
     </div>`;
+  document.getElementById('perfil-editar')?.addEventListener('click', abrirEditorPerfil);
+  document.getElementById('perfil-editar-nombre')?.addEventListener('click', abrirEditorPerfil);
+};
+
+function abrirEditorPerfil(){
+  const S = window.UserState;
+  const foto = window.__avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`);
+  const body = `<div class="dir-form">
+    <div class="dir-form__foto-wrap"><div class="dir-form__foto">${foto}</div><div style="font-size:11px;color:var(--text-3);text-align:center">La foto y el correo se toman automáticamente de tu cuenta de Google.</div></div>
+    <label class="dir-form__lbl">Nombre completo</label><input class="dir-form__in" id="perfil-nombre" maxlength="80" value="${escHtml(S.nombre || '')}">
+    <label class="dir-form__lbl">Correo de acceso</label><input class="dir-form__in" type="email" value="${escHtml(S.email || '')}" readonly aria-readonly="true">
+    <div style="font-size:11px;color:var(--text-3);margin-top:6px">El correo permanece ligado a tu inicio de sesión para proteger el acceso a tu cuenta.</div>
+  </div>`;
+  Modal.open({ id: 'perfil-editor', title: 'Editar mis datos', icon: 'i-edit', size: 'sm', body, footer: '<button class="btn btn--ghost" onclick="Modal.close(\'perfil-editor\')">Cancelar</button><button class="btn btn--accent" onclick="guardarPerfilCuenta()">Guardar cambios</button>' });
+  setTimeout(() => document.getElementById('perfil-nombre')?.focus(), 0);
+}
+
+window.guardarPerfilCuenta = async function(){
+  const nombre = document.getElementById('perfil-nombre')?.value || '';
+  try {
+    await window.__guardarPerfilCuenta(nombre);
+    Modal.close('perfil-editor');
+    Toast.success('Perfil actualizado', 'Tu nombre se sincronizó con tu cuenta y tu tarjeta.');
+    Sections.perfil();
+  } catch (e) { Toast.error('No se pudo actualizar tu perfil', e.message); }
 };
 
 /* ══════════════════════ SUSCRIPCIÓN ══════════════════════ */
