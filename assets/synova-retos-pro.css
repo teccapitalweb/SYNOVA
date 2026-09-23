@@ -132,3 +132,26 @@
 
 @media(max-width:720px){:root[data-theme="night"] #content:has(.syn-league),:root[data-theme="night"] #content:has(.syn-achievements){margin:0;padding:6px 0 24px;border-radius:0}}
 @media(max-width:390px){.syn-achievement-summary__stats{justify-content:space-between;gap:8px}.syn-achievement-summary__stats span{min-width:0}.syn-achievement{padding:16px}.syn-achievements__header h1{font-size:36px}}
+
+/* Retos · dirección editorial fotográfica SYNOVA */
+.syn-league-hero{grid-template-columns:minmax(0,1fr);align-items:end;min-height:310px;padding:38px 42px;background-image:linear-gradient(90deg,rgba(5,31,56,.96) 0%,rgba(7,45,75,.88) 42%,rgba(7,45,75,.22) 76%,rgba(7,45,75,.08) 100%),url("images/retos-hero-clinico.png");background-position:center;background-size:cover;box-shadow:0 20px 46px rgba(8,42,71,.17)}
+.syn-league-hero::before,.syn-league-hero::after{display:none}
+.syn-league-hero__copy{display:grid;align-content:end;max-width:560px;min-height:230px}
+.syn-league-hero h1{max-width:9ch;margin:12px 0 0;font-size:clamp(44px,5vw,64px);line-height:.98;letter-spacing:-2.6px}
+.syn-league-hero h1 em{color:#B6D7E9}
+.syn-hero-progress{display:grid;grid-template-columns:auto minmax(120px,230px);align-items:center;gap:16px;width:min(100%,390px);margin-top:26px}
+.syn-hero-progress>span{display:grid;gap:2px;min-width:100px}.syn-hero-progress strong{font-size:13px}.syn-hero-progress small{font-size:9px;color:rgba(255,255,255,.64)}
+.syn-hero-progress .syn-level__bar{margin:0;background:rgba(255,255,255,.22)}.syn-hero-progress .syn-level__bar span{background:#B6D7E9}
+.syn-story-entry{grid-template-columns:minmax(0,1fr);align-items:end;min-height:260px;padding:30px 32px;background-image:linear-gradient(90deg,rgba(6,37,65,.97) 0%,rgba(9,54,86,.86) 42%,rgba(9,54,86,.2) 74%,rgba(9,54,86,.08) 100%),url("images/retos-ruta-clinica.png");background-position:center;background-size:cover;box-shadow:0 16px 36px rgba(8,42,71,.14)}
+.syn-story-entry::before{display:none}.syn-story-entry__copy{display:grid;align-content:end;justify-items:start;min-height:196px}.syn-story-entry h2{max-width:10ch;margin:10px 0 24px;font-size:clamp(34px,4vw,49px);line-height:1.02}.syn-story-entry p,.syn-story-entry__art{display:none}
+.syn-game{min-height:194px;padding:22px;border-color:#CEDBE5;border-radius:22px;background:linear-gradient(180deg,#FFFFFF,#F8FBFD);box-shadow:0 10px 28px rgba(10,46,75,.07)}
+.syn-game::before{content:attr(data-label);position:absolute;left:22px;top:91px;font:800 8px 'JetBrains Mono',monospace;letter-spacing:1.2px;text-transform:uppercase;color:#7891A5}
+.syn-game__icon{width:58px;height:58px;margin-bottom:24px;border:1px solid #D8E5ED;border-radius:18px;background:#EAF3F8;color:#155D8D}
+.syn-game strong{max-width:16ch;font-size:17px;letter-spacing:-.3px}.syn-game>span:not(.syn-game__icon):not(.syn-game__go){margin-top:2px}.syn-game__go{top:22px;right:22px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#EDF4F8;color:#155D8D}
+.syn-game:hover{transform:translateY(-4px);border-color:#8CB6D0;box-shadow:0 18px 36px rgba(10,72,118,.13)}
+:root[data-theme="night"] .syn-league-hero{background-image:linear-gradient(90deg,rgba(3,20,35,.98) 0%,rgba(7,37,60,.92) 44%,rgba(5,27,45,.4) 78%,rgba(5,27,45,.2) 100%),url("images/retos-hero-clinico.png")}
+:root[data-theme="night"] .syn-story-entry{background-image:linear-gradient(90deg,rgba(3,20,35,.98) 0%,rgba(7,37,60,.91) 44%,rgba(5,27,45,.38) 78%,rgba(5,27,45,.2) 100%),url("images/retos-ruta-clinica.png")}
+:root[data-theme="night"] .syn-game{border-color:#294255;background:linear-gradient(180deg,#102638,#0E2131)}
+:root[data-theme="night"] .syn-game::before{color:#7892A5}:root[data-theme="night"] .syn-game__icon{border-color:#315069;background:#17364D;color:#9CC5DD}:root[data-theme="night"] .syn-game__go{background:#19364C;color:#9CC5DD}
+
+@media(max-width:720px){.syn-league-hero{min-height:270px;padding:26px 22px;background-position:62% center}.syn-league-hero__copy{min-height:215px}.syn-league-hero h1{max-width:8ch;font-size:43px}.syn-hero-progress{grid-template-columns:auto minmax(90px,1fr);margin-top:22px}.syn-story-entry{min-height:220px;padding:24px 21px;background-position:61% center}.syn-story-entry__copy{min-height:172px}.syn-story-entry h2{max-width:9ch;margin-bottom:20px;font-size:37px}.syn-game{min-height:112px;padding:17px 52px 17px 72px}.syn-game::before{left:72px;top:18px}.syn-game__icon{position:absolute;left:14px;top:28px;width:46px;height:46px;margin:0;border-radius:14px}.syn-game strong{margin-top:18px;font-size:15px}.syn-game__go{right:14px;top:41px}}

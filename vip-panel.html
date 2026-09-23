@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=6">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=7">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -3329,20 +3329,19 @@ window.pintarHubRetos = function(){
   const misiones=[hoy,s.quizSemana>0,s.flashSemana>=5], misionPct=Math.round(misiones.filter(Boolean).length/3*100);
   document.getElementById('content').innerHTML = `<div class="syn-league">
     <section class="syn-league-hero">
-      <div class="syn-league-hero__copy"><span class="syn-kicker"><svg class="ic"><use href="#i-trophy"/></svg>Liga clínica SYNOVA</span><h1>Entrena tu criterio. <em>Decide mejor.</em></h1><p>Práctica breve para una atención más segura.</p>
-        <div class="syn-level"><span class="syn-level__icon"><svg class="ic"><use href="#i-certificate"/></svg></span><div class="syn-level__body"><span>Nivel ${nivel.indice+1}</span><strong>${nivel.actual.nombre}</strong><div class="syn-level__bar"><span style="width:${nivel.pct}%"></span></div><small>${nivel.siguiente ? `${s.xp} XP · ${nivel.siguiente.xp-s.xp} para ${nivel.siguiente.nombre}` : `${s.xp} XP · nivel máximo`}</small></div></div>
+      <div class="syn-league-hero__copy"><span class="syn-kicker"><svg class="ic"><use href="#i-stethoscope"/></svg>Práctica SYNOVA</span><h1>Decide con <em>seguridad.</em></h1>
+        <div class="syn-hero-progress"><span><strong>${nivel.actual.nombre}</strong><small>${s.xp} XP</small></span><div class="syn-level__bar" aria-label="Progreso al siguiente nivel"><span style="width:${nivel.pct}%"></span></div></div>
       </div>
-      <div class="syn-rank-card"><span class="syn-rank-card__label">Tu posición</span><strong id="syn-rank-num">—</strong><span id="syn-rank-total">Calculando…</span><div class="syn-rank-card__line"><b>${s.xp} XP</b><i></i><b>${s.racha} días</b></div></div>
     </section>
     <div class="syn-league-dashboard">
       <main class="syn-league-main">
-        <div class="syn-section-head"><div><span class="syn-eyebrow">Entrenamiento</span><h2>Elige una práctica</h2></div></div>
-        <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Modo historia</span><h2>Ruta segura.</h2><p>Seis mundos de decisión clínica.</p><span class="btn btn--light">Comenzar <svg class="ic"><use href="#i-arrow-right"/></svg></span></span><span class="syn-story-entry__art"><span><svg class="ic"><use href="#i-stethoscope"/></svg></span></span></button>
+        <div class="syn-section-head"><div><span class="syn-eyebrow">Entrenamiento</span><h2>Elige una experiencia</h2></div></div>
+        <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Ruta clínica</span><h2>Aprende con casos.</h2><span class="btn btn--light">Explorar <svg class="ic"><use href="#i-arrow-right"/></svg></span></span></button>
         <button class="syn-daily" ${hoy?'disabled':''} onclick="iniciarRetoClinico('diario')"><span class="syn-daily__ic"><svg class="ic"><use href="#${hoy?'i-check':'i-calendar'}"/></svg></span><span class="syn-daily__tx"><strong>${hoy?'Reto diario completado':'Reto diario'}</strong><span>${hoy?'Vuelve mañana para una nueva decisión':'Una pregunta rápida · hasta 30 XP'}</span></span><svg class="ic"><use href="#i-arrow-right"/></svg></button>
         <div class="syn-game-grid">
-          <button class="syn-game" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Quiz</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Casos</strong><span>${s.casosResueltos.length} resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Flashcards</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Agilidad" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Pulso clínico</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Criterio" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Diagnóstico SYNOVA</strong><span>${s.casosResueltos.length} casos resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Repaso" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Memoria clínica</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
         </div>
         <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Comunidad</span><h2>Clasificación</h2></div></div><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
       </main>
