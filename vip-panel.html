@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=7">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=8">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -3337,11 +3337,11 @@ window.pintarHubRetos = function(){
       <main class="syn-league-main">
         <div class="syn-section-head"><div><span class="syn-eyebrow">Entrenamiento</span><h2>Elige una experiencia</h2></div></div>
         <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Ruta clínica</span><h2>Aprende con casos.</h2><span class="btn btn--light">Explorar <svg class="ic"><use href="#i-arrow-right"/></svg></span></span></button>
-        <button class="syn-daily" ${hoy?'disabled':''} onclick="iniciarRetoClinico('diario')"><span class="syn-daily__ic"><svg class="ic"><use href="#${hoy?'i-check':'i-calendar'}"/></svg></span><span class="syn-daily__tx"><strong>${hoy?'Reto diario completado':'Reto diario'}</strong><span>${hoy?'Vuelve mañana para una nueva decisión':'Una pregunta rápida · hasta 30 XP'}</span></span><svg class="ic"><use href="#i-arrow-right"/></svg></button>
+        <button class="syn-daily" ${hoy?'disabled':''} onclick="iniciarRetoClinico('diario')"><span class="syn-daily__ic"><img src="assets/images/retos-diario.png" alt="" loading="lazy"></span><span class="syn-daily__tx"><strong>${hoy?'Reto diario completado':'Reto diario'}</strong><span>${hoy?'Vuelve mañana para una nueva decisión':'Una pregunta rápida · hasta 30 XP'}</span></span><svg class="ic"><use href="#i-arrow-right"/></svg></button>
         <div class="syn-game-grid">
-          <button class="syn-game" data-label="Agilidad" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Pulso clínico</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" data-label="Criterio" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Diagnóstico SYNOVA</strong><span>${s.casosResueltos.length} casos resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" data-label="Repaso" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Memoria clínica</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Agilidad" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><img src="assets/images/retos-pulso-clinico.png" alt="" loading="lazy"></span><strong>Pulso clínico</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Criterio" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><img src="assets/images/retos-diagnostico-synova.png" alt="" loading="lazy"></span><strong>Diagnóstico SYNOVA</strong><span>${s.casosResueltos.length} casos resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Repaso" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><img src="assets/images/retos-memoria-clinica.png" alt="" loading="lazy"></span><strong>Memoria clínica</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
         </div>
         <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Comunidad</span><h2>Clasificación</h2></div></div><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
       </main>
