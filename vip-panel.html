@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=4">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=5">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -32,22 +32,22 @@ ul{list-style:none}
 ::selection{background:var(--primary);color:#fff}
 
 :root[data-theme="night"]{
-  --bg:#0B121F;--bg-deep:#070B12;
-  --surface:#101A2C;--surface-2:#16223A;--surface-3:#223353;
-  --border:rgba(140,190,230,0.08);--border-2:rgba(140,190,230,0.15);--border-strong:rgba(140,190,230,0.24);
-  --text:#EAF2FA;--text-2:#A9BBD1;--text-3:#7C8FA8;
-  --primary:#1C6FB0;--primary-soft:#5FB6E0;--primary-deep:#0B4A7C;
-  --primary-glow:rgba(28,111,176,0.42);--highlight:#2FD1C6;
+  --bg:#0A1622;--bg-deep:#07111B;
+  --surface:#102131;--surface-2:#162A3C;--surface-3:#203A50;
+  --border:rgba(164,196,216,0.08);--border-2:rgba(164,196,216,0.15);--border-strong:rgba(164,196,216,0.24);
+  --text:#F2F6F8;--text-2:#B7C8D4;--text-3:#8299AA;
+  --primary:#5F95B8;--primary-soft:#84ACCA;--primary-deep:#0B2A4A;
+  --primary-glow:rgba(95,149,184,0.28);--highlight:#5F95B8;
   --success:#34D399;--danger:#F87171;--warn:#FBBF24;--whatsapp:#22C55E;
   --shadow-card:0 20px 60px rgba(0,0,0,0.55);
 }
 :root[data-theme="day"]{
-  --bg:#EEF5FC;--bg-deep:#DCEAF7;
-  --surface:#FFFFFF;--surface-2:#F3F9FE;--surface-3:#E3EFF9;
-  --border:rgba(11,58,102,0.08);--border-2:rgba(11,58,102,0.14);--border-strong:rgba(11,58,102,0.24);
-  --text:#0B2A4A;--text-2:#3E5975;--text-3:#7891A8;
-  --primary:#0D5FA0;--primary-soft:#3D8FCB;--primary-deep:#0A3E68;
-  --primary-glow:rgba(13,95,160,0.28);--highlight:#159E92;
+  --bg:#F3F6F8;--bg-deep:#E7EDF2;
+  --surface:#FFFFFF;--surface-2:#F6F8FA;--surface-3:#EAF0F4;
+  --border:rgba(11,42,74,0.08);--border-2:rgba(11,42,74,0.14);--border-strong:rgba(11,42,74,0.24);
+  --text:#0B2A4A;--text-2:#465F73;--text-3:#71879A;
+  --primary:#1D5C86;--primary-soft:#4E81A2;--primary-deep:#0B2A4A;
+  --primary-glow:rgba(29,92,134,0.18);--highlight:#1D5C86;
   --success:#0F9D58;--danger:#DC2D3F;--warn:#B45309;--whatsapp:#16A34A;
   --shadow-card:0 16px 50px rgba(11,58,102,0.14);
 }
@@ -60,31 +60,21 @@ body{
   position:relative;
 }
 body::before{
-  content:"";position:fixed;inset:0;z-index:0;
-  background:radial-gradient(circle at 25% 30%,var(--primary-glow),transparent 50%),radial-gradient(circle at 75% 70%,color-mix(in srgb,var(--highlight) 18%,transparent),transparent 50%);
-  filter:blur(60px);
-  pointer-events:none;
-  animation:auroraBg 24s ease-in-out infinite alternate;
+  content:none;
 }
 body::after{
-  content:"";position:fixed;inset:0;z-index:0;
-  background-image:linear-gradient(to right,rgba(140,190,230,.05) 1px,transparent 1px),linear-gradient(to bottom,rgba(140,190,230,.05) 1px,transparent 1px);
-  background-size:48px 48px;
-  -webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);
-  mask-image:radial-gradient(ellipse at center,#000 0%,transparent 70%);
-  pointer-events:none;
+  content:none;
 }
-:root[data-theme="day"] body::after{background-image:linear-gradient(to right,rgba(11,58,102,.04) 1px,transparent 1px),linear-gradient(to bottom,rgba(11,58,102,.04) 1px,transparent 1px)}
 @keyframes auroraBg{
   0%{transform:translate(0,0) scale(1)}
   50%{transform:translate(2%,-2%) scale(1.05)}
   100%{transform:translate(-1%,1%) scale(1)}
 }
-.member-offer-bar{display:none;position:sticky;top:0;z-index:1200;min-height:46px;padding:8px 18px;align-items:center;justify-content:center;gap:14px;text-align:center;background:linear-gradient(90deg,#5D9FD0 0%,#72C2C4 100%);color:#071525;border-bottom:1px solid rgba(255,255,255,.22);font-size:12.5px;font-weight:750;box-shadow:0 5px 18px rgba(3,16,31,.16)}
+.member-offer-bar{display:none;position:sticky;top:0;z-index:1200;min-height:46px;padding:8px 18px;align-items:center;justify-content:center;gap:14px;text-align:center;background:#0B2A4A;color:#FFFFFF;border-bottom:1px solid rgba(255,255,255,.12);font-size:12.5px;font-weight:750;box-shadow:0 5px 18px rgba(3,16,31,.12)}
 .member-offer-bar.is-visible{display:flex}
-.member-offer-bar__star{color:#FFD64A;font-size:17px;line-height:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.2))}
-.member-offer-bar__cta{border:0;border-radius:10px;background:#08213A;color:#8BC9F7;padding:7px 14px;font:700 11px 'Inter',sans-serif;cursor:pointer;white-space:nowrap}
-.member-offer-bar__cta:hover{background:#0C2E50;color:#fff}
+.member-offer-bar__star{color:#BFD6E5;font-size:17px;line-height:1}
+.member-offer-bar__cta{border:1px solid rgba(255,255,255,.22);border-radius:10px;background:#FFFFFF;color:#0B2A4A;padding:7px 14px;font:700 11px 'Inter',sans-serif;cursor:pointer;white-space:nowrap}
+.member-offer-bar__cta:hover{background:#EAF0F4;color:#0B2A4A}
 .member-offer-bar.is-visible + .app{min-height:calc(100vh - 46px)}
 .member-offer-bar.is-visible + .app .sidebar,.member-offer-bar.is-visible + .app .aside{top:46px;height:calc(100vh - 46px)}
 .app{position:relative;z-index:1}
