@@ -73,4 +73,62 @@
 :root[data-theme="day"] .syn-world,
 :root[data-theme="day"] .syn-case{--world:#1D5C86!important}
 :root[data-theme="day"] .dir-card__foto--ini{background:#1D5C86!important}
+
+/* Modo noche · mismas piezas, contraste y profundidad adecuados. */
+:root[data-theme="night"] #content:has(.syn-league),
+:root[data-theme="night"] #content:has(.syn-achievements){background:transparent;border:0;border-radius:0;padding:8px 0 32px}
+:root[data-theme="night"] .syn-league{--syn-ink:#F1F6F9;--syn-deep:#081C2D;--syn-teal:#79A8C6;--syn-mint:#A8C9DC;--syn-paper:#102131;color:#F1F6F9}
+:root[data-theme="night"] .syn-league-hero{background:#0E2E49;box-shadow:0 18px 44px rgba(0,0,0,.22)}
+:root[data-theme="night"] .syn-story-entry{background:#123653;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+:root[data-theme="night"] .syn-daily,
+:root[data-theme="night"] .syn-game,
+:root[data-theme="night"] .syn-panel,
+:root[data-theme="night"] .syn-ranking{border-color:#294255;background:#102131;color:#F1F6F9}
+:root[data-theme="night"] .syn-daily:hover:not(:disabled),
+:root[data-theme="night"] .syn-game:hover{border-color:#466983;box-shadow:0 10px 24px rgba(0,0,0,.18)}
+:root[data-theme="night"] .syn-daily__ic,
+:root[data-theme="night"] .syn-game__icon,
+:root[data-theme="night"] .syn-weekly__head>span{background:#19364C;color:#8CB5D0}
+:root[data-theme="night"] .syn-game__go{color:#8FA5B5}
+:root[data-theme="night"] .syn-weekly{background:#102131;color:#F1F6F9}
+:root[data-theme="night"] .syn-weekly__head small,
+:root[data-theme="night"] .syn-weekly li small{color:#8FA5B5}
+:root[data-theme="night"] .syn-weekly__bar{background:#253C4E}
+:root[data-theme="night"] .syn-weekly li>span{border-color:#3A586E}
+:root[data-theme="night"] .syn-podium__place{border-color:#294255;background:#162A3C;color:#F1F6F9}
+:root[data-theme="night"] .syn-podium__place.place-1{border-color:#426C89;background:#183149}
+:root[data-theme="night"] .syn-ranking-row{border-color:#263D4F}
+:root[data-theme="night"] .syn-ranking-row.is-you{border-color:#426C89;background:#172D40}
+:root[data-theme="night"] .syn-ranking-row__name strong,
+:root[data-theme="night"] .syn-podium__place strong{color:#F1F6F9}
+:root[data-theme="night"] .syn-ranking-row__name span,
+:root[data-theme="night"] .syn-podium__place small{color:#8FA5B5}
+
+:root[data-theme="night"] .syn-achievements{--ach-ink:#F1F6F9;--ach-blue:#79A8C6;--ach-paper:#102131;color:var(--ach-ink)}
+:root[data-theme="night"] .syn-achievements__header{border-color:#294255}
+:root[data-theme="night"] .syn-achievements__header p,
+:root[data-theme="night"] .syn-achievement-summary__lead p,
+:root[data-theme="night"] .syn-achievement p{color:#9AAEBD}
+:root[data-theme="night"] .syn-achievement-summary{border-color:#294255;background:#102131;box-shadow:0 10px 30px rgba(0,0,0,.14)}
+:root[data-theme="night"] .syn-achievement-summary__icon{background:#19364C;color:#8CB5D0}
+:root[data-theme="night"] .syn-achievement-summary__lead>div>span,
+:root[data-theme="night"] .syn-achievement-summary__stats span,
+:root[data-theme="night"] .syn-achievement-group__head span,
+:root[data-theme="night"] .syn-achievement__foot strong{color:#8FA5B5}
+:root[data-theme="night"] .syn-achievement-summary__stats b,
+:root[data-theme="night"] .syn-achievement-group__head h2,
+:root[data-theme="night"] .syn-achievement h3{color:#F1F6F9}
+:root[data-theme="night"] .syn-achievement-summary__bar,
+:root[data-theme="night"] .syn-achievement__progress{background:#253C4E}
+:root[data-theme="night"] .syn-achievement{border-color:#294255;background:#102131;box-shadow:none}
+:root[data-theme="night"] .syn-achievement:hover{border-color:#466983;box-shadow:0 10px 24px rgba(0,0,0,.16)}
+:root[data-theme="night"] .syn-achievement__icon{background:#19364C;color:#8FA5B5}
+:root[data-theme="night"] .syn-achievement__state{background:#172D40;color:#8FA5B5}
+:root[data-theme="night"] .syn-achievement.is-unlocked{border-color:#426C89;background:#13283A}
+:root[data-theme="night"] .syn-achievement.is-unlocked .syn-achievement__icon{background:#1B3A51;color:#A8C9DC}
+:root[data-theme="night"] .syn-achievement.is-unlocked .syn-achievement__state{background:#5F95B8;color:#07111B}
+:root[data-theme="night"] .syn-achievement.is-unlocked .syn-achievement__progress span{background:#79A8C6}
+:root[data-theme="night"] .syn-achievement.is-unlocked .syn-achievement__foot strong{color:#A8C9DC}
+
+@media(max-width:720px){:root[data-theme="night"] #content:has(.syn-league),:root[data-theme="night"] #content:has(.syn-achievements){margin:0;padding:6px 0 24px;border-radius:0}}
 @media(max-width:390px){.syn-achievement-summary__stats{justify-content:space-between;gap:8px}.syn-achievement-summary__stats span{min-width:0}.syn-achievement{padding:16px}.syn-achievements__header h1{font-size:36px}}
