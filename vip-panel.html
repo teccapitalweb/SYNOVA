@@ -5340,8 +5340,18 @@ function mountNutricion(c){
   function esIOS(){
     return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
   }
-  function mostrar(){
+  function experienciaOcupada(){
+    var tour = document.querySelector('.membership-tour[aria-hidden="false"]');
+    var ficha = document.getElementById('synova-ficha-inicial');
+    var splash = document.querySelector('#splash-bienvenida,#splash-completado,#cancel-success-splash,.modal-backdrop');
+    return !!(tour || ficha || splash);
+  }
+  function mostrar(intentos){
     if (yaInstalada() || fueDescartada()) return;
+    if (experienciaOcupada()) {
+      if ((intentos || 0) < 150) setTimeout(function(){ mostrar((intentos || 0) + 1); }, 600);
+      return;
+    }
     pop.classList.add('show');
   }
   function ocultar(recordar){
