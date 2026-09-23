@@ -117,7 +117,7 @@
     this.backButton = root.querySelector('[data-tour-back]');
     this.nextButton = root.querySelector('[data-tour-next]');
     root.querySelector('[data-tour-brand]').textContent = this.config.brand || 'Recorrido guiado';
-    root.querySelector('[data-tour-skip]').addEventListener('click', this.finish.bind(this, true));
+    root.querySelector('[data-tour-skip]').addEventListener('click', this.finish.bind(this, true, false));
     this.backButton.addEventListener('click', this.previous.bind(this));
     this.nextButton.addEventListener('click', this.next.bind(this));
   };
@@ -185,7 +185,7 @@
       if (anchor) break;
       nextIndex += direction;
     }
-    if (!anchor) { this.finish(true); return; }
+    if (!anchor) { this.finish(true, false); return; }
     if (this.anchor) this.anchor.removeAttribute('data-membership-tour-active');
     this.current = nextIndex;
     this.anchor = anchor;
@@ -206,7 +206,7 @@
   };
 
   MembershipTour.prototype.next = function () {
-    if (this.current >= this.steps.length - 1) this.finish(true);
+    if (this.current >= this.steps.length - 1) this.finish(true, true);
     else this.show(this.current + 1, 1);
   };
 
@@ -270,7 +270,7 @@
 
   MembershipTour.prototype.onKeydown = function (event) {
     if (!this.active) return;
-    if (event.key === 'Escape') { event.preventDefault(); this.finish(true); return; }
+    if (event.key === 'Escape') { event.preventDefault(); this.finish(true, false); return; }
     if (event.key === 'ArrowRight') { event.preventDefault(); this.next(); return; }
     if (event.key === 'ArrowLeft') { event.preventDefault(); this.previous(); return; }
     if (event.key !== 'Tab') return;
@@ -281,7 +281,7 @@
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   };
 
-  MembershipTour.prototype.finish = async function (remember) {
+  MembershipTour.prototype.finish = async function (remember, completed) {
     if (!this.active) return;
     if (remember) this.markSeen();
     this.active = false;
@@ -294,6 +294,7 @@
     document.removeEventListener('keydown', this.boundKeydown);
     await this.setDrawer(false);
     if (this.previousFocus && this.previousFocus.isConnected && typeof this.previousFocus.focus === 'function') this.previousFocus.focus({ preventScroll: true });
+    if (completed && typeof this.config.onFinish === 'function') this.config.onFinish();
   };
 
   window.MembershipTour = MembershipTour;

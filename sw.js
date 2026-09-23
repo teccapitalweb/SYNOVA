@@ -8,7 +8,7 @@
    Sube este archivo a la raíz del repositorio, junto a los demás HTML.
    ============================================================ */
 
-var CACHE = 'synova-vip-bunny-v2';
+var CACHE = 'synova-vip-pro-v4';
 
 // Al instalar, activarse de inmediato (sin esperar a que se cierren pestañas viejas)
 self.addEventListener('install', function (e) {
@@ -39,12 +39,17 @@ self.addEventListener('fetch', function (e) {
   // Firebase, Stripe, Google Fonts, etc. quedan intactos y van siempre a la red.
   if (url.origin !== self.location.origin) return;
 
+  // Para documentos y código, evita que la caché HTTP del navegador entregue
+  // una versión anterior. La Cache API queda únicamente como respaldo offline.
+  var esCodigo = req.mode === 'navigate' || /\.(?:html|js|css)$/.test(url.pathname);
+  var peticionRed = esCodigo ? new Request(req, { cache: 'no-store' }) : req;
+
   // network-first: intenta la red; si falla, usa la caché
   e.respondWith(
-    fetch(req).then(function (res) {
+    fetch(peticionRed).then(function (res) {
       try {
         var copy = res.clone();
-        caches.open(CACHE).then(function (c) { c.put(req, copy); });
+        if (res && res.ok) caches.open(CACHE).then(function (c) { c.put(req, copy); });
       } catch (err) { /* ignorar errores de caché */ }
       return res;
     }).catch(function () {

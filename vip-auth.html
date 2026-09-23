@@ -806,7 +806,7 @@ document.getElementById('forgot-link').addEventListener('click', async (e) => {
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function(){
-      navigator.serviceWorker.register('sw.js').catch(function(){ /* silencioso: la app funciona igual sin SW */ });
+      navigator.serviceWorker.register('sw.js').then(function(reg){ return reg.update(); }).catch(function(){ /* silencioso: la app funciona igual sin SW */ });
     });
   }
 </script>

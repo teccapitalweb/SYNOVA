@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/onboarding-tour.css?v=1">
+<link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -549,6 +549,39 @@ body::after{
 .reto-result{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:42px 28px}.reto-result__icon{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:color-mix(in srgb,var(--primary) 13%,var(--surface));color:var(--primary)}.reto-result h2{font-size:28px}.reto-result p{color:var(--text-2);margin:8px 0 20px}
 @media(max-width:900px){.logros-grid,.retos-dashboard{grid-template-columns:1fr}.retos-grid{grid-template-columns:1fr}.reto-roadmap__steps{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:560px){.logro{grid-template-columns:44px 1fr;padding:17px;min-height:140px}.logro__icon{width:44px;height:44px}.logro-hero__racha{width:100%;justify-content:space-between}.reto-roadmap__steps{grid-template-columns:1fr}.reto-question{padding:20px}}
+
+/* BIENVENIDA INICIAL + CELEBRACIONES */
+.celebracion-confetti{position:fixed;inset:0;z-index:2147483000;pointer-events:none;overflow:hidden}
+.celebracion-confetti span{position:absolute;top:-24px;left:var(--x);width:var(--w);height:var(--h);background:var(--c);border-radius:2px;opacity:0;animation:synConfettiFall var(--t) cubic-bezier(.2,.65,.35,1) var(--d) forwards;transform:rotate(var(--r))}
+.celebracion-confetti span.is-round{border-radius:50%}
+.celebracion-confetti.is-grande span{box-shadow:0 2px 4px rgba(18,35,26,.16)}
+@keyframes synConfettiFall{0%{opacity:0;transform:translate3d(0,-18px,0) rotate(var(--r))}8%{opacity:1}100%{opacity:0;transform:translate3d(var(--drift),105vh,0) rotate(calc(var(--r) + 720deg))}}
+.ficha-inicial{position:fixed;inset:0;z-index:2147482500;display:grid;place-items:center;padding:20px;font-family:inherit}
+.ficha-inicial__veil{position:absolute;inset:0;background:rgba(5,14,28,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.ficha-inicial__panel{position:relative;width:min(760px,100%);max-height:min(780px,calc(100vh - 40px));overflow:auto;background:var(--surface);border:1px solid color-mix(in srgb,var(--primary) 32%,var(--border));border-radius:28px;box-shadow:0 34px 110px rgba(2,12,26,.5);padding:0;animation:fichaEntrada .48s cubic-bezier(.16,1,.3,1)}
+.ficha-inicial__head{position:relative;overflow:hidden;padding:30px 32px 26px;background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 17%,var(--surface)),color-mix(in srgb,var(--highlight) 10%,var(--surface)))}
+.ficha-inicial__head::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-90px;top:-135px;background:color-mix(in srgb,var(--highlight) 20%,transparent)}
+.ficha-inicial__identity{position:relative;z-index:1;display:flex;align-items:center;gap:16px}
+.ficha-inicial__avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;background:linear-gradient(135deg,var(--primary),var(--highlight));color:#fff;border:3px solid rgba(255,255,255,.92);box-shadow:0 10px 30px rgba(12,62,106,.24);font-size:20px;font-weight:800;flex:0 0 auto}
+.ficha-inicial__avatar img{width:100%;height:100%;object-fit:cover}
+.ficha-inicial__kicker{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:5px}
+.ficha-inicial h2{font-size:clamp(23px,3vw,32px);letter-spacing:-.8px;line-height:1.1;margin:0;color:var(--text)}
+.ficha-inicial__intro{position:relative;z-index:1;margin:10px 0 0;color:var(--text-2);font-size:13px;line-height:1.55;max-width:590px}
+.ficha-inicial__body{padding:26px 32px 30px}
+.ficha-inicial__grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ficha-inicial__field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.ficha-inicial__field--wide{grid-column:1/-1}
+.ficha-inicial__field label{font-size:11px;font-weight:800;letter-spacing:.35px;color:var(--text-2)}
+.ficha-inicial__field label span{font-weight:600;color:var(--text-3)}
+.ficha-inicial__input{width:100%;min-height:46px;padding:11px 13px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font:inherit;font-size:13px;outline:none;transition:border-color .16s,box-shadow .16s}
+.ficha-inicial__input:focus{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 15%,transparent)}
+.ficha-inicial__input[readonly]{color:var(--text-3);cursor:not-allowed}
+.ficha-inicial__note{display:flex;align-items:flex-start;gap:9px;margin:18px 0 0;padding:12px 14px;border-radius:13px;background:color-mix(in srgb,var(--primary) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--primary) 16%,var(--border));font-size:11.5px;line-height:1.5;color:var(--text-2)}
+.ficha-inicial__actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:22px}
+.ficha-inicial__error{display:none;margin-top:12px;color:var(--danger);font-size:12px;font-weight:650}
+@keyframes fichaEntrada{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+@media(max-width:640px){.ficha-inicial{padding:0;place-items:end center}.ficha-inicial__panel{width:100%;max-height:94dvh;border-radius:24px 24px 0 0;border-bottom:0}.ficha-inicial__head{padding:22px 20px 20px}.ficha-inicial__avatar{width:58px;height:58px}.ficha-inicial__body{padding:20px}.ficha-inicial__grid{grid-template-columns:1fr;gap:13px}.ficha-inicial__field--wide{grid-column:auto}.ficha-inicial__actions{flex-direction:column-reverse}.ficha-inicial__actions .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.celebracion-confetti{display:none}.ficha-inicial__panel{animation:none}}
 
 /* CERTIFICADOS */
 .certs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
@@ -1405,6 +1438,33 @@ const Theme = {
 Theme.init();
 
 function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Celebración reutilizable inspirada en el ritmo visual de Élite Pecuario. */
+window.celebrarSynova = function(intensidad){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('.celebracion-confetti').forEach(function(el){ el.remove(); });
+  var tipo = intensidad || 'normal';
+  var total = tipo === 'grande' ? 64 : (tipo === 'sutil' ? 24 : 42);
+  var colores = ['#1C6FB0','#5FB6E0','#2FD1C6','#34D399','#F2C14E','#FFFFFF','#7A67C7'];
+  var capa = document.createElement('div');
+  capa.className = 'celebracion-confetti' + (tipo === 'grande' ? ' is-grande' : '');
+  capa.setAttribute('aria-hidden', 'true');
+  for (var i = 0; i < total; i++) {
+    var pieza = document.createElement('span');
+    if (i % 5 === 0) pieza.className = 'is-round';
+    pieza.style.setProperty('--x', (Math.random() * 100).toFixed(2) + 'vw');
+    pieza.style.setProperty('--w', (5 + Math.random() * 7).toFixed(1) + 'px');
+    pieza.style.setProperty('--h', (6 + Math.random() * 11).toFixed(1) + 'px');
+    pieza.style.setProperty('--c', colores[i % colores.length]);
+    pieza.style.setProperty('--d', (Math.random() * .42).toFixed(2) + 's');
+    pieza.style.setProperty('--t', (1.75 + Math.random() * 1.05).toFixed(2) + 's');
+    pieza.style.setProperty('--r', ((Math.random() * 240) - 120).toFixed(0) + 'deg');
+    pieza.style.setProperty('--drift', ((Math.random() * 180) - 90).toFixed(0) + 'px');
+    capa.appendChild(pieza);
+  }
+  document.body.appendChild(capa);
+  setTimeout(function(){ capa.remove(); }, 3400);
+};
 window.escHtml = escHtml;
 
 const Toast = (function(){
@@ -1710,6 +1770,10 @@ onAuthStateChanged(auth, async (user) => {
 
   if (isAdmin) {
     modo = 'vip'; plan = 'admin'; membership = { activo: true, activa: true, plan: 'admin' };
+    try {
+      const adminSnap = await getDoc(doc(db, 'miembros', user.uid));
+      datosMiembro = adminSnap.exists() ? adminSnap.data() : {};
+    } catch (e) { datosMiembro = {}; }
   } else {
     const r = await resolverMembresia(user.uid);
     membership = r.membership;
@@ -1732,6 +1796,11 @@ onAuthStateChanged(auth, async (user) => {
     nombre: user.displayName || email.split('@')[0],
     iniciales: iniciales(user.displayName, email),
     foto,
+    whatsapp: datosMiembro.whatsapp || '',
+    especialidad: datosMiembro.especialidad || datosMiembro.puesto || '',
+    institucion: datosMiembro.institucion || datosMiembro.empresa || '',
+    ciudad: datosMiembro.ciudad || '',
+    perfilCompleto: datosMiembro.perfilCompleto === true,
     isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince
   };
 
@@ -1764,6 +1833,7 @@ onAuthStateChanged(auth, async (user) => {
   const params = new URLSearchParams(location.search);
   const seccionInicial = params.get('seccion') || (params.get('checkout') === 'success' ? 'suscripcion' : 'inicio');
   navigateTo(seccionInicial);
+  setTimeout(() => { window.__mostrarFichaInicialSynova && window.__mostrarFichaInicialSynova(); }, 320);
 
   if (params.get('checkout') === 'success') {
     if (window.UserState.modo === 'vip') {
@@ -1819,6 +1889,44 @@ window.__guardarPerfilCuenta = async function(nombre){
   return S;
 };
 
+window.__guardarFichaInicial = async function(datos){
+  const user = auth.currentUser;
+  const S = window.UserState;
+  if (!user || !S) throw new Error('No hay una sesión activa.');
+  const limpio = {
+    nombre: String(datos.nombre || '').trim(),
+    whatsapp: String(datos.whatsapp || '').replace(/[^0-9+]/g, '').trim(),
+    especialidad: String(datos.especialidad || '').trim(),
+    institucion: String(datos.institucion || '').trim(),
+    ciudad: String(datos.ciudad || '').trim()
+  };
+  if (limpio.nombre.length < 2) throw new Error('Escribe tu nombre completo.');
+  if (limpio.whatsapp.replace(/\D/g, '').length < 10) throw new Error('Escribe un WhatsApp válido de al menos 10 dígitos.');
+  if (limpio.especialidad.length < 2) throw new Error('Indica tu profesión, puesto o especialidad.');
+  await window.__guardarPerfilCuenta(limpio.nombre);
+  await setDoc(doc(db, 'miembros', user.uid), {
+    ...limpio,
+    perfilCompleto: true,
+    perfilCompletadoAt: serverTimestamp(),
+    lastUpdatedAt: serverTimestamp()
+  }, { merge: true });
+
+  const tarjetaRef = doc(db, 'directorio', user.uid);
+  const tarjetaSnap = await getDoc(tarjetaRef);
+  if (tarjetaSnap.exists()) {
+    const actual = tarjetaSnap.data() || {};
+    const parche = { email: S.email, updatedAt: serverTimestamp() };
+    if (!actual.whatsapp) parche.whatsapp = limpio.whatsapp;
+    if (!actual.puesto) parche.puesto = limpio.especialidad;
+    if (!actual.empresa && limpio.institucion) parche.empresa = limpio.institucion;
+    if (!actual.ciudad && limpio.ciudad) parche.ciudad = limpio.ciudad;
+    if (!actual.foto && S.foto) parche.foto = S.foto;
+    await setDoc(tarjetaRef, parche, { merge: true });
+  }
+  Object.assign(S, limpio, { perfilCompleto: true });
+  return S;
+};
+
 window.__signOut = async function(){
   try { await signOut(auth); window.location.href = 'vip-auth.html'; }
   catch (e) { Toast.error('No pudimos cerrar sesión', e.message); }
@@ -1831,6 +1939,10 @@ window.__signOut = async function(){
 // ═══════════════════════════════════════════════════════════════
 window.__showWelcomeSplash = function(opts) {
   opts = opts || {};
+  if (document.getElementById('synova-ficha-inicial')) {
+    window.__pendingWelcomeSplash = opts;
+    return;
+  }
   const S = window.UserState || {};
   const nombre = (S.nombre || S.displayName || 'Colega').split(' ')[0];
   const plan = opts.plan || S.plan || 'mensual';
@@ -3152,6 +3264,7 @@ window.responderRetoClinico = function(i){
   r.respondida = true;
   const p = r.preguntas[r.idx], ok = i === p.a;
   if (ok) r.correctas++;
+  if (ok) window.celebrarSynova('sutil');
   document.querySelectorAll('[data-reto-op]').forEach((b,j)=>{ b.disabled=true; if(j===p.a)b.classList.add('is-correct'); if(j===i&&!ok)b.classList.add('is-wrong'); });
   const fin = r.idx >= r.preguntas.length-1;
   document.getElementById('reto-feedback').innerHTML = `<div class="reto-feedback"><strong>${ok?'Decisión correcta':'Revisemos la prioridad'}</strong>${escHtml(p.exp)}<br><button class="btn btn--accent btn--sm" onclick="siguienteRetoClinico()">${fin?'Ver resultado':'Siguiente decisión'} <svg class="ic"><use href="#i-arrow-right"/></svg></button></div>`;
@@ -3182,6 +3295,7 @@ window.siguienteRetoClinico = function(){
 function pintarResultadoReto(res){
   const titulo = res.repetido ? 'Reto diario completado' : res.pct>=80 ? 'Excelente criterio clínico' : res.pct>=50 ? 'Buen avance' : 'Cada decisión enseña';
   document.getElementById('content').innerHTML = `<div class="reto-play"><div class="reto-result"><div class="reto-result__icon"><svg class="ic ic--xl"><use href="#${res.repetido?'i-check-circle':'i-trophy'}"/></svg></div><h2>${titulo}</h2><p>${res.repetido?'Vuelve mañana para una nueva decisión clínica.':`${res.correctas} de ${res.total} correctas · +${res.xp} XP`}</p><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn btn--accent" onclick="pintarHubRetos()">Volver a Retos</button>${!res.repetido&&res.tipo!=='diario'?`<button class="btn btn--ghost" onclick="iniciarRetoClinico('${res.tipo}')">Intentar de nuevo</button>`:''}</div></div></div>`;
+  if (!res.repetido) setTimeout(function(){ window.celebrarSynova(res.pct >= 80 ? 'grande' : 'normal'); }, 120);
 }
 
 async function asegurarFotosDirectorio(){
@@ -3589,6 +3703,10 @@ Sections.perfil = function(){
         <div class="perfil-card__title">Datos de la cuenta</div>
         <div class="perfil-field"><span class="perfil-field__lbl">Nombre</span><span class="perfil-field__val">${escHtml(S.nombre)}</span><button class="perfil-field__edit" id="perfil-editar-nombre" aria-label="Editar nombre"><svg class="ic"><use href="#i-edit"/></svg></button></div>
         <div class="perfil-field"><span class="perfil-field__lbl">Email</span><span class="perfil-field__val">${escHtml(S.email)}</span></div>
+        <div class="perfil-field"><span class="perfil-field__lbl">WhatsApp</span><span class="perfil-field__val">${escHtml(S.whatsapp || 'Por completar')}</span></div>
+        <div class="perfil-field"><span class="perfil-field__lbl">Especialidad</span><span class="perfil-field__val">${escHtml(S.especialidad || 'Por completar')}</span></div>
+        <div class="perfil-field"><span class="perfil-field__lbl">Institución</span><span class="perfil-field__val">${escHtml(S.institucion || 'No indicada')}</span></div>
+        <div class="perfil-field"><span class="perfil-field__lbl">Ciudad</span><span class="perfil-field__val">${escHtml(S.ciudad || 'No indicada')}</span></div>
         <div class="perfil-field"><span class="perfil-field__lbl">UID</span><span class="perfil-field__val" style="font-family:'JetBrains Mono',monospace;font-size:11px">${escHtml(S.uid)}</span></div>
       </div>
       <div class="perfil-card">
@@ -3609,18 +3727,27 @@ function abrirEditorPerfil(){
     <div class="dir-form__foto-wrap"><div class="dir-form__foto">${foto}</div><div style="font-size:11px;color:var(--text-3);text-align:center">La foto y el correo se toman automáticamente de tu cuenta de Google.</div></div>
     <label class="dir-form__lbl">Nombre completo</label><input class="dir-form__in" id="perfil-nombre" maxlength="80" value="${escHtml(S.nombre || '')}">
     <label class="dir-form__lbl">Correo de acceso</label><input class="dir-form__in" type="email" value="${escHtml(S.email || '')}" readonly aria-readonly="true">
-    <div style="font-size:11px;color:var(--text-3);margin-top:6px">El correo permanece ligado a tu inicio de sesión para proteger el acceso a tu cuenta.</div>
+    <label class="dir-form__lbl">WhatsApp</label><input class="dir-form__in" id="perfil-whatsapp" inputmode="tel" value="${escHtml(S.whatsapp || '')}">
+    <label class="dir-form__lbl">Profesión, puesto o especialidad</label><input class="dir-form__in" id="perfil-especialidad" maxlength="90" value="${escHtml(S.especialidad || '')}">
+    <label class="dir-form__lbl">Institución (opcional)</label><input class="dir-form__in" id="perfil-institucion" maxlength="100" value="${escHtml(S.institucion || '')}">
+    <label class="dir-form__lbl">Ciudad (opcional)</label><input class="dir-form__in" id="perfil-ciudad" maxlength="80" value="${escHtml(S.ciudad || '')}">
+    <div style="font-size:11px;color:var(--text-3);margin-top:6px">El correo permanece ligado a tu inicio de sesión para proteger el acceso a tu cuenta. Tu foto viene de Google, salvo que elijas otra en el Directorio.</div>
   </div>`;
   Modal.open({ id: 'perfil-editor', title: 'Editar mis datos', icon: 'i-edit', size: 'sm', body, footer: '<button class="btn btn--ghost" onclick="Modal.close(\'perfil-editor\')">Cancelar</button><button class="btn btn--accent" onclick="guardarPerfilCuenta()">Guardar cambios</button>' });
   setTimeout(() => document.getElementById('perfil-nombre')?.focus(), 0);
 }
 
 window.guardarPerfilCuenta = async function(){
-  const nombre = document.getElementById('perfil-nombre')?.value || '';
   try {
-    await window.__guardarPerfilCuenta(nombre);
+    await window.__guardarFichaInicial({
+      nombre: document.getElementById('perfil-nombre')?.value || '',
+      whatsapp: document.getElementById('perfil-whatsapp')?.value || '',
+      especialidad: document.getElementById('perfil-especialidad')?.value || '',
+      institucion: document.getElementById('perfil-institucion')?.value || '',
+      ciudad: document.getElementById('perfil-ciudad')?.value || ''
+    });
     Modal.close('perfil-editor');
-    Toast.success('Perfil actualizado', 'Tu nombre se sincronizó con tu cuenta y tu tarjeta.');
+    Toast.success('Perfil actualizado', 'Tus datos se sincronizaron con tu cuenta y tu tarjeta existente.');
     Sections.perfil();
   } catch (e) { Toast.error('No se pudo actualizar tu perfil', e.message); }
 };
@@ -5044,11 +5171,98 @@ function mountNutricion(c){
 })();
 </script>
 
+<script>
+/* Ficha profesional de primera entrada. Se adapta como hoja inferior en teléfono. */
+(function(){
+  function continuar(){
+    var pendiente = window.__pendingWelcomeSplash;
+    window.__pendingWelcomeSplash = null;
+    if (pendiente) {
+      setTimeout(function(){ window.__showWelcomeSplash && window.__showWelcomeSplash(pendiente); }, 280);
+      return;
+    }
+    setTimeout(function(){
+      if (window.SynovaOnboarding && !window.SynovaOnboarding.wasSeen()) window.SynovaOnboarding.start(false);
+    }, 420);
+  }
+
+  function cerrar(omitida){
+    var ficha = document.getElementById('synova-ficha-inicial');
+    if (ficha) ficha.remove();
+    if (omitida && window.UserState) {
+      try { sessionStorage.setItem('synova:ficha:omitida:' + window.UserState.uid, '1'); } catch (e) {}
+    }
+    continuar();
+  }
+
+  window.__mostrarFichaInicialSynova = function(){
+    var S = window.UserState;
+    if (!S || S.perfilCompleto || document.getElementById('synova-ficha-inicial')) return;
+    try { if (sessionStorage.getItem('synova:ficha:omitida:' + S.uid)) return; } catch (e) {}
+    var foto = window.__avatarHtml ? window.__avatarHtml(S.foto, S.iniciales, 'Foto de ' + S.nombre) : escHtml(S.iniciales || 'SN');
+    var ficha = document.createElement('div');
+    ficha.className = 'ficha-inicial';
+    ficha.id = 'synova-ficha-inicial';
+    ficha.setAttribute('role', 'dialog');
+    ficha.setAttribute('aria-modal', 'true');
+    ficha.setAttribute('aria-labelledby', 'ficha-inicial-titulo');
+    ficha.innerHTML = '<div class="ficha-inicial__veil"></div>' +
+      '<section class="ficha-inicial__panel">' +
+        '<header class="ficha-inicial__head"><div class="ficha-inicial__identity">' +
+          '<div class="ficha-inicial__avatar">' + foto + '</div><div><div class="ficha-inicial__kicker">Tu espacio profesional</div>' +
+          '<h2 id="ficha-inicial-titulo">Bienvenido a SYNOVA, ' + escHtml((S.nombre || 'colega').split(' ')[0]) + '</h2></div></div>' +
+          '<p class="ficha-inicial__intro">Completa estos datos una sola vez. Usaremos tu correo y foto de Google para identificarte en la comunidad; tú podrás editarlos desde Mi perfil.</p></header>' +
+        '<form class="ficha-inicial__body" id="ficha-inicial-form">' +
+          '<div class="ficha-inicial__grid">' +
+            '<div class="ficha-inicial__field"><label for="fi-nombre">Nombre completo</label><input class="ficha-inicial__input" id="fi-nombre" maxlength="80" autocomplete="name" required value="' + escHtml(S.nombre || '') + '"></div>' +
+            '<div class="ficha-inicial__field"><label for="fi-email">Correo de acceso <span>· desde Google</span></label><input class="ficha-inicial__input" id="fi-email" type="email" readonly value="' + escHtml(S.email || '') + '"></div>' +
+            '<div class="ficha-inicial__field"><label for="fi-whatsapp">WhatsApp</label><input class="ficha-inicial__input" id="fi-whatsapp" inputmode="tel" autocomplete="tel" placeholder="Ej. 238 123 4567" required value="' + escHtml(S.whatsapp || '') + '"></div>' +
+            '<div class="ficha-inicial__field"><label for="fi-especialidad">Profesión, puesto o especialidad</label><input class="ficha-inicial__input" id="fi-especialidad" maxlength="90" placeholder="Ej. Enfermería quirúrgica" required value="' + escHtml(S.especialidad || '') + '"></div>' +
+            '<div class="ficha-inicial__field"><label for="fi-institucion">Institución <span>· opcional</span></label><input class="ficha-inicial__input" id="fi-institucion" maxlength="100" placeholder="Hospital, clínica o consultorio" value="' + escHtml(S.institucion || '') + '"></div>' +
+            '<div class="ficha-inicial__field"><label for="fi-ciudad">Ciudad <span>· opcional</span></label><input class="ficha-inicial__input" id="fi-ciudad" maxlength="80" autocomplete="address-level2" placeholder="Ciudad y estado" value="' + escHtml(S.ciudad || '') + '"></div>' +
+          '</div>' +
+          '<div class="ficha-inicial__note"><svg class="ic"><use href="#i-shield-check"/></svg><span>Tu email no se puede cambiar aquí y nunca se publica automáticamente. En el Directorio tú decides qué datos de contacto mostrar.</span></div>' +
+          '<div class="ficha-inicial__error" id="ficha-inicial-error" role="alert"></div>' +
+          '<div class="ficha-inicial__actions"><button class="btn btn--ghost" type="button" id="fi-omitir">Ahora no</button><button class="btn btn--accent" type="submit" id="fi-guardar">Guardar y conocer SYNOVA <svg class="ic"><use href="#i-arrow-right"/></svg></button></div>' +
+        '</form></section>';
+    document.body.appendChild(ficha);
+    document.getElementById('fi-omitir').addEventListener('click', function(){ cerrar(true); });
+    document.getElementById('ficha-inicial-form').addEventListener('submit', async function(event){
+      event.preventDefault();
+      var btn = document.getElementById('fi-guardar');
+      var error = document.getElementById('ficha-inicial-error');
+      error.style.display = 'none';
+      btn.disabled = true;
+      var anterior = btn.innerHTML;
+      btn.textContent = 'Guardando…';
+      try {
+        await window.__guardarFichaInicial({
+          nombre: document.getElementById('fi-nombre').value,
+          whatsapp: document.getElementById('fi-whatsapp').value,
+          especialidad: document.getElementById('fi-especialidad').value,
+          institucion: document.getElementById('fi-institucion').value,
+          ciudad: document.getElementById('fi-ciudad').value
+        });
+        cerrar(false);
+        window.celebrarSynova('normal');
+        Toast.success('Perfil listo', 'Tu experiencia SYNOVA ya está personalizada.');
+      } catch (e) {
+        error.textContent = e.message || 'No pudimos guardar tus datos.';
+        error.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = anterior;
+      }
+    });
+    setTimeout(function(){ document.getElementById('fi-whatsapp').focus(); }, 80);
+  };
+})();
+</script>
+
 <!-- ─── Service Worker · permite instalar SYNOVA VIP como app y abrir más rápido ─── -->
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function(){
-      navigator.serviceWorker.register('sw.js').catch(function(){ /* silencioso: la app funciona igual */ });
+      navigator.serviceWorker.register('sw.js').then(function(reg){ return reg.update(); }).catch(function(){ /* silencioso: la app funciona igual */ });
     });
   }
 </script>
@@ -5308,11 +5522,11 @@ body{-webkit-tap-highlight-color:transparent}
 })();
 </script>
 <script src="assets/synova-referrals.js"></script>
-<script src="assets/onboarding-tour.js?v=1"></script>
+<script src="assets/onboarding-tour.js?v=2"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({
   namespace: 'synova',
-  version: 'v1',
+  version: 'v2',
   brand: 'Guía SYNOVA',
   readyEvent: 'synova:ready',
   autoDelay: 1500,
@@ -5351,6 +5565,13 @@ window.SynovaOnboarding = new window.MembershipTour({
       copy: 'Aquí verás las próximas sesiones con profesionales de la salud, sus fechas y el acceso para participar cuando comience la transmisión.'
     },
     {
+      desktopSelectors: '.sidebar .nav-item[data-section="retos"]',
+      mobileSelectors: '.mobile-drawer .mobile-drawer__item[data-section="retos"]',
+      mobileDrawer: true,
+      title: 'Retos clínicos y celebraciones',
+      copy: 'Practica decisiones clínicas breves, conserva tu racha y gana XP. Cada acierto y cada reto superado se celebran al instante.'
+    },
+    {
       desktopSelectors: '.sidebar [data-tour="tools"]',
       mobileSelectors: '.mobile-drawer [data-tour="tools"]',
       mobileDrawer: true,
@@ -5369,7 +5590,8 @@ window.SynovaOnboarding = new window.MembershipTour({
       title: 'La guía siempre estará disponible',
       copy: 'Pulsa este botón de ayuda para repetir el recorrido cuando quieras. También encontrarás la misma opción dentro de Mi perfil.'
     }
-  ]
+  ],
+  onFinish: function(){ window.celebrarSynova('normal'); }
 });
 </script>
 </body>
