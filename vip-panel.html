@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=1">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=2">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -2583,24 +2583,25 @@ function getRetosState(){
 function setRetosState(s){ try { localStorage.setItem(retosKey(), JSON.stringify(s)); } catch (e) {} }
 
 const LOGROS_DEF = [
-  { id:'primer-paso', name:'Primer paso', desc:'Completa tu primera clase dentro de SYNOVA.', xp:30, cat:'Constancia', color:'#2D89C8', icon:'i-play', value:s=>s.clasesVistas, goal:1 },
-  { id:'en-marcha', name:'En marcha', desc:'Avanza en cinco clases de tu ruta clínica.', xp:60, cat:'Constancia', color:'#2D89C8', icon:'i-bolt', value:s=>s.clasesVistas, goal:5 },
-  { id:'constante', name:'Constante', desc:'Mantén una racha de tres retos diarios.', xp:90, cat:'Constancia', color:'#2D89C8', icon:'i-calendar', value:s=>s.retos.racha, goal:3 },
-  { id:'imparable', name:'Imparable', desc:'Siete días consecutivos resolviendo retos.', xp:180, cat:'Constancia', color:'#2D89C8', icon:'i-activity', value:s=>s.retos.racha, goal:7 },
-  { id:'certificado', name:'Certificado', desc:'Obtén tu primer certificado verificable.', xp:80, cat:'Clínica', color:'#159E92', icon:'i-certificate', value:s=>s.certificados, goal:1 },
-  { id:'especialista', name:'Especialista', desc:'Completa tres cursos de actualización.', xp:160, cat:'Clínica', color:'#159E92', icon:'i-stethoscope', value:s=>s.cursosCompletados, goal:3 },
-  { id:'criterio-clinico', name:'Criterio clínico', desc:'Responde correctamente diez decisiones clínicas.', xp:140, cat:'Especialización', color:'#7A67C7', icon:'i-clipboard-check', value:s=>s.retos.correctas, goal:10 },
-  { id:'multidisciplinar', name:'Multidisciplinar', desc:'Completa formación en tres áreas de salud.', xp:220, cat:'Especialización', color:'#7A67C7', icon:'i-tools', value:s=>s.areasCompletadas, goal:3 },
-  { id:'casos', name:'Resolutor de casos', desc:'Finaliza tres guardias clínicas simuladas.', xp:180, cat:'Maestría', color:'#C08A2D', icon:'i-shield-check', value:s=>s.retos.casos, goal:3 },
-  { id:'maestro', name:'Maestro SYNOVA', desc:'Alcanza diez cursos completados.', xp:400, cat:'Maestría', color:'#C08A2D', icon:'i-crown', value:s=>s.cursosCompletados, goal:10 },
-  { id:'voz', name:'Voz de la comunidad', desc:'Publica tu primer aporte en el Foro VIP.', xp:50, cat:'Comunidad', color:'#4C9FD1', icon:'i-messages', value:s=>s.posts, goal:1 },
-  { id:'red-profesional', name:'Red profesional', desc:'Publica tu tarjeta en el Directorio VIP.', xp:60, cat:'Comunidad', color:'#4C9FD1', icon:'i-users', value:s=>s.tieneDirectorio?1:0, goal:1 }
+  { id:'primer-paso', name:'Primer paso', desc:'Completa tu primera clase.', xp:30, cat:'Constancia', color:'#2F6F7B', icon:'i-play', value:s=>s.clasesVistas, goal:1 },
+  { id:'en-marcha', name:'En marcha', desc:'Avanza en cinco clases.', xp:60, cat:'Constancia', color:'#2F6F7B', icon:'i-bolt', value:s=>s.clasesVistas, goal:5 },
+  { id:'constante', name:'Constante', desc:'Mantén tres días de práctica.', xp:90, cat:'Constancia', color:'#2F6F7B', icon:'i-calendar', value:s=>s.retos.racha, goal:3 },
+  { id:'imparable', name:'Imparable', desc:'Alcanza una racha de siete días.', xp:180, cat:'Constancia', color:'#2F6F7B', icon:'i-activity', value:s=>s.retos.racha, goal:7 },
+  { id:'certificado', name:'Certificado', desc:'Obtén tu primer certificado.', xp:80, cat:'Clínica', color:'#28766B', icon:'i-certificate', value:s=>s.certificados, goal:1 },
+  { id:'especialista', name:'Especialista', desc:'Completa tres cursos.', xp:160, cat:'Clínica', color:'#28766B', icon:'i-stethoscope', value:s=>s.cursosCompletados, goal:3 },
+  { id:'criterio-clinico', name:'Criterio clínico', desc:'Acierta diez decisiones clínicas.', xp:140, cat:'Especialización', color:'#3E637B', icon:'i-clipboard-check', value:s=>s.retos.correctas, goal:10 },
+  { id:'multidisciplinar', name:'Multidisciplinar', desc:'Domina tres áreas de salud.', xp:220, cat:'Especialización', color:'#3E637B', icon:'i-tools', value:s=>s.areasCompletadas, goal:3 },
+  { id:'casos', name:'Resolutor de casos', desc:'Finaliza tres casos clínicos.', xp:180, cat:'Maestría', color:'#A77837', icon:'i-shield-check', value:s=>s.retos.casos, goal:3 },
+  { id:'maestro', name:'Maestro SYNOVA', desc:'Completa diez cursos.', xp:400, cat:'Maestría', color:'#A77837', icon:'i-crown', value:s=>s.cursosCompletados, goal:10 },
+  { id:'voz', name:'Voz de la comunidad', desc:'Publica tu primer aporte.', xp:50, cat:'Comunidad', color:'#4C7680', icon:'i-messages', value:s=>s.posts, goal:1 },
+  { id:'red-profesional', name:'Red profesional', desc:'Crea tu tarjeta profesional.', xp:60, cat:'Comunidad', color:'#4C7680', icon:'i-users', value:s=>s.tieneDirectorio?1:0, goal:1 }
 ];
 
 Sections.logros = function(){
-  document.getElementById('content').innerHTML =
-    secHero('Tu progreso', 'Mis logros', 'Insignias que reconocen tu avance real dentro del club VIP de SYNOVA: cursos, certificados y participación en la comunidad.') +
-    '<div id="logros-wrap"><div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto"></div></div></div>';
+  document.getElementById('content').innerHTML = `<div class="syn-achievements">
+    <header class="syn-achievements__header"><span class="syn-eyebrow">Tu trayectoria</span><h1>Mis logros</h1><p>Formación, práctica y comunidad. Solo lo que cuenta.</p></header>
+    <div id="logros-wrap"><div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto"></div></div></div>
+  </div>`;
   cargarLogros();
 };
 
@@ -2643,34 +2644,27 @@ async function cargarLogros(){
   const cats = [...new Set(LOGROS_DEF.map(l => l.cat))];
   const gridsHtml = cats.map(cat => {
     const items = LOGROS_DEF.filter(l => l.cat === cat);
-    return `<section class="logro-section">
-      <div class="logro-section__head"><h2>${escHtml(cat)}</h2><span>${items.filter(l => unlocked.includes(l)).length}/${items.length}</span></div>
-      <div class="logros-grid">${items.map(l => {
+    return `<section class="syn-achievement-group">
+      <div class="syn-achievement-group__head"><h2>${escHtml(cat)}</h2><span>${items.filter(l => unlocked.includes(l)).length}/${items.length}</span></div>
+      <div class="syn-achievement-grid">${items.map(l => {
         const isUnlocked = unlocked.includes(l);
         const valor = Math.max(0, Number(l.value(st)) || 0);
         const progreso = Math.min(100, Math.round(valor / l.goal * 100));
-        return `<div class="logro ${isUnlocked ? 'is-unlocked' : 'is-locked'}" style="--cat-color:${l.color}">
-          <div class="logro__icon"><svg class="ic"><use href="#${l.icon}"/></svg></div>
-          <div class="logro__name">${escHtml(l.name)}</div>
-          <div class="logro__desc">${escHtml(l.desc)}</div>
-          <div class="logro__foot"><div class="logro__progress"><span style="width:${progreso}%"></span></div><div class="logro__xp">${Math.min(valor,l.goal)}/${l.goal} · ${l.xp} XP</div></div>
-        </div>`;
+        return `<article class="syn-achievement ${isUnlocked ? 'is-unlocked' : 'is-locked'}" style="--cat-color:${l.color}">
+          <div class="syn-achievement__icon"><svg class="ic"><use href="#${l.icon}"/></svg></div>
+          <span class="syn-achievement__state"><svg class="ic"><use href="#i-${isUnlocked?'check':'clock'}"/></svg></span>
+          <h3>${escHtml(l.name)}</h3><p>${escHtml(l.desc)}</p>
+          <div class="syn-achievement__foot"><div class="syn-achievement__progress"><span style="width:${progreso}%"></span></div><strong>${Math.min(valor,l.goal)}/${l.goal}</strong></div>
+        </article>`;
       }).join('')}</div>
     </section>`;
   }).join('');
 
-  wrap.innerHTML = `
-    <div class="logro-hero fade-up">
-      <div class="logro-hero__row">
-        <div class="logro-hero__icon"><svg class="ic ic--xl"><use href="#i-trophy"/></svg></div>
-        <div><div class="logro-hero__lbl">Progreso SYNOVA</div><div class="logro-hero__name">Nivel ${nivel} · ${xpTotal} XP</div></div>
-        <div class="logro-hero__racha"><div class="logro-hero__stat"><span class="logro-hero__racha-num">${unlocked.length}/${LOGROS_DEF.length}</span><span class="logro-hero__racha-lbl">Logros</span></div><div class="logro-hero__stat"><span class="logro-hero__racha-num">${st.retos.racha || 0}</span><span class="logro-hero__racha-lbl">Racha diaria</span></div></div>
-      </div>
-      <div class="logro-hero__xp-bar"><div class="logro-hero__xp-fill" style="width:${pct}%"></div></div>
-      <div class="logro-hero__xp-text"><span>Trayectoria completada</span><strong>${pct}%</strong></div>
-    </div>
-    ${gridsHtml}
-  `;
+  wrap.innerHTML = `<section class="syn-achievement-summary fade-up">
+    <div class="syn-achievement-summary__lead"><span class="syn-achievement-summary__icon"><svg class="ic"><use href="#i-trophy"/></svg></span><div><span>Progreso SYNOVA</span><h2>Nivel ${nivel}</h2><p>${xpTotal} XP acumulados</p></div></div>
+    <div class="syn-achievement-summary__stats"><span><b>${unlocked.length}</b>de ${LOGROS_DEF.length}</span><span><b>${st.retos.racha || 0}</b>racha</span><span><b>${pct}%</b>avance</span></div>
+    <div class="syn-achievement-summary__bar"><span style="width:${pct}%"></span></div>
+  </section>${gridsHtml}`;
 }
 </script>
 <!-- ══════════════════════ CERTIFICADOS / FORO ══════════════════════ -->
@@ -3344,28 +3338,25 @@ window.pintarHubRetos = function(){
   const misiones=[hoy,s.quizSemana>0,s.flashSemana>=5], misionPct=Math.round(misiones.filter(Boolean).length/3*100);
   document.getElementById('content').innerHTML = `<div class="syn-league">
     <section class="syn-league-hero">
-      <div class="syn-league-hero__copy"><span class="syn-kicker"><svg class="ic"><use href="#i-trophy"/></svg>Liga clínica SYNOVA</span><h1>Aprende. Practica. <em>Eleva tu criterio.</em></h1><p>Cada decisión, caso y repaso fortalece habilidades esenciales para una atención más segura.</p>
+      <div class="syn-league-hero__copy"><span class="syn-kicker"><svg class="ic"><use href="#i-trophy"/></svg>Liga clínica SYNOVA</span><h1>Entrena tu criterio. <em>Decide mejor.</em></h1><p>Práctica breve para una atención más segura.</p>
         <div class="syn-level"><span class="syn-level__icon"><svg class="ic"><use href="#i-certificate"/></svg></span><div class="syn-level__body"><span>Nivel ${nivel.indice+1}</span><strong>${nivel.actual.nombre}</strong><div class="syn-level__bar"><span style="width:${nivel.pct}%"></span></div><small>${nivel.siguiente ? `${s.xp} XP · ${nivel.siguiente.xp-s.xp} para ${nivel.siguiente.nombre}` : `${s.xp} XP · nivel máximo`}</small></div></div>
       </div>
-      <div class="syn-rank-card"><span class="syn-rank-card__label">Tu posición</span><strong id="syn-rank-num">—</strong><span id="syn-rank-total">Calculando la liga…</span><div class="syn-rank-card__mini"><span><b>${s.xp}</b>XP</span><span><b>${s.correctas}</b>aciertos</span><span><b>${s.racha}</b>racha</span></div></div>
+      <div class="syn-rank-card"><span class="syn-rank-card__label">Tu posición</span><strong id="syn-rank-num">—</strong><span id="syn-rank-total">Calculando…</span><div class="syn-rank-card__line"><b>${s.xp} XP</b><i></i><b>${s.racha} días</b></div></div>
     </section>
     <div class="syn-league-dashboard">
       <main class="syn-league-main">
-        <div class="syn-section-head"><div><span class="syn-eyebrow">Entrena tus conocimientos</span><h2>Zona de retos</h2></div><span>${BANCO_RETOS.length} decisiones + ${RETOS_FLASHCARDS.length} tarjetas</span></div>
-        <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Nueva experiencia · modo historia</span><h2>Domina la <em>ruta segura.</em></h2><p>Avanza por seis mundos, resuelve situaciones y construye criterio desde lo esencial.</p><span class="btn btn--light">Comenzar historia <svg class="ic"><use href="#i-arrow-right"/></svg></span></span><span class="syn-story-entry__art"><span><svg class="ic"><use href="#i-stethoscope"/></svg></span></span></button>
+        <div class="syn-section-head"><div><span class="syn-eyebrow">Entrenamiento</span><h2>Elige una práctica</h2></div></div>
+        <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Modo historia</span><h2>Ruta segura.</h2><p>Seis mundos de decisión clínica.</p><span class="btn btn--light">Comenzar <svg class="ic"><use href="#i-arrow-right"/></svg></span></span><span class="syn-story-entry__art"><span><svg class="ic"><use href="#i-stethoscope"/></svg></span></span></button>
         <button class="syn-daily" ${hoy?'disabled':''} onclick="iniciarRetoClinico('diario')"><span class="syn-daily__ic"><svg class="ic"><use href="#${hoy?'i-check':'i-calendar'}"/></svg></span><span class="syn-daily__tx"><strong>${hoy?'Reto diario completado':'Reto diario'}</strong><span>${hoy?'Vuelve mañana para una nueva decisión':'Una pregunta rápida · hasta 30 XP'}</span></span><svg class="ic"><use href="#i-arrow-right"/></svg></button>
         <div class="syn-game-grid">
-          <button class="syn-game" style="--game:#2D89C8" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Quiz Relámpago</strong><span>Modos, categorías y sesiones rápidas contra reloj.</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" style="--game:#7A67C7" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Casos de decisión</strong><span>${s.casosResueltos.length}/${BANCO_RETOS.filter(x=>x.tipo==='caso').length} escenarios resueltos.</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" style="--game:#159E92" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Flashcards</strong><span>${s.flashDominadas}/${RETOS_FLASHCARDS.length} dominadas con repaso espaciado.</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#2F6F7B" onclick="abrirQuizSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-bolt"/></svg></span><strong>Quiz</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#3E637B" onclick="abrirCasosSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-stethoscope"/></svg></span><strong>Casos</strong><span>${s.casosResueltos.length} resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" style="--game:#28766B" onclick="abrirFlashSynova()"><span class="syn-game__icon"><svg class="ic"><use href="#i-book"/></svg></span><strong>Flashcards</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
         </div>
-        <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Avance verificado</span><h2>Clasificación de la comunidad</h2></div><span class="syn-live"><svg class="ic"><use href="#i-shield-check"/></svg>Solo progreso</span></div><p class="syn-ranking__intro">Aquí se reconoce la práctica constante. La clasificación muestra únicamente nombre, foto y avance en Retos; nunca datos de contacto.</p><div id="syn-ranking-content"><div class="empty-note">Cargando liga…</div></div></section>
-        ${retoFuente()}
+        <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Comunidad</span><h2>Clasificación</h2></div></div><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
       </main>
       <aside class="syn-league-side">
-        <section class="syn-panel syn-weekly"><div class="syn-weekly__head"><span><svg class="ic"><use href="#i-trophy"/></svg></span><div><small>Misión semanal</small><strong>${misionPct}% completada</strong></div></div><div class="syn-weekly__bar"><span style="width:${misionPct}%"></span></div><ul>${[['Reto diario','Resuelve la decisión de hoy'],['Práctica activa','Completa un quiz esta semana'],['Memoria clínica','Repasa 5 flashcards']].map((x,i)=>`<li class="${misiones[i]?'is-done':''}"><span><svg class="ic"><use href="#i-${misiones[i]?'check':'clock'}"/></svg></span><div><strong>${x[0]}</strong><small>${x[1]}</small></div></li>`).join('')}</ul><div class="syn-weekly__reward"><svg class="ic"><use href="#i-crown"/></svg>Completa las 3 para dominar la semana</div></section>
-        <section class="syn-panel syn-path"><span class="syn-eyebrow">Camino a maestro</span><h3>Seis niveles de dominio</h3><ol>${RETOS_NIVELES.map((n,i)=>`<li class="${i<nivel.indice?'is-done':i===nivel.indice?'is-current':''}"><span>${i+1}</span><div><strong>${n.nombre}</strong><small>${n.xp.toLocaleString('es-MX')} XP</small></div>${i===nivel.indice?'<em>Estás aquí</em>':''}</li>`).join('')}</ol></section>
-        <section class="syn-panel syn-board"><span class="syn-eyebrow">Tu tablero</span><div><span><svg class="ic"><use href="#i-bolt"/></svg><b>${s.quizBest}%</b><small>récord quiz</small></span><span><svg class="ic"><use href="#i-stethoscope"/></svg><b>${s.casosResueltos.length}</b><small>casos</small></span><span><svg class="ic"><use href="#i-book"/></svg><b>${s.flashDominadas}</b><small>dominadas</small></span></div></section>
+        <section class="syn-panel syn-weekly"><div class="syn-weekly__head"><span><svg class="ic"><use href="#i-trophy"/></svg></span><div><small>Esta semana</small><strong>${misionPct}% completada</strong></div></div><div class="syn-weekly__bar"><span style="width:${misionPct}%"></span></div><ul>${[['Reto diario','Decisión de hoy'],['Quiz','Una práctica'],['Flashcards','Cinco repasos']].map((x,i)=>`<li class="${misiones[i]?'is-done':''}"><span><svg class="ic"><use href="#i-${misiones[i]?'check':'clock'}"/></svg></span><div><strong>${x[0]}</strong><small>${x[1]}</small></div></li>`).join('')}</ul></section>
       </aside>
     </div>
   </div>`;
@@ -3490,7 +3481,7 @@ async function cargarRankingRetos(){
   const yo=items.find(x=>x.uid===S?.uid);if(yo){yo.xp=Math.max(yo.xp,s.xp);yo.nivel=nivelReto(yo.xp).actual.nombre;yo.foto=yo.foto||S.foto||'';}else if(S?.uid)items.push({uid:S.uid,nombre:S.nombre||'Tú',foto:S.foto||'',xp:s.xp,nivel:nivelReto(s.xp).actual.nombre});
   items.sort((a,b)=>b.xp-a.xp||a.nombre.localeCompare(b.nombre));const pos=Math.max(1,items.findIndex(x=>x.uid===S?.uid)+1);const num=document.getElementById('syn-rank-num'),total=document.getElementById('syn-rank-total');if(num)num.textContent='#'+pos;if(total)total.textContent=`de ${items.length} en la liga`;
   if(!box)return;const top=items.slice(0,3),orden=top.length>=3?[top[1],top[0],top[2]]:top;
-  box.innerHTML=`<div class="syn-podium">${orden.map(p=>{const real=items.indexOf(p)+1;return `<div class="syn-podium__place place-${real} ${p.uid===S?.uid?'is-you':''}"><span class="syn-podium__medal">#${real}</span>${avatarReto(p)}<strong>${escHtml(p.nombre)}</strong><small>${escHtml(p.nivel)}</small><b>${p.xp} XP</b></div>`;}).join('')}</div><div class="syn-ranking-table">${items.slice(3,15).map((p,i)=>`<div class="syn-ranking-row ${p.uid===S?.uid?'is-you':''}"><span class="syn-ranking-row__rank">${i+4}</span>${avatarReto(p)}<span class="syn-ranking-row__name"><strong>${escHtml(p.nombre)}${p.uid===S?.uid?' · Tú':''}</strong><span>${escHtml(p.nivel)}</span></span><b>${p.xp} XP</b></div>`).join('')}</div><div class="syn-privacy"><svg class="ic"><use href="#i-shield-check"/></svg> Solo se comparte avance educativo; nunca teléfono ni correo.</div>`;
+  box.innerHTML=`<div class="syn-podium">${orden.map(p=>{const real=items.indexOf(p)+1;return `<div class="syn-podium__place place-${real} ${p.uid===S?.uid?'is-you':''}"><span class="syn-podium__medal">#${real}</span>${avatarReto(p)}<strong>${escHtml(p.nombre)}</strong><small>${escHtml(p.nivel)}</small><b>${p.xp} XP</b></div>`;}).join('')}</div><div class="syn-ranking-table">${items.slice(3,8).map((p,i)=>`<div class="syn-ranking-row ${p.uid===S?.uid?'is-you':''}"><span class="syn-ranking-row__rank">${i+4}</span>${avatarReto(p)}<span class="syn-ranking-row__name"><strong>${escHtml(p.nombre)}${p.uid===S?.uid?' · Tú':''}</strong><span>${escHtml(p.nivel)}</span></span><b>${p.xp} XP</b></div>`).join('')}</div>`;
 }
 
 async function asegurarFotosDirectorio(){
