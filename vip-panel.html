@@ -4875,10 +4875,12 @@ function mountNutricion(c){
 .course-lesson-card__thumb::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(3,24,40,.06),rgba(3,24,40,.46))}
 .course-lesson-card__number{position:absolute;top:8px;left:8px;z-index:2;padding:4px 6px;border-radius:6px;background:rgba(5,31,51,.78);color:#fff;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:800}
 .course-lesson-card__thumb-play{position:absolute;right:8px;bottom:8px;z-index:2;width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#fff;color:#0a446d;font-size:10px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.course-lesson-card__content{min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;overflow:hidden}
 .course-lesson-card__eyebrow{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:1.35px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:5px}
 .course-lesson-card.is-done .course-lesson-card__eyebrow{color:var(--success)}
-.course-lesson-card__title{font-size:13px;font-weight:800;line-height:1.35;color:var(--text)}
-.course-lesson-card__meta{font-size:10.5px;color:var(--text-3);margin-top:5px}
+.course-lesson-card__eyebrow,.course-lesson-card__title,.course-lesson-card__meta{display:block;max-width:100%}
+.course-lesson-card__title{font-size:13px;font-weight:800;line-height:1.35;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.course-lesson-card__meta{font-size:10.5px;line-height:1.4;color:var(--text-3);margin-top:5px}
 .course-lesson-card__action{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border-2);background:var(--surface);color:var(--primary);font-size:13px;transition:background .2s,color .2s,transform .2s}
 .course-lesson-card:hover .course-lesson-card__action{background:var(--primary);color:#fff;transform:scale(1.04)}
 .course-summary{padding:22px;position:sticky;top:86px}
@@ -5324,7 +5326,7 @@ function mountNutricion(c){
           const thumb = port ? ' style="background-image:url(\'' + port.replace(/'/g,'%27') + '\')"' : '';
           return '<button class="course-lesson-card' + (vista && desblok?' is-done':'') + (desblok?'':' is-locked') + '" data-clase="' + i + '">' +
             '<span class="course-lesson-card__thumb"' + thumb + '><span class="course-lesson-card__number">' + String(i+1).padStart(2,'0') + '</span><span class="course-lesson-card__thumb-play">' + (desblok?'▶':'•') + '</span></span>' +
-            '<span><span class="course-lesson-card__eyebrow">' + (vista?'Clase completada':(desblok?'Disponible ahora':'Contenido VIP')) + '</span><span class="course-lesson-card__title">' + escHtml(s.titulo || ('Clase ' + (i+1))) + '</span><span class="course-lesson-card__meta">' + (vista?'Lista para repasar':(desblok?'Abrir clase y comenzar':'Activa tu membresía para abrir')) + '</span></span>' +
+            '<span class="course-lesson-card__content"><span class="course-lesson-card__eyebrow">' + (vista?'Clase completada':(desblok?'Disponible ahora':'Contenido VIP')) + '</span><span class="course-lesson-card__title">' + escHtml(s.titulo || ('Clase ' + (i+1))) + '</span><span class="course-lesson-card__meta">' + (vista?'Lista para repasar':(desblok?'Abrir clase y comenzar':'Activa tu membresía para abrir')) + '</span></span>' +
             '<span class="course-lesson-card__action">' + (vista?'✓':(desblok?'▶':'•')) + '</span></button>';
         }).join('')
       : '<p style="font-size:13px;color:var(--text-2);line-height:1.6;margin-top:8px">Este curso está en preparación. En cuanto el equipo SYNOVA suba las clases las verás aquí.</p>';
