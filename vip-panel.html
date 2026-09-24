@@ -1236,12 +1236,8 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
     </div>
 
     <div class="nav-section" data-tour="tools">
-      <div class="nav-label">Herramientas Pro</div>
-      <a class="nav-item" data-section="tool-dosis"><svg class="ic"><use href="#i-pill"/></svg>Dosis por peso</a>
-      <a class="nav-item" data-section="tool-receta"><svg class="ic"><use href="#i-file-text"/></svg>Receta médica</a>
-      <a class="nav-item" data-section="tool-imc"><svg class="ic"><use href="#i-heart"/></svg>IMC y riesgo</a>
-      <a class="nav-item" data-section="tool-anestesicos"><svg class="ic"><use href="#i-syringe"/></svg>Anestésicos locales</a>
-      <a class="nav-item" data-section="tool-nutricion"><svg class="ic"><use href="#i-apple"/></svg>Nutrición clínica</a>
+      <div class="nav-label">Recursos clínicos</div>
+      <a class="nav-item" data-section="herramientas"><svg class="ic"><use href="#i-tools"/></svg>Herramientas</a>
     </div>
 
     <div class="nav-section">
@@ -1378,12 +1374,8 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
         <a class="mobile-drawer__item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
       </div>
       <div class="mobile-drawer__section" data-tour="tools">
-        <div class="mobile-drawer__label">Herramientas Pro</div>
-        <a class="mobile-drawer__item" data-section="tool-dosis"><svg class="ic"><use href="#i-pill"/></svg>Dosis por peso</a>
-        <a class="mobile-drawer__item" data-section="tool-receta"><svg class="ic"><use href="#i-file-text"/></svg>Receta médica</a>
-        <a class="mobile-drawer__item" data-section="tool-imc"><svg class="ic"><use href="#i-heart"/></svg>IMC y riesgo</a>
-        <a class="mobile-drawer__item" data-section="tool-anestesicos"><svg class="ic"><use href="#i-syringe"/></svg>Anestésicos locales</a>
-        <a class="mobile-drawer__item" data-section="tool-nutricion"><svg class="ic"><use href="#i-apple"/></svg>Nutrición clínica</a>
+        <div class="mobile-drawer__label">Recursos clínicos</div>
+        <a class="mobile-drawer__item" data-section="herramientas"><svg class="ic"><use href="#i-tools"/></svg>Herramientas</a>
       </div>
       <div class="mobile-drawer__section">
         <div class="mobile-drawer__label">Comunidad</div>
@@ -1632,8 +1624,9 @@ function marcarActivoNav(section){
 
 window.navigateTo = function(section){
   if (!Sections[section]) section = 'inicio';
-  document.querySelector('.app')?.classList.toggle('app--focus', section === 'retos' || section === 'logros' || section === 'curso');
-  marcarActivoNav(section === 'curso' ? 'cursos' : section);
+  const esHerramienta = section === 'herramientas' || section.indexOf('tool-') === 0;
+  document.querySelector('.app')?.classList.toggle('app--focus', section === 'retos' || section === 'logros' || section === 'curso' || esHerramienta);
+  marcarActivoNav(section === 'curso' ? 'cursos' : (esHerramienta ? 'herramientas' : section));
   cerrarDrawer();
   const content = document.getElementById('content');
   content.innerHTML = '<div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto 14px"></div></div>';
@@ -4234,6 +4227,34 @@ function noticiaTiempoRel(ts){
 
 <!-- ══════════════════════ HERRAMIENTAS PRO · estilos ══════════════════════ -->
 <style id="syn-tools-css">
+.tools-hub{max-width:1120px;margin:0 auto;padding:4px 0 48px}
+.tools-hub__hero{position:relative;overflow:hidden;min-height:245px;border-radius:26px;padding:38px;display:flex;align-items:flex-end;background:linear-gradient(125deg,#092d4d 0%,#0c4f79 68%,#177da0 100%);color:#fff;box-shadow:0 24px 52px rgba(7,48,81,.2)}
+.tools-hub__hero::before,.tools-hub__hero::after{content:"";position:absolute;border:1px solid rgba(255,255,255,.13);border-radius:50%}
+.tools-hub__hero::before{width:260px;height:260px;right:-45px;top:-95px}.tools-hub__hero::after{width:150px;height:150px;right:42px;top:-42px}
+.tools-hub__hero-copy{position:relative;z-index:1;max-width:690px}
+.tools-hub__kicker{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:800;letter-spacing:1.7px;text-transform:uppercase;color:#a9e3f1;margin-bottom:15px}
+.tools-hub__kicker .ic{width:15px;height:15px;color:#a9e3f1}
+.tools-hub__hero h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(34px,5vw,54px);line-height:1.04;letter-spacing:-2px;font-weight:800}
+.tools-hub__hero p{font-size:13px;line-height:1.7;color:rgba(255,255,255,.75);max-width:580px;margin-top:13px}
+.tools-hub__head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:30px 0 15px}
+.tools-hub__head span{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);font-weight:800}
+.tools-hub__head h2{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;letter-spacing:-.6px;margin-top:5px}
+.tools-hub__head small{color:var(--text-3);font-size:11px}
+.tools-hub__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tool-launch{display:grid;grid-template-columns:54px minmax(0,1fr) 42px;gap:16px;align-items:center;padding:20px;border:1px solid var(--border);border-radius:19px;background:var(--surface);color:var(--text);text-align:left;box-shadow:0 10px 28px rgba(21,69,103,.06);transition:transform .2s,border-color .2s,box-shadow .2s}
+.tool-launch:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--primary) 38%,var(--border));box-shadow:0 16px 34px rgba(21,69,103,.11)}
+.tool-launch__icon{width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--primary) 10%,var(--surface-2));color:var(--primary)}
+.tool-launch__icon .ic{width:23px;height:23px}
+.tool-launch__label{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1.3px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:5px}
+.tool-launch strong{display:block;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;line-height:1.3}
+.tool-launch p{font-size:11px;line-height:1.55;color:var(--text-3);margin-top:5px}
+.tool-launch__go{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-2);border:1px solid var(--border);color:var(--primary);font-size:15px;transition:background .2s,color .2s}
+.tool-launch:hover .tool-launch__go{background:var(--primary);color:#fff}
+.tools-back{display:inline-flex;align-items:center;gap:8px;width:max-content;border:0;background:transparent;color:var(--text-2);font-size:11.5px;font-weight:800;padding:7px 0;margin-bottom:-3px;transition:color .18s,transform .18s}
+.tools-back:hover{color:var(--primary);transform:translateX(-2px)}
+.tools-back__arrow{font-size:17px;line-height:1}
+@media(max-width:760px){.tools-hub__grid{grid-template-columns:1fr}.tools-hub__hero{min-height:230px;padding:28px 24px;border-radius:21px}.tools-hub__hero h1{font-size:36px}.tools-hub__head{margin-top:24px}.tool-launch{padding:16px}}
+@media(max-width:440px){.tool-launch{grid-template-columns:46px minmax(0,1fr) 34px;gap:12px}.tool-launch__icon{width:46px;height:46px;border-radius:13px}.tool-launch__go{width:32px;height:32px}.tool-launch p{font-size:10.5px}}
 .bn-tool{display:flex;flex-direction:column;gap:18px}
 .tool-section__head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:2px}
 .tool-section__title{display:flex;align-items:center;gap:14px;min-width:0}
@@ -4419,6 +4440,7 @@ function noticiaTiempoRel(ts){
       : '';
     container.innerHTML =
       '<div class="bn-tool fade-up">' +
+        '<button class="tools-back" data-section="herramientas"><span class="tools-back__arrow">←</span>Volver a Herramientas</button>' +
         '<div class="tool-section__head"><div class="tool-section__title">' +
           '<div class="tool-section__icon"><svg class="ic"><use href="#'+cfg.icon+'"/></svg></div>' +
           '<div><h1>'+escHtml(cfg.title)+'</h1><p>'+escHtml(cfg.sub)+'</p></div>' +
@@ -4786,9 +4808,21 @@ function mountNutricion(c){
   applyObjDefaults(); calc();
 }
 
+  function mountHerramientas(c){
+    const herramientas = [
+      { section:'tool-dosis', icon:'i-pill', label:'Medicamentos', title:'Dosis por peso', desc:'Calcula dosis y volumen según peso, concentración y frecuencia.' },
+      { section:'tool-receta', icon:'i-file-text', label:'Documentación', title:'Receta médica', desc:'Prepara una receta profesional y genera su versión en PDF.' },
+      { section:'tool-imc', icon:'i-heart', label:'Valoración', title:'IMC y riesgo', desc:'Evalúa composición corporal y factores básicos de riesgo.' },
+      { section:'tool-anestesicos', icon:'i-syringe', label:'Seguridad clínica', title:'Anestésicos locales', desc:'Revisa dosis máximas, cartuchos y límites de vasoconstrictor.' },
+      { section:'tool-nutricion', icon:'i-apple', label:'Nutrición', title:'Nutrición clínica', desc:'Estima gasto energético y distribución de macronutrientes.' }
+    ];
+    c.innerHTML = '<div class="tools-hub fade-up"><section class="tools-hub__hero"><div class="tools-hub__hero-copy"><div class="tools-hub__kicker"><svg class="ic"><use href="#i-tools"/></svg>Herramientas SYNOVA</div><h1>Apoyo clínico,<br>en un solo lugar.</h1><p>Calculadoras y formatos profesionales para acompañar decisiones frecuentes de forma clara y ordenada.</p></div></section><div class="tools-hub__head"><div><span>Recursos disponibles</span><h2>Elige una herramienta</h2></div><small>' + herramientas.length + ' herramientas</small></div><div class="tools-hub__grid">' + herramientas.map(function(h){ return '<button class="tool-launch" data-section="' + h.section + '"><span class="tool-launch__icon"><svg class="ic"><use href="#' + h.icon + '"/></svg></span><span><span class="tool-launch__label">' + h.label + '</span><strong>' + h.title + '</strong><p>' + h.desc + '</p></span><span class="tool-launch__go">→</span></button>'; }).join('') + '</div></div>';
+  }
+
   /* ── Registro en el router del panel ── */
   function reg(){
     if (!window.Sections) return setTimeout(reg, 60);
+    window.Sections['herramientas'] = function(){ mountHerramientas(document.getElementById('content')); };
     window.Sections['tool-dosis'] = function(){ mountDosis(document.getElementById('content')); };
     window.Sections['tool-receta'] = function(){ mountReceta(document.getElementById('content')); };
     window.Sections['tool-imc'] = function(){ mountImc(document.getElementById('content')); };
@@ -5948,7 +5982,7 @@ window.SynovaOnboarding = new window.MembershipTour({
       mobileSelectors: '.mobile-drawer [data-tour="tools"]',
       mobileDrawer: true,
       title: 'Herramientas para la práctica clínica',
-      copy: 'Tienes accesos para calcular dosis, preparar recetas, valorar IMC y riesgo, revisar anestésicos locales y apoyar decisiones de nutrición clínica.'
+      copy: 'Entra a un solo centro de herramientas y elige desde ahí la calculadora o formato clínico que necesitas.'
     },
     {
       desktopSelectors: '.sidebar .nav-item[data-section="perfil"]',
