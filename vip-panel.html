@@ -1791,12 +1791,17 @@ onAuthStateChanged(auth, async (user) => {
     notifPendiente = dd.notificacionPendiente || null;
   }
   const memberSince = fechaMembresia || (modo === 'vip' && user.metadata && user.metadata.creationTime ? new Date(user.metadata.creationTime).toISOString() : null);
-  const foto = user.photoURL || datosMiembro.fotoGoogle || '';
+  /* Firebase a veces deja photoURL vacío aunque el proveedor Google sí entregue
+     imagen. Revisamos también providerData y la copia persistida del perfil. */
+  const perfilProveedor = (user.providerData || []).find(p => p && (p.photoURL || p.displayName)) || {};
+  const fotoProveedor = perfilProveedor.photoURL || '';
+  const foto = user.photoURL || fotoProveedor || datosMiembro.fotoGoogle || datosMiembro.foto || '';
+  const nombreCuenta = user.displayName || perfilProveedor.displayName || datosMiembro.displayName || datosMiembro.nombre || email.split('@')[0];
 
   window.UserState = {
-    uid: user.uid, email, displayName: user.displayName || '',
-    nombre: user.displayName || email.split('@')[0],
-    iniciales: iniciales(user.displayName, email),
+    uid: user.uid, email, displayName: nombreCuenta,
+    nombre: nombreCuenta,
+    iniciales: iniciales(nombreCuenta, email),
     foto,
     whatsapp: datosMiembro.whatsapp || '',
     especialidad: datosMiembro.especialidad || datosMiembro.puesto || '',
@@ -1812,8 +1817,8 @@ onAuthStateChanged(auth, async (user) => {
     const perfilCuenta = {
       uid: user.uid,
       email,
-      nombre: user.displayName || email.split('@')[0],
-      displayName: user.displayName || '',
+      nombre: nombreCuenta,
+      displayName: nombreCuenta,
       lastUpdatedAt: serverTimestamp()
     };
     if (foto) perfilCuenta.fotoGoogle = foto;
@@ -3315,7 +3320,8 @@ function nivelReto(xp){
 }
 function inicialesReto(nombre){ return (nombre||'S').trim().split(/\s+/).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
 function avatarReto(p){
-  return p.foto ? `<span class="syn-rank-avatar"><img src="${escHtml(p.foto)}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>` : `<span class="syn-rank-avatar">${escHtml(inicialesReto(p.nombre))}</span>`;
+  const ini = escHtml(inicialesReto(p.nombre));
+  return p.foto ? `<span class="syn-rank-avatar"><img src="${escHtml(p.foto)}" alt="Foto de ${escHtml(p.nombre || 'miembro')}" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove();this.parentElement.textContent='${ini}'"></span>` : `<span class="syn-rank-avatar">${ini}</span>`;
 }
 function iconoAreaReto(area){
   if (/infe|ester/i.test(area)) return 'i-syringe';
@@ -3468,14 +3474,18 @@ window.calificarFlashSynova = function(dominada){
 async function sincronizarProgresoReto(s){
   try{
     const S=window.UserState,{doc,getDoc,setDoc,db,serverTimestamp}=window.__fs;if(!S?.uid||!db)return;
-    const ref=doc(db,'directorio',S.uid),snap=await getDoc(ref);if(!snap.exists())return;
-    await setDoc(ref,{retoXp:s.xp,retoNivel:nivelReto(s.xp).actual.nombre,retoCorrectas:s.correctas,retoUpdatedAt:serverTimestamp()},{merge:true});
+    const ref=doc(db,'directorio',S.uid);
+    await setDoc(ref,{uid:S.uid,nombre:S.nombre||'Miembro SYNOVA',email:S.email||'',foto:S.foto||'',retoXp:s.xp,retoNivel:nivelReto(s.xp).actual.nombre,retoCorrectas:s.correctas,retoUpdatedAt:serverTimestamp()},{merge:true});
     window.__dirFotos=null;
   }catch(e){console.warn('[SYNOVA] progreso de retos:',e.message);}
 }
 async function cargarRankingRetos(){
   const box=document.getElementById('syn-ranking-content');if(!box)return;const S=window.UserState,s=estadoRetos();let items=[];
-  try{const {collection,getDocs,db}=window.__fs,snap=await getDocs(collection(db,'directorio'));snap.forEach(d=>{const p=d.data();if(Number(p.retoXp)>0)items.push({uid:p.uid||d.id,nombre:p.nombre||'Miembro SYNOVA',foto:p.foto||'',xp:Number(p.retoXp)||0,nivel:p.retoNivel||nivelReto(Number(p.retoXp)||0).actual.nombre});});}catch(e){console.warn('[SYNOVA] ranking:',e.message);}
+  try{
+    const {collection,getDocs,db}=window.__fs;
+    const snap=await getDocs(collection(db,'directorio'));
+    snap.forEach(d=>{const p=d.data();if(Number(p.retoXp)>0)items.push({uid:p.uid||d.id,nombre:p.nombre||'Miembro SYNOVA',foto:p.foto||'',xp:Number(p.retoXp)||0,nivel:p.retoNivel||nivelReto(Number(p.retoXp)||0).actual.nombre});});
+  }catch(e){console.warn('[SYNOVA] ranking:',e.message);}
   const yo=items.find(x=>x.uid===S?.uid);if(yo){yo.xp=Math.max(yo.xp,s.xp);yo.nivel=nivelReto(yo.xp).actual.nombre;yo.foto=yo.foto||S.foto||'';}else if(S?.uid)items.push({uid:S.uid,nombre:S.nombre||'Tú',foto:S.foto||'',xp:s.xp,nivel:nivelReto(s.xp).actual.nombre});
   items.sort((a,b)=>b.xp-a.xp||a.nombre.localeCompare(b.nombre));const pos=Math.max(1,items.findIndex(x=>x.uid===S?.uid)+1);const num=document.getElementById('syn-rank-num'),total=document.getElementById('syn-rank-total');if(num)num.textContent='#'+pos;if(total)total.textContent=`de ${items.length} en la liga`;
   if(!box)return;const top=items.slice(0,3),orden=top.length>=3?[top[1],top[0],top[2]]:top;
