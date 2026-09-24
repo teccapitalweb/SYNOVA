@@ -1229,7 +1229,6 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       <a class="nav-item is-active" data-section="inicio"><svg class="ic"><use href="#i-home"/></svg>Inicio</a>
       <a class="nav-item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Mis cursos<span class="nav-item__badge" id="nav-badge-cursos">—</span></a>
       <a class="nav-item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Clases en vivo</a>
-      <a class="nav-item" data-section="pdfs"><svg class="ic"><use href="#i-news"/></svg>PDFs y material</a>
       <a class="nav-item" data-section="retos"><svg class="ic"><use href="#i-bolt"/></svg>Retos clínicos</a>
       <a class="nav-item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
       <a class="nav-item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
@@ -1373,7 +1372,6 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
         <a class="mobile-drawer__item" data-section="inicio"><svg class="ic"><use href="#i-home"/></svg>Inicio</a>
         <a class="mobile-drawer__item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Mis cursos</a>
         <a class="mobile-drawer__item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Clases en vivo</a>
-        <a class="mobile-drawer__item" data-section="pdfs"><svg class="ic"><use href="#i-news"/></svg>PDFs y material</a>
         <a class="mobile-drawer__item" data-section="retos"><svg class="ic"><use href="#i-bolt"/></svg>Retos clínicos</a>
         <a class="mobile-drawer__item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
         <a class="mobile-drawer__item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
@@ -1634,15 +1632,19 @@ function marcarActivoNav(section){
 
 window.navigateTo = function(section){
   if (!Sections[section]) section = 'inicio';
-  document.querySelector('.app')?.classList.toggle('app--focus', section === 'retos' || section === 'logros');
-  marcarActivoNav(section);
+  document.querySelector('.app')?.classList.toggle('app--focus', section === 'retos' || section === 'logros' || section === 'curso');
+  marcarActivoNav(section === 'curso' ? 'cursos' : section);
   cerrarDrawer();
   const content = document.getElementById('content');
   content.innerHTML = '<div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto 14px"></div></div>';
   try { Sections[section](); } catch (e) { console.error('[SYNOVA] Error renderizando sección', section, e); content.innerHTML = '<div class="empty-state"><h3>Ocurrió un problema al cargar esta sección</h3><p>' + escHtml(e.message) + '</p></div>'; }
   /* transición sedosa entre secciones (solo capa visual) */
   content.classList.remove('sec-anim'); void content.offsetWidth; content.classList.add('sec-anim');
-  history.replaceState(null, '', location.pathname + '?seccion=' + section);
+  const nextUrl = new URL(location.href);
+  nextUrl.searchParams.set('seccion', section);
+  if (section === 'curso' && window.__cursoActualId) nextUrl.searchParams.set('curso', window.__cursoActualId);
+  else nextUrl.searchParams.delete('curso');
+  history.replaceState(null, '', nextUrl.pathname + '?' + nextUrl.searchParams.toString());
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (typeof window.__actualizarAside === 'function') window.__actualizarAside();
 };
@@ -2267,7 +2269,7 @@ Sections.inicio = function(){
       <div class="banner__stats">
         <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl">Cursos</div><div class="banner__stat-val" id="stat-cursos">—</div></div>
         <div class="banner__stat" data-section="webinars" style="cursor:pointer"><div class="banner__stat-lbl">Clases</div><div class="banner__stat-val" id="stat-webinars">—</div></div>
-        <div class="banner__stat" data-section="pdfs" style="cursor:pointer"><div class="banner__stat-lbl">PDFs</div><div class="banner__stat-val" id="stat-pdfs">—</div></div>
+        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl">Recursos</div><div class="banner__stat-val" id="stat-pdfs">—</div></div>
         <div class="banner__stat" data-section="certificados" style="cursor:pointer"><div class="banner__stat-lbl">Certificados</div><div class="banner__stat-val" id="stat-certs">—</div></div>
       </div>
     </section>
@@ -4832,6 +4834,44 @@ function mountNutricion(c){
 .mat-card__title{font-size:13.5px;font-weight:700;line-height:1.35}
 .mat-card__curso{font-size:11px;color:var(--text-3);margin-top:4px;display:flex;align-items:center;gap:5px}
 .mat-card__curso svg{width:11px;height:11px}
+/* Página independiente de curso */
+.course-page{max-width:1180px;margin:0 auto;padding:2px 0 48px}
+.course-page__back{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--text-2);font-size:12px;font-weight:700;margin:0 0 16px;padding:7px 0;transition:color .2s,transform .2s}
+.course-page__back:hover{color:var(--primary);transform:translateX(-2px)}
+.course-page__back .ic{width:15px;height:15px}
+.course-page__hero{min-height:310px;border-radius:26px;overflow:hidden;position:relative;display:flex;align-items:flex-end;padding:38px;color:#fff;background-color:#0b3457;background-size:cover;background-position:center;box-shadow:0 24px 54px rgba(8,42,70,.18)}
+.course-page__hero::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,28,48,.96) 0%,rgba(5,35,59,.86) 45%,rgba(5,35,59,.3) 78%,rgba(5,35,59,.16) 100%)}
+.course-page__hero-content{position:relative;z-index:1;max-width:670px}
+.course-page__eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;font-weight:800;color:#9ed9ef;margin-bottom:15px}
+.course-page__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(30px,4vw,52px);line-height:1.04;letter-spacing:-2px;font-weight:800;max-width:720px}
+.course-page__description{font-size:13px;line-height:1.7;color:rgba(255,255,255,.78);max-width:600px;margin-top:14px}
+.course-page__meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+.course-page__pill{display:inline-flex;align-items:center;gap:7px;padding:7px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:rgba(255,255,255,.1);backdrop-filter:blur(8px);font-size:11px;font-weight:700}
+.course-page__pill .ic{width:13px;height:13px;color:#bce9f7}
+.course-page__layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px;margin-top:24px;align-items:start}
+.course-page__main{display:grid;gap:18px;min-width:0}
+.course-section,.course-summary{border:1px solid var(--border);background:var(--surface);border-radius:20px;box-shadow:0 12px 32px rgba(21,69,103,.07)}
+.course-section{padding:22px}
+.course-section__head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:16px}
+.course-section__kicker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);font-weight:800;margin-bottom:6px}
+.course-section__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;letter-spacing:-.5px;font-weight:800;color:var(--text)}
+.course-section__count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);white-space:nowrap}
+.course-page .leccion{margin-bottom:8px;padding:13px;background:var(--surface-2);border-color:var(--border)}
+.course-page .leccion:last-child{margin-bottom:0}
+.course-page .leccion__thumb{width:72px;height:48px;border-radius:11px}
+.course-page .leccion.is-locked{opacity:.72}
+.course-summary{padding:22px;position:sticky;top:86px}
+.course-summary__label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);font-weight:800}
+.course-summary__value{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:var(--text);margin-top:8px;letter-spacing:-1px}
+.course-summary__caption{font-size:11px;color:var(--text-3);margin-top:2px}
+.course-summary__bar{height:7px;background:var(--surface-3);border-radius:10px;overflow:hidden;margin:18px 0 20px}
+.course-summary__bar>span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--primary),var(--highlight));transition:width .4s ease}
+.course-summary__row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid var(--border);font-size:12px;color:var(--text-2)}
+.course-summary__row strong{color:var(--text);font-size:12px}
+.course-resource-lock{margin-top:13px;padding:16px;border:1px dashed var(--border-2);border-radius:14px;background:var(--surface-2);text-align:center}
+.course-legacy-note{max-width:760px;margin:60px auto;text-align:center;padding:40px;border:1px solid var(--border);border-radius:22px;background:var(--surface)}
+@media(max-width:900px){.course-page__layout{grid-template-columns:1fr}.course-summary{position:static;order:-1}.course-page__hero{min-height:280px}}
+@media(max-width:640px){.course-page{padding-bottom:28px}.course-page__hero{min-height:300px;padding:24px 20px;border-radius:20px;background-position:64% center}.course-page__hero::before{background:linear-gradient(90deg,rgba(5,28,48,.97),rgba(5,35,59,.78) 75%,rgba(5,35,59,.45))}.course-page__title{font-size:32px;letter-spacing:-1.3px}.course-page__description{font-size:12px}.course-page__layout{gap:14px;margin-top:16px}.course-section,.course-summary{border-radius:17px}.course-section{padding:16px}.course-summary{padding:18px}.course-page .leccion__thumb{width:54px;height:42px}.course-page .leccion{gap:10px;padding:11px}.course-section__head{align-items:flex-start}.course-section__title{font-size:18px}}
 </style>
 <div class="visor-ov" id="visorOverlay" role="dialog" aria-modal="true">
   <div class="visor-box">
@@ -5165,22 +5205,36 @@ function mountNutricion(c){
     }).join('');
     grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
       const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
-      /* Bloqueado o no, el detalle SIEMPRE se abre (estilo OdonTeck): adentro se muestra el aviso elegante */
-      abrirCurso(c.id);
+      window.__cursoActualId = String(c.id);
+      window.navigateTo('curso');
     }));
   }
 
-  /* ── DETALLE DE CURSO (clases + materiales embebidos) ── */
+  /* ── DETALLE DE CURSO COMO PÁGINA INDEPENDIENTE ── */
+  window.Sections.curso = function(){
+    const id = String(window.__cursoActualId || new URLSearchParams(location.search).get('curso') || '');
+    window.__cursoActualId = id;
+    document.getElementById('content').innerHTML = '<div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto 14px"></div><p>Cargando curso…</p></div>';
+    loadCursos().then(function(cursos){
+      if (!id || !cursos.some(function(c){ return String(c.id) === id; })) {
+        document.getElementById('content').innerHTML = '<div class="course-legacy-note"><h2>Curso no disponible</h2><p style="color:var(--text-2);margin:10px 0 20px">Vuelve al catálogo para elegir otro curso.</p><button class="btn btn--accent" data-section="cursos">Ver mis cursos</button></div>';
+        return;
+      }
+      abrirCurso(id, true);
+    }).catch(function(e){
+      document.getElementById('content').innerHTML = emptyState('i-book','No se pudo cargar el curso',e.message);
+    });
+  };
   window.__synRefrescarCurso = function(id){
-    if (document.getElementById('splash-completado')) return; /* si hay splash de curso completado, no reabrir el modal */
+    if (document.getElementById('splash-completado')) return;
     /* Si esta clase acaba de completar el curso, el splash de "curso completado"
        está en camino (esperando el guardado del certificado en Firestore) —
        no reabrimos el detalle para no pisarnos con el cierre de ese modal. */
     if (cursoProg(id).cert) return;
-    if (document.getElementById('curso-detalle-body')) abrirCurso(id, true);
+    if (document.getElementById('curso-detalle-body')) abrirCurso(String(id), true);
   };
   function abrirCurso(id, reabrir){
-    const c = (window.__cursosCache||[]).find(x => x.id === id); if (!c) return;
+    const c = (window.__cursosCache||[]).find(x => String(x.id) === String(id)); if (!c) return;
     const color = c.color || colorForArea(c.area || c.nombre);
     const prog = cursoProg(id);
     const sesiones = Array.isArray(c.sesiones) ? c.sesiones : [];
@@ -5211,82 +5265,61 @@ function mountNutricion(c){
         }).join('')
       : '<p style="font-size:13px;color:var(--text-2);line-height:1.6;margin-top:8px">Este curso está en preparación. En cuanto el equipo SYNOVA suba las clases las verás aquí.</p>';
 
-    const materialesAccesibles = materiales.map((m,i) => ({m,i})).filter(({i}) => esVip() || esMaterialGratisGlobal(id, i));
-    let matsHtml = materialesAccesibles.length
-      ? '<div class="perfil-card__title" style="margin-top:18px">Material del curso</div>' + materialesAccesibles.map(({m,i}) => {
+    const materialesConAcceso = materiales.map((m,i) => ({m,i,abierto:esVip() || esMaterialGratisGlobal(id, i)}));
+    let matsHtml = materialesConAcceso.length
+      ? materialesConAcceso.map(({m,i,abierto}) => {
           const mp = (m.portada || port);
-          return '<div class="leccion" data-mat="' + i + '">' +
+          return '<div class="leccion' + (abierto ? '' : ' is-locked') + '" data-mat="' + i + '" data-open="' + abierto + '" style="cursor:pointer">' +
             '<div class="leccion__thumb leccion__thumb--play"' + (mp?(' style="background-image:url(\'' + String(mp).replace(/'/g,'%27') + '\')"'):'') + '><div class="lp"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
-            '<div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material ' + (i+1))) + '</div><div class="leccion__meta">Documento · da clic para abrir' + (!esVip() ? ' · GRATIS' : '') + '</div></div>' +
-            '<div class="leccion__go"><svg><use href="#i-arrow-right"/></svg></div></div>';
+            '<div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material ' + (i+1))) + '</div><div class="leccion__meta">' + (abierto ? 'PDF · Abrir material' : 'PDF · Disponible con tu membresía') + '</div></div>' +
+            '<div class="leccion__go"><svg><use href="' + (abierto ? '#i-arrow-right' : '#i-shield-check') + '"/></svg></div></div>';
         }).join('')
-      : '';
-    if (!esVip() && materiales.length > materialesAccesibles.length){
-      matsHtml += '<div style="margin-top:18px;padding:18px;border:1px solid var(--border-2);border-radius:14px;background:var(--surface-2);text-align:center"><b style="color:var(--text)">🔒 Más material exclusivo para miembros</b><p style="font-size:12px;color:var(--text-2);line-height:1.55;margin:7px 0 12px">Tu primer material es gratis. Activa tu membresía para abrir el resto del contenido del curso.</p><button class="btn btn--accent" onclick="Modal.close(\'curso-detalle\');window.navigateTo(\'suscripcion\')">Desbloquear curso completo</button></div>';
-    }
+      : '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Este curso todavía no tiene documentos publicados.</p>';
 
-    /* ── Hero estilo OdonTeck: portada de fondo + tags + meta ── */
+    /* Cabecera académica con portada propia del curso. */
     const desbloq = cursoDesbloqueado(c);
     const dFalta = diasRestantes(c);
-    const heroBg = (port && port.indexOf('data:') !== 0)
-      ? 'background:linear-gradient(135deg,rgba(0,0,0,.35),rgba(0,0,0,.7)),url(\'' + port.replace(/'/g,'%27') + '\');background-size:cover;background-position:center;'
-      : 'background:linear-gradient(135deg,' + color + ',#08131F);';
-    const tagW = 'color:#fff;border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12);';
+    const heroBg = port ? ' style="background-image:url(\'' + port.replace(/'/g,'%27') + '\')"' : '';
     const heroHtml =
-      '<div style="' + heroBg + 'border-radius:14px;padding:24px;color:#fff;margin-bottom:18px;">' +
-        '<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">' +
-          '<span class="tag" style="' + tagW + '">' + escHtml(c.area || 'SYNOVA') + '</span>' +
-          (c.nivel ? '<span class="tag" style="' + tagW + '">' + escHtml(c.nivel) + '</span>' : '') +
-          (c.disponibleSiempre ? '<span class="tag" style="color:#0B1018;border-color:var(--success);background:var(--success);font-weight:700;">DISPONIBLE</span>' : '') +
-        '</div>' +
-        '<h2 style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-bottom:8px;">' + escHtml(c.nombre || 'Curso SYNOVA') + '</h2>' +
-        '<div style="display:flex;gap:14px;font-size:12px;opacity:.9;flex-wrap:wrap;">' +
-          (c.instructor ? '<span><svg class="ic" style="color:#fff;width:13px;height:13px"><use href="#i-users"/></svg> ' + escHtml(c.instructor) + '</span>' : '') +
-          (c.horas ? '<span><svg class="ic" style="color:#fff;width:13px;height:13px"><use href="#i-clock"/></svg> ' + c.horas + 'h</span>' : '') +
-          (sesiones.length ? '<span><svg class="ic" style="color:#fff;width:13px;height:13px"><use href="#i-book"/></svg> ' + sesiones.length + ' clase' + (sesiones.length!==1?'s':'') + '</span>' : '') +
-        '</div>' +
+      '<div class="course-page__hero"' + heroBg + '><div class="course-page__hero-content">' +
+        '<div class="course-page__eyebrow">' + escHtml(c.area || 'Formación SYNOVA') + '</div>' +
+        '<h1 class="course-page__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</h1>' +
+        (c.descripcion ? '<p class="course-page__description">' + escHtml(c.descripcion) + '</p>' : '') +
+        '<div class="course-page__meta">' +
+          (c.nivel ? '<span class="course-page__pill"><svg class="ic"><use href="#i-certificate"/></svg>' + escHtml(c.nivel) + '</span>' : '') +
+          (c.instructor ? '<span class="course-page__pill"><svg class="ic"><use href="#i-users"/></svg>' + escHtml(c.instructor) + '</span>' : '') +
+          (c.horas ? '<span class="course-page__pill"><svg class="ic"><use href="#i-clock"/></svg>' + c.horas + ' h</span>' : '') +
+          '<span class="course-page__pill"><svg class="ic"><use href="#i-book"/></svg>' + sesiones.length + ' clase' + (sesiones.length!==1?'s':'') + '</span>' +
+        '</div></div>' +
       '</div>';
-    const descHtml = c.descripcion ? '<p style="font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:18px">' + escHtml(c.descripcion) + '</p>' : '';
 
+    const pct = sesiones.length ? Math.round((prog.vistas.length / sesiones.length) * 100) : 0;
     let contenidoHtml;
     if (!desbloq && c.marcarProximamente === true){
       contenidoHtml =
-        '<div class="empty-state" style="background:var(--surface-2);border:1px solid var(--border-2);border-radius:14px;padding:32px 24px;text-align:center;">' +
+        '<section class="course-section"><div class="empty-state" style="padding:32px 24px;text-align:center;">' +
           '<div class="empty-state__icon" style="margin:0 auto 12px"><svg class="ic ic--xl" style="color:var(--primary)"><use href="#i-clock"/></svg></div>' +
           '<h3 style="color:var(--primary);margin-bottom:8px">Próximamente</h3>' +
           '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Este curso está en preparación. Te avisaremos cuando esté disponible.</p>' +
-        '</div>';
+        '</div></section>';
     } else if (!desbloq){
       /* Aviso elegante de desbloqueo próximo (estilo OdonTeck) */
       contenidoHtml =
-        '<div class="empty-state" style="background:var(--surface-2);border:1px solid var(--border-2);border-radius:14px;padding:32px 24px;text-align:center;">' +
+        '<section class="course-section"><div class="empty-state" style="padding:32px 24px;text-align:center;">' +
           '<div class="empty-state__icon" style="margin:0 auto 12px"><svg class="ic ic--xl" style="color:var(--primary)"><use href="#i-shield-check"/></svg></div>' +
           '<h3 style="color:var(--primary);margin-bottom:8px">🔒 Este curso se desbloquea pronto</h3>' +
           '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Disponible en <strong style="color:var(--primary)">' + dFalta + ' día' + (dFalta!==1?'s':'') + '</strong>. Los cursos se desbloquean progresivamente para que aproveches cada uno a fondo.</p>' +
           '<p style="font-size:12px;color:var(--text-3);margin-top:10px">Si quieres acceso anticipado, contáctanos.</p>' +
-        '</div>';
+        '</div></section>';
     } else {
-      /* Barra de progreso del curso (estilo OdonTeck) */
-      const pct = sesiones.length ? Math.round((prog.vistas.length / sesiones.length) * 100) : 0;
-      const progHtml = sesiones.length
-        ? '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">' +
-            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);font-weight:600;">📺 Clases del curso</div>' +
-            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:' + (pct===100?'var(--success)':'var(--primary)') + ';font-weight:700;">' + prog.vistas.length + '/' + sesiones.length + ' · ' + pct + '%</div>' +
-          '</div>' +
-          '<div style="height:6px;background:var(--surface-3);border-radius:3px;overflow:hidden;margin-bottom:14px;">' +
-            '<div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--primary),var(--highlight));border-radius:3px;transition:width .4s ease;"></div>' +
-          '</div>'
-        : '';
-      contenidoHtml = progHtml + clasesHtml + matsHtml;
+      contenidoHtml =
+        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Aprendizaje</div><h2 class="course-section__title">Clases</h2></div><span class="course-section__count">' + prog.vistas.length + ' de ' + sesiones.length + ' vistas</span></div>' + clasesHtml + '</section>' +
+        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + matsHtml + '</section>';
     }
 
-    const body = '<div id="curso-detalle-body">' + heroHtml + descHtml + contenidoHtml + '</div>';
-
-    Modal.open({ id:'curso-detalle', title: escHtml(c.nombre || 'Curso'), subtitle: escHtml(c.area || ''), icon:'i-book', size:'lg', body,
-      footer: '<button class="btn btn--ghost" onclick="Modal.close(\'curso-detalle\')">Cerrar</button>' });
-    /* Al reabrir con el mismo id, el modal anterior sigue 250ms en el DOM: engancharse SIEMPRE al último nodo */
-    const bodies = document.querySelectorAll('#curso-detalle-body');
-    const cont = bodies[bodies.length - 1];
+    const summaryHtml = '<aside class="course-summary"><div class="course-summary__label">Tu avance</div><div class="course-summary__value">' + pct + '%</div><div class="course-summary__caption">Progreso del curso</div><div class="course-summary__bar"><span style="width:' + pct + '%"></span></div><div class="course-summary__row"><span>Clases</span><strong>' + sesiones.length + '</strong></div><div class="course-summary__row"><span>Completadas</span><strong>' + prog.vistas.length + '</strong></div><div class="course-summary__row"><span>Materiales</span><strong>' + materiales.length + '</strong></div></aside>';
+    document.getElementById('content').innerHTML = '<div class="course-page" id="curso-detalle-body"><button class="course-page__back" data-section="cursos"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-arrow-right"/></svg>Volver a Mis cursos</button>' + heroHtml + '<div class="course-page__layout"><main class="course-page__main">' + contenidoHtml + '</main>' + summaryHtml + '</div></div>';
+    const cont = document.getElementById('curso-detalle-body');
     cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => {
       const i = +el.dataset.clase;
       if (!claseDesbloqueada(id, i, sesiones.length)) {
@@ -5296,15 +5329,17 @@ function mountNutricion(c){
       const s = sesiones[i];
       window.__abrirVisor(s.videoId ? s : s.url, s.titulo || ('Clase '+(i+1)), id, i);
     }));
-    cont.querySelectorAll('[data-mat]').forEach(el => el.addEventListener('click', () => { const i = +el.dataset.mat; const m = materiales[i]; window.__abrirVisor(m.url, m.titulo || ('Material '+(i+1)), null, null); }));
+    cont.querySelectorAll('[data-mat]').forEach(el => el.addEventListener('click', () => {
+      const i = +el.dataset.mat;
+      if (el.dataset.open !== 'true') { window.__showPaywallModal('Tu primer material es gratis. Activa tu membresía SYNOVA VIP para abrir los demás recursos del curso.'); return; }
+      const m = materiales[i]; window.__abrirVisor(m.url, m.titulo || ('Material '+(i+1)), null, null);
+    }));
   }
 
-  /* ── SECCIÓN PDFs Y MATERIAL (derivada de los cursos, embebida, con drip) ── */
+  /* Compatibilidad con enlaces antiguos: los materiales ahora viven dentro de cada curso. */
   window.Sections.pdfs = function(){
     document.getElementById('content').innerHTML =
-      secHero('Biblioteca', 'PDFs y material', 'Tu primer material es gratis. Los demás se habilitan junto con su curso conforme avanza tu membresía.') +
-      '<div id="pdfs-grid"></div>';
-    renderMateriales();
+      '<div class="course-legacy-note"><div class="course-section__kicker">Nueva organización</div><h1 style="font-family:\'Plus Jakarta Sans\',sans-serif;font-size:30px;letter-spacing:-1px">Tus materiales están dentro de cada curso</h1><p style="color:var(--text-2);line-height:1.65;margin:12px auto 22px;max-width:540px">Abre un curso para encontrar sus clases, PDFs y recursos en un solo lugar.</p><button class="btn btn--accent" data-section="cursos">Ir a Mis cursos</button></div>';
   };
   async function renderMateriales(){
     const grid = document.getElementById('pdfs-grid'); if (!grid) return;
@@ -5743,14 +5778,7 @@ window.SynovaOnboarding = new window.MembershipTour({
       desktopSelectors: '.sidebar .nav-item[data-section="cursos"]',
       mobileSelectors: '.mobile-nav .mobile-nav__item[data-section="cursos"]',
       title: 'Tus cursos clínicos',
-      copy: 'En Mis cursos encontrarás contenidos de atención clínica, enfermería, calidad y seguridad, junto con tu avance y los certificados que vayas obteniendo.'
-    },
-    {
-      desktopSelectors: '.sidebar .nav-item[data-section="pdfs"]',
-      mobileSelectors: '.mobile-drawer .mobile-drawer__item[data-section="pdfs"]',
-      mobileDrawer: true,
-      title: 'Biblioteca de apoyo',
-      copy: 'Consulta guías, checklists, formatos y materiales descargables para aplicar protocolos y buenas prácticas en consultorio, clínica o institución.'
+      copy: 'Abre un curso para encontrar en una sola página sus clases, avance, PDFs y materiales de apoyo.'
     },
     {
       desktopSelectors: '.sidebar .nav-item[data-section="webinars"]',
