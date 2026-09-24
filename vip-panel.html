@@ -1642,8 +1642,14 @@ window.navigateTo = function(section){
   content.classList.remove('sec-anim'); void content.offsetWidth; content.classList.add('sec-anim');
   const nextUrl = new URL(location.href);
   nextUrl.searchParams.set('seccion', section);
-  if (section === 'curso' && window.__cursoActualId) nextUrl.searchParams.set('curso', window.__cursoActualId);
-  else nextUrl.searchParams.delete('curso');
+  if (section === 'curso' && window.__cursoActualId) {
+    nextUrl.searchParams.set('curso', window.__cursoActualId);
+    if (window.__claseActualIndex !== null && window.__claseActualIndex !== undefined) nextUrl.searchParams.set('clase', window.__claseActualIndex);
+    else nextUrl.searchParams.delete('clase');
+  } else {
+    nextUrl.searchParams.delete('curso');
+    nextUrl.searchParams.delete('clase');
+  }
   history.replaceState(null, '', nextUrl.pathname + '?' + nextUrl.searchParams.toString());
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (typeof window.__actualizarAside === 'function') window.__actualizarAside();
@@ -4870,8 +4876,45 @@ function mountNutricion(c){
 .course-summary__row strong{color:var(--text);font-size:12px}
 .course-resource-lock{margin-top:13px;padding:16px;border:1px dashed var(--border-2);border-radius:14px;background:var(--surface-2);text-align:center}
 .course-legacy-note{max-width:760px;margin:60px auto;text-align:center;padding:40px;border:1px solid var(--border);border-radius:22px;background:var(--surface)}
-@media(max-width:900px){.course-page__layout{grid-template-columns:1fr}.course-summary{position:static;order:-1}.course-page__hero{min-height:280px}}
-@media(max-width:640px){.course-page{padding-bottom:28px}.course-page__hero{min-height:300px;padding:24px 20px;border-radius:20px;background-position:64% center}.course-page__hero::before{background:linear-gradient(90deg,rgba(5,28,48,.97),rgba(5,35,59,.78) 75%,rgba(5,35,59,.45))}.course-page__title{font-size:32px;letter-spacing:-1.3px}.course-page__description{font-size:12px}.course-page__layout{gap:14px;margin-top:16px}.course-section,.course-summary{border-radius:17px}.course-section{padding:16px}.course-summary{padding:18px}.course-page .leccion__thumb{width:54px;height:42px}.course-page .leccion{gap:10px;padding:11px}.course-section__head{align-items:flex-start}.course-section__title{font-size:18px}}
+/* Vista de clase: reproductor y temario dentro de la página, nunca en popup. */
+.lesson-page{max-width:1220px;margin:0 auto;padding:2px 0 48px}
+.lesson-page__crumbs{display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:16px;color:var(--text-3);font-size:11px}
+.lesson-page__crumbs button{border:0;background:transparent;padding:6px 0;color:var(--text-2);font-weight:700}
+.lesson-page__crumbs button:hover{color:var(--primary)}
+.lesson-page__crumbs span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lesson-page__layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:22px;align-items:start}
+.lesson-player{border-radius:22px;overflow:hidden;background:#061b2c;border:1px solid color-mix(in srgb,var(--primary) 24%,var(--border));box-shadow:0 24px 58px rgba(5,35,58,.22)}
+.lesson-player__frame{position:relative;aspect-ratio:16/9;background:radial-gradient(circle at 50% 45%,#173f5d,#061827 72%);display:flex;align-items:center;justify-content:center}
+.lesson-player__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#06121d}
+.lesson-player__loading{display:flex;flex-direction:column;align-items:center;gap:12px;color:#c3ddea;font-size:12px}
+.lesson-player__error{max-width:430px;padding:28px;text-align:center;color:#d7e8f0;font-size:13px;line-height:1.6}
+.lesson-info{margin-top:18px;padding:25px;border:1px solid var(--border);border-radius:20px;background:var(--surface);box-shadow:0 12px 32px rgba(21,69,103,.06)}
+.lesson-info__eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--primary);font-weight:800}
+.lesson-info__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(24px,3vw,36px);line-height:1.12;letter-spacing:-1.1px;color:var(--text);margin-top:8px}
+.lesson-info__desc{font-size:13px;line-height:1.7;color:var(--text-2);margin-top:11px;max-width:760px}
+.lesson-info__actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+.lesson-complete{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;font-size:12px;font-weight:800;box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 24%,transparent)}
+.lesson-complete.is-done{background:color-mix(in srgb,var(--success) 16%,var(--surface));color:var(--success);box-shadow:none;border:1px solid color-mix(in srgb,var(--success) 32%,transparent)}
+.lesson-complete .ic{width:15px;height:15px}
+.lesson-next{display:inline-flex;align-items:center;gap:7px;padding:10px 15px;border:1px solid var(--border-2);border-radius:12px;background:var(--surface-2);color:var(--text);font-size:12px;font-weight:700}
+.lesson-syllabus{position:sticky;top:84px;border:1px solid var(--border);border-radius:20px;background:var(--surface);overflow:hidden;box-shadow:0 12px 32px rgba(21,69,103,.07)}
+.lesson-syllabus__head{padding:20px 19px 16px;border-bottom:1px solid var(--border)}
+.lesson-syllabus__kicker{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--primary);font-weight:800}
+.lesson-syllabus__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:var(--text);margin-top:6px}
+.lesson-syllabus__progress{font-size:11px;color:var(--text-3);margin-top:5px}
+.lesson-syllabus__list{padding:8px;max-height:520px;overflow:auto}
+.lesson-item{display:grid;grid-template-columns:34px minmax(0,1fr) 18px;align-items:center;gap:10px;width:100%;padding:11px 9px;border:0;border-radius:12px;background:transparent;text-align:left;color:var(--text);transition:background .18s,color .18s}
+.lesson-item:hover{background:var(--surface-2)}
+.lesson-item.is-active{background:color-mix(in srgb,var(--primary) 11%,var(--surface-2));color:var(--primary)}
+.lesson-item.is-locked{opacity:.58}
+.lesson-item__num{width:34px;height:34px;border-radius:10px;background:var(--surface-3);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;color:var(--text-2)}
+.lesson-item.is-active .lesson-item__num{background:var(--primary);color:#fff}
+.lesson-item__name{font-size:11.5px;font-weight:700;line-height:1.35}
+.lesson-item__state{font-size:9.5px;color:var(--text-3);margin-top:2px}
+.lesson-item>.ic{width:15px;height:15px;color:var(--text-3)}
+.lesson-resources{margin-top:18px}
+@media(max-width:900px){.course-page__layout,.lesson-page__layout{grid-template-columns:1fr}.course-summary{position:static;order:-1}.course-page__hero{min-height:280px}.lesson-syllabus{position:static}.lesson-syllabus__list{max-height:none}}
+@media(max-width:640px){.course-page,.lesson-page{padding-bottom:28px}.course-page__hero{min-height:300px;padding:24px 20px;border-radius:20px;background-position:64% center}.course-page__hero::before{background:linear-gradient(90deg,rgba(5,28,48,.97),rgba(5,35,59,.78) 75%,rgba(5,35,59,.45))}.course-page__title{font-size:32px;letter-spacing:-1.3px}.course-page__description{font-size:12px}.course-page__layout,.lesson-page__layout{gap:14px;margin-top:16px}.course-section,.course-summary,.lesson-info,.lesson-syllabus{border-radius:17px}.course-section{padding:16px}.course-summary{padding:18px}.course-page .leccion__thumb{width:54px;height:42px}.course-page .leccion{gap:10px;padding:11px}.course-section__head{align-items:flex-start}.course-section__title{font-size:18px}.lesson-player{border-radius:16px}.lesson-info{padding:18px}.lesson-info__title{font-size:25px}.lesson-info__actions{align-items:stretch}.lesson-complete,.lesson-next{justify-content:center;flex:1 1 100%}}
 </style>
 <div class="visor-ov" id="visorOverlay" role="dialog" aria-modal="true">
   <div class="visor-box">
@@ -4956,7 +4999,7 @@ function mountNutricion(c){
     const p = getProg(); if (!p[cursoId]) p[cursoId] = { vistas: [] };
     if (!p[cursoId].vistas.includes(idx)) p[cursoId].vistas.push(idx);
     setProg(p);
-    const c = (window.__cursosCache || []).find(x => x.id === cursoId);
+    const c = (window.__cursosCache || []).find(x => String(x.id) === String(cursoId));
     if (c && Array.isArray(c.sesiones) && c.sesiones.length && p[cursoId].vistas.length >= c.sesiones.length){
       if (typeof window.marcarCursoCompletado === 'function' && !cursoProg(cursoId).cert){ p[cursoId].cert = true; setProg(p); try { window.marcarCursoCompletado(cursoId); } catch(e){} }
     }
@@ -5206,13 +5249,16 @@ function mountNutricion(c){
     grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
       const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
       window.__cursoActualId = String(c.id);
+      window.__claseActualIndex = null;
       window.navigateTo('curso');
     }));
   }
 
   /* ── DETALLE DE CURSO COMO PÁGINA INDEPENDIENTE ── */
   window.Sections.curso = function(){
-    const id = String(window.__cursoActualId || new URLSearchParams(location.search).get('curso') || '');
+    const params = new URLSearchParams(location.search);
+    const id = String(window.__cursoActualId || params.get('curso') || '');
+    const claseParam = window.__claseActualIndex !== null && window.__claseActualIndex !== undefined ? Number(window.__claseActualIndex) : (params.has('clase') ? Number(params.get('clase')) : null);
     window.__cursoActualId = id;
     document.getElementById('content').innerHTML = '<div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto 14px"></div><p>Cargando curso…</p></div>';
     loadCursos().then(function(cursos){
@@ -5220,7 +5266,14 @@ function mountNutricion(c){
         document.getElementById('content').innerHTML = '<div class="course-legacy-note"><h2>Curso no disponible</h2><p style="color:var(--text-2);margin:10px 0 20px">Vuelve al catálogo para elegir otro curso.</p><button class="btn btn--accent" data-section="cursos">Ver mis cursos</button></div>';
         return;
       }
-      abrirCurso(id, true);
+      const curso = cursos.find(function(c){ return String(c.id) === id; });
+      if (Number.isInteger(claseParam) && claseParam >= 0 && claseParam < ((curso.sesiones || []).length)) {
+        window.__claseActualIndex = claseParam;
+        abrirClaseEnCurso(id, claseParam);
+      } else {
+        window.__claseActualIndex = null;
+        abrirCurso(id, true);
+      }
     }).catch(function(e){
       document.getElementById('content').innerHTML = emptyState('i-book','No se pudo cargar el curso',e.message);
     });
@@ -5231,6 +5284,7 @@ function mountNutricion(c){
        está en camino (esperando el guardado del certificado en Firestore) —
        no reabrimos el detalle para no pisarnos con el cierre de ese modal. */
     if (cursoProg(id).cert) return;
+    if (document.getElementById('curso-clase-body') && Number.isInteger(Number(window.__claseActualIndex))) { abrirClaseEnCurso(String(id), Number(window.__claseActualIndex)); return; }
     if (document.getElementById('curso-detalle-body')) abrirCurso(String(id), true);
   };
   function abrirCurso(id, reabrir){
@@ -5326,14 +5380,87 @@ function mountNutricion(c){
         window.__showPaywallModal(`Tu primera clase y tu primer material son gratis. Activa tu membresía para abrir el resto del contenido del curso.`);
         return;
       }
-      const s = sesiones[i];
-      window.__abrirVisor(s.videoId ? s : s.url, s.titulo || ('Clase '+(i+1)), id, i);
+      window.__claseActualIndex = i;
+      const url = new URL(location.href); url.searchParams.set('seccion','curso'); url.searchParams.set('curso',id); url.searchParams.set('clase',i); history.replaceState(null,'',url.pathname+'?'+url.searchParams.toString());
+      abrirClaseEnCurso(id, i);
     }));
     cont.querySelectorAll('[data-mat]').forEach(el => el.addEventListener('click', () => {
       const i = +el.dataset.mat;
       if (el.dataset.open !== 'true') { window.__showPaywallModal('Tu primer material es gratis. Activa tu membresía SYNOVA VIP para abrir los demás recursos del curso.'); return; }
       const m = materiales[i]; window.__abrirVisor(m.url, m.titulo || ('Material '+(i+1)), null, null);
     }));
+  }
+
+  async function resolverEmbedClase(sesion, cursoId, idx){
+    if (!sesion) throw new Error('La clase no está disponible.');
+    if (!sesion.videoId) {
+      if (!sesion.url) throw new Error('El video de esta clase aún no ha sido publicado.');
+      return driveEmbed(sesion.url);
+    }
+    const user = window.__auth && window.__auth.currentUser;
+    if (!user) throw new Error('La sesión venció; vuelve a iniciar sesión.');
+    const idToken = await user.getIdToken();
+    const response = await fetch(window.__WEBHOOK_URL + '/api/bunny/embed-token', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + idToken },
+      body:JSON.stringify({ videoId:sesion.videoId, courseId:cursoId, sessionIndex:idx })
+    });
+    const data = await response.json().catch(function(){ return {}; });
+    if (!response.ok || !data.embedUrl) throw new Error(data.error || 'No se pudo autorizar la reproducción.');
+    return data.embedUrl;
+  }
+
+  async function abrirClaseEnCurso(id, idx){
+    const c = (window.__cursosCache || []).find(function(x){ return String(x.id) === String(id); });
+    if (!c) return;
+    const sesiones = Array.isArray(c.sesiones) ? c.sesiones : [];
+    const materiales = Array.isArray(c.materiales) ? c.materiales : [];
+    const s = sesiones[idx];
+    if (!s) { window.__claseActualIndex = null; abrirCurso(id, true); return; }
+    if (!claseDesbloqueada(id, idx, sesiones.length)) { window.__showPaywallModal('Activa tu membresía para abrir esta clase.'); return; }
+
+    window.__cursoActualId = String(id);
+    window.__claseActualIndex = idx;
+    const prog = cursoProg(id);
+    const vista = prog.vistas.includes(idx);
+    const siguiente = sesiones.findIndex(function(_,i){ return i > idx && claseDesbloqueada(id,i,sesiones.length); });
+    const syllabus = sesiones.map(function(item,i){
+      const abierta = claseDesbloqueada(id,i,sesiones.length);
+      const hecha = prog.vistas.includes(i);
+      return '<button class="lesson-item' + (i===idx?' is-active':'') + (abierta?'':' is-locked') + '" data-lesson-index="' + i + '">' +
+        '<span class="lesson-item__num">' + String(i+1).padStart(2,'0') + '</span><span><span class="lesson-item__name">' + escHtml(item.titulo || ('Clase '+(i+1))) + '</span><span class="lesson-item__state">' + (hecha?'Completada':(abierta?'Disponible':'Contenido VIP')) + '</span></span>' +
+        '<svg class="ic"><use href="' + (hecha?'#i-check-circle':(abierta?'#i-play':'#i-shield-check')) + '"/></svg></button>';
+    }).join('');
+    const recursos = materiales.length ? materiales.map(function(m,i){
+      const abierto = esVip() || esMaterialGratisGlobal(id,i);
+      return '<div class="leccion' + (abierto?'':' is-locked') + '" data-lesson-mat="' + i + '" data-open="' + abierto + '" style="cursor:pointer"><div class="leccion__thumb" style="background:color-mix(in srgb,var(--primary) 10%,var(--surface-3));display:flex;align-items:center;justify-content:center"><svg class="ic" style="color:var(--primary);width:20px;height:20px"><use href="#i-news"/></svg></div><div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material '+(i+1))) + '</div><div class="leccion__meta">PDF · ' + (abierto?'Abrir recurso':'Disponible con membresía') + '</div></div><div class="leccion__go"><svg><use href="' + (abierto?'#i-arrow-right':'#i-shield-check') + '"/></svg></div></div>';
+    }).join('') : '<p style="font-size:12px;color:var(--text-3)">Esta clase no tiene material adicional.</p>';
+
+    document.getElementById('content').innerHTML = '<div class="lesson-page" id="curso-clase-body">' +
+      '<div class="lesson-page__crumbs"><button id="lessonBackCourse">Mis cursos</button><span>›</span><button id="lessonBackContent">' + escHtml(c.nombre || 'Curso') + '</button><span>›</span><span>' + escHtml(s.titulo || ('Clase '+(idx+1))) + '</span></div>' +
+      '<div class="lesson-page__layout"><main><div class="lesson-player"><div class="lesson-player__frame" id="lessonPlayerFrame"><div class="lesson-player__loading"><div class="sub-loading__spin"></div><span>Preparando la clase…</span></div></div></div>' +
+      '<section class="lesson-info"><div class="lesson-info__eyebrow">Clase ' + (idx+1) + ' de ' + sesiones.length + '</div><h1 class="lesson-info__title">' + escHtml(s.titulo || ('Clase '+(idx+1))) + '</h1><p class="lesson-info__desc">' + escHtml(s.descripcion || c.descripcion || 'Contenido clínico preparado por SYNOVA para fortalecer tu práctica profesional.') + '</p><div class="lesson-info__actions"><button class="lesson-complete' + (vista?' is-done':'') + '" id="lessonMark"><svg class="ic"><use href="' + (vista?'#i-check-circle':'#i-check') + '"/></svg>' + (vista?'Clase completada':'Marcar como completada') + '</button>' + (siguiente>=0?'<button class="lesson-next" id="lessonNext">Siguiente clase <svg class="ic"><use href="#i-arrow-right"/></svg></button>':'') + '</div></section>' +
+      '<section class="course-section lesson-resources"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + recursos + '</section></main>' +
+      '<aside class="lesson-syllabus"><div class="lesson-syllabus__head"><div class="lesson-syllabus__kicker">Contenido del curso</div><div class="lesson-syllabus__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div><div class="lesson-syllabus__progress">' + prog.vistas.length + ' de ' + sesiones.length + ' clases completadas</div></div><div class="lesson-syllabus__list">' + syllabus + '</div></aside></div></div>';
+
+    const root = document.getElementById('curso-clase-body');
+    root.querySelector('#lessonBackCourse').onclick = function(){ window.__claseActualIndex=null; window.navigateTo('cursos'); };
+    root.querySelector('#lessonBackContent').onclick = function(){ window.__claseActualIndex=null; const u=new URL(location.href);u.searchParams.delete('clase');history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirCurso(id,true); };
+    root.querySelectorAll('[data-lesson-index]').forEach(function(btn){ btn.onclick=function(){ const i=+btn.dataset.lessonIndex;if(!claseDesbloqueada(id,i,sesiones.length)){window.__showPaywallModal('Activa tu membresía para abrir esta clase.');return;}const u=new URL(location.href);u.searchParams.set('clase',i);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,i); }; });
+    root.querySelectorAll('[data-lesson-mat]').forEach(function(el){ el.onclick=function(){const i=+el.dataset.lessonMat;if(el.dataset.open!=='true'){window.__showPaywallModal('Activa tu membresía para abrir los demás recursos del curso.');return;}const m=materiales[i];window.__abrirVisor(m.url,m.titulo||('Material '+(i+1)),null,null);}; });
+    root.querySelector('#lessonMark').onclick = function(){ if(!cursoProg(id).vistas.includes(idx)) window.__synMarcarVista(id,idx); abrirClaseEnCurso(id,idx); };
+    const nextBtn = root.querySelector('#lessonNext'); if(nextBtn) nextBtn.onclick=function(){const u=new URL(location.href);u.searchParams.set('clase',siguiente);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,siguiente);};
+
+    try {
+      const embedUrl = await resolverEmbedClase(s,id,idx);
+      const frameWrap = document.getElementById('lessonPlayerFrame');
+      if (!frameWrap || window.__cursoActualId !== String(id) || window.__claseActualIndex !== idx) return;
+      frameWrap.innerHTML = '<iframe title="' + escHtml(s.titulo || 'Clase SYNOVA') + '" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+      frameWrap.querySelector('iframe').src = embedUrl;
+    } catch(error) {
+      const frameWrap = document.getElementById('lessonPlayerFrame');
+      if (frameWrap) frameWrap.innerHTML = '<div class="lesson-player__error"><strong>No pudimos cargar el video.</strong><br>' + escHtml(error.message || 'Intenta nuevamente en unos minutos.') + '</div>';
+    }
   }
 
   /* Compatibilidad con enlaces antiguos: los materiales ahora viven dentro de cada curso. */
