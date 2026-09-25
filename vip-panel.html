@@ -1232,7 +1232,6 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       <a class="nav-item" data-section="retos"><svg class="ic"><use href="#i-bolt"/></svg>Retos clínicos</a>
       <a class="nav-item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
       <a class="nav-item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
-      <a class="nav-item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
     </div>
 
     <div class="nav-section" data-tour="tools">
@@ -1371,7 +1370,6 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
         <a class="mobile-drawer__item" data-section="retos"><svg class="ic"><use href="#i-bolt"/></svg>Retos clínicos</a>
         <a class="mobile-drawer__item" data-section="logros"><svg class="ic"><use href="#i-trophy"/></svg>Mis logros</a>
         <a class="mobile-drawer__item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados</a>
-        <a class="mobile-drawer__item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Invita y gana</a>
       </div>
       <div class="mobile-drawer__section" data-tour="tools">
         <div class="mobile-drawer__label">Recursos clínicos</div>
@@ -1815,13 +1813,23 @@ onAuthStateChanged(auth, async (user) => {
       lastUpdatedAt: serverTimestamp()
     };
     if (foto) perfilCuenta.fotoGoogle = foto;
-    setDoc(doc(db, 'miembros', user.uid), perfilCuenta, { merge: true }).catch(() => {});
+    await setDoc(doc(db, 'miembros', user.uid), perfilCuenta, { merge: true });
     if (foto) {
       const tarjetaRef = doc(db, 'directorio', user.uid);
-      getDoc(tarjetaRef).then((tarjetaSnap) => {
-        if (tarjetaSnap.exists() && !tarjetaSnap.data().foto) {
-          return setDoc(tarjetaRef, { foto, email, updatedAt: serverTimestamp() }, { merge: true });
-        }
+      const tarjetaSnap = await getDoc(tarjetaRef);
+      if (tarjetaSnap.exists() && !tarjetaSnap.data().foto) {
+        await setDoc(tarjetaRef, { foto, email, updatedAt: serverTimestamp() }, { merge: true });
+      }
+    }
+    /* Una sesión administrativa completa, en segundo plano, las fotos que
+       Firebase Auth ya conoce. Así la clasificación no depende de que cada
+       miembro vuelva a publicar o completar un reto. */
+    if (isAdmin) {
+      user.getIdToken().then((token) => fetch(`${WEBHOOK_URL}/admin/sincronizar-fotos-directorio`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      })).then((r) => {
+        if (r.ok) { window.__dirFotos = null; window.__dirFotosPromise = null; }
       }).catch(() => {});
     }
   } catch (e) {}
@@ -4470,8 +4478,8 @@ const FARMACOS = [
 ];
 function mountDosis(c){
   const opts = FARMACOS.map(f=>'<option value="'+f.id+'">'+escHtml(f.n)+'</option>').join('');
-  toolShell(c, { icon:'i-pill', title:'Calculadora de dosis por peso (mg/kg)', sub:'Selecciona el fármaco, captura el peso y obtén la dosis por toma, el volumen exacto de la presentación y el esquema recomendado.',
-    actions:'<button class="btn btn--accent btn--sm" id="dp-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>',
+  toolShell(c, { icon:'i-pill', title:'Dosis por peso', sub:'Calcula dosis y volumen según el peso.',
+    actions:'<button class="btn btn--accent btn--sm" id="dp-pdf">PDF<svg class="ic"><use href="#i-download"/></svg></button>',
     body:'<div class="bn-card"><div class="bn-card__t"><svg class="ic"><use href="#i-stethoscope"/></svg>Datos del paciente y fármaco</div>'+
       '<div class="bn-grid">'+
         '<div class="bn-field bn-field--full"><label>Fármaco</label><select class="bn-select" id="dp-farm">'+opts+'</select><div class="bn-field__hint" id="dp-via">—</div></div>'+
@@ -4541,8 +4549,8 @@ function mountDosis(c){
 const RX_LS='synova_receta_medico';
 function rxRow(data){ data=data||{}; return '<div class="rx-line" data-rx><div><div class="rx-line__grid" style="margin-bottom:9px"><input class="input" data-f="med" placeholder="Medicamento (denominación genérica)" value="'+escHtml(data.med||'')+'"><input class="input" data-f="pres" placeholder="Presentación (tabletas 500 mg…)" value="'+escHtml(data.pres||'')+'"></div><div class="rx-line__grid"><input class="input" data-f="dosis" placeholder="Dosis y vía (1 tab. VO)" value="'+escHtml(data.dosis||'')+'"><input class="input" data-f="freq" placeholder="Frecuencia y duración (c/8 h × 7 días)" value="'+escHtml(data.freq||'')+'"></div></div><button class="rx-del" data-del title="Quitar"><svg class="ic ic--sm"><use href="#i-trash"/></svg></button></div>'; }
 function mountReceta(c){
-  toolShell(c,{ icon:'i-file-text', title:'Generador de receta médica', sub:'Receta con estructura conforme a la NOM-004-SSA3 y al Reglamento de Insumos para la Salud: folio de control, código QR de verificación y formato listo para imprimir.',
-    actions:'<button class="btn btn--ghost btn--sm" id="rx-clear">Limpiar</button><button class="btn btn--accent btn--sm" id="rx-pdf">Generar receta PDF<svg class="ic"><use href="#i-download"/></svg></button>',
+  toolShell(c,{ icon:'i-file-text', title:'Receta médica', sub:'Prepara una receta profesional lista para imprimir.',
+    actions:'<button class="btn btn--ghost btn--sm" id="rx-clear">Limpiar</button><button class="btn btn--accent btn--sm" id="rx-pdf">Generar PDF<svg class="ic"><use href="#i-download"/></svg></button>',
     body:'<div class="bn-card"><div class="bn-card__t"><svg class="ic"><use href="#i-stethoscope"/></svg>Datos del médico <span style="text-transform:none;font-weight:500;color:var(--text-3)">· se guardan en este equipo</span></div><div class="bn-grid">'+
         '<div class="bn-field"><label>Nombre del médico</label><input class="input" id="rx-medico" placeholder="Dr(a). Nombre Apellido"></div>'+
         '<div class="bn-field"><label>Cédula profesional</label><input class="input" id="rx-cedula" inputmode="numeric" placeholder="0000000"><div class="bn-field__hint">Obligatoria en la receta</div></div>'+
@@ -4607,8 +4615,8 @@ function mountReceta(c){
 function clasImc(imc){ if(imc<16)return{t:'Bajo peso severo',b:'hi'}; if(imc<17)return{t:'Bajo peso moderado',b:'mid'}; if(imc<18.5)return{t:'Bajo peso',b:'mid'}; if(imc<25)return{t:'Peso normal',b:'ok'}; if(imc<30)return{t:'Sobrepeso',b:'mid'}; if(imc<35)return{t:'Obesidad grado I',b:'hi'}; if(imc<40)return{t:'Obesidad grado II',b:'hi'}; return{t:'Obesidad grado III',b:'hi'}; }
 function clasPa(s,d){ if(s==null||d==null)return null; if(s>=180||d>=120)return{t:'Crisis hipertensiva',b:'hi',nota:'Requiere valoración médica urgente.'}; if(s>=140||d>=90)return{t:'Hipertensión etapa 2',b:'hi',nota:'Confirmar con mediciones repetidas y valoración.'}; if(s>=130||d>=80)return{t:'Hipertensión etapa 1',b:'mid',nota:'Cambios en estilo de vida; valorar tratamiento.'}; if(s>=120&&d<80)return{t:'Presión elevada',b:'mid',nota:'Vigilar y modificar estilo de vida.'}; return{t:'Presión normal',b:'ok',nota:'Mantener hábitos saludables.'}; }
 function mountImc(c){
-  toolShell(c,{ icon:'i-heart', title:'IMC y riesgo cardiometabólico', sub:'Índice de masa corporal con clasificación OMS, circunferencia de cintura, índices cintura/cadera y cintura/talla, y clasificación de presión arterial en un solo tablero.',
-    actions:'<button class="btn btn--accent btn--sm" id="ic-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>',
+  toolShell(c,{ icon:'i-heart', title:'IMC y riesgo', sub:'Evalúa IMC y riesgo cardiometabólico.',
+    actions:'<button class="btn btn--accent btn--sm" id="ic-pdf">PDF<svg class="ic"><use href="#i-download"/></svg></button>',
     body:'<div class="bn-card"><div class="bn-card__t"><svg class="ic"><use href="#i-user"/></svg>Datos antropométricos</div><div class="bn-grid">'+
         '<div class="bn-field"><label>Sexo</label><div class="bn-seg" id="ic-sexo"><button data-v="M" class="is-on">Hombre</button><button data-v="F">Mujer</button></div><div class="bn-field__hint">Ajusta los puntos de corte de riesgo</div></div>'+
         '<div class="bn-field"><label>Edad</label><input class="input" id="ic-edad" inputmode="numeric" placeholder="años"><div class="bn-field__hint">Opcional</div></div>'+
@@ -4686,8 +4694,8 @@ const ANEST=[
 ];
 function mountAnest(c){
   const opts=ANEST.map(a=>'<option value="'+a.id+'">'+escHtml(a.n)+'</option>').join('');
-  toolShell(c,{ icon:'i-syringe', title:'Dosis máxima de anestésicos locales', sub:'Calcula la dosis máxima segura por peso, el volumen y el número de cartuchos (1.8 mL), con control del límite de vasoconstrictor en pacientes sanos y cardiópatas.',
-    actions:'<button class="btn btn--accent btn--sm" id="an-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>',
+  toolShell(c,{ icon:'i-syringe', title:'Anestésicos locales', sub:'Calcula límites seguros según el peso.',
+    actions:'<button class="btn btn--accent btn--sm" id="an-pdf">PDF<svg class="ic"><use href="#i-download"/></svg></button>',
     body:'<div class="bn-card"><div class="bn-card__t"><svg class="ic"><use href="#i-syringe"/></svg>Datos del procedimiento</div><div class="bn-grid">'+
         '<div class="bn-field bn-field--full"><label>Anestésico y presentación</label><select class="bn-select" id="an-farm">'+opts+'</select><div class="bn-field__hint" id="an-vaso">—</div></div>'+
         '<div class="bn-field"><label>Peso del paciente</label><input class="input" id="an-peso" inputmode="decimal" placeholder="ej. 70"><div class="bn-field__hint">kg</div></div>'+
@@ -4749,8 +4757,8 @@ const NU_OBJ={ mant:{l:'Mantenimiento de peso',tipo:'kcal',aj:0,prot:1.2,grasa:2
 function mountNutricion(c){
   const actOpts=NU_ACT.map((a,i)=>'<option value="'+a.v+'"'+(i===2?' selected':'')+'>'+escHtml(a.l)+'</option>').join('');
   const objOpts=Object.entries(NU_OBJ).map(([k,o])=>'<option value="'+k+'">'+escHtml(o.l)+'</option>').join('');
-  toolShell(c,{ icon:'i-apple', title:'Calculadora de nutrición clínica', sub:'Gasto energético por Mifflin-St Jeor y Harris-Benedict, ajuste por objetivo o patología y reparto de macronutrientes con gramos, calorías y porcentajes.',
-    actions:'<button class="btn btn--accent btn--sm" id="nu-pdf">Reporte PDF<svg class="ic"><use href="#i-download"/></svg></button>',
+  toolShell(c,{ icon:'i-apple', title:'Nutrición clínica', sub:'Estima energía y macronutrientes.',
+    actions:'<button class="btn btn--accent btn--sm" id="nu-pdf">PDF<svg class="ic"><use href="#i-download"/></svg></button>',
     body:'<div class="bn-card"><div class="bn-card__t"><svg class="ic"><use href="#i-user"/></svg>Datos del paciente</div><div class="bn-grid">'+
         '<div class="bn-field"><label>Sexo</label><div class="bn-seg" id="nu-sexo"><button data-v="M" class="is-on">Hombre</button><button data-v="F">Mujer</button></div></div>'+
         '<div class="bn-field"><label>Edad</label><input class="input" id="nu-edad" inputmode="numeric" placeholder="años"></div>'+
