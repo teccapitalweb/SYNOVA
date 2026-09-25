@@ -108,6 +108,15 @@ body::after{
 .nav-item__badge{margin-left:auto;font-size:9px;font-weight:600;padding:1px 7px;border-radius:100px;background:var(--surface-3);color:var(--text-2);letter-spacing:.3px;min-width:20px;text-align:center}
 .nav-item__badge.is-new{background:var(--primary);color:#fff}
 .nav-item__dot{width:7px;height:7px;border-radius:50%;background:var(--danger);margin-left:auto;animation:pulse 1.4s infinite}
+.sidebar-account{margin-top:auto;padding:16px 12px 0;border-top:1px solid var(--border);display:grid;gap:9px}
+.sidebar-upgrade{width:100%;min-height:42px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--primary-deep),var(--primary));color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 9px 22px color-mix(in srgb,var(--primary) 23%,transparent)}
+.sidebar-upgrade .ic{width:15px;height:15px}.sidebar-upgrade[hidden]{display:none}
+.sidebar-member{width:100%;display:grid;grid-template-columns:38px minmax(0,1fr) 28px;align-items:center;gap:9px;padding:9px;border:1px solid var(--border);border-radius:15px;background:var(--surface);color:var(--text);text-align:left;transition:border-color .18s,background .18s,transform .18s}
+.sidebar-member:hover{border-color:color-mix(in srgb,var(--primary) 40%,var(--border));background:var(--surface-2);transform:translateY(-1px)}
+.sidebar-member__avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}.sidebar-member__avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.sidebar-member__copy{min-width:0;display:flex;flex-direction:column;gap:3px}.sidebar-member__copy strong{font-size:11.5px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sidebar-member__copy span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.7px;text-transform:uppercase;color:var(--primary);font-weight:800}
+.sidebar-member__edit{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--text-3)}.sidebar-member__edit .ic{width:14px;height:14px}
+.sidebar-account__logout{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:9px;border:0;background:transparent;color:var(--danger);font-size:11.5px;font-weight:700}.sidebar-account__logout .ic{width:15px;height:15px}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
 
 /* MAIN */
@@ -128,8 +137,8 @@ body::after{
 .theme-toggle:hover{color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
 .theme-toggle .ic{width:14px;height:14px}
 
-.avatar{display:flex;align-items:center;gap:9px;padding:5px 11px 5px 5px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2)}
-.avatar__circle{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.3px;overflow:hidden}
+.avatar{display:flex;align-items:center;padding:3px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2)}
+.avatar__circle{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.3px;overflow:hidden}
 .avatar__info{display:flex;flex-direction:column;line-height:1.1}
 .avatar__name{font-size:11px;font-weight:600}
 .avatar__plan{font-size:9px;font-weight:600;color:var(--primary);letter-spacing:.5px}
@@ -900,6 +909,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .mobile-drawer__item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;color:var(--text-2);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:-.1px;cursor:pointer;transition:background .12s ease,color .12s ease}
 .mobile-drawer__item:hover,.mobile-drawer__item.is-active{background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
 .mobile-drawer__item .ic{width:18px;height:18px;flex-shrink:0}
+.mobile-drawer__account{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr) 30px;gap:10px;align-items:center;padding:10px 12px;margin-bottom:8px;border:1px solid var(--border);border-radius:14px;background:var(--surface-2);color:var(--text);text-align:left}.mobile-drawer__account .sidebar-member__avatar{width:42px;height:42px}.mobile-drawer__account .sidebar-member__copy strong{font-size:13px}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .5s ease forwards}
@@ -912,7 +922,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   .app{grid-template-columns:1fr}
   .sidebar{display:none}
   .main{padding:calc(14px + env(safe-area-inset-top)) 14px 130px}
-  .topbar__right .avatar{display:none}
+  .topbar__right .avatar{display:flex}
   .banner{flex-direction:column;align-items:flex-start;padding:20px 22px}
   .banner__stats{align-self:stretch;justify-content:space-between;flex-wrap:wrap}
   .mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:9000;background:var(--surface);border-top:0.5px solid var(--border-2);padding:6px 4px max(6px,env(safe-area-inset-bottom));justify-content:space-around;align-items:center}
@@ -1248,18 +1258,24 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 
     <div class="nav-section">
       <div class="nav-label">Mi cuenta</div>
-      <a class="nav-item" data-section="perfil"><svg class="ic"><use href="#i-user"/></svg>Mi perfil</a>
       <a class="nav-item" data-section="suscripcion"><svg class="ic"><use href="#i-credit-card"/></svg>Suscripción</a>
-      <a class="nav-item" id="btn-logout"><svg class="ic"><use href="#i-logout"/></svg>Cerrar sesión</a>
+    </div>
+
+    <div class="sidebar-account" data-tour="account">
+      <button class="sidebar-upgrade" id="sidebar-upgrade" type="button" data-section="suscripcion"><svg class="ic"><use href="#i-crown"/></svg>Hazte VIP</button>
+      <button class="sidebar-member" id="sidebar-member-card" type="button" title="Abrir mi cuenta">
+        <span class="sidebar-member__avatar" id="sidebar-member-avatar">··</span>
+        <span class="sidebar-member__copy"><strong id="sidebar-member-name">Cargando…</strong><span id="sidebar-member-plan">—</span></span>
+        <span class="sidebar-member__edit"><svg class="ic"><use href="#i-edit"/></svg></span>
+      </button>
+      <button class="sidebar-account__logout" id="btn-logout" type="button"><svg class="ic"><use href="#i-logout"/></svg>Cerrar sesión</button>
     </div>
   </aside>
 
   <!-- MAIN -->
   <main class="main">
     <header class="topbar">
-      <div class="topbar__left">
-        <span class="pill" id="topbar-pill"><svg class="ic"><use href="#i-user"/></svg><span id="topbar-pill-text">Miembro</span></span>
-      </div>
+      <div class="topbar__left"></div>
       <div class="topbar__right">
         <button class="icon-btn" id="btn-tour-help" data-tour-restart type="button" aria-label="Volver a ver el recorrido guiado" title="Recorrido guiado">
           <span class="tour-help-icon" aria-hidden="true">?</span>
@@ -1272,12 +1288,8 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
           <svg class="ic" id="theme-icon"><use href="#i-moon"/></svg>
           <span id="theme-label">Noche</span>
         </button>
-        <div class="avatar" id="btn-avatar" style="cursor:pointer" title="Mi perfil">
+        <div class="avatar" id="btn-avatar" style="cursor:pointer" title="Mi cuenta" aria-label="Abrir mi cuenta">
           <div class="avatar__circle" id="avatar-circle">··</div>
-          <div class="avatar__info">
-            <span class="avatar__name" id="avatar-name">Cargando…</span>
-            <span class="avatar__plan" id="avatar-plan">—</span>
-          </div>
         </div>
       </div>
     </header>
@@ -1383,7 +1395,11 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       </div>
       <div class="mobile-drawer__section">
         <div class="mobile-drawer__label">Mi cuenta</div>
-        <a class="mobile-drawer__item" data-section="perfil"><svg class="ic"><use href="#i-user"/></svg>Mi perfil</a>
+        <button class="mobile-drawer__account" id="drawer-member-card" type="button">
+          <span class="sidebar-member__avatar" id="drawer-member-avatar">··</span>
+          <span class="sidebar-member__copy"><strong id="drawer-member-name">Cargando…</strong><span id="drawer-member-plan">—</span></span>
+          <span class="sidebar-member__edit"><svg class="ic"><use href="#i-edit"/></svg></span>
+        </button>
         <a class="mobile-drawer__item" data-section="suscripcion"><svg class="ic"><use href="#i-credit-card"/></svg>Suscripción</a>
         <a class="mobile-drawer__item" id="drawer-logout-btn" style="color:#EF4444;"><svg class="ic"><use href="#i-logout"/></svg>Cerrar sesión</a>
       </div>
@@ -1609,6 +1625,8 @@ document.getElementById('drawer-logout-btn')?.addEventListener('click', (e) => {
 });
 document.getElementById('btn-logout')?.addEventListener('click', openLogoutModal);
 document.getElementById('btn-avatar')?.addEventListener('click', () => navigateTo('perfil'));
+document.getElementById('sidebar-member-card')?.addEventListener('click', () => navigateTo('perfil'));
+document.getElementById('drawer-member-card')?.addEventListener('click', () => { cerrarDrawer(); navigateTo('perfil'); });
 
 /* ══════════════════════ ROUTER ══════════════════════ */
 const Sections = {};
@@ -1654,7 +1672,7 @@ document.addEventListener('click', (e) => {
 <!-- ══════════════════════ FIREBASE + LÓGICA DE MEMBRESÍA ══════════════════════ -->
 <script type="module">
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut, updateProfile, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut, updateProfile, setPersistence, browserLocalPersistence, GoogleAuthProvider, linkWithPopup, reload } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, addDoc, deleteDoc,
   query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp
@@ -1743,12 +1761,14 @@ async function resolverMembresia(uid){
 
 function hidratarUI(S){
   document.getElementById('avatar-circle').innerHTML = avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`);
-  document.getElementById('avatar-name').textContent = S.nombre;
-  document.getElementById('avatar-plan').textContent = S.isAdmin ? 'ADMIN' : (S.modo === 'vip' ? (S.plan === 'anual' ? 'VIP ANUAL' : 'VIP MENSUAL') : 'SIN PLAN');
+  const cuentaPlan = S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? (S.plan === 'anual' ? 'VIP anual' : 'VIP mensual') : 'Sin membresía');
+  ['sidebar-member-avatar','drawer-member-avatar'].forEach(id => { const el=document.getElementById(id); if(el)el.innerHTML=avatarHtml(S.foto,S.iniciales,`Foto de ${S.nombre}`); });
+  ['sidebar-member-name','drawer-member-name'].forEach(id => { const el=document.getElementById(id); if(el)el.textContent=S.nombre; });
+  ['sidebar-member-plan','drawer-member-plan'].forEach(id => { const el=document.getElementById(id); if(el)el.textContent=cuentaPlan; });
+  const upgrade=document.getElementById('sidebar-upgrade'); if(upgrade)upgrade.hidden=S.isAdmin||S.modo==='vip';
   const planTxt = S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? ('VIP ' + (S.plan === 'anual' ? 'Anual' : 'Mensual')) : 'Sin membresía');
   document.getElementById('brand-plan-badge').textContent = planTxt;
   document.getElementById('drawer-plan-badge').textContent = planTxt;
-  const topPill = document.getElementById('topbar-pill-text'); if (topPill) topPill.textContent = S.nombre.split(' ')[0];
   document.getElementById('nav-badge-cursos').textContent = '';
   const offerBar = document.getElementById('member-offer-bar');
   if (offerBar) offerBar.classList.toggle('is-visible', !S.isAdmin && S.modo !== 'vip');
@@ -1895,6 +1915,35 @@ window.__guardarPerfilCuenta = async function(nombre){
   if (user.photoURL) S.foto = user.photoURL;
   hidratarUI(S);
   return S;
+};
+
+window.__conectarFotoGoogle = async function(){
+  const user = auth.currentUser;
+  const S = window.UserState;
+  if (!user || !S) throw new Error('No hay una sesión activa.');
+  const yaGoogle = (user.providerData || []).some(p => p && p.providerId === 'google.com');
+  if (!yaGoogle) {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await linkWithPopup(user, provider);
+  } else {
+    await reload(user);
+  }
+  const perfilGoogle = (user.providerData || []).find(p => p && p.providerId === 'google.com') || {};
+  const foto = user.photoURL || perfilGoogle.photoURL || '';
+  if (!foto) throw new Error('La cuenta de Google seleccionada no tiene una foto disponible.');
+  if (!user.photoURL) await updateProfile(user, { photoURL: foto });
+  await setDoc(doc(db, 'miembros', user.uid), { fotoGoogle: foto, email: S.email, lastUpdatedAt: serverTimestamp() }, { merge: true });
+  const tarjetaRef = doc(db, 'directorio', user.uid);
+  const tarjetaSnap = await getDoc(tarjetaRef);
+  if (tarjetaSnap.exists() && !tarjetaSnap.data().foto) {
+    await setDoc(tarjetaRef, { foto, fotoFuente: 'google', updatedAt: serverTimestamp() }, { merge: true });
+  }
+  S.foto = foto;
+  window.__dirFotos = null;
+  window.__dirFotosPromise = null;
+  hidratarUI(S);
+  return foto;
 };
 
 window.__guardarFichaInicial = async function(datos){
@@ -3889,6 +3938,7 @@ Sections.perfil = function(){
           <span class="pill"><svg class="ic"><use href="#i-crown"/></svg>${S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? ('VIP ' + (S.plan === 'anual' ? 'Anual' : 'Mensual')) : 'Sin membresía')}</span>
         </div>
       </div>
+      ${!S.foto ? '<button class="btn btn--ghost" id="perfil-google-foto"><svg class="ic"><use href="#i-image"/></svg>Usar foto de Google</button>' : ''}
       <button class="btn btn--accent" id="perfil-editar"><svg class="ic"><use href="#i-edit"/></svg>Editar datos</button>
       <button class="btn btn--ghost" data-section="directorio"><svg class="ic"><use href="#i-users"/></svg>Mi tarjeta del directorio</button>
       <button class="btn btn--ghost" data-tour-restart type="button"><span class="tour-help-icon" aria-hidden="true">?</span>Ver recorrido guiado</button>
@@ -3913,6 +3963,11 @@ Sections.perfil = function(){
     </div>`;
   document.getElementById('perfil-editar')?.addEventListener('click', abrirEditorPerfil);
   document.getElementById('perfil-editar-nombre')?.addEventListener('click', abrirEditorPerfil);
+  document.getElementById('perfil-google-foto')?.addEventListener('click', async function(){
+    const btn=this; btn.disabled=true; btn.textContent='Conectando…';
+    try { await window.__conectarFotoGoogle(); Toast.success('Foto conectada','Usaremos la foto de tu cuenta de Google.'); Sections.perfil(); }
+    catch(e){ Toast.error('No se pudo conectar la foto', e.code === 'auth/credential-already-in-use' ? 'Esa cuenta de Google ya está vinculada a otro acceso.' : e.message); btn.disabled=false; btn.innerHTML='<svg class="ic"><use href="#i-image"/></svg>Usar foto de Google'; }
+  });
 };
 
 function abrirEditorPerfil(){
@@ -5615,7 +5670,7 @@ function mountNutricion(c){
         '<header class="ficha-inicial__head"><div class="ficha-inicial__identity">' +
           '<div class="ficha-inicial__avatar">' + foto + '</div><div><div class="ficha-inicial__kicker">Tu espacio profesional</div>' +
           '<h2 id="ficha-inicial-titulo">Bienvenido a SYNOVA, ' + escHtml((S.nombre || 'colega').split(' ')[0]) + '</h2></div></div>' +
-          '<p class="ficha-inicial__intro">Completa estos datos una sola vez. Usaremos tu correo y foto de Google para identificarte en la comunidad; tú podrás editarlos desde Mi perfil.</p></header>' +
+          '<p class="ficha-inicial__intro">Completa estos datos una sola vez. Tu correo y foto de Google identificarán tu cuenta; podrás editarla desde tu tarjeta de usuario.</p></header>' +
         '<form class="ficha-inicial__body" id="ficha-inicial-form">' +
           '<div class="ficha-inicial__grid">' +
             '<div class="ficha-inicial__field"><label for="fi-nombre">Nombre completo</label><input class="ficha-inicial__input" id="fi-nombre" maxlength="80" autocomplete="name" required value="' + escHtml(S.nombre || '') + '"></div>' +
@@ -5962,7 +6017,7 @@ window.SynovaOnboarding = new window.MembershipTour({
   steps: [
     {
       desktopSelectors: '.sidebar .brand',
-      mobileSelectors: '.topbar__left',
+      mobileSelectors: '.topbar__right .avatar',
       title: 'Bienvenido a SYNOVA',
       copy: 'Este es tu espacio de formación y actualización clínica. Te mostraremos los accesos principales para aprovechar cursos, recursos y herramientas en tu práctica profesional.'
     },
@@ -5993,16 +6048,16 @@ window.SynovaOnboarding = new window.MembershipTour({
       copy: 'Entra a un solo centro de herramientas y elige desde ahí la calculadora o formato clínico que necesitas.'
     },
     {
-      desktopSelectors: '.sidebar .nav-item[data-section="perfil"]',
-      mobileSelectors: '.mobile-drawer .mobile-drawer__item[data-section="perfil"]',
+      desktopSelectors: '.sidebar [data-tour="account"]',
+      mobileSelectors: '.mobile-drawer #drawer-member-card',
       mobileDrawer: true,
-      title: 'Perfil y configuración de tu cuenta',
-      copy: 'Desde Mi perfil puedes consultar tus datos y el estado de tu membresía. En Suscripción podrás revisar y gestionar el plan asociado a tu cuenta.'
+      title: 'Tu cuenta SYNOVA',
+      copy: 'Tu tarjeta usa la identidad de tu acceso. Ábrela para consultar o editar tus datos; en Suscripción puedes gestionar tu plan.'
     },
     {
       selectors: '#btn-tour-help',
       title: 'La guía siempre estará disponible',
-      copy: 'Pulsa este botón de ayuda para repetir el recorrido cuando quieras. También encontrarás la misma opción dentro de Mi perfil.'
+      copy: 'Pulsa este botón de ayuda para repetir el recorrido cuando quieras. También lo encontrarás dentro de tu cuenta.'
     }
   ],
   onFinish: function(){ window.celebrarSynova('normal'); }
