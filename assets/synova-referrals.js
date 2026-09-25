@@ -23,6 +23,7 @@
       .ref-step{height:12px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border)}
       .ref-step.is-done{background:linear-gradient(90deg,var(--primary),var(--accent));border-color:transparent}
       .ref-invite-note{margin:12px 0;padding:11px 13px;border-radius:12px;background:#e8f7f4;border:1px solid #9adbcf;color:#14685d;font-size:12px;font-weight:700}
+      .ref-credit-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.ref-credit-stat{padding:9px 11px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border);font-size:11px;color:var(--text-2)}.ref-credit-stat b{display:block;color:var(--text);font:800 15px 'Plus Jakarta Sans',sans-serif;margin-bottom:1px}
       [data-theme="dark"] .ref-invite-note{background:#123631;border-color:#285d55;color:#9ce1d5}
       @media(max-width:680px){.ref-compact__head,.ref-compact__bottom{display:grid;grid-template-columns:1fr}.ref-code{width:max-content;max-width:100%}.ref-actions .btn{flex:1}}
     `;
@@ -72,19 +73,19 @@
     mount.innerHTML = '<div class="sub-loading" style="min-height:120px"><div class="sub-loading__spin"></div><div>Cargando invitaciones…</div></div>';
     content.appendChild(mount);
     try {
-      var data = await referralFetch('/referrals/me');
-      var done = Number(data.progress || 0);
+      var results = await Promise.all([referralFetch('/referrals/me'), referralFetch('/credits/me')]);
+      var data = results[0], credits = results[1] || {};
       if (!document.getElementById('ref-compact')) return;
       mount.innerHTML = `
         <div class="ref-compact__head">
-          <div><div class="ref-compact__kicker">Beneficios</div><h3>Invita y gana</h3><div class="ref-muted">Comparte tu enlace. Cada 3 suscripciones pagadas obtienes una recompensa.</div></div>
-          <div class="ref-code">${safe(data.code)}</div>
+          <div><div class="ref-compact__kicker">Créditos SYNOVA</div><h3>Invita y amplía tu biblioteca</h3><div class="ref-muted">Recibe 50 créditos cuando un colega se registra y 250 más cuando activa su primera membresía VIP.</div></div>
+          <div class="ref-code">${Number(credits.balance || 0)} créditos</div>
         </div>
         <div class="ref-compact__bottom">
-          <div><div class="ref-progress">${[0,1,2].map(function(i){return '<div class="ref-step '+(i<done?'is-done':'')+'"></div>';}).join('')}</div><div class="ref-muted"><b style="color:var(--text)">${done} de 3</b> para tu próxima recompensa</div></div>
+          <div><div class="ref-code" style="font-size:12px">${safe(data.code)}</div><div class="ref-credit-stats"><span class="ref-credit-stat"><b>${Number(credits.referredRegistrations || 0)}</b>registros</span><span class="ref-credit-stat"><b>${Number(credits.referredVip || 0)}</b>nuevos VIP</span><span class="ref-credit-stat"><b>${Number(credits.lifetimeEarned || 0)}</b>créditos ganados</span></div></div>
           <div class="ref-actions"><button class="btn btn--ghost btn--sm" id="ref-copy">Copiar enlace</button><button class="btn btn--wa btn--sm" id="ref-whatsapp">WhatsApp</button></div>
         </div>
-        ${Number(data.pendingRewards || 0) ? '<div class="ref-invite-note">Tienes una recompensa pendiente.</div>' : ''}`;
+        <div class="ref-muted" style="margin-top:14px">Quien se registra con tu enlace también recibe 25 créditos; al volverse VIP obtiene 100 adicionales.</div>`;
       mount.querySelector('#ref-copy').addEventListener('click', async function () {
         await navigator.clipboard.writeText(data.link);
         if (window.Toast) Toast.success('Enlace copiado', 'Ya puedes compartirlo.');
