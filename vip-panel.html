@@ -93,9 +93,8 @@ body::after{
 .sidebar::-webkit-scrollbar{width:5px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
 
-.brand{display:flex;align-items:center;gap:11px;padding:6px 16px 16px;border-bottom:0.5px solid var(--border);margin-bottom:6px}
-.brand__logo{width:38px;height:38px;border-radius:11px;background:#fff;border:0.5px solid rgba(11,58,102,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:5px;box-shadow:0 2px 8px rgba(11,58,102,.12)}
-.brand__logo img{width:100%;height:100%;object-fit:contain;display:block}
+.brand{display:flex;align-items:center;justify-content:center;padding:5px 18px 17px;border-bottom:0.5px solid var(--border);margin-bottom:6px;min-height:66px}
+.brand__logo-img{width:142px;max-width:100%;height:48px;object-fit:contain;display:block;filter:drop-shadow(0 4px 10px rgba(11,58,102,.1))}
 .brand__name{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;line-height:1.1}
 .brand__plan{display:inline-block;font-size:9px;letter-spacing:1.4px;text-transform:uppercase;color:var(--primary);font-weight:700;margin-top:3px;padding:2px 7px;border-radius:100px;background:color-mix(in srgb,var(--primary) 12%,transparent);border:0.5px solid color-mix(in srgb,var(--primary) 30%,transparent)}
 
@@ -128,17 +127,18 @@ body::after{
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:600;padding:5px 12px 5px 10px;border-radius:100px;background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary);border:0.5px solid color-mix(in srgb,var(--primary) 30%,transparent);letter-spacing:1.2px;text-transform:uppercase}
 .pill .ic{width:11px;height:11px}
 
-.icon-btn{width:34px;height:34px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);transition:color .15s,border-color .15s,background .15s;position:relative}
-.icon-btn:hover{color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
-.icon-btn .ic{width:16px;height:16px}
+.icon-btn{width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--border-2);display:flex;align-items:center;justify-content:center;color:var(--text-2);box-shadow:0 5px 16px rgba(11,42,74,.06),inset 0 1px 0 color-mix(in srgb,#fff 65%,transparent);transition:transform .18s,color .18s,border-color .18s,background .18s,box-shadow .18s;position:relative}
+.icon-btn:hover{transform:translateY(-1px);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 34%,var(--border));background:var(--surface);box-shadow:0 9px 22px rgba(11,42,74,.1)}
+.icon-btn .ic{width:17px;height:17px;stroke-width:1.7}
 .icon-btn .dot{position:absolute;top:8px;right:9px;width:6px;height:6px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 2px var(--surface)}
 
-.theme-toggle{display:flex;align-items:center;gap:7px;padding:7px 13px 7px 11px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2);font-size:11.5px;color:var(--text-2);font-weight:500;transition:color .15s,border-color .15s,background .15s}
-.theme-toggle:hover{color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
+.theme-toggle{display:flex;align-items:center;gap:7px;min-height:38px;padding:7px 13px 7px 11px;border-radius:12px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--border-2);box-shadow:0 5px 16px rgba(11,42,74,.06),inset 0 1px 0 color-mix(in srgb,#fff 65%,transparent);font-size:11px;color:var(--text-2);font-weight:650;transition:transform .18s,color .18s,border-color .18s,background .18s,box-shadow .18s}
+.theme-toggle:hover{transform:translateY(-1px);color:var(--primary);border-color:color-mix(in srgb,var(--primary) 34%,var(--border));background:var(--surface);box-shadow:0 9px 22px rgba(11,42,74,.1)}
 .theme-toggle .ic{width:14px;height:14px}
 
-.avatar{display:flex;align-items:center;padding:3px;border-radius:100px;background:var(--surface);border:0.5px solid var(--border-2)}
-.avatar__circle{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.3px;overflow:hidden}
+.avatar{display:flex;align-items:center;padding:3px;border-radius:12px;background:color-mix(in srgb,var(--surface) 92%,transparent);border:1px solid var(--border-2);box-shadow:0 5px 16px rgba(11,42,74,.06),inset 0 1px 0 color-mix(in srgb,#fff 65%,transparent);transition:transform .18s,border-color .18s,box-shadow .18s}
+.avatar:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--primary) 38%,var(--border));box-shadow:0 9px 22px rgba(11,42,74,.11)}
+.avatar__circle{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--primary-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:-.3px;overflow:hidden}
 .avatar__info{display:flex;flex-direction:column;line-height:1.1}
 .avatar__name{font-size:11px;font-weight:600}
 .avatar__plan{font-size:9px;font-weight:600;color:var(--primary);letter-spacing:.5px}
@@ -1227,11 +1227,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand__logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
-      <div>
-        <div class="brand__name">SYNOVA</div>
-        <div class="brand__plan" id="brand-plan-badge">Cargando…</div>
-      </div>
+      <img class="brand__logo-img" src="assets/img/synova-logo-cropped.png" alt="SYNOVA México">
     </div>
 
     <div class="nav-section">
@@ -1278,7 +1274,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
       <div class="topbar__left"></div>
       <div class="topbar__right">
         <button class="icon-btn" id="btn-tour-help" data-tour-restart type="button" aria-label="Volver a ver el recorrido guiado" title="Recorrido guiado">
-          <span class="tour-help-icon" aria-hidden="true">?</span>
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.7 9a2.45 2.45 0 0 1 4.65 1.08c0 1.92-2.35 2.05-2.35 3.72"></path><path d="M12 17.3h.01"></path></svg>
         </button>
         <button class="icon-btn" id="btn-notif" aria-label="Notificaciones">
           <svg class="ic"><use href="#i-bell"/></svg>
@@ -1363,11 +1359,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   <div class="mobile-drawer__panel">
     <div class="mobile-drawer__header">
       <div class="mobile-drawer__brand">
-        <div class="brand__logo"><img src="assets/img/synova-logo.png" alt="SYNOVA México"></div>
-        <div>
-          <div class="brand__name">SYNOVA</div>
-          <div class="brand__plan" id="drawer-plan-badge">Cargando…</div>
-        </div>
+        <img class="brand__logo-img" src="assets/img/synova-logo-cropped.png" alt="SYNOVA México">
       </div>
       <button class="mobile-drawer__close" id="mobile-drawer-close" aria-label="Cerrar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1767,8 +1759,8 @@ function hidratarUI(S){
   ['sidebar-member-plan','drawer-member-plan'].forEach(id => { const el=document.getElementById(id); if(el)el.textContent=cuentaPlan; });
   const upgrade=document.getElementById('sidebar-upgrade'); if(upgrade)upgrade.hidden=S.isAdmin||S.modo==='vip';
   const planTxt = S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? ('VIP ' + (S.plan === 'anual' ? 'Anual' : 'Mensual')) : 'Sin membresía');
-  document.getElementById('brand-plan-badge').textContent = planTxt;
-  document.getElementById('drawer-plan-badge').textContent = planTxt;
+  const brandPlan=document.getElementById('brand-plan-badge'); if(brandPlan)brandPlan.textContent=planTxt;
+  const drawerPlan=document.getElementById('drawer-plan-badge'); if(drawerPlan)drawerPlan.textContent=planTxt;
   document.getElementById('nav-badge-cursos').textContent = '';
   const offerBar = document.getElementById('member-offer-bar');
   if (offerBar) offerBar.classList.toggle('is-visible', !S.isAdmin && S.modo !== 'vip');
@@ -1819,6 +1811,7 @@ onAuthStateChanged(auth, async (user) => {
     institucion: datosMiembro.institucion || datosMiembro.empresa || '',
     ciudad: datosMiembro.ciudad || '',
     perfilCompleto: datosMiembro.perfilCompleto === true,
+    fichaInicialVista: datosMiembro.fichaInicialVista === true,
     isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince
   };
 
@@ -1964,6 +1957,7 @@ window.__guardarFichaInicial = async function(datos){
   await setDoc(doc(db, 'miembros', user.uid), {
     ...limpio,
     perfilCompleto: true,
+    fichaInicialVista: true,
     perfilCompletadoAt: serverTimestamp(),
     lastUpdatedAt: serverTimestamp()
   }, { merge: true });
@@ -1980,8 +1974,17 @@ window.__guardarFichaInicial = async function(datos){
     if (!actual.foto && S.foto) parche.foto = S.foto;
     await setDoc(tarjetaRef, parche, { merge: true });
   }
-  Object.assign(S, limpio, { perfilCompleto: true });
+  Object.assign(S, limpio, { perfilCompleto: true, fichaInicialVista: true });
   return S;
+};
+
+window.__marcarFichaInicialVista = async function(){
+  const user=auth.currentUser;
+  const S=window.UserState;
+  if(!user||!S)return;
+  S.fichaInicialVista=true;
+  try{localStorage.setItem('synova:ficha:vista:'+user.uid,'1');}catch(e){}
+  try{await setDoc(doc(db,'miembros',user.uid),{fichaInicialVista:true,fichaInicialVistaAt:serverTimestamp()},{merge:true});}catch(e){}
 };
 
 window.__signOut = async function(){
@@ -5648,15 +5651,19 @@ function mountNutricion(c){
     var ficha = document.getElementById('synova-ficha-inicial');
     if (ficha) ficha.remove();
     if (omitida && window.UserState) {
-      try { sessionStorage.setItem('synova:ficha:omitida:' + window.UserState.uid, '1'); } catch (e) {}
+      try { localStorage.setItem('synova:ficha:vista:' + window.UserState.uid, '1'); } catch (e) {}
+      if (window.__marcarFichaInicialVista) window.__marcarFichaInicialVista();
     }
     continuar();
   }
 
   window.__mostrarFichaInicialSynova = function(){
     var S = window.UserState;
-    if (!S || S.perfilCompleto || document.getElementById('synova-ficha-inicial')) return;
-    try { if (sessionStorage.getItem('synova:ficha:omitida:' + S.uid)) return; } catch (e) {}
+    if (!S || S.perfilCompleto || S.fichaInicialVista || document.getElementById('synova-ficha-inicial')) return;
+    try {
+      if (localStorage.getItem('synova:ficha:vista:' + S.uid)) return;
+      if (sessionStorage.getItem('synova:ficha:omitida:' + S.uid)) { localStorage.setItem('synova:ficha:vista:' + S.uid,'1'); if(window.__marcarFichaInicialVista)window.__marcarFichaInicialVista(); return; }
+    } catch (e) {}
     var foto = window.__avatarHtml ? window.__avatarHtml(S.foto, S.iniciales, 'Foto de ' + S.nombre) : escHtml(S.iniciales || 'SN');
     var ficha = document.createElement('div');
     ficha.className = 'ficha-inicial';
