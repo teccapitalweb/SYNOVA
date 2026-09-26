@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=8">
-<link rel="stylesheet" href="assets/synova-books-credits.css?v=2">
+<link rel="stylesheet" href="assets/synova-books-credits.css?v=3">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -4423,7 +4423,8 @@ function noticiaTiempoRel(ts){
   function folio(pref){ const d = new Date(); const r = Math.random().toString(36).slice(2, 5).toUpperCase(); return (pref || 'SYN') + '-' + d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0') + '-' + r; }
   function hoyStr(){ return new Date().toLocaleDateString('es-MX', { day:'numeric', month:'long', year:'numeric' }); }
   function toolRequiereVIP(nombre){
-    if (window.toolEsVIP && window.toolEsVIP()) return true;
+    if (toolTieneAcceso()) return true;
+    if (creditosTool()) { abrirCanjeTool(__toolActual); return false; }
     if (typeof window.__showPaywallModal === 'function') window.__showPaywallModal('Las Herramientas Pro son exclusivas para miembros VIP. Actívala para ver los resultados de ' + (nombre || 'las calculadoras') + ' y descargar tus reportes en PDF.');
     else if (window.Toast) Toast.info('Solo VIP','Activa tu membresía para usar esta función.');
     return false;
@@ -4434,21 +4435,23 @@ function noticiaTiempoRel(ts){
      sus datos. Cuando el cálculo ya iba a entregarle el número, se detiene
      aquí y se le ofrece la membresía. El PDF sigue con su propio candado. */
   function toolGateResultado(nombre, refs){
-    if (window.toolEsVIP && window.toolEsVIP()) return true;
+    if (toolTieneAcceso()) return true;
     refs = refs || {};
+    const tc = creditosTool();
     if (refs.val){
-      refs.val.innerHTML = '<span style="font-size:.42em;font-weight:800;letter-spacing:1px;opacity:.8">SOLO VIP</span>';
+      refs.val.innerHTML = '<span style="font-size:.42em;font-weight:800;letter-spacing:1px;opacity:.8">BLOQUEADO</span>';
       refs.val.style.color = 'var(--text-3)';
     }
-    if (refs.note) refs.note.textContent = 'Ya capturaste los datos: activa tu membresía para ver el resultado.';
+    if (refs.note) refs.note.textContent = 'Ya capturaste los datos: canjea la herramienta o activa tu membresía para ver el resultado.';
     [refs.mini, refs.extra1, refs.extra2].forEach(function(el){ if (el && el.style) el.style.display = 'none'; });
     if (refs.alert){
       refs.alert.innerHTML = '<div class="bn-alert bn-alert--warn">' +
         '<svg class="ic"><use href="#i-crown"/></svg>' +
-        '<div><b>Resultado exclusivo para miembros VIP.</b> Capturaste todo bien; para ver ' +
-        escHtml(nombre || 'el cálculo') + ' y descargar el reporte en PDF necesitas una membresía activa.' +
-        '<div style="margin-top:10px"><button type="button" class="btn btn--accent btn--sm" data-tool-paywall="' +
-        escHtml(nombre || '') + '">Hazte VIP</button></div></div></div>';
+        '<div><b>Resultado bloqueado.</b> Capturaste todo bien; desbloquea ' + escHtml(nombre || 'el cálculo') +
+        (tc ? ' con <b>' + tc.cost + ' créditos</b> o' : '') + ' con tu membresía VIP.' +
+        '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">' +
+        (tc ? '<button type="button" class="btn btn--accent btn--sm" data-tool-redeem="' + __toolActual + '">Canjear ' + tc.cost + ' cr</button>' : '') +
+        '<button type="button" class="btn btn--ghost btn--sm" data-section="suscripcion">Hazte VIP</button></div></div></div>';
     }
     /* El modal salta una sola vez por sesión: el aviso de arriba queda fijo. */
     if (!window.__toolPaywallVisto){ window.__toolPaywallVisto = true; toolRequiereVIP(nombre); }
@@ -4460,6 +4463,49 @@ function noticiaTiempoRel(ts){
   });
   
   const esVIP = () => !!(window.toolEsVIP && window.toolEsVIP());
+
+  /* ── Créditos SYNOVA · cualquier cuenta puede canjear una herramienta (los ids coinciden con el backend) ── */
+  const TOOL_CREDITS = {
+    'tool-dosis':       { id:'tool-dosis-peso',  cost:120, title:'Dosis por peso' },
+    'tool-receta':      { id:'tool-receta',      cost:150, title:'Receta médica' },
+    'tool-imc':         { id:'tool-imc',         cost:150, title:'IMC y riesgo' },
+    'tool-anestesicos': { id:'tool-anestesicos', cost:180, title:'Anestésicos locales' },
+    'tool-nutricion':   { id:'tool-nutricion',   cost:200, title:'Nutrición clínica' }
+  };
+  let __toolActual = null;
+  const creditosTool = (section) => TOOL_CREDITS[section || __toolActual] || null;
+  const toolCanjeada = (section) => { const t = creditosTool(section); return !!(t && window.SynovaCredits && window.SynovaCredits.owned(t.id)); };
+  const toolTieneAcceso = (section) => esVIP() || toolCanjeada(section);
+  const saldoCreditos = () => (window.SynovaCredits ? window.SynovaCredits.balance() : 0);
+  window.toolTieneAcceso = toolTieneAcceso;
+
+  async function abrirCanjeTool(section){
+    const t = creditosTool(section); if (!t) return;
+    const SC = window.SynovaCredits;
+    if (!SC) { Toast.info('Preparando tus créditos', 'Intenta de nuevo en un momento.'); return; }
+    if (!SC.state.loaded) await SC.load();
+    const saldo = SC.balance(), costo = t.cost, alcanza = saldo >= costo;
+    const body = alcanza
+      ? '<div class="credit-confirm"><strong>' + escHtml(t.title) + '</strong><p>Se descontarán <b>' + costo + '</b> de tus <b>' + saldo + '</b> créditos. La herramienta queda desbloqueada para siempre.</p></div>'
+      : '<div class="credit-confirm"><strong>' + escHtml(t.title) + '</strong><p>No tienes créditos suficientes. Tienes <b>' + saldo + '</b> y necesitas <b>' + costo + '</b>. Gánalos en <b>Retos</b> o hazte VIP.</p></div>';
+    const footer = '<button class="btn btn--ghost" type="button" onclick="Modal.close(\'tool-credit-redeem\')">Cancelar</button>' +
+      (alcanza ? '<button class="btn btn--accent" type="button" id="tool-credit-confirm">Canjear y usar</button>' : '<button class="btn btn--accent" type="button" id="tool-credit-earn">Ir a Retos</button>');
+    Modal.open({ id:'tool-credit-redeem', title: alcanza ? '¿Canjear ' + costo + ' créditos?' : 'Créditos insuficientes', subtitle:'Créditos SYNOVA', icon:'i-crown', size:'sm', body, footer });
+    document.getElementById('tool-credit-earn')?.addEventListener('click', () => { Modal.close('tool-credit-redeem'); if (window.navigateTo) navigateTo('retos'); });
+    document.getElementById('tool-credit-confirm')?.addEventListener('click', async (ev) => {
+      const b = ev.currentTarget; b.disabled = true; b.textContent = 'Canjeando…';
+      try {
+        await SC.redeem(t.id);
+        Modal.close('tool-credit-redeem');
+        Toast.success('Herramienta desbloqueada', t.title + ' ya es tuya.');
+        if (window.navigateTo) navigateTo(section || __toolActual);
+      } catch (e) { b.disabled = false; b.textContent = 'Canjear y usar'; Toast.error('No pudimos completar el canje', e.message || 'Intenta de nuevo.'); }
+    });
+  }
+  document.addEventListener('click', function(ev){
+    var b = ev.target && ev.target.closest && ev.target.closest('[data-tool-redeem]');
+    if (b){ ev.preventDefault(); abrirCanjeTool(b.getAttribute('data-tool-redeem')); }
+  });
 
   /* ── PDF membrete SYNOVA ── */
   const SYN = { azul:[28,111,176], tealAcc:[47,209,198], tinta:[15,23,42], gris:[110,120,140], gris2:[150,160,178], linea:[225,232,245] };
@@ -4510,8 +4556,10 @@ function noticiaTiempoRel(ts){
 
   /* Shell común */
   function toolShell(container, cfg){
-    const lock = (!esVIP())
-      ? '<div class="bn-viplock"><div class="bn-viplock__ic"><svg class="ic"><use href="#i-crown"/></svg></div><div class="bn-viplock__txt"><div class="bn-viplock__t">Herramienta Pro · exclusiva para miembros VIP</div><div class="bn-viplock__d">Captura los datos que quieras: el resultado y el reporte PDF se abren con tu membresía activa.</div></div><button class="btn btn--accent btn--sm bn-viplock-btn" data-section="suscripcion">Hazte VIP</button></div>'
+    const tc = creditosTool();
+    const lock = (!toolTieneAcceso())
+      ? '<div class="bn-viplock"><div class="bn-viplock__ic"><svg class="ic"><use href="#i-crown"/></svg></div><div class="bn-viplock__txt"><div class="bn-viplock__t">Herramienta Pro · ' + (tc ? tc.cost + ' créditos o membresía VIP' : 'exclusiva para miembros VIP') + '</div><div class="bn-viplock__d">' + (tc ? 'Tu saldo: ' + saldoCreditos() + ' créditos. ' : '') + 'Captura los datos que quieras: el resultado y el reporte PDF se abren al desbloquearla.</div></div>' +
+        (tc ? '<button class="btn btn--accent btn--sm bn-viplock-btn" data-tool-redeem="' + __toolActual + '">Canjear ' + tc.cost + ' cr</button>' : '<button class="btn btn--accent btn--sm bn-viplock-btn" data-section="suscripcion">Hazte VIP</button>') + '</div>'
       : '';
     container.innerHTML =
       '<div class="bn-tool fade-up">' +
@@ -4891,18 +4939,28 @@ function mountNutricion(c){
       { section:'tool-anestesicos', image:'assets/img/tools/anestesicos-locales.png', label:'Seguridad clínica', title:'Anestésicos locales', desc:'Revisa dosis máximas, cartuchos y límites de vasoconstrictor.' },
       { section:'tool-nutricion', image:'assets/img/tools/nutricion-clinica.png', label:'Nutrición', title:'Nutrición clínica', desc:'Estima gasto energético y distribución de macronutrientes.' }
     ];
-    c.innerHTML = '<div class="tools-hub fade-up"><section class="tools-hub__hero"><div class="tools-hub__hero-copy"><div class="tools-hub__kicker"><svg class="ic"><use href="#i-tools"/></svg>Herramientas SYNOVA</div><h1>Apoyo clínico,<br>en un solo lugar.</h1><p>Calculadoras y formatos profesionales para acompañar decisiones frecuentes de forma clara y ordenada.</p></div></section><div class="tools-hub__head"><div><span>Recursos disponibles</span><h2>Elige una herramienta</h2></div><small>' + herramientas.length + ' herramientas</small></div><div class="tools-hub__grid">' + herramientas.map(function(h){ return '<button class="tool-launch" data-section="' + h.section + '"><span class="tool-launch__icon"><img src="' + h.image + '" alt="" loading="lazy"></span><span><span class="tool-launch__label">' + h.label + '</span><strong>' + h.title + '</strong><p>' + h.desc + '</p></span><span class="tool-launch__go">→</span></button>'; }).join('') + '</div></div>';
+    const vip = esVIP();
+    const precio = function(h){ const tc = creditosTool(h.section); if (vip) return '<span class="tool-launch__price is-owned">Incluida con VIP</span>'; if (toolCanjeada(h.section)) return '<span class="tool-launch__price is-owned">Tuya</span>'; return tc ? '<span class="tool-launch__price">' + tc.cost + ' créditos</span>' : ''; };
+    c.innerHTML = '<div class="tools-hub fade-up"><section class="tools-hub__hero"><div class="tools-hub__hero-copy"><div class="tools-hub__kicker"><svg class="ic"><use href="#i-tools"/></svg>Herramientas SYNOVA</div><h1>Apoyo clínico,<br>en un solo lugar.</h1><p>' + (vip ? 'Calculadoras y formatos profesionales para acompañar decisiones frecuentes de forma clara y ordenada.' : 'Tus primeros 120 créditos son de regalo: alcanzan para tu primera herramienta. Tu saldo: <b>' + saldoCreditos() + ' créditos</b>.') + '</p></div></section><div class="tools-hub__head"><div><span>Recursos disponibles</span><h2>Elige una herramienta</h2></div><small>' + herramientas.length + ' herramientas</small></div><div class="tools-hub__grid">' + herramientas.map(function(h){ return '<button class="tool-launch" data-section="' + h.section + '"><span class="tool-launch__icon"><img src="' + h.image + '" alt="" loading="lazy"></span><span><span class="tool-launch__label">' + h.label + '</span><strong>' + h.title + '</strong><p>' + h.desc + '</p>' + precio(h) + '</span><span class="tool-launch__go">→</span></button>'; }).join('') + '</div></div>';
   }
 
   /* ── Registro en el router del panel ── */
   function reg(){
     if (!window.Sections) return setTimeout(reg, 60);
-    window.Sections['herramientas'] = function(){ mountHerramientas(document.getElementById('content')); };
-    window.Sections['tool-dosis'] = function(){ mountDosis(document.getElementById('content')); };
-    window.Sections['tool-receta'] = function(){ mountReceta(document.getElementById('content')); };
-    window.Sections['tool-imc'] = function(){ mountImc(document.getElementById('content')); };
-    window.Sections['tool-anestesicos'] = function(){ mountAnest(document.getElementById('content')); };
-    window.Sections['tool-nutricion'] = function(){ mountNutricion(document.getElementById('content')); };
+    // Carga el saldo antes de pintar para que el candado refleje canjes previos.
+    const conCreditos = function(section, mount){
+      return function(){
+        __toolActual = section;
+        const run = function(){ if (__toolActual === section) mount(document.getElementById('content')); };
+        if (window.SynovaCredits && !window.SynovaCredits.state.loaded && !esVIP()) window.SynovaCredits.load().then(run); else run();
+      };
+    };
+    window.Sections['herramientas'] = conCreditos(null, mountHerramientas);
+    window.Sections['tool-dosis'] = conCreditos('tool-dosis', mountDosis);
+    window.Sections['tool-receta'] = conCreditos('tool-receta', mountReceta);
+    window.Sections['tool-imc'] = conCreditos('tool-imc', mountImc);
+    window.Sections['tool-anestesicos'] = conCreditos('tool-anestesicos', mountAnest);
+    window.Sections['tool-nutricion'] = conCreditos('tool-nutricion', mountNutricion);
   }
   reg();
 })();
@@ -6014,7 +6072,7 @@ body{-webkit-tap-highlight-color:transparent}
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="assets/synova-books-credits.js?v=1"></script>
+<script src="assets/synova-books-credits.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>
 <script>
