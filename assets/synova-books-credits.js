@@ -38,15 +38,25 @@
     try {
       var data = await api('/credits/me');
       state.balance=Number(data.balance||0); state.lifetimeEarned=Number(data.lifetimeEarned||0); state.unlocked=Array.isArray(data.unlocked)?data.unlocked:[]; state.loaded=true;
+      if(data.welcomeJustGranted){ window.Toast&&Toast.success('Te regalamos '+Number(data.welcomeCredits||120)+' créditos','Alcanzan para tu primera herramienta o libro.'); }
     } catch(e){ state.loaded=true; console.warn('[Créditos SYNOVA]',e.message); }
+    window.dispatchEvent(new CustomEvent('synova:credits-changed',{detail:state}));
     return state;
   }
+  // Canje genérico (libros y herramientas). Actualiza saldo y desbloqueos locales.
+  async function redeemReward(rewardId){
+    var result=await api('/credits/redeem',{method:'POST',body:JSON.stringify({rewardId:rewardId})});
+    state.balance=Number(result.balance||0); if(!owned(rewardId))state.unlocked.push(rewardId);
+    window.dispatchEvent(new CustomEvent('synova:credits-changed',{detail:state}));
+    return result;
+  }
+  window.SynovaCredits={ state:state, load:loadCredits, owned:owned, balance:function(){return state.balance;}, redeem:redeemReward };
   function wallet(){
     return '<div class="credit-wallet"><div class="credit-wallet__label">Tu saldo disponible</div><div class="credit-wallet__value"><span class="credit-coin">C</span><span id="syn-credit-balance">'+state.balance+'</span></div><p class="credit-wallet__sub">Créditos SYNOVA · no transferibles</p></div>';
   }
   function renderLibrary(){
     var c=document.getElementById('content'); if(!c)return;
-    c.innerHTML='<div class="books-page fade-up"><section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-book')+'Biblioteca SYNOVA</div><h1>Conocimiento clínico<br>para conservar.</h1><p>Gana créditos al superar retos y compartir SYNOVA. Canjéalos por libros y recursos profesionales que permanecerán en tu cuenta.</p></div>'+wallet()+'</section><div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu próxima referencia</h2></div><small>'+books.filter(function(b){return b.available;}).length+' disponibles · 1 próximamente</small></div><div class="book-shelf">'+books.map(card).join('')+'</div></div>';
+    c.innerHTML='<div class="books-page fade-up"><section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-book')+'Biblioteca SYNOVA</div><h1>Conocimiento clínico<br>para conservar.</h1><p>Tus primeros 120 créditos son de regalo. Gana más en Retos y compartiendo SYNOVA, y canjéalos por libros y herramientas que permanecerán en tu cuenta.</p></div>'+wallet()+'</section><div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu próxima referencia</h2></div><small>'+books.filter(function(b){return b.available;}).length+' disponibles · 1 próximamente</small></div><div class="book-shelf">'+books.map(card).join('')+'</div></div>';
     c.querySelectorAll('[data-book]').forEach(function(el){ el.addEventListener('click',function(){ renderDetail(el.dataset.book); }); });
     if(!state.loaded) loadCredits().then(function(){ if(document.querySelector('.books-page'))renderLibrary(); });
   }
@@ -64,18 +74,22 @@
     var redeem=document.getElementById('book-redeem'); if(redeem)redeem.onclick=function(){confirmRedeem(book);};
   }
   function confirmRedeem(book){
-    if(state.balance<book.cost){ window.Toast&&Toast.info('Aún te faltan créditos','Necesitas '+(book.cost-state.balance)+' créditos más. Sigue participando en Retos o invita a un colega.'); return; }
+    var alcanza=state.balance>=book.cost;
     var run=function(){ redeem(book); };
     if(window.Modal&&Modal.open){
-      Modal.open({ id:'book-redeem-confirm', title:'Añadir a tu biblioteca', subtitle:'Canje permanente con Créditos SYNOVA', icon:'i-book', size:'sm', body:'<div style="display:flex;gap:14px;align-items:center"><img src="'+book.cover+'" alt="" style="width:72px;aspect-ratio:2/3;object-fit:cover;border-radius:7px;box-shadow:4px 7px 16px rgba(0,0,0,.2)"><div><strong>'+esc(book.title)+'</strong><p style="margin-top:6px;color:var(--text-2);font-size:12px;line-height:1.5">Se descontarán <b>'+book.cost+' créditos</b>. El libro quedará vinculado a tu cuenta.</p></div></div>', footer:'<button class="btn btn--ghost" onclick="Modal.close(\'book-redeem-confirm\')">Cancelar</button><button class="btn btn--accent" id="confirm-book-redeem">Confirmar canje</button>' });
-      setTimeout(function(){ var b=document.getElementById('confirm-book-redeem'); if(b)b.onclick=function(){Modal.close('book-redeem-confirm');run();}; },0);
-    } else if(confirm('¿Canjear '+book.title+' por '+book.cost+' créditos?')) run();
+      var body='<div class="credit-confirm"><img src="'+book.cover+'" alt="" style="width:72px;aspect-ratio:2/3;object-fit:cover;border-radius:7px;box-shadow:4px 7px 16px rgba(0,0,0,.2);margin-bottom:10px"><strong>'+esc(book.title)+'</strong>'+(alcanza
+        ?'<p>Se descontarán <b>'+book.cost+'</b> de tus <b>'+state.balance+'</b> créditos. El libro queda en tu cuenta para siempre.</p>'
+        :'<p>No tienes créditos suficientes. Tienes <b>'+state.balance+'</b> y necesitas <b>'+book.cost+'</b>. Gánalos en <b>Retos</b> o invita a un colega.</p>')+'</div>';
+      var footer='<button class="btn btn--ghost" onclick="Modal.close(\'book-redeem-confirm\')">Cancelar</button>'+(alcanza?'<button class="btn btn--accent" id="confirm-book-redeem">Canjear y leer</button>':'<button class="btn btn--accent" id="confirm-book-earn">Ir a Retos</button>');
+      Modal.open({ id:'book-redeem-confirm', title:alcanza?'¿Canjear '+book.cost+' créditos?':'Créditos insuficientes', subtitle:'Créditos SYNOVA', icon:'i-book', size:'sm', body:body, footer:footer });
+      setTimeout(function(){ var b=document.getElementById('confirm-book-redeem'); if(b)b.onclick=function(){Modal.close('book-redeem-confirm');run();}; var g=document.getElementById('confirm-book-earn'); if(g)g.onclick=function(){Modal.close('book-redeem-confirm'); if(window.navigateTo)navigateTo('retos');}; },0);
+    } else if(!alcanza){ window.Toast&&Toast.info('Créditos insuficientes','Tienes '+state.balance+' y necesitas '+book.cost+'. Gánalos en Retos.'); }
+    else if(confirm('¿Canjear '+book.title+' por '+book.cost+' créditos?')) run();
   }
   async function redeem(book){
     try{
-      var result=await api('/credits/redeem',{method:'POST',body:JSON.stringify({rewardId:book.id})});
-      state.balance=Number(result.balance||0); if(!owned(book.id))state.unlocked.push(book.id);
-      window.Toast&&Toast.success('Libro añadido','Ya puedes abrirlo desde tu biblioteca.'); renderDetail(book.id);
+      await redeemReward(book.id);
+      window.Toast&&Toast.success('Libro añadido','Abriendo tu lector…'); renderDetail(book.id); openReader(book);
     }catch(e){ window.Toast&&Toast.error('No se pudo canjear',e.message); }
   }
   async function openReader(book){
