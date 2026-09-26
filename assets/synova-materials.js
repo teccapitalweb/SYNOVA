@@ -31,24 +31,54 @@
       '<div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu material</h2></div><small>'+materials.length+' materiales · '+mine+' tuyos</small></div>' +
       '<div class="mat-shelf">'+materials.map(card).join('')+'</div></div>';
     c.querySelectorAll('[data-material]').forEach(function(el){ el.addEventListener('click', function(){ open(el.dataset.material); }); });
+    c.querySelectorAll('[data-material-dl]').forEach(function(el){ el.addEventListener('click', function(ev){ ev.stopPropagation(); var m = find(el.dataset.materialDl); if (m) download(m); }); });
   }
+
+  function find(id){ return materials.find(function(x){ return x.id === id; }); }
 
   function card(m){
     var mine = owned(m.id);
+    var foot = mine
+      ? '<span class="book-cost">'+icon('i-check-circle')+'Tuyo · abrir</span><span class="mat-item__actions"><span class="book-open" data-material-dl="'+m.id+'" role="button" title="Descargar" aria-label="Descargar '+esc(m.title)+'">'+icon('i-download')+'</span><span class="book-open" title="Ver">'+icon('i-arrow-right')+'</span></span>'
+      : '<span class="book-cost"><span class="credit-coin">C</span>'+m.cost+' créditos</span><span class="book-open">'+icon('i-arrow-right')+'</span>';
     return '<button class="mat-item '+(mine?'is-owned':'')+'" data-material="'+m.id+'">' +
       '<span class="mat-item__icon">'+icon('i-file-text')+'<em>XLSX</em></span>' +
       '<span class="mat-item__body"><span class="book-card__tag">'+esc(m.area)+'</span><strong>'+esc(m.title)+'</strong><span class="mat-item__desc">'+esc(m.desc)+'</span>' +
-      '<span class="mat-item__foot">'+(mine?'<span class="book-cost">'+icon('i-check-circle')+'Tuyo · descargar</span>':'<span class="book-cost"><span class="credit-coin">C</span>'+m.cost+' créditos</span>')+'<span class="book-open">'+icon(mine?'i-download':'i-arrow-right')+'</span></span></span></button>';
+      '<span class="mat-item__foot">'+foot+'</span></span></button>';
+  }
+
+  /* Vista embebida en el visor del panel (Office Online) con un enlace firmado de corta vida. */
+  async function view(m){
+    try {
+      var user = window.__auth && window.__auth.currentUser; if (!user) throw new Error('Inicia sesión para continuar.');
+      window.Toast && Toast.info('Abriendo material', m.title);
+      var res = await fetch(API() + '/api/materials/' + encodeURIComponent(m.id) + '/view', { method:'POST', headers:{ Authorization:'Bearer ' + await user.getIdToken() } });
+      var data = await res.json().catch(function(){ return {}; });
+      if (!res.ok || !data.embedUrl) throw new Error(data.error || 'No pudimos abrir el material.');
+      if (typeof window.__abrirVisor !== 'function') { window.open(data.embedUrl, '_blank', 'noopener'); return; }
+      await window.__abrirVisor(data.embedUrl, m.title);
+      /* El botón de descarga del visor baja el archivo por el canal autenticado. */
+      var dl = document.getElementById('visorDownload');
+      if (dl) {
+        var original = dl.innerHTML;
+        dl.setAttribute('href', '#synova-material');
+        dl.innerHTML = icon('i-download') + 'Descargar';
+        dl.onclick = function(ev){ if (dl.getAttribute('href') !== '#synova-material') return; ev.preventDefault(); download(m); };
+        /* Cuando otro recurso reutiliza el visor, se restaura el botón original. */
+        var mo = new MutationObserver(function(){ if (dl.getAttribute('href') === '#synova-material') return; dl.innerHTML = original; dl.onclick = null; mo.disconnect(); });
+        mo.observe(dl, { attributes:true, attributeFilter:['href'] });
+      }
+    } catch(e){ window.Toast && Toast.error('No se pudo abrir', e.message); }
   }
 
   function open(id){
-    var m = materials.find(function(x){ return x.id === id; }); if (!m) return;
-    if (owned(m.id)) return download(m);
+    var m = find(id); if (!m) return;
+    if (owned(m.id)) return view(m);
     var saldo = balance(), alcanza = saldo >= m.cost;
     var body = '<div class="credit-confirm"><strong>'+esc(m.title)+'</strong>'+(alcanza
       ? '<p>Se descontarán <b>'+m.cost+'</b> de tus <b>'+saldo+'</b> créditos. El material queda en tu cuenta para siempre.</p>'
       : '<p>No tienes créditos suficientes. Tienes <b>'+saldo+'</b> y necesitas <b>'+m.cost+'</b>. Gánalos en <b>Retos</b> o invita a un colega.</p>')+'</div>';
-    var footer = '<button class="btn btn--ghost" onclick="Modal.close(\'mat-redeem\')">Cancelar</button>' + (alcanza ? '<button class="btn btn--accent" id="mat-redeem-ok">Canjear y descargar</button>' : '<button class="btn btn--accent" id="mat-redeem-earn">Ir a Retos</button>');
+    var footer = '<button class="btn btn--ghost" onclick="Modal.close(\'mat-redeem\')">Cancelar</button>' + (alcanza ? '<button class="btn btn--accent" id="mat-redeem-ok">Canjear y abrir</button>' : '<button class="btn btn--accent" id="mat-redeem-earn">Ir a Retos</button>');
     Modal.open({ id:'mat-redeem', title: alcanza ? '¿Canjear '+m.cost+' créditos?' : 'Créditos insuficientes', subtitle:'Créditos SYNOVA', icon:'i-file-text', size:'sm', body:body, footer:footer });
     setTimeout(function(){
       var earn = document.getElementById('mat-redeem-earn'); if (earn) earn.onclick = function(){ Modal.close('mat-redeem'); if (window.navigateTo) navigateTo('retos'); };
@@ -58,8 +88,8 @@
           await SC().redeem(m.id);
           Modal.close('mat-redeem');
           window.Toast && Toast.success('Material desbloqueado', m.title + ' ya es tuyo.');
-          render(); download(m);
-        } catch(e){ ok.disabled = false; ok.textContent = 'Canjear y descargar'; window.Toast && Toast.error('No pudimos completar el canje', e.message || 'Intenta de nuevo.'); }
+          render(); view(m);
+        } catch(e){ ok.disabled = false; ok.textContent = 'Canjear y abrir'; window.Toast && Toast.error('No pudimos completar el canje', e.message || 'Intenta de nuevo.'); }
       };
     }, 0);
   }
