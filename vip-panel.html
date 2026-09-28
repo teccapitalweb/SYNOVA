@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=9">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=10">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=5">
 
 <style>
@@ -3155,7 +3155,7 @@ Sections.foro = function(){
     `<div class="foro-aviso"><svg class="ic"><use href="#i-clock"/></svg><span>Las publicaciones se eliminan automáticamente <strong>${FORO_DIAS_VIDA} días</strong> después de publicarse.</span></div>` +
     (toolEsVIP()
       ? `<div class="foro-composer">
-          <div class="foro-composer__avatar">${avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`)}</div>
+          <div class="foro-composer__avatar">${window.__avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`)}</div>
           <div class="foro-composer__main">
             <textarea id="foro-texto" class="foro-composer__input" placeholder="Comparte un caso, una duda o una buena práctica con la comunidad…" maxlength="1500"></textarea>
             <div id="foro-img-preview" class="foro-img-preview" style="display:none">
@@ -3230,7 +3230,7 @@ function suscribirForo(){
         const fecha = tsToDate(p.createdAt);
         const fotoAutor = p.foto || fotosDirectorio[p.uid] || (esMio ? S.foto : '');
         return `<div class="post" data-postid="${p.id}">
-          <div class="post__avatar" style="background:${color}">${avatarHtml(fotoAutor, p.iniciales, `Foto de ${p.nombre || 'Miembro SYNOVA'}`)}</div>
+          <div class="post__avatar" style="background:${color}">${window.__avatarHtml(fotoAutor, p.iniciales, `Foto de ${p.nombre || 'Miembro SYNOVA'}`)}</div>
           <div class="post__main">
             <div class="post__header">
               <span class="post__author">${escHtml(p.nombre || 'Miembro SYNOVA')}</span>
@@ -3406,6 +3406,15 @@ function retoFuente(){
   return `<div class="syn-source-note"><svg class="ic"><use href="#i-info"/></svg><span>Entrenamiento educativo: sigue siempre los protocolos de tu institución y la valoración del equipo responsable. Referencias marco: <a href="https://www.who.int/publications/m/item/five-moments-for-hand-hygiene" target="_blank" rel="noopener">OMS</a>, <a href="https://www.cdc.gov/injection-safety/hcp/clinical-guidance/index.html" target="_blank" rel="noopener">CDC</a> y <a href="https://www.jointcommission.org/en-us/standards/national-performance-goals" target="_blank" rel="noopener">Joint Commission</a>.</span></div>`;
 }
 function frenarTimerReto(){ if(RetoTimer){ clearInterval(RetoTimer); RetoTimer=null; } }
+function saldoCreditosReto(){
+  const creditos=window.SynovaCredits?.state;
+  return creditos?.loaded ? Number(creditos.balance||0) : '—';
+}
+function actualizarSaldoCreditosReto(){
+  const saldo=document.getElementById('syn-retos-credit-balance');
+  if(saldo)saldo.textContent=saldoCreditosReto();
+}
+window.addEventListener('synova:credits-changed',actualizarSaldoCreditosReto);
 
 Sections.retos = function(){ pintarHubRetos(); };
 window.pintarHubRetos = function(){
@@ -3428,13 +3437,16 @@ window.pintarHubRetos = function(){
           <button class="syn-game" data-label="Criterio" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><img src="assets/images/retos-diagnostico-synova.png" alt="" loading="lazy"></span><strong>Diagnóstico SYNOVA</strong><span>${s.casosResueltos.length} casos resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
           <button class="syn-game" data-label="Repaso" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><img src="assets/images/retos-memoria-clinica.png" alt="" loading="lazy"></span><strong>Memoria clínica</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
         </div>
-        <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Comunidad</span><h2>Clasificación</h2></div></div><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
+        <section class="syn-ranking"><div class="syn-section-head"><div><span class="syn-eyebrow">Comunidad</span><h2>Clasificación</h2></div><span id="syn-ranking-count">Cargando participantes…</span></div><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
       </main>
       <aside class="syn-league-side">
         <section class="syn-panel syn-weekly"><div class="syn-weekly__head"><span><svg class="ic"><use href="#i-trophy"/></svg></span><div><small>Esta semana</small><strong>${misionPct}% completada</strong></div></div><div class="syn-weekly__bar"><span style="width:${misionPct}%"></span></div><ul>${[['Reto diario','Decisión de hoy'],['Quiz','Una práctica'],['Flashcards','Cinco repasos']].map((x,i)=>`<li class="${misiones[i]?'is-done':''}"><span><svg class="ic"><use href="#i-${misiones[i]?'check':'clock'}"/></svg></span><div><strong>${x[0]}</strong><small>${x[1]}</small></div></li>`).join('')}</ul></section>
+        <section class="syn-panel syn-retos-credit"><span class="syn-retos-credit__coin">C</span><div><small>Tu saldo</small><strong><span id="syn-retos-credit-balance">${saldoCreditosReto()}</span> créditos</strong><p>Gana más al completar actividades.</p></div><button onclick="navigateTo('libros')" aria-label="Usar créditos en Libros">Usar →</button></section>
       </aside>
     </div>
   </div>`;
+  actualizarSaldoCreditosReto();
+  if(window.SynovaCredits&&!window.SynovaCredits.state.loaded)window.SynovaCredits.load();
   cargarRankingRetos();
 };
 
@@ -3563,9 +3575,9 @@ async function cargarRankingRetos(){
     snap.forEach(d=>{const p=d.data();if(Number(p.retoXp)>0)items.push({uid:p.uid||d.id,nombre:p.nombre||'Miembro SYNOVA',foto:p.foto||'',xp:Number(p.retoXp)||0,nivel:p.retoNivel||nivelReto(Number(p.retoXp)||0).actual.nombre});});
   }catch(e){console.warn('[SYNOVA] ranking:',e.message);}
   const yo=items.find(x=>x.uid===S?.uid);if(yo){yo.xp=Math.max(yo.xp,s.xp);yo.nivel=nivelReto(yo.xp).actual.nombre;yo.foto=yo.foto||S.foto||'';}else if(S?.uid)items.push({uid:S.uid,nombre:S.nombre||'Tú',foto:S.foto||'',xp:s.xp,nivel:nivelReto(s.xp).actual.nombre});
-  items.sort((a,b)=>b.xp-a.xp||a.nombre.localeCompare(b.nombre));const pos=Math.max(1,items.findIndex(x=>x.uid===S?.uid)+1);const num=document.getElementById('syn-rank-num'),total=document.getElementById('syn-rank-total');if(num)num.textContent='#'+pos;if(total)total.textContent=`de ${items.length} en la liga`;
+  items.sort((a,b)=>b.xp-a.xp||a.nombre.localeCompare(b.nombre));const pos=Math.max(1,items.findIndex(x=>x.uid===S?.uid)+1);const num=document.getElementById('syn-rank-num'),total=document.getElementById('syn-rank-total'),count=document.getElementById('syn-ranking-count');if(num)num.textContent='#'+pos;if(total)total.textContent=`de ${items.length} en la liga`;if(count)count.textContent=`${items.length} ${items.length===1?'participante activo':'participantes activos'}`;
   if(!box)return;const top=items.slice(0,3),orden=top.length>=3?[top[1],top[0],top[2]]:top;
-  box.innerHTML=`<div class="syn-podium">${orden.map(p=>{const real=items.indexOf(p)+1;return `<div class="syn-podium__place place-${real} ${p.uid===S?.uid?'is-you':''}"><span class="syn-podium__medal">#${real}</span>${avatarReto(p)}<strong>${escHtml(p.nombre)}</strong><small>${escHtml(p.nivel)}</small><b>${p.xp} XP</b></div>`;}).join('')}</div><div class="syn-ranking-table">${items.slice(3,8).map((p,i)=>`<div class="syn-ranking-row ${p.uid===S?.uid?'is-you':''}"><span class="syn-ranking-row__rank">${i+4}</span>${avatarReto(p)}<span class="syn-ranking-row__name"><strong>${escHtml(p.nombre)}${p.uid===S?.uid?' · Tú':''}</strong><span>${escHtml(p.nivel)}</span></span><b>${p.xp} XP</b></div>`).join('')}</div>`;
+  box.innerHTML=`<div class="syn-podium">${orden.map(p=>{const real=items.indexOf(p)+1;return `<div class="syn-podium__place place-${real} ${p.uid===S?.uid?'is-you':''}"><span class="syn-podium__medal">#${real}</span>${avatarReto(p)}<strong>${escHtml(p.nombre)}</strong><small>${escHtml(p.nivel)}</small><b>${p.xp} XP</b></div>`;}).join('')}</div><div class="syn-ranking-table">${items.slice(3,8).map((p,i)=>`<div class="syn-ranking-row ${p.uid===S?.uid?'is-you':''}"><span class="syn-ranking-row__rank">${i+4}</span>${avatarReto(p)}<span class="syn-ranking-row__name"><strong>${escHtml(p.nombre)}${p.uid===S?.uid?' · Tú':''}</strong><span>${escHtml(p.nivel)}</span></span><b>${p.xp} XP</b></div>`).join('')}</div><p class="syn-ranking-note">Aquí aparecen quienes ya iniciaron Retos y sumaron XP. Los demás miembros se incorporan al completar su primera actividad.</p>`;
 }
 
 async function asegurarFotosDirectorio(){
@@ -3644,7 +3656,7 @@ window.toggleComentarios = async function(postId){
       const color = colorForArea(c.uid || c.nombre);
       const fecha = tsToDate(c.createdAt);
       const fotoAutor = c.foto || fotosDirectorio[c.uid] || (S && c.uid === S.uid ? S.foto : '');
-      html += `<div class="com"><div class="com__avatar" style="background:${color}">${avatarHtml(fotoAutor, c.iniciales, `Foto de ${c.nombre || 'Miembro'}`)}</div><div class="com__body"><div class="com__head"><span class="com__author">${escHtml(c.nombre || 'Miembro')}</span><span class="com__time">${fecha ? fecha.toLocaleDateString('es-MX') : ''}</span>${S && c.uid === S.uid ? `<button class="com__del" onclick="borrarComentario('${postId}','${d.id}')">×</button>` : ''}</div><div class="com__text">${escHtml(c.texto || '')}</div></div></div>`;
+      html += `<div class="com"><div class="com__avatar" style="background:${color}">${window.__avatarHtml(fotoAutor, c.iniciales, `Foto de ${c.nombre || 'Miembro'}`)}</div><div class="com__body"><div class="com__head"><span class="com__author">${escHtml(c.nombre || 'Miembro')}</span><span class="com__time">${fecha ? fecha.toLocaleDateString('es-MX') : ''}</span>${S && c.uid === S.uid ? `<button class="com__del" onclick="borrarComentario('${postId}','${d.id}')">×</button>` : ''}</div><div class="com__text">${escHtml(c.texto || '')}</div></div></div>`;
     });
     html += '</div>';
     html += toolEsVIP() ? `<div class="com-form"><input class="com-input" id="com-input-${postId}" placeholder="Escribe un comentario…"><button class="btn btn--accent btn--sm" onclick="enviarComentario('${postId}')">Enviar</button></div>` : '';
