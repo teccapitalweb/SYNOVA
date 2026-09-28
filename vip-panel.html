@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=8">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=9">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=5">
 
 <style>
@@ -3390,6 +3390,18 @@ function iconoAreaReto(area){
   if (/acceso|herida|hemo/i.test(area)) return 'i-stethoscope';
   return 'i-shield-check';
 }
+function imagenAreaReto(area){
+  const clave=(area||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  if (clave.includes('seguridad del paciente')) return 'seguridad-del-paciente.png';
+  if (clave.includes('control de infecciones')) return 'control-de-infecciones.png';
+  if (clave.includes('heridas')) return 'heridas.png';
+  if (clave.includes('triage')) return 'triage.png';
+  if (clave.includes('accesos vasculares')) return 'accesos-vasculares.png';
+  if (clave.includes('esterilizacion')) return 'esterilizacion.png';
+  if (clave.includes('medicamentos')) return 'medicamentos.png';
+  if (clave.includes('calidad y comunicacion')) return 'calidad-y-comunicacion.png';
+  return 'seguridad-del-paciente.png';
+}
 function retoFuente(){
   return `<div class="syn-source-note"><svg class="ic"><use href="#i-info"/></svg><span>Entrenamiento educativo: sigue siempre los protocolos de tu institución y la valoración del equipo responsable. Referencias marco: <a href="https://www.who.int/publications/m/item/five-moments-for-hand-hygiene" target="_blank" rel="noopener">OMS</a>, <a href="https://www.cdc.gov/injection-safety/hcp/clinical-guidance/index.html" target="_blank" rel="noopener">CDC</a> y <a href="https://www.jointcommission.org/en-us/standards/national-performance-goals" target="_blank" rel="noopener">Joint Commission</a>.</span></div>`;
 }
@@ -3430,10 +3442,10 @@ window.abrirQuizSynova = function(){
   const s=estadoRetos(), areas=[...new Set(BANCO_RETOS.filter(x=>x.tipo==='quiz').map(x=>x.area))];
   document.getElementById('content').innerHTML=`<div class="syn-challenge"><button class="btn btn--ghost btn--sm syn-back" onclick="pintarHubRetos()">← Volver a la liga</button><section class="syn-challenge-hero" style="--game:#2D89C8"><div class="syn-challenge-hero__copy"><span class="syn-kicker">Entrenamiento rápido</span><h1>Quiz Relámpago</h1><p>Practica decisiones breves, recibe explicación inmediata y mejora tu récord.</p><div class="syn-challenge-hero__stats"><span><b>${BANCO_RETOS.filter(x=>x.tipo==='quiz').length}</b> preguntas</span><span><b>${s.quizBest}%</b> mejor sesión</span><span><b>${s.quizzes}</b> sesiones</span></div></div><div class="syn-challenge-hero__art"><span><svg class="ic"><use href="#i-bolt"/></svg></span></div></section>
     <div class="syn-section-head"><div><span class="syn-eyebrow">Elige cómo practicar</span><h2>Modos de juego</h2></div></div><div class="syn-mode-grid">
-      <button class="syn-mode" style="--mode:#2D89C8" onclick="iniciarRetoClinico('quiz','', 'reloj')"><span><svg class="ic"><use href="#i-clock"/></svg></span><strong>Contra reloj</strong><p>Ocho decisiones mixtas con 20 segundos por pregunta.</p><small>Hasta 200 XP</small></button>
-      <button class="syn-mode" style="--mode:#159E92" onclick="iniciarRetoClinico('quiz','', 'guiado')"><span><svg class="ic"><use href="#i-book"/></svg></span><strong>Práctica guiada</strong><p>Diez preguntas sin presión y con explicación inmediata.</p><small>Aprende a tu ritmo</small></button>
-      <button class="syn-mode" style="--mode:#7A67C7" onclick="iniciarRetoClinico('quiz','Seguridad del paciente','guiado')"><span><svg class="ic"><use href="#i-shield-check"/></svg></span><strong>Seguridad esencial</strong><p>Identificación, barreras, comunicación y cultura de seguridad.</p><small>Ruta recomendada</small></button>
-    </div><div class="syn-section-head"><div><span class="syn-eyebrow">Biblioteca clínica</span><h2>Practica por tema</h2></div></div><div class="syn-deck-grid">${areas.map((a,i)=>`<button class="syn-deck" style="--deck:${['#2D89C8','#159E92','#7A67C7','#D17847','#C35488'][i%5]}" onclick="iniciarRetoClinico('quiz','${escHtml(a)}','guiado')"><span class="syn-deck__icon"><svg class="ic"><use href="#${iconoAreaReto(a)}"/></svg></span><span><strong>${escHtml(a)}</strong><small>${BANCO_RETOS.filter(x=>x.tipo==='quiz'&&x.area===a).length} preguntas</small></span><i>→</i></button>`).join('')}</div>${retoFuente()}</div>`;
+      <button class="syn-mode" style="--mode:#2D89C8" onclick="iniciarRetoClinico('quiz','', 'reloj')"><span><img src="assets/images/retos-icons/contra-reloj.png" alt="" loading="lazy"></span><strong>Contra reloj</strong><p>Ocho decisiones mixtas con 20 segundos por pregunta.</p><small>Hasta 200 XP</small></button>
+      <button class="syn-mode" style="--mode:#159E92" onclick="iniciarRetoClinico('quiz','', 'guiado')"><span><img src="assets/images/retos-icons/practica-guiada.png" alt="" loading="lazy"></span><strong>Práctica guiada</strong><p>Diez preguntas sin presión y con explicación inmediata.</p><small>Aprende a tu ritmo</small></button>
+      <button class="syn-mode" style="--mode:#7A67C7" onclick="iniciarRetoClinico('quiz','Seguridad del paciente','guiado')"><span><img src="assets/images/retos-icons/seguridad-esencial.png" alt="" loading="lazy"></span><strong>Seguridad esencial</strong><p>Identificación, barreras, comunicación y cultura de seguridad.</p><small>Ruta recomendada</small></button>
+    </div><div class="syn-section-head"><div><span class="syn-eyebrow">Biblioteca clínica</span><h2>Practica por tema</h2></div></div><div class="syn-deck-grid">${areas.map((a,i)=>`<button class="syn-deck" style="--deck:${['#2D89C8','#159E92','#7A67C7','#D17847','#C35488'][i%5]}" onclick="iniciarRetoClinico('quiz','${escHtml(a)}','guiado')"><span class="syn-deck__icon"><img src="assets/images/retos-icons/${imagenAreaReto(a)}" alt="" loading="lazy"></span><span><strong>${escHtml(a)}</strong><small>${BANCO_RETOS.filter(x=>x.tipo==='quiz'&&x.area===a).length} preguntas</small></span><i>→</i></button>`).join('')}</div>${retoFuente()}</div>`;
 };
 
 window.abrirCasosSynova = function(){
