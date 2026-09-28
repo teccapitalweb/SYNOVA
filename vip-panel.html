@@ -2195,7 +2195,26 @@ const NOTIF_TIPOS = {
   sistema:     { icono: 'i-bell',        color: '#3B82F6' },
   general:     { icono: 'i-bell',        color: '#8B7CF0' }
 };
-window.__notifsState = { items: [] };
+window.__notifsState = { items: [], globalItems: [], creditItems: [] };
+function combinarNotificaciones(){
+  const s = window.__notifsState;
+  s.items = [...(s.creditItems || []), ...(s.globalItems || [])].sort((a,b) => b.createdAtMs - a.createdAtMs).slice(0,15);
+  window.__notifs = s.items;
+  actualizarBadgeNotif();
+}
+window.addEventListener('synova:credit-notices', (event) => {
+  const notices = Array.isArray(event.detail) ? event.detail : [];
+  window.__notifsState.creditItems = notices.map(n => ({
+    id: 'credit-' + n.id,
+    tipo: 'creditos',
+    icono: 'i-trophy',
+    color: n.tipo === 'venta' ? '#1677A6' : '#16A06A',
+    titulo: n.tipo === 'venta' ? 'Compra de créditos acreditada' : 'Recibiste créditos de regalo',
+    descripcion: `Se agregaron ${Number(n.amount || 0).toLocaleString('es-MX')} créditos SYNOVA a tu saldo.`,
+    createdAtMs: n.createdAt ? new Date(n.createdAt).getTime() : Date.now()
+  }));
+  combinarNotificaciones();
+});
 function setupNotificaciones(uid){
   try {
     const q = query(collection(db, 'notificaciones'), orderBy('createdAt', 'desc'), limit(15));
@@ -2214,9 +2233,8 @@ function setupNotificaciones(uid){
           createdAtMs: data.createdAt?.toDate?.()?.getTime?.() || data.createdAt?.toMillis?.() || Date.now()
         });
       });
-      window.__notifsState.items = items;
-      window.__notifs = items;
-      actualizarBadgeNotif();
+      window.__notifsState.globalItems = items;
+      combinarNotificaciones();
     }, (err) => console.warn('[SYNOVA] notificaciones:', err.message));
   } catch (e) { console.warn('[SYNOVA] setupNotificaciones error', e.message); }
 }
@@ -6093,7 +6111,7 @@ body{-webkit-tap-highlight-color:transparent}
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="assets/synova-books-credits.js?v=4"></script>
+<script src="assets/synova-books-credits.js?v=5"></script>
 <script src="assets/synova-materials.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>

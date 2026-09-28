@@ -10,8 +10,9 @@
     { id:'enfermedades-infecciosas', title:'Enfermedades infecciosas · Mandell', area:'Infectología', cover:'assets/img/books/enfermedades-infecciosas.jpg', cost:260, available:true, desc:'Tratado de referencia para el estudio integral de las enfermedades infecciosas y sus fundamentos clínicos.' },
     { id:'alas-parasitologia', title:'Alas de parasitología', area:'Parasitología', cover:'assets/img/books/alas-parasitologia.jpg', cost:0, available:false, desc:'Una nueva referencia de parasitología que se incorporará próximamente al catálogo de SYNOVA.' }
   ];
-  var state = { balance:0, lifetimeEarned:0, unlocked:[], loaded:false };
+  var state = { balance:0, lifetimeEarned:0, unlocked:[], loaded:false, notices:[] };
   var currentBook = null, pdfDoc = null, pageNumber = 1, renderTask = null;
+  var creditSyncTimer = null;
 
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function icon(id){ return '<svg class="ic"><use href="#'+id+'"/></svg>'; }
@@ -61,10 +62,28 @@
     }
     return type.indexOf('json') >= 0 ? response.json() : response;
   }
+  function noticeStorageKey(){
+    var user=window.__auth&&window.__auth.currentUser;
+    return 'synova_credit_notices_seen_'+(user&&user.uid||'guest');
+  }
+  function processCreditNotices(notices){
+    notices=Array.isArray(notices)?notices.filter(function(n){return n&&n.id;}):[];
+    state.notices=notices;
+    window.dispatchEvent(new CustomEvent('synova:credit-notices',{detail:notices}));
+    var seen=[]; try{seen=JSON.parse(localStorage.getItem(noticeStorageKey())||'[]');if(!Array.isArray(seen))seen=[];}catch(_){seen=[];}
+    var known=new Set(seen), fresh=notices.filter(function(n){return !known.has(n.id);});
+    if(fresh.length){
+      var latest=fresh[0], amount=Number(latest.amount||0), isSale=latest.tipo==='venta';
+      window.Toast&&Toast.success(isSale?'Compra acreditada':'Créditos de regalo','Recibiste '+amount+' créditos SYNOVA'+(fresh.length>1?' y '+(fresh.length-1)+' movimiento'+(fresh.length>2?'s':'')+' más.':'.'));
+      seen=fresh.map(function(n){return n.id;}).concat(seen).slice(0,100);
+      try{localStorage.setItem(noticeStorageKey(),JSON.stringify(Array.from(new Set(seen))));}catch(_){}
+    }
+  }
   async function loadCredits(){
     try {
       var data = await api('/credits/me');
       state.balance=Number(data.balance||0); state.lifetimeEarned=Number(data.lifetimeEarned||0); state.unlocked=Array.isArray(data.unlocked)?data.unlocked:[]; state.loaded=true;
+      processCreditNotices(data.creditNotices);
       if(data.welcomeJustGranted){ window.Toast&&Toast.success('Te regalamos '+Number(data.welcomeCredits||120)+' créditos','Alcanzan para tu primer material o libro.'); }
     } catch(e){ state.loaded=true; console.warn('[Créditos SYNOVA]',e.message); }
     window.dispatchEvent(new CustomEvent('synova:credits-changed',{detail:state}));
@@ -161,6 +180,7 @@
     if(!window.Sections)return setTimeout(install,50);
     window.Sections.libros=renderLibrary;
     loadCredits().then(registerReferral);
+    if(!creditSyncTimer)creditSyncTimer=window.setInterval(function(){if(!document.hidden&&window.__auth&&window.__auth.currentUser)loadCredits();},20000);
   }
   install();
   window.addEventListener('synova:ready',function(){loadCredits().then(registerReferral);},{once:true});
