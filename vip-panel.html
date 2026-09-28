@@ -337,6 +337,9 @@ body::after{
 .toast--info .toast__icon{color:var(--primary)}
 .toast__title{font-weight:700;font-size:12.5px}
 .toast__msg{font-size:11.5px;color:var(--text-2);margin-top:1px}
+.toast--credit{position:fixed;top:92px;left:50%;right:auto;bottom:auto;width:min(460px,calc(100vw - 40px));max-width:none;min-width:0;padding:16px 18px;border:1px solid color-mix(in srgb,var(--success) 32%,var(--border-2));border-radius:17px;background:linear-gradient(120deg,color-mix(in srgb,var(--surface) 96%,#fff),color-mix(in srgb,var(--success) 7%,var(--surface)));box-shadow:0 20px 54px rgba(6,45,72,.2);gap:13px;overflow:hidden;transform:translate(-50%,-24px) scale(.97);opacity:0;transition:transform .32s cubic-bezier(.2,.8,.25,1),opacity .24s ease}
+.toast--credit.is-show{transform:translate(-50%,0) scale(1);opacity:1}.toast--credit .toast__icon{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:linear-gradient(145deg,#e8fbf2,#ccefdc);color:#147b53;box-shadow:inset 0 0 0 1px rgba(20,123,83,.1)}.toast--credit .toast__icon .ic{width:21px;height:21px}.toast--credit .toast__body{flex:1;min-width:0}.toast--credit .toast__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:14px;font-weight:800;letter-spacing:-.2px;color:var(--text)}.toast--credit .toast__msg{margin-top:3px;font-size:12px;line-height:1.45;color:var(--text-2)}.toast__amount{flex-shrink:0;padding:8px 10px;border-radius:11px;background:var(--primary);color:#fff;font:800 13px 'JetBrains Mono',monospace;letter-spacing:.2px;box-shadow:0 7px 17px color-mix(in srgb,var(--primary) 28%,transparent)}.toast__progress{position:absolute;left:0;right:0;bottom:0;height:3px;background:color-mix(in srgb,var(--success) 18%,transparent)}.toast__progress:after{content:"";display:block;width:100%;height:100%;background:linear-gradient(90deg,var(--success),#40c9a2);transform-origin:left;animation:toast-credit-progress var(--toast-duration,5000ms) linear forwards}@keyframes toast-credit-progress{to{transform:scaleX(0)}}
+@media(max-width:960px){.toast--credit{top:auto;left:14px;right:14px;bottom:86px;width:auto;padding:15px;border-radius:16px;transform:translateY(24px) scale(.98)}.toast--credit.is-show{transform:translateY(0) scale(1)}.toast--credit .toast__icon{width:40px;height:40px}.toast__amount{padding:7px 9px;font-size:12px}}
 
 /* Section hero */
 .sec-hero{padding:10px 0 24px;border-bottom:1px solid var(--border);margin-bottom:28px}
@@ -1475,7 +1478,20 @@ const Toast = (function(){
     requestAnimationFrame(() => el.classList.add('is-show'));
     setTimeout(() => { el.classList.remove('is-show'); setTimeout(() => el.remove(), 400); }, d);
   }
-  return { success: (t, m, d) => show('success', t, m, d), error: (t, m, d) => show('error', t, m, d), info: (t, m, d) => show('info', t, m, d) };
+  function credit(t, m, amount, d){
+    d = d || 5000;
+    const cont = ensure();
+    const previous = cont.querySelector('.toast--credit');
+    if (previous) previous.remove();
+    const el = document.createElement('div');
+    el.className = 'toast toast--credit';
+    el.style.setProperty('--toast-duration', d + 'ms');
+    el.innerHTML = '<div class="toast__icon"><svg class="ic"><use href="#i-trophy"/></svg></div><div class="toast__body"><div class="toast__title">' + escHtml(t || '') + '</div><div class="toast__msg">' + escHtml(m || '') + '</div></div><div class="toast__amount">' + escHtml(amount || '') + '</div><div class="toast__progress"></div>';
+    cont.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('is-show'));
+    setTimeout(() => { el.classList.remove('is-show'); setTimeout(() => el.remove(), 400); }, d);
+  }
+  return { success: (t, m, d) => show('success', t, m, d), error: (t, m, d) => show('error', t, m, d), info: (t, m, d) => show('info', t, m, d), credit };
 })();
 window.Toast = Toast;
 window.toast = function(msg, type){ if (type === 'error') Toast.error('Aviso', msg); else Toast.success('Listo', msg); };
@@ -6111,7 +6127,7 @@ body{-webkit-tap-highlight-color:transparent}
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="assets/synova-books-credits.js?v=5"></script>
+<script src="assets/synova-books-credits.js?v=6"></script>
 <script src="assets/synova-materials.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>
