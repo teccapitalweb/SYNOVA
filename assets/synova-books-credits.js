@@ -38,7 +38,7 @@
     try {
       var data = await api('/credits/me');
       state.balance=Number(data.balance||0); state.lifetimeEarned=Number(data.lifetimeEarned||0); state.unlocked=Array.isArray(data.unlocked)?data.unlocked:[]; state.loaded=true;
-      if(data.welcomeJustGranted){ window.Toast&&Toast.success('Te regalamos '+Number(data.welcomeCredits||120)+' créditos','Alcanzan para tu primera herramienta o libro.'); }
+      if(data.welcomeJustGranted){ window.Toast&&Toast.success('Te regalamos '+Number(data.welcomeCredits||120)+' créditos','Alcanzan para tu primer material o libro.'); }
     } catch(e){ state.loaded=true; console.warn('[Créditos SYNOVA]',e.message); }
     window.dispatchEvent(new CustomEvent('synova:credits-changed',{detail:state}));
     return state;
