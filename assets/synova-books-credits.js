@@ -74,8 +74,8 @@
     var known=new Set(seen), fresh=notices.filter(function(n){return !known.has(n.id);});
     if(fresh.length){
       var latest=fresh[0], total=fresh.reduce(function(sum,n){return sum+Number(n.amount||0);},0), isSale=latest.tipo==='venta';
-      var title=fresh.length>1?'¡Felicidades!':(isSale?'¡Compra acreditada!':'¡Felicidades!');
-      var message=(fresh.length>1?'Recibiste '+fresh.length+' recompensas':(isSale?'Tu compra se acreditó correctamente':'SYNOVA te regaló créditos'))+' · Saldo: '+Number(state.balance||0).toLocaleString('es-MX');
+      var title=fresh.length>1?'Créditos SYNOVA acreditados':(isSale?'Compra acreditada':'Reconocimiento SYNOVA');
+      var message=(fresh.length>1?'Se registraron '+fresh.length+' asignaciones':(isSale?'Tu compra se registró correctamente':'Se otorgaron créditos a tu cuenta'))+' · Saldo disponible: '+Number(state.balance||0).toLocaleString('es-MX');
       if(window.Toast&&Toast.credit)Toast.credit(title,message,'+'+total,3000);
       else if(window.Toast)Toast.success(title,message,3000);
       seen=fresh.map(function(n){return n.id;}).concat(seen).slice(0,100);
