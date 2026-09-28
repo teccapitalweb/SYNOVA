@@ -16,6 +16,33 @@
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function icon(id){ return '<svg class="ic"><use href="#'+id+'"/></svg>'; }
   function owned(id){ return state.unlocked.indexOf(id) !== -1; }
+  function celebrateRedemption(rewardId){
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    document.querySelectorAll('.redeem-burst').forEach(function(el){el.remove();});
+    var palettes=[
+      ['#0f6fa1','#37b8c8','#f1b93b','#ffffff'],
+      ['#0c4a6e','#2dd4bf','#a7f3d0','#f8fafc'],
+      ['#165f8d','#7dd3fc','#fbbf24','#f472b6']
+    ];
+    var seed=String(rewardId||'synova').split('').reduce(function(sum,ch){return sum+ch.charCodeAt(0);},0);
+    var colors=palettes[seed%palettes.length], layer=document.createElement('div');
+    layer.className='redeem-burst'; layer.setAttribute('aria-hidden','true');
+    for(var i=0;i<34;i++){
+      var piece=document.createElement('i'), angle=(Math.PI*2*i/34)+((seed%11)/25), distance=115+Math.random()*230;
+      piece.className='redeem-burst__piece '+(i%9===0?'is-star':i%3===0?'is-round':'is-diamond');
+      if(i%9===0)piece.textContent='✦';
+      piece.style.setProperty('--burst-x',(Math.cos(angle)*distance).toFixed(0)+'px');
+      piece.style.setProperty('--burst-y',(Math.sin(angle)*distance*.68-32).toFixed(0)+'px');
+      piece.style.setProperty('--burst-spin',(180+Math.random()*540).toFixed(0)+'deg');
+      piece.style.setProperty('--burst-delay',(Math.random()*.08).toFixed(2)+'s');
+      piece.style.setProperty('--burst-time',(.68+Math.random()*.3).toFixed(2)+'s');
+      piece.style.setProperty('--burst-size',(6+Math.random()*7).toFixed(0)+'px');
+      piece.style.setProperty('--burst-color',colors[i%colors.length]);
+      layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    window.setTimeout(function(){layer.remove();},1200);
+  }
   async function token(){
     var user = window.__auth && window.__auth.currentUser;
     if (!user) throw new Error('Inicia sesión para continuar.');
@@ -48,9 +75,10 @@
     var result=await api('/credits/redeem',{method:'POST',body:JSON.stringify({rewardId:rewardId})});
     state.balance=Number(result.balance||0); if(!owned(rewardId))state.unlocked.push(rewardId);
     window.dispatchEvent(new CustomEvent('synova:credits-changed',{detail:state}));
+    if(!result.alreadyUnlocked)celebrateRedemption(rewardId);
     return result;
   }
-  window.SynovaCredits={ state:state, load:loadCredits, owned:owned, balance:function(){return state.balance;}, redeem:redeemReward };
+  window.SynovaCredits={ state:state, load:loadCredits, owned:owned, balance:function(){return state.balance;}, redeem:redeemReward, celebrate:celebrateRedemption };
   function wallet(){
     return '<div class="credit-wallet"><div class="credit-wallet__label">Tu saldo disponible</div><div class="credit-wallet__value"><span class="credit-coin">C</span><span id="syn-credit-balance">'+state.balance+'</span></div><p class="credit-wallet__sub">Créditos SYNOVA · no transferibles</p></div>';
   }
@@ -89,7 +117,7 @@
   async function redeem(book){
     try{
       await redeemReward(book.id);
-      window.Toast&&Toast.success('Libro añadido','Abriendo tu lector…'); renderDetail(book.id); openReader(book);
+      window.Toast&&Toast.success('¡Canje completado!','El libro ya es tuyo. Abriendo el lector…'); renderDetail(book.id); openReader(book);
     }catch(e){ window.Toast&&Toast.error('No se pudo canjear',e.message); }
   }
   async function openReader(book){
@@ -104,7 +132,11 @@
       window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       pdfDoc=await window.pdfjsLib.getDocument({url:API()+'/api/books/'+encodeURIComponent(book.id)+'/file',httpHeaders:{Authorization:'Bearer '+idToken},withCredentials:false,isEvalSupported:false}).promise;
       await renderPage();
-    }catch(e){ closeReader(); window.Toast&&Toast.error('No se pudo abrir el libro',e.message); }
+    }catch(e){
+      closeReader();
+      var unavailable=/\b503\b|unexpected server response/i.test(String(e&&e.message||''));
+      window.Toast&&Toast.error('No se pudo abrir el libro',unavailable?'La biblioteca protegida no respondió. Tu canje está guardado; inténtalo nuevamente en un momento.':e.message);
+    }
   }
   async function renderPage(){
     if(!pdfDoc)return; var page=await pdfDoc.getPage(pageNumber), body=document.getElementById('reader-body'), canvas=document.getElementById('reader-canvas'); if(!body||!canvas)return;
