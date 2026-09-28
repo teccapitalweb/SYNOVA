@@ -74,10 +74,10 @@
     var known=new Set(seen), fresh=notices.filter(function(n){return !known.has(n.id);});
     if(fresh.length){
       var latest=fresh[0], total=fresh.reduce(function(sum,n){return sum+Number(n.amount||0);},0), isSale=latest.tipo==='venta';
-      var title=fresh.length>1?'¡Créditos acreditados!':(isSale?'¡Compra acreditada!':'¡Recibiste créditos!');
-      var message=(fresh.length>1?'Se registraron '+fresh.length+' movimientos':(isSale?'Compra registrada correctamente':'Regalo acreditado por SYNOVA'))+' · Nuevo saldo: '+Number(state.balance||0).toLocaleString('es-MX');
-      if(window.Toast&&Toast.credit)Toast.credit(title,message,'+'+total,5000);
-      else if(window.Toast)Toast.success(title,message,5000);
+      var title=fresh.length>1?'¡Felicidades!':(isSale?'¡Compra acreditada!':'¡Felicidades!');
+      var message=(fresh.length>1?'Recibiste '+fresh.length+' recompensas':(isSale?'Tu compra se acreditó correctamente':'SYNOVA te regaló créditos'))+' · Saldo: '+Number(state.balance||0).toLocaleString('es-MX');
+      if(window.Toast&&Toast.credit)Toast.credit(title,message,'+'+total,3000);
+      else if(window.Toast)Toast.success(title,message,3000);
       seen=fresh.map(function(n){return n.id;}).concat(seen).slice(0,100);
       try{localStorage.setItem(noticeStorageKey(),JSON.stringify(Array.from(new Set(seen))));}catch(_){}
     }
