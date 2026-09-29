@@ -8,7 +8,7 @@
     { id:'guia-sanford', title:'Guía Sanford', area:'Terapéutica antimicrobiana', cover:'assets/img/books/guia-sanford.jpg', cost:180, available:true, desc:'Consulta clínica de terapéutica antimicrobiana para apoyar decisiones informadas y el uso responsable de antibióticos.' },
     { id:'vacunas-inmunizacion', title:'Vacunas e inmunización', area:'Medicina preventiva', cover:'assets/img/books/vacunas-inmunizacion.jpg', cost:180, available:true, desc:'Panorama de inmunización y vacunación para fortalecer la prevención y la actualización profesional.' },
     { id:'enfermedades-infecciosas', title:'Enfermedades infecciosas · Mandell', area:'Infectología', cover:'assets/img/books/enfermedades-infecciosas.jpg', cost:260, available:true, desc:'Tratado de referencia para el estudio integral de las enfermedades infecciosas y sus fundamentos clínicos.' },
-    { id:'alas-parasitologia', title:'Alas de parasitología', area:'Parasitología', cover:'assets/img/books/alas-parasitologia.jpg', cost:0, available:false, desc:'Una nueva referencia de parasitología que se incorporará próximamente al catálogo de SYNOVA.' }
+    { id:'atlas-parasitologia', title:'Atlas de parasitología', area:'Parasitología', cover:'assets/img/books/alas-parasitologia.jpg', cost:180, available:true, desc:'Referencia ilustrada para identificar parásitos humanos, revisar sus características morfológicas y reforzar el diagnóstico parasitológico.' }
   ];
   var state = { balance:0, lifetimeEarned:0, unlocked:[], loaded:false, notices:[] };
   var currentBook = null, pdfDoc = null, pageNumber = 1, renderTask = null;
@@ -106,7 +106,10 @@
   }
   function renderLibrary(){
     var c=document.getElementById('content'); if(!c)return;
-    c.innerHTML='<div class="books-page fade-up"><section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-book')+'Biblioteca SYNOVA</div><h1>Conocimiento clínico<br>para conservar.</h1><p>Tus primeros 120 créditos son de regalo. Gana más en Retos y compartiendo SYNOVA, y canjéalos por libros y herramientas que permanecerán en tu cuenta.</p></div>'+wallet()+'</section><div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu próxima referencia</h2></div><small>'+books.filter(function(b){return b.available;}).length+' disponibles · 1 próximamente</small></div><div class="book-shelf">'+books.map(card).join('')+'</div></div>';
+    var availableCount=books.filter(function(b){return b.available;}).length;
+    var upcomingCount=books.length-availableCount;
+    var catalogStatus=availableCount+' disponibles'+(upcomingCount?' · '+upcomingCount+' próximamente':'');
+    c.innerHTML='<div class="books-page fade-up"><section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-book')+'Biblioteca SYNOVA</div><h1>Conocimiento clínico<br>para conservar.</h1><p>Tus primeros 120 créditos son de regalo. Gana más en Retos y compartiendo SYNOVA, y canjéalos por libros y herramientas que permanecerán en tu cuenta.</p></div>'+wallet()+'</section><div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu próxima referencia</h2></div><small>'+catalogStatus+'</small></div><div class="book-shelf">'+books.map(card).join('')+'</div></div>';
     c.querySelectorAll('[data-book]').forEach(function(el){ el.addEventListener('click',function(){ renderDetail(el.dataset.book); }); });
     if(!state.loaded) loadCredits().then(function(){ if(document.querySelector('.books-page'))renderLibrary(); });
   }
