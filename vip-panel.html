@@ -2367,9 +2367,9 @@ Sections.inicio = function(){
   const g = applyGreeting();
   const nombre = (S.nombre || '').split(' ')[0] || '';
   document.getElementById('content').innerHTML = `
-    <section class="banner fade-up">
+    <section class="banner home-premium fade-up">
       <div class="banner__info">
-        <span class="banner__eyebrow"><span class="banner__eyebrow__dot"></span>${escHtml(g.eyebrow)}<span class="banner__version">SYNOVA VIP</span></span>
+        <div class="banner__overline"><span class="banner__eyebrow"><span class="banner__eyebrow__dot"></span>${escHtml(g.eyebrow)}</span><span class="banner__version">SYNOVA VIP</span></div>
         <h1 class="banner__title">${g.greet}, ${escHtml(nombre)}</h1>
         <p class="banner__sub">Tu acceso a cursos clínicos, clases en vivo, normativa NOM en salud, auditoría de calidad de atención y la comunidad de profesionales de salud de SYNOVA México.</p>
         ${!toolEsVIP() ? `<div style="margin-top:16px;position:relative;z-index:1"><button class="btn btn--accent btn--lg" data-section="suscripcion">Activar membresía VIP<svg class="ic"><use href="#i-arrow-right"/></svg></button></div>` : ''}
@@ -2773,8 +2773,10 @@ async function cargarLogros(){
 /* ══════════════════════ CERTIFICADOS ══════════════════════ */
 Sections.certificados = function(){
   document.getElementById('content').innerHTML =
-    secHero('Tu trayectoria', 'Mis certificados', 'Cada certificado SYNOVA tiene folio único <strong style="color:var(--primary-soft);font-family:\'JetBrains Mono\',monospace">SYNOVA-2026-XXXXXX</strong> y código QR verificable. Compártelos en LinkedIn o descárgalos en PDF.') +
-    '<div id="certs-wrap"><div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto"></div></div></div>';
+    '<div class="certs-page">' +
+      secHero('Tu trayectoria', 'Mis certificados', 'Credenciales digitales con folio único y código QR verificable, listas para compartir o descargar en PDF.') +
+      '<div id="certs-wrap"><div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto"></div></div></div>' +
+    '</div>';
   cargarCertificados();
 };
 
@@ -2796,12 +2798,11 @@ async function cargarCertificados(){
     const totalHoras = certs.reduce((s, c) => s + (Number(c.horas) || 0), 0);
     const areas = [...new Set(certs.map(c => c.area || 'Salud'))].length;
 
-    /* KPIs arriba · mismo patrón que OdonTeck */
-    const kpis = `<div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-card__label">Certificados</div><div class="kpi-card__value">${certs.length}</div></div>
-      <div class="kpi-card"><div class="kpi-card__label">Horas certificadas</div><div class="kpi-card__value">${totalHoras}</div></div>
-      <div class="kpi-card"><div class="kpi-card__label">Áreas dominadas</div><div class="kpi-card__value">${certs.length ? areas : 0}</div></div>
-      <div class="kpi-card"><div class="kpi-card__label">Verificables</div><div class="kpi-card__value">100<span style="font-size:16px">%</span></div></div>
+    const kpis = `<div class="cert-summary" aria-label="Resumen de certificaciones">
+      <div class="cert-summary__item"><span>Certificados</span><strong>${certs.length}</strong></div>
+      <div class="cert-summary__item"><span>Horas certificadas</span><strong>${totalHoras}</strong></div>
+      <div class="cert-summary__item"><span>Áreas acreditadas</span><strong>${certs.length ? areas : 0}</strong></div>
+      <div class="cert-summary__item"><span>Verificación</span><strong>100<small>%</small></strong></div>
     </div>`;
 
     if (!certs.length){
@@ -2810,7 +2811,7 @@ async function cargarCertificados(){
     }
 
     wrap.innerHTML = kpis +
-      `<div class="section-header"><h2 class="section-header__title">Tus ${certs.length} certificado${certs.length !== 1 ? 's' : ''}<span class="section-header__badge">${certs.length} activo${certs.length !== 1 ? 's' : ''}</span></h2></div>` +
+      `<div class="certs-list-head"><div><span>Archivo académico</span><h2>Tus certificados</h2></div><small>${certs.length} credencial${certs.length !== 1 ? 'es' : ''}</small></div>` +
       `<div class="certs-list">${certs.map(c => {
         const fecha = tsToDate(c.createdAt) || (c.emitido ? new Date(c.emitido) : new Date());
         const horas = Number(c.horas) || 0;
@@ -6109,6 +6110,64 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 }
 @media(max-width:560px){.banner{padding:23px 18px}.banner__title{font-size:32px}.banner__stats{grid-template-columns:repeat(2,minmax(0,1fr))}.news-card__cover{height:126px}.sec-hero__title{font-size:34px}}
 @media(prefers-reduced-motion:reduce){#content.sec-anim > *{animation:none!important}.kpi-card:hover,.curso-card:hover,.certb:hover,.pdf-card:hover,.webinar-card:hover,.news-card:hover{transform:none}}
+
+/* Inicio premium · composición editorial unificada */
+.banner.home-premium,
+:root[data-theme="day"] .banner.home-premium{
+  min-height:238px;padding:38px 40px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(360px,.75fr);align-items:center;gap:42px;
+  color:#F7F4ED;background:linear-gradient(118deg,#0B2A46 0%,#103D60 58%,#165675 100%);border:1px solid rgba(255,255,255,.12);border-radius:24px;
+  box-shadow:0 22px 54px rgba(9,35,58,.18);isolation:isolate;
+}
+.banner.home-premium::before{background-image:linear-gradient(to right,rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.045) 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(90deg,#000,transparent 72%);-webkit-mask-image:linear-gradient(90deg,#000,transparent 72%);opacity:.72}
+.banner.home-premium::after{inset:auto -135px -235px auto;width:470px;height:470px;border:1px solid rgba(255,255,255,.09);border-radius:50%;background:radial-gradient(circle,transparent 0 25%,rgba(255,255,255,.055) 25.2% 25.6%,transparent 26% 43%,rgba(255,255,255,.05) 43.2% 43.6%,transparent 44%);filter:none;animation:none;opacity:1;z-index:-1}
+.home-premium .banner__info{min-width:0}
+.home-premium .banner__overline{display:flex;align-items:center;gap:12px;min-height:22px}
+.home-premium .banner__eyebrow{padding:0;border:0;background:none;color:#A9CEDD;font-size:8.5px;letter-spacing:1.75px;white-space:nowrap}
+.home-premium .banner__eyebrow::after{content:"";width:32px;height:1px;background:#C7A567;margin-left:4px}
+.home-premium .banner__version{margin:0;padding:4px 8px;border:1px solid rgba(255,255,255,.18);border-radius:999px;color:rgba(255,255,255,.65);font-size:7.5px;letter-spacing:1.15px;white-space:nowrap}
+.home-premium .banner__title{margin-top:18px;color:#FFFFFF;background:none;-webkit-text-fill-color:currentColor;font-family:'Newsreader',Georgia,serif;font-size:clamp(39px,3.6vw,52px);font-weight:600;letter-spacing:-1.35px;line-height:1}
+.home-premium .banner__sub{max-width:650px;margin-top:13px;color:rgba(237,244,248,.76);font-size:13px;line-height:1.68}
+.home-premium .btn--accent{background:#F7F4ED;color:#0B2A46;border:1px solid rgba(255,255,255,.7);box-shadow:0 10px 26px rgba(0,0,0,.16)}
+.home-premium .btn--accent:hover{background:#FFFFFF;transform:translateY(-1px)}
+.home-premium .banner__stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;width:100%;border:1px solid rgba(255,255,255,.15);border-radius:18px;overflow:hidden;background:rgba(5,28,47,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.home-premium .banner__stat{min-width:0;padding:21px 22px;background:transparent;border:0;border-radius:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;overflow:visible}
+.home-premium .banner__stat:nth-child(odd){border-right:1px solid rgba(255,255,255,.12)}
+.home-premium .banner__stat:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.12)}
+.home-premium .banner__stat::before{display:none}
+.home-premium .banner__stat-lbl{margin:0 0 8px;color:rgba(218,232,239,.62);font-size:7.5px;letter-spacing:1.5px}
+.home-premium .banner__stat-lbl::before{display:none}
+.home-premium .banner__stat-val{color:#FFFFFF;background:none;-webkit-text-fill-color:currentColor;font-family:'Newsreader',Georgia,serif;font-size:30px;font-weight:600;letter-spacing:-.5px}
+
+/* Certificados · archivo académico minimalista */
+.certs-page{max-width:1180px}
+.certs-page .sec-hero{max-width:780px;padding:0 0 22px;margin-bottom:0;border-bottom:0}
+.certs-page .sec-hero__eyebrow{color:var(--text-3)}
+.certs-page .sec-hero__title{font-size:clamp(36px,4vw,46px);margin-top:12px}
+.certs-page .sec-hero__sub{max-width:650px;margin-top:9px}
+.cert-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:12px 0 34px;border-top:1px solid var(--border-2);border-bottom:1px solid var(--border-2)}
+.cert-summary__item{position:relative;padding:19px 22px 18px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;min-width:0}
+.cert-summary__item:not(:last-child){border-right:1px solid var(--border)}
+.cert-summary__item span{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.25px;text-transform:uppercase;color:var(--text-3);line-height:1.45}
+.cert-summary__item strong{font-family:'Newsreader',Georgia,serif;font-size:31px;font-weight:600;line-height:.9;color:var(--text);letter-spacing:-.5px}
+.cert-summary__item small{font-family:inherit;font-size:17px}
+.certs-list-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:12px}
+.certs-list-head span{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:1.45px;text-transform:uppercase;color:var(--text-3);margin-bottom:5px}
+.certs-list-head h2{font-family:'Newsreader',Georgia,serif;font-size:25px;font-weight:600;letter-spacing:-.55px}
+.certs-list-head small{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-3);padding-bottom:3px}
+.certs-page .certs-list{gap:8px}
+.certs-page .certb{gap:15px;padding:15px 17px;border-radius:13px;border-color:var(--border);box-shadow:none;background:color-mix(in srgb,var(--surface) 98%,transparent)}
+.certs-page .certb:hover{transform:none;border-color:color-mix(in srgb,var(--primary) 32%,var(--border));box-shadow:0 10px 26px rgba(19,40,63,.06)}
+.certs-page .certb__seal{width:44px;height:44px;border-radius:11px;background:color-mix(in srgb,var(--primary) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--primary) 18%,var(--border));color:var(--primary)}
+.certs-page .certb__seal svg{width:24px;height:28px}
+.certs-page .certb__eyebrow{font-size:7.5px;letter-spacing:1.4px;margin-bottom:3px}
+.certs-page .certb__title{font-size:14px;margin-bottom:5px}
+.certs-page .certb__meta{font-size:9.5px}.certs-page .certb__folio{font-size:9px;margin-top:4px;color:var(--text-3)}
+.certs-page .certb__action{gap:7px}.certs-page .certb__verify{font-size:7.5px}.certs-page .certb__verify::before{width:5px;height:5px;box-shadow:none}
+.certs-page .certb__view{font-size:11.5px;color:var(--primary)}
+
+@media(max-width:1100px){.banner.home-premium,:root[data-theme="day"] .banner.home-premium{grid-template-columns:1fr;gap:28px}.home-premium .banner__stats{max-width:620px;grid-template-columns:repeat(4,minmax(0,1fr))}.home-premium .banner__stat{padding:17px 16px}.home-premium .banner__stat:nth-child(odd){border-right:1px solid rgba(255,255,255,.12)}.home-premium .banner__stat:nth-child(-n+2){border-bottom:0}.home-premium .banner__stat:not(:last-child){border-right:1px solid rgba(255,255,255,.12)}}
+@media(max-width:760px){.cert-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.cert-summary__item:nth-child(2){border-right:0}.cert-summary__item:nth-child(-n+2){border-bottom:1px solid var(--border)}.certs-page .certb__action{align-items:center}.certs-page .certb__verify{display:none}}
+@media(max-width:560px){.banner.home-premium,:root[data-theme="day"] .banner.home-premium{padding:28px 22px;border-radius:20px}.home-premium .banner__overline{flex-wrap:wrap;gap:8px}.home-premium .banner__title{font-size:38px}.home-premium .banner__stats{grid-template-columns:repeat(2,minmax(0,1fr))}.home-premium .banner__stat:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.12)}.home-premium .banner__stat:nth-child(2){border-right:0}.cert-summary__item{padding:16px 13px}.cert-summary__item strong{font-size:27px}.certs-page .certb{align-items:flex-start;padding:14px}.certs-page .certb__action{align-self:center}.certs-page .certb__view{font-size:0;width:34px;height:34px;border-radius:50%;background:var(--surface-2);justify-content:center}.certs-page .certb__view .ic{width:14px;height:14px}.certs-page .certb__meta{gap:6px}.certs-page .certb__folio{word-break:break-all}}
 </style>
 <script>
 /* ── KPIs con conteo animado · solo visual, no toca los datos ── */
