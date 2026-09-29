@@ -1760,7 +1760,11 @@ async function resolverMembresia(uid){
   const d = snap.exists() ? snap.data() : {};
 
   if (!membership) {
-    const exp = d.expiraEn || d.fechaFinAcceso || d.fechaProximaRenovacion || null;
+    const exp = d.cancelacionProgramada === true
+      ? (d.fechaFinAcceso || d.fechaProximaRenovacion || d.expiraEn || null)
+      : ((d.stripeSubscriptionId && d.fechaProximaRenovacion)
+          ? d.fechaProximaRenovacion
+          : (d.expiraEn || d.fechaFinAcceso || d.fechaProximaRenovacion || null));
     const expDate = exp ? (exp.toDate ? exp.toDate() : new Date(exp)) : null;
     const vigente = (d.activa === true || d.activo === true) && (!expDate || expDate.getTime() > Date.now());
     membership = { activo: vigente, activa: vigente, plan: d.plan || null, estado: d.estado || null, proximaRenovacion: exp ? (expDate ? expDate.toISOString() : null) : null };
