@@ -1435,6 +1435,9 @@ const Theme = {
 Theme.init();
 
 function escHtml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function gmailComposeUrl(email){
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(String(email || '').trim())}`;
+}
 
 /* Celebración reutilizable inspirada en el ritmo visual de Élite Pecuario. */
 window.celebrarSynova = function(intensidad){
@@ -3847,7 +3850,7 @@ function pintarDirectorio(filtro){
       <div class="dir-card__ctas">
         ${p.whatsapp ? `<a class="dir-cta dir-cta--wa" href="https://wa.me/${escHtml(String(p.whatsapp).replace(/\D/g,''))}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-whatsapp"/></svg></a>` : ''}
         ${p.linkedin ? `<a class="dir-cta dir-cta--li" href="${escHtml(p.linkedin)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-linkedin"/></svg></a>` : ''}
-        ${p.email ? `<a class="dir-cta" href="mailto:${escHtml(p.email)}" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-mail"/></svg></a>` : ''}
+        ${p.email ? `<a class="dir-cta" href="${escHtml(gmailComposeUrl(p.email))}" target="_blank" rel="noopener" aria-label="Escribir a ${escHtml(p.email)} en Gmail" title="Escribir en Gmail" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-mail"/></svg></a>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -3874,7 +3877,7 @@ function abrirTarjetaDetalle(id){
       ${p.bio ? `<div class="dir-det__bio">${escHtml(p.bio)}</div>` : ''}
       <div class="dir-det__rows">
         ${p.whatsapp ? `<a class="dir-det__row" href="https://wa.me/${escHtml(String(p.whatsapp).replace(/\D/g,''))}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-whatsapp"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">WhatsApp</span><span class="dir-det__row-val">${escHtml(p.whatsapp)}</span></div></a>` : ''}
-        ${p.email ? `<a class="dir-det__row" href="mailto:${escHtml(p.email)}"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-mail"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">Correo</span><span class="dir-det__row-val">${escHtml(p.email)}</span></div></a>` : ''}
+        ${p.email ? `<a class="dir-det__row" href="${escHtml(gmailComposeUrl(p.email))}" target="_blank" rel="noopener" aria-label="Escribir a ${escHtml(p.email)} en Gmail"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-mail"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">Correo</span><span class="dir-det__row-val">${escHtml(p.email)}</span></div></a>` : ''}
         ${p.linkedin ? `<a class="dir-det__row" href="${escHtml(p.linkedin)}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-linkedin"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">LinkedIn</span><span class="dir-det__row-val">Ver perfil</span></div></a>` : ''}
         ${!p.whatsapp && !p.email && !p.linkedin ? '<div class="dir-det__sincontacto">Este miembro no agregó datos de contacto públicos.</div>' : ''}
       </div>
