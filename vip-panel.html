@@ -20,6 +20,7 @@
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=13">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=6">
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=1">
+<link rel="stylesheet" href="assets/synova-certificates-credits.css?v=1">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -2939,7 +2940,29 @@ async function cargarLogros(){
 Sections.certificados = function(){
   document.getElementById('content').innerHTML =
     '<div class="certs-page">' +
-      secHero('Tu trayectoria', 'Mis certificados', 'Credenciales digitales con folio único y código QR verificable, listas para compartir o descargar en PDF.') +
+      `<section class="certs-pro-hero">
+        <div class="certs-pro-hero__copy">
+          <span class="certs-pro-hero__eyebrow"><i></i>Tu trayectoria</span>
+          <h1>Mis certificados</h1>
+          <p>Cada certificado SYNOVA incluye <strong>folio único, código QR verificable y respaldo académico</strong>. Está listo para descargar, compartir y validar públicamente.</p>
+        </div>
+        <div class="certs-pro-hero__art" aria-hidden="true">
+          <svg viewBox="0 0 250 170" fill="none">
+            <path d="M35 38h158c8 0 14 6 14 14v91H35z" fill="#F7FAFC" stroke="#8EC4D7" stroke-width="5"/>
+            <path d="M52 58h83M52 73h119M52 88h92" stroke="#82A4B5" stroke-width="6" stroke-linecap="round"/>
+            <path d="M63 121c17-20 24 14 42-8 11-13 16 14 31 0" stroke="#0B3653" stroke-width="5" stroke-linecap="round"/>
+            <rect x="157" y="98" width="34" height="34" rx="3" fill="#E7F1F5" stroke="#0B3653" stroke-width="4"/>
+            <path d="M164 105h7v7h-7zm13 0h7v7h-7zm-13 13h7v7h-7zm13 5h7v7h-7z" fill="#0B3653"/>
+            <circle cx="45" cy="119" r="29" fill="#F6C95F" stroke="#E2A82E" stroke-width="5"/>
+            <circle cx="45" cy="119" r="16" fill="#FFF4BE"/>
+            <path d="m45 109 3 7 8 1-6 5 2 8-7-4-7 4 2-8-6-5 8-1z" fill="#0C547A"/>
+            <path d="m29 140-5 24 21-12 21 12-5-24" fill="#0C6B91" stroke="#72C9C1" stroke-width="4"/>
+            <path d="M196 17l7 13 15 2-11 11 3 15-14-7-13 7 3-15-11-11 15-2z" fill="#75D4C7"/>
+            <circle cx="201" cy="35" r="29" fill="#0B3653" stroke="#F6C95F" stroke-width="5"/>
+            <path d="m187 35 9 9 18-20" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </section>` +
       '<div id="certs-wrap"><div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto"></div></div></div>' +
     '</div>';
   cargarCertificados();
@@ -2963,20 +2986,32 @@ async function cargarCertificados(){
     const totalHoras = certs.reduce((s, c) => s + (Number(c.horas) || 0), 0);
     const areas = [...new Set(certs.map(c => c.area || 'Salud'))].length;
 
-    const kpis = `<div class="kpi-grid" aria-label="Resumen de certificaciones">
-      <div class="kpi-card"><div class="kpi-card__label">Certificados</div><div class="kpi-card__value">${certs.length}</div></div>
-      <div class="kpi-card"><div class="kpi-card__label">Horas certificadas</div><div class="kpi-card__value">${totalHoras}</div></div>
-      <div class="kpi-card"><div class="kpi-card__label">Áreas acreditadas</div><div class="kpi-card__value">${certs.length ? areas : 0}</div></div>
-      <div class="kpi-card"><div class="kpi-card__label">Verificables</div><div class="kpi-card__value">100<span class="kpi-card__value-sub">%</span></div></div>
+    const kpis = `<div class="kpi-grid cert-kpis" aria-label="Resumen de certificaciones">
+      <div class="kpi-card"><div class="kpi-card__label">Certificados</div><div class="kpi-card__value">${certs.length}</div><small>Credenciales emitidas</small></div>
+      <div class="kpi-card"><div class="kpi-card__label">Horas certificadas</div><div class="kpi-card__value">${totalHoras}</div><small>Formación comprobable</small></div>
+      <div class="kpi-card"><div class="kpi-card__label">Áreas acreditadas</div><div class="kpi-card__value">${certs.length ? areas : 0}</div><small>Especialidades distintas</small></div>
+      <div class="kpi-card"><div class="kpi-card__label">Verificables</div><div class="kpi-card__value">100<span class="kpi-card__value-sub">%</span></div><small>Validación pública por QR</small></div>
     </div>`;
 
     if (!certs.length){
-      wrap.innerHTML = kpis + emptyState('i-certificate', 'Aún no tienes certificados', 'Completa un curso al 100% desde la sección "Mis cursos" para generar tu certificado con folio y QR verificable.');
+      wrap.innerHTML = kpis + `<section class="certs-empty-pro">
+        <span class="certs-empty-pro__icon"><svg class="ic"><use href="#i-certificate"/></svg></span>
+        <span class="certs-empty-pro__eyebrow">Tu próxima credencial</span>
+        <h2>Aún no tienes certificados emitidos</h2>
+        <p>Completa un curso al 100% para generar tu certificado oficial SYNOVA y comenzar a construir una trayectoria verificable.</p>
+        <div class="certs-empty-pro__benefits">
+          <span><b>✓</b>Folio único <code>SYNOVA-2026-XXXXXX</code></span>
+          <span><b>✓</b>Código QR verificable desde cualquier dispositivo</span>
+          <span><b>✓</b>PDF listo para currículum y LinkedIn</span>
+          <span><b>✓</b>Validación pública en synovamexico.com</span>
+        </div>
+        <button class="btn btn--accent" type="button" onclick="navigateTo('cursos')"><svg class="ic"><use href="#i-book"/></svg>Empezar un curso</button>
+      </section>`;
       return;
     }
 
     wrap.innerHTML = kpis +
-      `<div class="section-header"><h2 class="section-header__title">Tus ${certs.length} certificado${certs.length !== 1 ? 's' : ''}<span class="section-header__badge">${certs.length} activo${certs.length !== 1 ? 's' : ''}</span></h2></div>` +
+      `<div class="certs-list-head"><div><span>Archivo académico</span><h2>Tus ${certs.length} certificado${certs.length !== 1 ? 's' : ''}</h2></div><small>${certs.length} credencial${certs.length !== 1 ? 'es' : ''} activa${certs.length !== 1 ? 's' : ''}</small></div>` +
       `<div class="certs-list">${certs.map(c => {
         const fecha = tsToDate(c.createdAt) || (c.emitido ? new Date(c.emitido) : new Date());
         const horas = Number(c.horas) || 0;
@@ -3677,7 +3712,14 @@ window.pintarHubRetos = function(){
       </main>
       <aside class="syn-league-side">
         <section class="syn-panel syn-weekly"><div class="syn-weekly__head"><span><svg class="ic"><use href="#i-trophy"/></svg></span><div><small>Esta semana</small><strong>${misionPct}% completada</strong></div></div><div class="syn-weekly__bar"><span style="width:${misionPct}%"></span></div><ul>${[['Reto diario','Decisión de hoy'],['Quiz','Una práctica'],['Flashcards','Cinco repasos']].map((x,i)=>`<li class="${misiones[i]?'is-done':''}"><span><svg class="ic"><use href="#i-${misiones[i]?'check':'clock'}"/></svg></span><div><strong>${x[0]}</strong><small>${x[1]}</small></div></li>`).join('')}</ul></section>
-        <section class="syn-panel syn-retos-credit"><span class="syn-retos-credit__coin">C</span><div><small>Tu saldo</small><strong><span id="syn-retos-credit-balance">${saldoCreditosReto()}</span> créditos</strong><p>Gana más al completar actividades.</p></div><button onclick="navigateTo('libros')" aria-label="Usar créditos en Libros">Usar →</button></section>
+        <section class="syn-credit-vault" aria-label="Cartera de Créditos SYNOVA">
+          <div class="syn-credit-vault__head"><span class="syn-credit-vault__brand">S</span><span>Mis Créditos SYNOVA</span></div>
+          <span class="syn-credit-vault__eyebrow">Mi cartera SYNOVA</span>
+          <div class="syn-credit-vault__balance"><strong id="syn-retos-credit-balance">${saldoCreditosReto()}</strong><span>créditos</span></div>
+          <p>Tu saldo para desbloquear libros, materiales y herramientas clínicas.</p>
+          <div class="syn-credit-vault__earn"><span><b>+10</b> por clase</span><span><b>+</b> retos y actividades</span></div>
+          <button type="button" onclick="navigateTo('libros')">Ver recompensas <svg class="ic"><use href="#i-arrow-right"/></svg></button>
+        </section>
       </aside>
     </div>
   </div>`;

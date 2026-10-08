@@ -8,7 +8,7 @@
    Sube este archivo a la raíz del repositorio, junto a los demás HTML.
    ============================================================ */
 
-var CACHE = 'synova-vip-pro-v38';
+var CACHE = 'synova-vip-pro-v39';
 
 // Al instalar, activarse de inmediato (sin esperar a que se cierren pestañas viejas)
 self.addEventListener('install', function (e) {
