@@ -748,6 +748,16 @@ body::after{
 .dir-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--primary) 45%,transparent);box-shadow:0 20px 45px color-mix(in srgb,var(--primary) 15%,rgba(0,0,0,.12))}
 .dir-card--mia{border-color:color-mix(in srgb,var(--primary) 50%,transparent)}
 .dir-card__badge-mia{position:absolute;top:12px;right:12px;z-index:2;background:var(--primary);color:#fff;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:999px}
+.dir-card__tier{position:absolute;top:12px;left:12px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:800;letter-spacing:.6px;padding:3px 9px;border-radius:999px;text-transform:uppercase}
+.dir-card__tier.is-vip{background:linear-gradient(135deg,#C7A567,#9E7B3D);color:#fff;box-shadow:0 3px 10px rgba(158,123,61,.4)}
+.dir-card__tier.is-free{background:var(--surface-3);color:var(--text-3);border:1px solid var(--border-2)}
+.dir-card--vip{border-color:color-mix(in srgb,#C7A567 55%,var(--border))}
+.dir-card--vip .dir-card__foto{border-color:#C7A567;box-shadow:0 6px 18px rgba(158,123,61,.35)}
+.dir-card--vip::before{background:linear-gradient(135deg,color-mix(in srgb,#C7A567 30%,transparent),color-mix(in srgb,#C7A567 10%,transparent))}
+.syn-tier{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:800;letter-spacing:.6px;padding:2px 7px;border-radius:999px;text-transform:uppercase}
+.syn-tier.is-vip{background:linear-gradient(135deg,#C7A567,#9E7B3D);color:#fff}
+.syn-tier.is-free{background:var(--surface-3);color:var(--text-3)}
+@media(max-width:600px){.dir-card__tier{display:none}}
 .dir-card__top{position:relative;z-index:1;margin-bottom:14px}
 .dir-card__foto{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--surface);box-shadow:0 6px 18px rgba(0,0,0,.18);background:var(--surface-2);display:block}
 .dir-card__foto--ini{display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif}
@@ -763,6 +773,38 @@ body::after{
 .dir-cta .ic{width:17px;height:17px}
 .dir-cta--wa:hover{color:#25D366;border-color:#25D366}
 .dir-cta--li:hover{color:#0A66C2;border-color:#0A66C2}
+.dir-cta--mail:hover{color:var(--primary);border-color:var(--primary)}
+.dir-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px;-webkit-overflow-scrolling:touch}
+.dir-chips::-webkit-scrollbar{height:0}
+.dir-chip{flex-shrink:0;padding:8px 15px;border-radius:999px;border:1px solid var(--border-2);background:var(--surface);color:var(--text-2);font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s;font-family:inherit}
+.dir-chip:hover{border-color:color-mix(in srgb,var(--primary) 40%,transparent)}
+.dir-chip.is-active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.dir-card__sincontacto{font-size:11px;color:var(--text-3);margin-top:auto;padding-top:6px;font-style:italic}
+.dir-card__body-m{display:contents}
+@media(max-width:600px){
+  .dir-grid{grid-template-columns:1fr;gap:12px}
+  .dir-card{flex-direction:row;align-items:flex-start;text-align:left;padding:16px;gap:14px}
+  .dir-card::before{height:100%;width:5px;top:0;bottom:0;right:auto;background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 55%,transparent),color-mix(in srgb,var(--highlight) 40%,transparent))}
+  .dir-card__badge-mia{top:14px;right:14px}
+  .dir-card__top{margin-bottom:0;flex-shrink:0}
+  .dir-card__foto{width:62px;height:62px;border-width:2px}
+  .dir-card__foto--ini{font-size:22px}
+  .dir-card__body-m{display:flex;flex-direction:column;align-items:flex-start;flex:1;min-width:0}
+  .dir-card__name{font-size:15.5px;margin-bottom:2px}
+  .dir-card__puesto{font-size:12.5px;margin-bottom:3px}
+  .dir-card__empresa{margin-bottom:7px;font-size:11.5px}
+  .dir-card__sector{margin-bottom:7px;font-size:9.5px;padding:3px 9px}
+  .dir-card__bio{-webkit-line-clamp:2;font-size:11.5px;margin-bottom:9px;text-align:left}
+  .dir-card__ctas{justify-content:flex-start;flex-wrap:wrap}
+  .dir-cta{width:34px;height:34px}
+}
+.dir-det__row-ic .ic{width:18px;height:18px}
+.dir-det__row--wa:hover .dir-det__row-ic{color:#25D366}
+.dir-det__row--li:hover .dir-det__row-ic{color:#0A66C2}
+.dir-det__sincontacto{font-size:12.5px;color:var(--text-3);font-style:italic;margin-top:16px}
+.dir-form__opt{font-weight:500;color:var(--text-3);text-transform:none;letter-spacing:0}
+.dir-form__sep{margin:20px 0 6px;font-size:12.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--primary);border-top:1px solid var(--border);padding-top:16px}
+select.dir-form__in{cursor:pointer}
 .dir-form{display:flex;flex-direction:column;gap:0}
 .dir-form__foto-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:18px}
 .dir-form__foto{width:92px;height:92px;border-radius:50%;background:var(--surface-2);border:2px dashed var(--border-2);display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -1856,11 +1898,27 @@ onAuthStateChanged(auth, async (user) => {
     };
     if (foto) perfilCuenta.fotoGoogle = foto;
     await setDoc(doc(db, 'miembros', user.uid), perfilCuenta, { merge: true });
-    if (foto) {
+    {
+      /* Alta automática en el Directorio/Clasificación: cada miembro aparece con
+         su ficha mínima (nombre, foto, estatus VIP) aunque nunca la edite, y los
+         antiguos se incorporan al volver a entrar. Solo su propio doc; sin datos
+         de facturación. El estatus VIP se refresca en cada sesión. */
       const tarjetaRef = doc(db, 'directorio', user.uid);
       const tarjetaSnap = await getDoc(tarjetaRef);
-      if (tarjetaSnap.exists() && !tarjetaSnap.data().foto) {
-        await setDoc(tarjetaRef, { foto, email, updatedAt: serverTimestamp() }, { merge: true });
+      const esVipActual = (modo === 'vip' || isAdmin);
+      if (!tarjetaSnap.exists()) {
+        await setDoc(tarjetaRef, {
+          uid: user.uid, nombre: nombreCuenta, email,
+          foto: foto || '', vip: esVipActual, plan: plan || null,
+          visible: true, autoAlta: true, updatedAt: serverTimestamp()
+        }, { merge: true });
+      } else {
+        const td = tarjetaSnap.data();
+        const upd = { vip: esVipActual, plan: plan || null, updatedAt: serverTimestamp() };
+        if (!td.nombre) upd.nombre = nombreCuenta;
+        if (!td.foto && foto) upd.foto = foto;
+        if (td.email === undefined) upd.email = email;
+        await setDoc(tarjetaRef, upd, { merge: true });
       }
     }
     /* Una sesión administrativa completa, en segundo plano, las fotos que
@@ -2801,11 +2859,11 @@ async function cargarCertificados(){
     const totalHoras = certs.reduce((s, c) => s + (Number(c.horas) || 0), 0);
     const areas = [...new Set(certs.map(c => c.area || 'Salud'))].length;
 
-    const kpis = `<div class="cert-summary" aria-label="Resumen de certificaciones">
-      <div class="cert-summary__item"><span>Certificados</span><strong>${certs.length}</strong></div>
-      <div class="cert-summary__item"><span>Horas certificadas</span><strong>${totalHoras}</strong></div>
-      <div class="cert-summary__item"><span>Áreas acreditadas</span><strong>${certs.length ? areas : 0}</strong></div>
-      <div class="cert-summary__item"><span>Verificación</span><strong>100<small>%</small></strong></div>
+    const kpis = `<div class="kpi-grid" aria-label="Resumen de certificaciones">
+      <div class="kpi-card"><div class="kpi-card__label">Certificados</div><div class="kpi-card__value">${certs.length}</div></div>
+      <div class="kpi-card"><div class="kpi-card__label">Horas certificadas</div><div class="kpi-card__value">${totalHoras}</div></div>
+      <div class="kpi-card"><div class="kpi-card__label">Áreas acreditadas</div><div class="kpi-card__value">${certs.length ? areas : 0}</div></div>
+      <div class="kpi-card"><div class="kpi-card__label">Verificables</div><div class="kpi-card__value">100<span class="kpi-card__value-sub">%</span></div></div>
     </div>`;
 
     if (!certs.length){
@@ -2814,7 +2872,7 @@ async function cargarCertificados(){
     }
 
     wrap.innerHTML = kpis +
-      `<div class="certs-list-head"><div><span>Archivo académico</span><h2>Tus certificados</h2></div><small>${certs.length} credencial${certs.length !== 1 ? 'es' : ''}</small></div>` +
+      `<div class="section-header"><h2 class="section-header__title">Tus ${certs.length} certificado${certs.length !== 1 ? 's' : ''}<span class="section-header__badge">${certs.length} activo${certs.length !== 1 ? 's' : ''}</span></h2></div>` +
       `<div class="certs-list">${certs.map(c => {
         const fecha = tsToDate(c.createdAt) || (c.emitido ? new Date(c.emitido) : new Date());
         const horas = Number(c.horas) || 0;
@@ -3646,12 +3704,18 @@ async function cargarRankingRetos(){
   try{
     const {collection,getDocs,db}=window.__fs;
     const snap=await getDocs(collection(db,'directorio'));
-    snap.forEach(d=>{const p=d.data();if(Number(p.retoXp)>0)items.push({uid:p.uid||d.id,nombre:p.nombre||'Miembro SYNOVA',foto:p.foto||'',xp:Number(p.retoXp)||0,nivel:p.retoNivel||nivelReto(Number(p.retoXp)||0).actual.nombre});});
+    snap.forEach(d=>{const p=d.data();if(p.visible===false && p.uid!==S?.uid)return;items.push({uid:p.uid||d.id,nombre:p.nombre||'Miembro SYNOVA',foto:p.foto||'',xp:Number(p.retoXp)||0,nivel:p.retoNivel||nivelReto(Number(p.retoXp)||0).actual.nombre,vip:p.vip!==false});});
   }catch(e){console.warn('[SYNOVA] ranking:',e.message);}
-  const yo=items.find(x=>x.uid===S?.uid);if(yo){yo.xp=Math.max(yo.xp,s.xp);yo.nivel=nivelReto(yo.xp).actual.nombre;yo.foto=yo.foto||S.foto||'';}else if(S?.uid)items.push({uid:S.uid,nombre:S.nombre||'Tú',foto:S.foto||'',xp:s.xp,nivel:nivelReto(s.xp).actual.nombre});
+  const yo=items.find(x=>x.uid===S?.uid);if(yo){yo.xp=Math.max(yo.xp,s.xp);yo.nivel=nivelReto(yo.xp).actual.nombre;yo.foto=yo.foto||S.foto||'';yo.vip=toolEsVIP();}else if(S?.uid)items.push({uid:S.uid,nombre:S.nombre||'Tú',foto:S.foto||'',xp:s.xp,nivel:nivelReto(s.xp).actual.nombre,vip:toolEsVIP()});
   items.sort((a,b)=>b.xp-a.xp||a.nombre.localeCompare(b.nombre));const pos=Math.max(1,items.findIndex(x=>x.uid===S?.uid)+1);const num=document.getElementById('syn-rank-num'),total=document.getElementById('syn-rank-total'),count=document.getElementById('syn-ranking-count');if(num)num.textContent='#'+pos;if(total)total.textContent=`de ${items.length} en la liga`;if(count)count.textContent=`${items.length} en la clasificación`;
   if(!box)return;const top=items.slice(0,3),orden=top.length>=3?[top[1],top[0],top[2]]:top;
-  box.innerHTML=`<div class="syn-podium">${orden.map(p=>{const real=items.indexOf(p)+1;return `<div class="syn-podium__place place-${real} ${p.uid===S?.uid?'is-you':''}"><span class="syn-podium__medal">#${real}</span>${avatarReto(p)}<strong>${escHtml(p.nombre)}</strong><small>${escHtml(p.nivel)}</small><b>${p.xp} XP</b></div>`;}).join('')}</div><div class="syn-ranking-table">${items.slice(3,8).map((p,i)=>`<div class="syn-ranking-row ${p.uid===S?.uid?'is-you':''}"><span class="syn-ranking-row__rank">${i+4}</span>${avatarReto(p)}<span class="syn-ranking-row__name"><strong>${escHtml(p.nombre)}${p.uid===S?.uid?' · Tú':''}</strong><span>${escHtml(p.nivel)}</span></span><b>${p.xp} XP</b></div>`).join('')}</div><p class="syn-ranking-note">Tu posición siempre se muestra. Los demás miembros se incorporan cuando completan su primera actividad y suman XP.</p>`;
+  box.innerHTML=`<div class="kpi-grid" style="margin-bottom:20px">`
+    +`<div class="kpi-card"><div class="kpi-card__label">Participantes</div><div class="kpi-card__value">${items.length}</div></div>`
+    +`<div class="kpi-card"><div class="kpi-card__label">Tu posición</div><div class="kpi-card__value">#${pos}</div></div>`
+    +`<div class="kpi-card"><div class="kpi-card__label">Tu XP</div><div class="kpi-card__value">${(yo?yo.xp:s.xp)||0}</div></div>`
+    +`<div class="kpi-card"><div class="kpi-card__label">Líder</div><div class="kpi-card__value">${top[0]?top[0].xp:0}<span class="kpi-card__value-sub">XP</span></div></div>`
+    +`</div>`
+    +`<div class="syn-podium">${orden.map(p=>{const real=items.indexOf(p)+1;return `<div class="syn-podium__place place-${real} ${p.uid===S?.uid?'is-you':''}"><span class="syn-podium__medal">#${real}</span>${avatarReto(p)}<strong>${escHtml(p.nombre)}</strong><small>${escHtml(p.nivel)}</small><span class="syn-tier ${p.vip?'is-vip':'is-free'}">${p.vip?'★ VIP':'Miembro'}</span><b>${p.xp} XP</b></div>`;}).join('')}</div><div class="syn-ranking-table">${items.slice(3,8).map((p,i)=>`<div class="syn-ranking-row ${p.uid===S?.uid?'is-you':''}"><span class="syn-ranking-row__rank">${i+4}</span>${avatarReto(p)}<span class="syn-ranking-row__name"><strong>${escHtml(p.nombre)}${p.uid===S?.uid?' · Tú':''}</strong><span>${escHtml(p.nivel)}${p.vip?' · VIP':''}</span></span><b>${p.xp} XP</b></div>`).join('')}</div><p class="syn-ranking-note">Aquí aparecen todos los miembros de SYNOVA, VIP y no VIP. Suma XP completando retos para subir en la clasificación.</p>`;
 }
 
 async function asegurarFotosDirectorio(){
@@ -3765,19 +3829,33 @@ window.borrarComentario = async function(postId, comId){
 <!-- ══════════════════════ DIRECTORIO / CANAL / PERFIL / SUSCRIPCIÓN ══════════════════════ -->
 <script>
 /* ══════════════════════ DIRECTORIO VIP ══════════════════════ */
+const DIR_SECTORES = ['Hospital','Clínica','Consultorio','Enfermería','Urgencias','Pediatría','Laboratorio','Salud pública','Nutrición','Docencia','Otro'];
+let _dirFiltroSector = 'todos';
+let _dirBusqueda = '';
 Sections.directorio = function(){
   const S = window.UserState;
+  _dirFiltroSector = 'todos'; _dirBusqueda = '';
   document.getElementById('content').innerHTML =
     secHero('Networking', 'Directorio VIP', 'Profesionales de la salud aliados de SYNOVA. Crea tu tarjeta profesional y conecta con la comunidad.') +
     `<div class="dir-bar">
       <div class="dir-search"><svg class="ic"><use href="#i-search"/></svg><input id="dir-buscar" placeholder="Buscar por nombre, puesto o sector…"></div>
       ${S.isAdmin ? `<button class="btn btn--ghost btn--sm" id="dir-sync-fotos"><svg class="ic"><use href="#i-image"/></svg>Sincronizar fotos</button>` : ''}
-      ${toolEsVIP() ? `<button class="btn btn--accent btn--sm" id="dir-mi-tarjeta"><svg class="ic"><use href="#i-edit"/></svg>Mi tarjeta</button>` : ''}
+      <button class="btn btn--accent btn--sm" id="dir-mi-tarjeta"><svg class="ic"><use href="#i-edit"/></svg>Mi tarjeta</button>
+    </div>
+    <div class="dir-chips" id="dir-chips">
+      <button class="dir-chip is-active" data-sector="todos">Todos</button>
+      ${DIR_SECTORES.map(s => `<button class="dir-chip" data-sector="${escHtml(s)}">${escHtml(s)}</button>`).join('')}
     </div>
     <div id="dir-grid" class="dir-grid"></div>`;
   cargarDirectorio();
   document.getElementById('dir-mi-tarjeta')?.addEventListener('click', abrirEditorTarjeta);
-  document.getElementById('dir-buscar')?.addEventListener('input', (e) => pintarDirectorio(e.target.value));
+  document.getElementById('dir-buscar')?.addEventListener('input', (e) => { _dirBusqueda = e.target.value; pintarDirectorio(); });
+  document.querySelectorAll('#dir-chips [data-sector]').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('#dir-chips [data-sector]').forEach(x => x.classList.remove('is-active'));
+    c.classList.add('is-active');
+    _dirFiltroSector = c.dataset.sector;
+    pintarDirectorio();
+  }));
   document.getElementById('dir-sync-fotos')?.addEventListener('click', async () => {
     const r = await sincronizarFotosGoogleDirectorio(false);
     if (r) cargarDirectorio();
@@ -3819,29 +3897,36 @@ async function cargarDirectorio(){
     const items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
     window.__dirCache = items;
     window.__dirFotos = Object.fromEntries(items.filter(p => p.uid && p.foto).map(p => [p.uid, p.foto]));
-    pintarDirectorio('');
+    pintarDirectorio();
   } catch (e) { grid.innerHTML = emptyState('i-users', 'No se pudo cargar el directorio', e.message); }
 }
 
-function pintarDirectorio(filtro){
+function pintarDirectorio(){
   const grid = document.getElementById('dir-grid');
   if (!grid) return;
   const S = window.UserState;
-  const q = (filtro || '').toLowerCase().trim();
-  let items = window.__dirCache || [];
-  if (q) items = items.filter(p => (p.nombre || '').toLowerCase().includes(q) || (p.puesto || '').toLowerCase().includes(q) || (p.sector || '').toLowerCase().includes(q));
-  if (!items.length) { grid.innerHTML = emptyState('i-users', filtro ? 'Sin resultados' : 'Directorio vacío por ahora', filtro ? 'Prueba con otro término de búsqueda.' : 'Sé de los primeros en crear tu tarjeta profesional en el directorio VIP.'); return; }
+  const q = (_dirBusqueda || '').toLowerCase().trim();
+  let items = (window.__dirCache || []).filter(p => p.visible !== false || (S && p.uid === S.uid));
+  if (_dirFiltroSector !== 'todos') items = items.filter(p => (p.sector || '') === _dirFiltroSector);
+  if (q) items = items.filter(p => (p.nombre || '').toLowerCase().includes(q) || (p.puesto || '').toLowerCase().includes(q) || (p.sector || '').toLowerCase().includes(q) || (p.empresa || '').toLowerCase().includes(q));
+  const filtrando = q || _dirFiltroSector !== 'todos';
+  if (!items.length) { grid.innerHTML = emptyState('i-users', filtrando ? 'Sin resultados' : 'Directorio vacío por ahora', filtrando ? 'Prueba con otro término o sector.' : 'Sé de los primeros en crear tu tarjeta profesional en el directorio VIP.'); return; }
+  /* VIP primero, luego por nombre */
+  items = items.slice().sort((a, b) => ((b.vip !== false) - (a.vip !== false)) || (a.nombre || '').localeCompare(b.nombre || ''));
   grid.innerHTML = items.map(p => {
     const color = colorForArea(p.nombre || p.id);
     const esMia = S && p.uid === S.uid;
+    const esVipCard = esMia ? toolEsVIP() : (p.vip !== false);
     const iniciales = (p.nombre || '?').trim().split(' ').filter(Boolean).slice(0, 2).map(s => s[0]).join('').toUpperCase();
     const fotoUrl = p.foto || (esMia ? S.foto : '');
     const foto = fotoUrl
       ? `<img src="${escHtml(fotoUrl)}" alt="${escHtml(p.nombre || '')}" class="dir-card__foto" referrerpolicy="no-referrer" loading="lazy">`
       : `<div class="dir-card__foto dir-card__foto--ini" style="background:${color}">${escHtml(iniciales)}</div>`;
-    return `<div class="dir-card ${esMia ? 'dir-card--mia' : ''}" data-pid="${p.id}">
+    return `<div class="dir-card ${esMia ? 'dir-card--mia' : ''} ${esVipCard ? 'dir-card--vip' : 'dir-card--free'}" data-pid="${p.id}">
+      <div class="dir-card__tier ${esVipCard ? 'is-vip' : 'is-free'}">${esVipCard ? '★ VIP' : 'Miembro'}</div>
       ${esMia ? '<div class="dir-card__badge-mia">Tú</div>' : ''}
       <div class="dir-card__top">${foto}</div>
+      <div class="dir-card__body-m">
       <div class="dir-card__name">${escHtml(p.nombre || 'Miembro SYNOVA')}</div>
       <div class="dir-card__puesto">${escHtml(p.puesto || '')}</div>
       ${p.empresa ? `<div class="dir-card__empresa"><svg class="ic"><use href="#i-briefcase"/></svg>${escHtml(p.empresa)}</div>` : ''}
@@ -3851,6 +3936,8 @@ function pintarDirectorio(filtro){
         ${p.whatsapp ? `<a class="dir-cta dir-cta--wa" href="https://wa.me/${escHtml(String(p.whatsapp).replace(/\D/g,''))}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-whatsapp"/></svg></a>` : ''}
         ${p.linkedin ? `<a class="dir-cta dir-cta--li" href="${escHtml(p.linkedin)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-linkedin"/></svg></a>` : ''}
         ${p.email ? `<a class="dir-cta" href="${escHtml(gmailComposeUrl(p.email))}" target="_blank" rel="noopener" aria-label="Escribir a ${escHtml(p.email)} en Gmail" title="Escribir en Gmail" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-mail"/></svg></a>` : ''}
+        ${p.web ? `<a class="dir-cta" href="${escHtml((p.web||'').startsWith('http')?p.web:'https://'+p.web)}" target="_blank" rel="noopener" aria-label="Sitio web" title="Sitio web" onclick="event.stopPropagation()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></a>` : ''}
+      </div>
       </div>
     </div>`;
   }).join('');
@@ -3878,8 +3965,9 @@ function abrirTarjetaDetalle(id){
       <div class="dir-det__rows">
         ${p.whatsapp ? `<a class="dir-det__row" href="https://wa.me/${escHtml(String(p.whatsapp).replace(/\D/g,''))}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-whatsapp"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">WhatsApp</span><span class="dir-det__row-val">${escHtml(p.whatsapp)}</span></div></a>` : ''}
         ${p.email ? `<a class="dir-det__row" href="${escHtml(gmailComposeUrl(p.email))}" target="_blank" rel="noopener" aria-label="Escribir a ${escHtml(p.email)} en Gmail"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-mail"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">Correo</span><span class="dir-det__row-val">${escHtml(p.email)}</span></div></a>` : ''}
-        ${p.linkedin ? `<a class="dir-det__row" href="${escHtml(p.linkedin)}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-linkedin"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">LinkedIn</span><span class="dir-det__row-val">Ver perfil</span></div></a>` : ''}
-        ${!p.whatsapp && !p.email && !p.linkedin ? '<div class="dir-det__sincontacto">Este miembro no agregó datos de contacto públicos.</div>' : ''}
+        ${p.linkedin ? `<a class="dir-det__row dir-det__row--li" href="${escHtml(p.linkedin)}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-linkedin"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">LinkedIn</span><span class="dir-det__row-val">Ver perfil</span></div></a>` : ''}
+        ${p.web ? `<a class="dir-det__row" href="${escHtml((p.web||'').startsWith('http')?p.web:'https://'+p.web)}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">Sitio web</span><span class="dir-det__row-val">${escHtml(p.web)}</span></div></a>` : ''}
+        ${!p.whatsapp && !p.email && !p.linkedin && !p.web ? '<div class="dir-det__sincontacto">Este miembro no agregó datos de contacto públicos.</div>' : ''}
       </div>
     </div>`;
   Modal.open({ id: 'dir-detalle', title: 'Tarjeta profesional', icon: 'i-users', size: 'sm', body, footer: '<button class="btn btn--ghost" onclick="Modal.close(\'dir-detalle\')">Cerrar</button>' });
@@ -3930,11 +4018,19 @@ function abrirEditorTarjeta(){
       <label class="dir-form__lbl">Nombre completo</label><input class="dir-form__in" id="df-nombre" value="${escHtml(mia.nombre || S.nombre || '')}">
       <label class="dir-form__lbl">Puesto</label><input class="dir-form__in" id="df-puesto" placeholder="Ej. Médico general, Coordinadora de calidad…" value="${escHtml(mia.puesto || '')}">
       <label class="dir-form__lbl">Empresa / institución</label><input class="dir-form__in" id="df-empresa" value="${escHtml(mia.empresa || '')}">
-      <label class="dir-form__lbl">Sector</label><input class="dir-form__in" id="df-sector" placeholder="Ej. Hospital, Consultorio, Clínica…" value="${escHtml(mia.sector || '')}">
+      <label class="dir-form__lbl">Sector</label>
+      <select class="dir-form__in" id="df-sector">
+        <option value="">Selecciona…</option>
+        ${DIR_SECTORES.map(s => `<option value="${escHtml(s)}" ${mia.sector===s?'selected':''}>${escHtml(s)}</option>`).join('')}
+        ${mia.sector && !DIR_SECTORES.includes(mia.sector) ? `<option value="${escHtml(mia.sector)}" selected>${escHtml(mia.sector)}</option>` : ''}
+      </select>
       <label class="dir-form__lbl">Bio corta</label><textarea class="dir-form__in" id="df-bio" rows="2">${escHtml(mia.bio || '')}</textarea>
+      <div class="dir-form__sep">Contacto <span class="dir-form__opt">(todos opcionales)</span></div>
       <label class="dir-form__lbl">WhatsApp (10 dígitos)</label><input class="dir-form__in" id="df-whatsapp" value="${escHtml(mia.whatsapp || '')}">
       <label class="dir-form__lbl">Correo de contacto</label><input class="dir-form__in" id="df-email" value="${escHtml(mia.email || S.email || '')}">
       <label class="dir-form__lbl">LinkedIn (URL)</label><input class="dir-form__in" id="df-linkedin" value="${escHtml(mia.linkedin || '')}">
+      <label class="dir-form__lbl">Sitio web <span class="dir-form__opt">(opcional)</span></label><input class="dir-form__in" id="df-web" placeholder="tusitio.com" value="${escHtml(mia.web || '')}">
+      <label class="dir-form__check"><input type="checkbox" id="df-visible" ${mia.visible!==false?'checked':''}> Mostrar mi tarjeta en el directorio</label>
     </div>`;
   Modal.open({ id: 'dir-editor', title: 'Mi tarjeta profesional', icon: 'i-edit', size: 'sm', body, footer: '<button class="btn btn--ghost" onclick="Modal.close(\'dir-editor\')">Cancelar</button><button class="btn btn--accent" onclick="guardarTarjeta()">Guardar</button>' });
   /* Foto */
@@ -3974,6 +4070,10 @@ window.guardarTarjeta = async function(){
       whatsapp: document.getElementById('df-whatsapp').value.trim(),
       email: document.getElementById('df-email').value.trim(),
       linkedin: document.getElementById('df-linkedin').value.trim(),
+      web: document.getElementById('df-web').value.trim(),
+      visible: document.getElementById('df-visible').checked,
+      vip: (window.UserState && (window.UserState.modo === 'vip' || window.UserState.isAdmin)) || false,
+      plan: (window.UserState && window.UserState.plan) || null,
       updatedAt: serverTimestamp()
     };
     if (_dirFotoTmp === null) data.foto = S.foto || null;          // volver a la foto de Google
