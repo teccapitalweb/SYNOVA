@@ -19,8 +19,8 @@
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=13">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=6">
-<link rel="stylesheet" href="assets/synova-course-experience.css?v=1">
-<link rel="stylesheet" href="assets/synova-certificates-credits.css?v=2">
+<link rel="stylesheet" href="assets/synova-course-experience.css?v=2">
+<link rel="stylesheet" href="assets/synova-certificates-credits.css?v=3">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -3752,9 +3752,18 @@ window.abrirHistoriaSynova = function(){
 
 window.iniciarCasoSynova = function(indice){ window.iniciarRetoClinico('casos',String(indice),'caso'); };
 window.iniciarMundoSynova = function(id){ window.iniciarRetoClinico('historia',id,'historia'); };
-window.iniciarRetoClinico = function(tipo,filtro='',modo='guiado'){
+function accesoRetoPayload(tipo,filtro,modo){
+  const source=tipo==='diario'?'daily':tipo==='casos'?'case':tipo==='historia'?'story':tipo;
+  const hoy=fechaReto();
+  const activityId=tipo==='diario'?hoy:tipo==='casos'?('caso-'+filtro):tipo==='historia'?filtro:[hoy,filtro||'general',modo||'guiado'].join(':');
+  return {source,activityId};
+}
+window.iniciarRetoClinico = async function(tipo,filtro='',modo='guiado'){
   const s=estadoRetos();
   if(tipo==='diario'&&s.diarios.includes(fechaReto())){ pintarResultadoReto({tipo,correctas:1,total:1,xp:0,pct:100,repetido:true}); return; }
+  if(!window.__synovaCanStartChallenge){Toast.info('Preparando Retos','Intenta de nuevo en un momento.');return;}
+  const acceso=await window.__synovaCanStartChallenge(accesoRetoPayload(tipo,filtro,modo));
+  if(!acceso)return;
   let preguntas=[];
   if(tipo==='diario'){
     const semilla=Number(fechaReto().replace(/-/g,'')); preguntas=[BANCO_RETOS[semilla%BANCO_RETOS.length]];
@@ -3799,10 +3808,11 @@ window.siguienteRetoClinico = function(){
   else if(r.tipo==='casos'){s.casos++;if(r.casoId&&!s.casosResueltos.includes(r.casoId))s.casosResueltos.push(r.casoId);}
   else if(r.tipo==='historia'&&pct>=60&&!s.historia.includes(r.filtro)){s.historia.push(r.filtro);xp+=50;}
   s.xp+=xp;s.correctas+=r.correctas;s.respondidas+=total;s.mejor=Math.max(s.mejor,pct);setRetosState(s);sincronizarProgresoReto(s);
-  if(r.correctas>0&&window.__synovaAwardChallenge){
-    const source=r.tipo==='casos'?'case':r.tipo==='historia'?'story':r.tipo;
+  if(window.__synovaAwardChallenge){
+    const source=r.tipo==='diario'?'daily':r.tipo==='casos'?'case':r.tipo==='historia'?'story':r.tipo;
     const key=r.tipo==='diario'?hoy:r.tipo==='casos'?(r.casoId||r.filtro):r.tipo==='historia'?r.filtro:[hoy,r.filtro||'general',r.modo||'guiado'].join(':');
-    window.__synovaAwardChallenge({source:source,activityId:key,correct:r.correctas});
+    const aprobado=(r.tipo==='diario'||r.tipo==='casos')?r.correctas===total:pct>=60;
+    window.__synovaAwardChallenge({source:source,activityId:key,correct:aprobado?r.correctas:0});
   }
   pintarResultadoReto({tipo:r.tipo,filtro:r.filtro,modo:r.modo,correctas:r.correctas,total,xp,pct});
 };
@@ -3819,7 +3829,10 @@ window.abrirFlashSynova = function(){
   document.getElementById('content').innerHTML=`<div class="syn-challenge"><button class="btn btn--ghost btn--sm syn-back" onclick="pintarHubRetos()">← Volver a la liga</button><section class="syn-challenge-hero" style="--game:#159E92"><div class="syn-challenge-hero__copy"><span class="syn-kicker">Memoria activa</span><h1>Flashcards clínicas</h1><p>Recuerda lo esencial con sesiones breves y repetición espaciada.</p><div class="syn-challenge-hero__stats"><span><b>${RETOS_FLASHCARDS.length}</b> tarjetas</span><span><b>${s.flashDominadas}</b> dominadas</span><span><b>${pendientes}</b> para hoy</span></div></div><div class="syn-challenge-hero__art"><span><svg class="ic"><use href="#i-book"/></svg></span></div></section><div class="syn-section-head"><div><span class="syn-eyebrow">Elige una sesión</span><h2>Mazos de repaso</h2></div></div><div class="syn-deck-grid"><button class="syn-deck" style="--deck:#159E92" onclick="iniciarFlashSynova('')"><span class="syn-deck__icon"><img src="assets/images/flashcards-icons/repaso-inteligente.png" alt="" loading="lazy"></span><span><strong>Repaso inteligente</strong><small>Hasta 12 tarjetas vencidas o nuevas</small></span><i>→</i></button>${areas.map((a,i)=>{const cantidad=RETOS_FLASHCARDS.filter(x=>x.area===a).length;return `<button class="syn-deck" style="--deck:${['#2D89C8','#7A67C7','#D17847','#C35488'][i%4]}" onclick="iniciarFlashSynova('${escHtml(a)}')"><span class="syn-deck__icon"><img src="assets/images/flashcards-icons/${imagenFlashcardReto(a)}" alt="" loading="lazy"></span><span><strong>${escHtml(a)}</strong><small>${cantidad} ${cantidad===1?'tarjeta':'tarjetas'}</small></span><i>→</i></button>`;}).join('')}</div>${retoFuente()}</div>`;
 };
 
-window.iniciarFlashSynova = function(area=''){
+window.iniciarFlashSynova = async function(area=''){
+  if(!window.__synovaCanStartChallenge){Toast.info('Preparando Retos','Intenta de nuevo en un momento.');return;}
+  const acceso=await window.__synovaCanStartChallenge({source:'flash',activityId:fechaReto()+':'+(area||'general')});
+  if(!acceso)return;
   const s=estadoRetos(),hoy=fechaReto();let base=RETOS_FLASHCARDS.filter(c=>(!area||c.area===area)&&(!s.flash[c.id]||!s.flash[c.id].due||s.flash[c.id].due<=hoy));
   if(!base.length)base=RETOS_FLASHCARDS.filter(c=>!area||c.area===area);
   FlashSession={area,tarjetas:mezclarRetos(base).slice(0,12),idx:0,volteada:false,dominadas:0};pintarFlashReto();
@@ -3835,7 +3848,7 @@ window.calificarFlashSynova = function(dominada){
   const f=FlashSession;if(!f||!f.volteada)return;const c=f.tarjetas[f.idx],s=estadoRetos(),prev=s.flash[c.id]||{reps:0};const reps=dominada?Math.min(5,(prev.reps||0)+1):0,dias=dominada?[1,3,7,16,35][reps-1]:0;const due=new Date();due.setDate(due.getDate()+dias);
   s.flash[c.id]={reps,due:due.toLocaleDateString('en-CA')};s.flashEstudiadas++;s.flashSemana++;if(dominada){f.dominadas++;s.xp+=3;}
   s.flashDominadas=Object.values(s.flash).filter(x=>x.reps>=3).length;setRetosState(s);
-  if(f.idx>=f.tarjetas.length-1){sincronizarProgresoReto(s);if(f.dominadas>0&&window.__synovaAwardChallenge)window.__synovaAwardChallenge({source:'flash',activityId:fechaReto()+':'+(f.tarjetas[0]?.area||'general'),correct:Math.min(5,f.dominadas)});document.getElementById('content').innerHTML=`<div class="reto-play"><div class="reto-result"><div class="reto-result__icon"><svg class="ic ic--xl"><use href="#i-book"/></svg></div><h2>Repaso completado</h2><p>${f.tarjetas.length} tarjetas vistas · ${f.dominadas} recordadas</p><button class="btn btn--accent" onclick="pintarHubRetos()">Volver a Retos</button></div></div>`;window.celebrarSynova(f.dominadas>=Math.ceil(f.tarjetas.length*.7)?'grande':'normal');return;}
+  if(f.idx>=f.tarjetas.length-1){sincronizarProgresoReto(s);const aprobado=f.dominadas>=Math.ceil(f.tarjetas.length*.7);if(window.__synovaAwardChallenge)window.__synovaAwardChallenge({source:'flash',activityId:fechaReto()+':'+(f.area||'general'),correct:aprobado?Math.min(5,f.dominadas):0});document.getElementById('content').innerHTML=`<div class="reto-play"><div class="reto-result"><div class="reto-result__icon"><svg class="ic ic--xl"><use href="#i-book"/></svg></div><h2>Repaso completado</h2><p>${f.tarjetas.length} tarjetas vistas · ${f.dominadas} recordadas</p><button class="btn btn--accent" onclick="pintarHubRetos()">Volver a Retos</button></div></div>`;window.celebrarSynova(aprobado?'grande':'normal');return;}
   f.idx++;f.volteada=false;pintarFlashReto();
 };
 
@@ -6091,7 +6104,8 @@ function mountNutricion(c){
         '</div></div>' +
       '</div>';
 
-    const pct = sesiones.length ? Math.round((prog.vistas.length / sesiones.length) * 100) : 0;
+    const vistasValidas = sesiones.reduce(function(total,_,i){ return total + (prog.vistas.includes(i) ? 1 : 0); }, 0);
+    const pct = sesiones.length ? Math.min(100, Math.round((vistasValidas / sesiones.length) * 100)) : 0;
     let contenidoHtml;
     if (!desbloq && c.marcarProximamente === true){
       contenidoHtml =
@@ -6111,11 +6125,11 @@ function mountNutricion(c){
         '</div></section>';
     } else {
       contenidoHtml =
-        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Aprendizaje</div><h2 class="course-section__title">Clases</h2></div><span class="course-section__count">' + prog.vistas.length + ' de ' + sesiones.length + ' vistas</span></div><div class="course-lesson-list">' + clasesHtml + '</div></section>' +
+        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Aprendizaje</div><h2 class="course-section__title">Clases</h2></div><span class="course-section__count">' + vistasValidas + ' de ' + sesiones.length + ' vistas</span></div><div class="course-lesson-list">' + clasesHtml + '</div></section>' +
         '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + matsHtml + '</section>';
     }
 
-    const summaryHtml = '<aside class="course-summary"><div class="course-summary__label">Tu avance</div><div class="course-summary__value">' + pct + '%</div><div class="course-summary__caption">Progreso del curso</div><div class="course-summary__bar"><span style="width:' + pct + '%"></span></div><div class="course-summary__row"><span>Clases</span><strong>' + sesiones.length + '</strong></div><div class="course-summary__row"><span>Completadas</span><strong>' + prog.vistas.length + '</strong></div><div class="course-summary__row"><span>Materiales</span><strong>' + materiales.length + '</strong></div></aside>';
+    const summaryHtml = '<aside class="course-summary"><div class="course-summary__label">Tu avance</div><div class="course-summary__value">' + pct + '%</div><div class="course-summary__caption">Progreso del curso</div><div class="course-summary__bar"><span style="width:' + pct + '%"></span></div><div class="course-summary__row"><span>Clases</span><strong>' + sesiones.length + '</strong></div><div class="course-summary__row"><span>Completadas</span><strong>' + vistasValidas + '</strong></div><div class="course-summary__row"><span>Materiales</span><strong>' + materiales.length + '</strong></div></aside>';
     document.getElementById('content').innerHTML = '<div class="course-page" id="curso-detalle-body"><button class="course-page__back" data-section="cursos"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-arrow-right"/></svg>Volver a Mis cursos</button>' + heroHtml + '<div class="course-page__layout"><main class="course-page__main">' + contenidoHtml + '</main>' + summaryHtml + '</div></div>';
     const cont = document.getElementById('curso-detalle-body');
     cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => {
@@ -6167,6 +6181,22 @@ function mountNutricion(c){
     }catch(error){console.warn('[ejercicio de clase]',error.message);}
   }
 
+  function contenidoClaseSynova(curso, sesion, idx){
+    const titulo=sesion.titulo||('Clase '+(idx+1));
+    const resumen=sesion.resumen||sesion.descripcion||curso.descripcion||'Revisa los conceptos centrales de la clase y aplícalos con criterio clínico, seguridad y una documentación clara.';
+    const fuente=Array.isArray(sesion.conceptos)?sesion.conceptos:Array.isArray(sesion.puntosClave)?sesion.puntosClave:[];
+    const conceptos=(fuente.length?fuente:[
+      'Fundamentos esenciales de '+titulo,
+      'Aplicación clínica y toma de decisiones seguras',
+      'Registro, seguimiento y comunicación con el equipo'
+    ]).slice(0,4).map(function(item,i){
+      if(item&&typeof item==='object')return {tiempo:String(item.tiempo||item.time||['02:00','06:20','10:40','14:10'][i]),texto:String(item.texto||item.text||item.titulo||titulo)};
+      return {tiempo:['02:00','06:20','10:40','14:10'][i],texto:String(item)};
+    });
+    return {titulo,resumen,conceptos};
+  }
+  function claveNotasClaseSynova(cursoId,idx){const uid=window.UserState?.uid||'guest';return 'synova:lesson-notes:'+uid+':'+cursoId+':'+idx;}
+
   async function abrirClaseEnCurso(id, idx){
     const c = (window.__cursosCache || []).find(function(x){ return String(x.id) === String(id); });
     if (!c) return;
@@ -6180,7 +6210,13 @@ function mountNutricion(c){
     window.__claseActualIndex = idx;
     const prog = cursoProg(id);
     const vista = prog.vistas.includes(idx);
-    const siguiente = sesiones.findIndex(function(_,i){ return i > idx && claseDesbloqueada(id,i,sesiones.length); });
+    const completadas = sesiones.reduce(function(total,_,i){return total+(prog.vistas.includes(i)?1:0);},0);
+    const siguiente = idx+1<sesiones.length?idx+1:-1;
+    const siguienteAbierta = siguiente>=0&&claseDesbloqueada(id,siguiente,sesiones.length);
+    const contenido = contenidoClaseSynova(c,s,idx);
+    const minutos = Math.max(20,Math.round(((Number(c.horas)||sesiones.length)*60)/Math.max(1,sesiones.length)));
+    const juegoGanado = !!window.SynovaClassGames?.hasWon(String(id),idx+1);
+    let notas='';try{notas=localStorage.getItem(claveNotasClaseSynova(id,idx))||'';}catch(_){ }
     const syllabus = sesiones.map(function(item,i){
       const abierta = claseDesbloqueada(id,i,sesiones.length);
       const hecha = prog.vistas.includes(i);
@@ -6194,28 +6230,35 @@ function mountNutricion(c){
       return '<div class="leccion' + (abierto?'':' is-locked') + '" data-lesson-mat="' + i + '" data-open="' + abierto + '" style="cursor:pointer"><div class="leccion__thumb" style="background:color-mix(in srgb,var(--primary) 10%,var(--surface-3));display:flex;align-items:center;justify-content:center"><svg class="ic" style="color:var(--primary);width:20px;height:20px"><use href="#i-news"/></svg></div><div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material '+(i+1))) + '</div><div class="leccion__meta">PDF · ' + (abierto?'Abrir recurso':'Disponible con membresía') + '</div></div><div class="leccion__go"><svg class="ic"><use href="' + (abierto?'#i-arrow-right':'#i-shield-check') + '"/></svg></div></div>';
     }).join('') : '<p style="font-size:12px;color:var(--text-3)">Esta clase no tiene material adicional.</p>';
 
-    document.getElementById('content').innerHTML = '<div class="lesson-page" id="curso-clase-body">' +
+    const panelEstudio = function(variante){return '<aside class="lesson-syllabus lesson-studio '+variante+'"><div class="lesson-studio__tabs" role="tablist"><button class="is-active" type="button" data-lesson-tab="temario">Temario</button><button type="button" data-lesson-tab="notas">Notas</button><button type="button" data-lesson-tab="juego">Juego</button></div><div class="lesson-studio__panel is-active" data-lesson-panel="temario"><div class="lesson-syllabus__head"><div class="lesson-syllabus__kicker">Contenido del curso</div><div class="lesson-syllabus__title">'+escHtml(c.nombre||'Curso SYNOVA')+'</div><div class="lesson-syllabus__progress">'+completadas+' de '+sesiones.length+' clases completadas</div></div><div class="lesson-syllabus__list">'+syllabus+'</div></div><div class="lesson-studio__panel" data-lesson-panel="notas"><label class="lesson-notes"><span>Tus notas de la clase</span><textarea data-lesson-notes placeholder="Escribe ideas, criterios clínicos o dudas para repasar…">'+escHtml(notas)+'</textarea><small data-notes-state>Se guardan automáticamente en este dispositivo.</small></label></div><div class="lesson-studio__panel" data-lesson-panel="juego"><div class="lesson-side-game"><span class="lesson-side-game__icon"><svg class="ic"><use href="#i-trophy"/></svg></span><h3>Desafío clínico</h3><p>Resuelve tres decisiones breves para comprobar lo aprendido.</p><span class="lesson-side-game__state '+(juegoGanado?'is-won':'')+'">'+(juegoGanado?'✓ Ganado':(vista?'Clase completada':'Pendiente'))+'</span><button type="button" data-lesson-game-start>'+(vista?'Practicar otra vez':'Jugar y completar')+'</button></div></div></aside>';};
+
+    document.getElementById('content').innerHTML = '<div class="lesson-page lesson-page--premium fade-up" id="curso-clase-body">' +
       '<div class="lesson-page__nav"><button class="lesson-back-btn" id="lessonBackContent"><span class="lesson-back-btn__arrow">←</span>Volver al curso</button><button class="lesson-back-btn lesson-back-btn--quiet" id="lessonBackCourse"><span class="lesson-back-btn__arrow">←</span>Mis cursos</button></div>' +
       '<div class="lesson-page__crumbs"><span>' + escHtml(c.nombre || 'Curso') + '</span><span>›</span><strong>' + escHtml(s.titulo || ('Clase '+(idx+1))) + '</strong></div>' +
-      '<div class="lesson-page__layout"><main><div class="lesson-player"><div class="lesson-player__frame" id="lessonPlayerFrame"><div class="lesson-player__loading"><div class="sub-loading__spin"></div><span>Preparando la clase…</span></div></div></div>' +
-      '<section class="lesson-info"><div class="lesson-info__eyebrow">Clase ' + (idx+1) + ' de ' + sesiones.length + '</div><h1 class="lesson-info__title">' + escHtml(s.titulo || ('Clase '+(idx+1))) + '</h1><p class="lesson-info__desc">' + escHtml(s.descripcion || c.descripcion || 'Contenido clínico preparado por SYNOVA para fortalecer tu práctica profesional.') + '</p><div class="lesson-game-note"><svg class="ic"><use href="#i-trophy"/></svg><span>'+(vista?'Ejercicio completado. Puedes repetirlo para practicar.':'Resuelve un ejercicio breve para completar la clase, desbloquear la siguiente y ganar 10 créditos SYNOVA.')+'</span></div><div class="lesson-info__actions"><button class="lesson-complete' + (vista?' is-done':'') + '" id="lessonMark"><svg class="ic"><use href="' + (vista?'#i-check-circle':'#i-trophy') + '"/></svg>' + (vista?'Practicar otra vez':'Resolver ejercicio y completar') + '</button>' + (vista&&siguiente>=0?'<button class="lesson-next" id="lessonNext">Siguiente clase <svg class="ic"><use href="#i-arrow-right"/></svg></button>':'') + '</div></section>' +
-      '<section class="course-section lesson-resources"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + recursos + '</section></main>' +
-      '<aside class="lesson-syllabus"><div class="lesson-syllabus__head"><div class="lesson-syllabus__kicker">Contenido del curso</div><div class="lesson-syllabus__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div><div class="lesson-syllabus__progress">' + prog.vistas.length + ' de ' + sesiones.length + ' clases completadas</div></div><div class="lesson-syllabus__list">' + syllabus + '</div></aside></div></div>';
+      '<div class="lesson-page__layout"><main class="lesson-premium-main"><div class="lesson-player"><div class="lesson-player__frame" id="lessonPlayerFrame"><div class="lesson-player__loading"><div class="sub-loading__spin"></div><span>Preparando la clase…</span></div></div></div>' +
+      '<section class="lesson-premium-heading"><div><span>Clase '+(idx+1)+' de '+sesiones.length+' · '+minutos+' min</span><h1>'+escHtml(contenido.titulo)+'</h1><div class="lesson-heading-progress"><i style="width:'+Math.round(completadas/Math.max(1,sesiones.length)*100)+'%"></i><small>'+completadas+' de '+sesiones.length+' vistas · '+Math.round(completadas/Math.max(1,sesiones.length)*100)+'%</small></div></div><button type="button" class="lesson-primary '+(vista?'is-complete':'')+'" id="lessonPrimary" '+(!vista?'data-lesson-game-start':'')+'>'+(vista?(siguiente>=0?'Continuar a la siguiente':'Volver al curso'):'Marcar vista y seguir')+'<svg class="ic"><use href="#i-arrow-right"/></svg></button></section>' +
+      panelEstudio('lesson-studio--mobile') +
+      (siguiente>=0?'<button type="button" class="lesson-next-card '+(siguienteAbierta?'is-ready':'')+'" id="lessonNextCard" '+(siguienteAbierta?'':'disabled')+'><span class="lesson-next-card__thumb" style="background-image:linear-gradient(90deg,rgba(5,30,49,.18),rgba(5,30,49,.52)),url(\''+String(portadaDe(c)||'').replace(/'/g,'%27')+'\')"></span><span><small>A continuación · clase '+(siguiente+1)+'</small><strong>'+escHtml(sesiones[siguiente].titulo||('Clase '+(siguiente+1)))+'</strong><em>'+(siguienteAbierta?'Lista para continuar':'Se desbloquea al ganar el mini juego')+'</em></span><svg class="ic"><use href="'+(siguienteAbierta?'#i-arrow-right':'#i-shield-check')+'"/></svg></button>':'') +
+      '<section class="lesson-summary-card"><span class="lesson-section-kicker">Resumen de la clase</span><h2>Resumen</h2><p>'+escHtml(contenido.resumen)+'</p><h3>Conceptos clave</h3><div class="lesson-concepts">'+contenido.conceptos.map(function(x){return '<div><time>'+escHtml(x.tiempo)+'</time><span>'+escHtml(x.texto)+'</span></div>';}).join('')+'</div><footer><svg class="ic"><use href="#i-shield-check"/></svg>Material educativo revisado por el equipo SYNOVA</footer></section>' +
+      '<section class="lesson-game-card"><span class="lesson-game-card__art"><svg class="ic"><use href="#i-trophy"/></svg></span><div class="lesson-game-card__copy"><span class="lesson-section-kicker">Mini juego de la clase</span><h2>Desafío clínico</h2><p>Resuelve tres decisiones breves. '+(vista?'Ya completaste esta clase: puedes jugar otra vez para repasar.':'Al ganar, la clase queda marcada como vista, se desbloquea la siguiente y recibes 10 créditos SYNOVA.')+'</p></div><span class="lesson-game-card__state '+(juegoGanado?'is-won':'')+'">'+(juegoGanado?'✓ Ganado':(vista?'Completada':'Pendiente'))+'</span><button type="button" class="lesson-game-card__start" data-lesson-game-start>'+(vista?'Practicar de nuevo':'Jugar y completar la clase')+'<svg class="ic"><use href="#i-arrow-right"/></svg></button></section>' +
+      '<section class="course-section lesson-resources"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + recursos + '</section></main>' + panelEstudio('lesson-studio--desktop') + '</div></div>';
 
     const root = document.getElementById('curso-clase-body');
     root.querySelector('#lessonBackCourse').onclick = function(){ window.__claseActualIndex=null; window.navigateTo('cursos'); };
     root.querySelector('#lessonBackContent').onclick = function(){ window.__claseActualIndex=null; const u=new URL(location.href);u.searchParams.delete('clase');history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirCurso(id,true); };
+    root.querySelectorAll('[data-lesson-tab]').forEach(function(tab){tab.onclick=function(){const side=tab.closest('.lesson-studio');side.querySelectorAll('[data-lesson-tab]').forEach(function(x){x.classList.toggle('is-active',x===tab);});side.querySelectorAll('[data-lesson-panel]').forEach(function(x){x.classList.toggle('is-active',x.dataset.lessonPanel===tab.dataset.lessonTab);});};});
+    let notaTimer=0;root.querySelectorAll('[data-lesson-notes]').forEach(function(area){area.oninput=function(){root.querySelectorAll('[data-notes-state]').forEach(function(x){x.textContent='Guardando…';});clearTimeout(notaTimer);notaTimer=setTimeout(function(){try{localStorage.setItem(claveNotasClaseSynova(id,idx),area.value);}catch(_){ }root.querySelectorAll('[data-lesson-notes]').forEach(function(copy){if(copy!==area)copy.value=area.value;});root.querySelectorAll('[data-notes-state]').forEach(function(x){x.textContent='Guardado en este dispositivo.';});},350);};});
     root.querySelectorAll('[data-lesson-index]').forEach(function(btn){ btn.onclick=function(){ const i=+btn.dataset.lessonIndex;if(!claseDesbloqueada(id,i,sesiones.length)){avisarBloqueoClase(id,i);return;}const u=new URL(location.href);u.searchParams.set('clase',i);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,i); }; });
     root.querySelectorAll('[data-lesson-mat]').forEach(function(el){ el.onclick=function(){const i=+el.dataset.lessonMat;if(el.dataset.open!=='true'){window.__showPaywallModal('Activa tu membresía para abrir los demás recursos del curso.');return;}const m=materiales[i];window.__abrirVisor(m.url,m.titulo||('Material '+(i+1)),null,null);}; });
-    root.querySelector('#lessonMark').onclick = async function(){
+    let jugandoClase=false;const jugarClase=async function(){
+      if(jugandoClase)return;jugandoClase=true;
       const yaVista=cursoProg(id).vistas.includes(idx);
-      if(!window.SynovaClassGames){Toast.info('Preparando ejercicio','Intenta de nuevo en un momento.');return;}
-      const ganado=await window.SynovaClassGames.play({courseId:String(id),courseTitle:c.nombre||'Curso SYNOVA',classNumber:idx+1,lessonIndex:idx,lessonTitle:s.titulo||('Clase '+(idx+1)),session:s,practica:yaVista,credits:yaVista?0:10});
-      if(!ganado)return;
-      if(!yaVista){window.__synMarcarVista(id,idx);void acreditarEjercicioClase(c,idx);}
-      abrirClaseEnCurso(id,idx);
+      if(!window.SynovaClassGames){Toast.info('Preparando ejercicio','Intenta de nuevo en un momento.');jugandoClase=false;return;}
+      try{const ganado=await window.SynovaClassGames.play({courseId:String(id),courseTitle:c.nombre||'Curso SYNOVA',classNumber:idx+1,lessonIndex:idx,lessonTitle:contenido.titulo,session:s,practica:yaVista,credits:yaVista?0:10});if(!ganado)return;if(!yaVista){window.__synMarcarVista(id,idx);void acreditarEjercicioClase(c,idx);if(siguiente>=0){const u=new URL(location.href);u.searchParams.set('clase',siguiente);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,siguiente);}else{const u=new URL(location.href);u.searchParams.delete('clase');history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirCurso(id,true);}return;}abrirClaseEnCurso(id,idx);}finally{jugandoClase=false;}
     };
-    const nextBtn = root.querySelector('#lessonNext'); if(nextBtn) nextBtn.onclick=function(){const u=new URL(location.href);u.searchParams.set('clase',siguiente);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,siguiente);};
+    root.querySelectorAll('[data-lesson-game-start]').forEach(function(btn){btn.onclick=jugarClase;});
+    const primary=root.querySelector('#lessonPrimary');if(primary&&vista)primary.onclick=function(){if(siguiente>=0&&siguienteAbierta){const u=new URL(location.href);u.searchParams.set('clase',siguiente);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,siguiente);}else{root.querySelector('#lessonBackContent').click();}};
+    const nextCard=root.querySelector('#lessonNextCard');if(nextCard&&siguienteAbierta)nextCard.onclick=function(){const u=new URL(location.href);u.searchParams.set('clase',siguiente);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,siguiente);};
 
     try {
       const embedUrl = await resolverEmbedClase(s,id,idx);
@@ -6709,8 +6752,8 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="assets/synova-course-experience.js?v=1"></script>
-<script src="assets/synova-books-credits.js?v=8"></script>
+<script src="assets/synova-course-experience.js?v=2"></script>
+<script src="assets/synova-books-credits.js?v=9"></script>
 <script src="assets/synova-materials.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>

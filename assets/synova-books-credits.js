@@ -179,8 +179,36 @@
     sessionStorage.setItem('synova:credit-referral-checked','1');
     try{var data=await api('/credits/register-referral',{method:'POST',body:JSON.stringify({referralCode:code})});if(data.applied&&!data.alreadyApplied&&data.balance){state.balance=Number(data.balance);window.Toast&&Toast.success('Créditos de bienvenida','Recibiste créditos por entrar con una invitación.');}}catch(e){console.warn('[Referral credits]',e.message);}
   }
+  window.__synovaCanStartChallenge=async function(payload){
+    try{
+      var result=await api('/credits/challenge-access',{method:'POST',body:JSON.stringify(payload||{})});
+      if(result&&result.allowed)return result;
+      if(window.__showPaywallModal)window.__showPaywallModal('Tu ronda gratuita de Retos ya fue utilizada. Activa tu membresía SYNOVA VIP para jugar todas las experiencias sin límite.');
+      return null;
+    }catch(e){
+      if(e&&e.payload&&e.payload.code==='VIP_CHALLENGE_REQUIRED'&&window.__showPaywallModal){
+        window.__showPaywallModal('Tu ronda gratuita de Retos ya fue utilizada. Activa tu membresía SYNOVA VIP para seguir jugando.');
+      }else if(window.Toast){Toast.error('No pudimos iniciar el reto',e.message||'Intenta de nuevo.');}
+      return null;
+    }
+  };
   window.__synovaAwardChallenge=async function(payload){
-    try{var result=await api('/credits/earn',{method:'POST',body:JSON.stringify(payload)});if(result.awarded){state.balance=Number(result.balance||state.balance);window.Toast&&Toast.success('+'+result.credits+' Créditos SYNOVA','Se sumaron a tu saldo por completar el reto.');}return result;}catch(e){console.warn('[Challenge credits]',e.message);return null;}
+    try{
+      var result=await api('/credits/earn',{method:'POST',body:JSON.stringify(payload)});
+      if(result.awarded){
+        state.balance=Number(result.balance||state.balance);
+        window.dispatchEvent(new CustomEvent('synova:credits-changed',{detail:state}));
+        window.setTimeout(function(){
+          if(window.SynovaCoinChest)window.SynovaCoinChest.show({amount:result.credits,total:result.balance,title:'¡Reto superado!'});
+          else if(window.Toast)Toast.credit('Créditos SYNOVA','Se sumaron a tu saldo.','+'+result.credits,3400);
+        },420);
+      }
+      return result;
+    }catch(e){
+      if(e&&e.payload&&e.payload.code==='VIP_CHALLENGE_REQUIRED'&&window.__showPaywallModal)window.__showPaywallModal('Tu ronda gratuita de Retos ya fue utilizada. Activa tu membresía SYNOVA VIP para seguir jugando.');
+      else console.warn('[Challenge credits]',e.message);
+      return null;
+    }
   };
   function install(){
     if(!window.Sections)return setTimeout(install,50);

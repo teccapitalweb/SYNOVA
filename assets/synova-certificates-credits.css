@@ -13,3 +13,11 @@
 @media(max-width:760px){.certs-pro-hero{grid-template-columns:1fr;min-height:0;padding:27px 23px}.certs-pro-hero__art{display:none}.cert-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.certs-empty-pro__benefits{grid-template-columns:1fr}.certs-list-head>small{display:none}.certs-page .certb{flex-wrap:wrap;padding:16px}.certs-page .certb__action{align-items:flex-start;width:calc(100% - 60px);margin-left:60px}.certs-page .certb__go{position:absolute;right:14px;bottom:16px}}
 @media(max-width:480px){.certs-pro-hero h1{font-size:36px}.certs-pro-hero p{font-size:12px}.cert-kpis{gap:8px!important}.cert-kpis .kpi-card{min-height:101px;padding:17px 14px 14px!important}.cert-kpis .kpi-card>small{display:none}.certs-empty-pro{padding:34px 18px}.certs-page .certb__seal{width:40px;height:40px}.syn-credit-vault__body{grid-template-columns:74px minmax(0,1fr)}.syn-credit-vault__gem{width:55px;height:61px;margin-left:5px}}
 @media(prefers-reduced-motion:reduce){.certs-page .certb__go,.syn-credit-vault button{transition:none}}
+
+/* La misma composición de cartera premium, con identidad cromática SYNOVA. */
+.syn-credit-vault{border-color:rgba(119,207,229,.45);background:radial-gradient(circle at 84% 20%,rgba(100,207,225,.28),transparent 34%),linear-gradient(145deg,#082d49,#0b567c 66%,#128096);color:#f4fbff;box-shadow:0 20px 40px rgba(5,55,84,.24)}
+.syn-credit-vault:before{border-color:rgba(144,220,238,.25);box-shadow:0 0 0 28px rgba(116,205,226,.055),0 0 0 56px rgba(116,205,226,.035)}
+.syn-credit-vault:after{background:#a9e4f2;box-shadow:62px -8px 0 1px #f5cc64,4px 73px 0 #a9e4f2}
+.syn-credit-vault__gem{background:linear-gradient(145deg,#9be4ef,#2a9bc0);filter:drop-shadow(0 11px 12px rgba(8,85,119,.34))}.syn-credit-vault__gem i{background:#075171}
+.syn-credit-vault__eyebrow{color:#a9e2ef}.syn-credit-vault__balance strong{color:#fff}.syn-credit-vault__balance span{color:#c8eff7}.syn-credit-vault__copy p{color:rgba(235,248,252,.7)}
+.syn-credit-vault button{border-color:rgba(162,224,238,.38);background:rgba(255,255,255,.08);color:#fff}.syn-credit-vault button:hover{border-color:rgba(190,238,248,.78);background:rgba(255,255,255,.14)}.syn-credit-vault button .ic{color:#b8e8f2}
