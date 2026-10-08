@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/synova-admin-metrics.css?v=1">
 <style>
 /* SYNOVA ADMIN · panel VIP para consultoría de salud (procesos, normas, calidad de atención) */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -614,6 +615,7 @@ window.__tokenAdmin = tokenAdmin;
     <div class="nav-section">
       <div class="nav-label">Resumen</div>
       <a class="nav-item is-active" data-section="dashboard"><svg class="ic"><use href="#i-home"/></svg>Dashboard</a>
+      <a class="nav-item" data-section="metricas"><svg class="ic"><use href="#i-heart-pulse"/></svg>Métricas<span class="nav-item__badge">NUEVO</span></a>
     </div>
 
     <div class="nav-section">
@@ -923,6 +925,19 @@ PAGES.dashboard = function(){
       </div>
     </div>`;
   page.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', e => { e.preventDefault(); navigate(b.dataset.go); }));
+};
+
+PAGES.metricas = function(){
+  const page = document.getElementById('page');
+  const mount = () => {
+    if (page.dataset.live !== 'metricas' || !window.SynovaMetricsAdmin) return;
+    window.SynovaMetricsAdmin.mount(page, { getToken: window.__tokenAdmin, api: window.__WEBHOOK_URL });
+  };
+  if (window.SynovaMetricsAdmin) mount();
+  else {
+    page.innerHTML = '<div class="empty"><svg class="spin" style="width:22px;height:22px;stroke:var(--primary);fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg></div>';
+    window.addEventListener('synova:metrics-admin-ready', mount, { once:true });
+  }
 };
 function loadingRow(){ return `<div style="padding:20px;text-align:center;color:var(--text-3);font-size:13px">Cargando desde Firestore…</div>`; }
 function emptyRow(txt){ return `<div style="padding:20px;text-align:center;color:var(--text-3);font-size:13px">${escHtml(txt)}</div>`; }
@@ -2859,6 +2874,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
+<script src="assets/synova-admin-metrics.js?v=1"></script>
 <script src="assets/synova-referrals-admin.js"></script>
 </body>
 </html>

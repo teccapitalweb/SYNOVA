@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="night">
+<html lang="es" data-theme="day">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0B121F">
+<meta name="theme-color" content="#F2F4F2">
 <meta name="description" content="SYNOVA México · Inicia sesión o crea tu cuenta">
 <title>SYNOVA · Acceso</title>
 <link rel="icon" type="image/png" href="assets/img/synova-favicon.png">
@@ -17,7 +17,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
-
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -303,6 +302,7 @@ body.auth-ready .auth-gate{display:none !important}
 @media (max-width:420px){.auth-gate::before{opacity:.5}.auth-gate{gap:18px}.ag-logo{width:64px;height:64px;border-radius:17px}.ag-name{font-size:19px}.ag-text{font-size:9.5px;letter-spacing:1.1px}}
 @media (prefers-reduced-motion:reduce){.ag-logo{animation:none}.ag-spinner{animation-duration:1.6s}}
 </style>
+<link rel="stylesheet" href="assets/synova-auth-premium.css?v=1">
 </head>
 <body>
 
@@ -335,6 +335,18 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
         <div class="brand__name">SYNOVA</div>
         <div class="brand__sub">Consultoría · Capacitación Clínica en Salud</div>
       </div>
+    </div>
+    <div class="auth-premium-story">
+      <span class="auth-access-eyebrow">SYNOVA CLINICAL / ACCESS</span>
+      <h1>Decisiones clínicas más seguras empiezan con <em>mejor preparación.</em></h1>
+      <p>Una experiencia continua de aprendizaje para profesionales de la salud: contenido aplicable, práctica guiada y evidencia verificable de tu avance.</p>
+      <div class="auth-value-grid">
+        <div class="auth-value"><span>01</span><div><strong>Formación con respaldo</strong><small>Cursos y certificados con folio verificable.</small></div></div>
+        <div class="auth-value"><span>02</span><div><strong>Práctica que sí reta</strong><small>Juegos clínicos, casos y créditos SYNOVA.</small></div></div>
+        <div class="auth-value"><span>03</span><div><strong>Herramientas clínicas</strong><small>Recursos listos para tu entorno profesional.</small></div></div>
+        <div class="auth-value"><span>04</span><div><strong>Comunidad profesional</strong><small>Directorio, sesiones en vivo y conexión VIP.</small></div></div>
+      </div>
+      <div class="auth-start"><div class="auth-start__title"><span>Así empiezas</span><strong>En menos de un minuto</strong></div><div class="auth-steps"><div class="auth-step"><b>1</b><span>Crea tu cuenta</span></div><div class="auth-step"><b>2</b><span>Elige tu curso</span></div><div class="auth-step"><b>3</b><span>Comienza gratis</span></div></div></div>
     </div>
     <div>
       <h1 class="auth-hero__title">Procesos, normas y calidad de atención que tu equipo <em>necesita dominar</em>.</h1>
@@ -385,6 +397,7 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
 
   <main class="auth-main">
 <div class="wrap">
+  <span class="auth-access-eyebrow">SYNOVA CLINICAL / ACCESS</span>
   <div class="brand">
     <div class="brand__logo">
       <img src="assets/img/synova-logo.png" alt="SYNOVA México">
@@ -394,6 +407,7 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
   </div>
 
   <div class="card">
+    <div class="auth-offer"><span class="auth-offer__icon">+</span><div><strong>Tu inicio en SYNOVA es gratuito</strong><span>120 créditos de bienvenida y primeras clases del curso que tú elijas.</span></div></div>
     <div class="tabs">
       <button class="tab" data-tab="login">Iniciar sesión</button>
       <button class="tab is-active" data-tab="register">Crear cuenta</button>
@@ -493,7 +507,7 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
 <script>
 const Theme = {
   init() {
-    const s = localStorage.getItem('synova-auth:theme') || 'night';
+    const s = localStorage.getItem('synova-auth:theme') || 'day';
     document.documentElement.dataset.theme = s;
     this.updateIcon();
   },
@@ -811,5 +825,6 @@ document.getElementById('forgot-link').addEventListener('click', async (e) => {
   }
 </script>
 <script src="assets/synova-referrals.js"></script>
+<script src="assets/synova-analytics.js?v=1"></script>
 </body>
 </html>

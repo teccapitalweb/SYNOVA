@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=6">
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=2">
 <link rel="stylesheet" href="assets/synova-certificates-credits.css?v=3">
+<link rel="stylesheet" href="assets/synova-arcade.css?v=1">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -1806,6 +1807,7 @@ window.navigateTo = function(section){
     nextUrl.searchParams.delete('clase');
   }
   history.replaceState(null, '', nextUrl.pathname + '?' + nextUrl.searchParams.toString());
+  window.dispatchEvent(new CustomEvent('synova:navigation', { detail:{ section } }));
   window.scrollTo({ top: 0, behavior: 'instant' });
   if (typeof window.__actualizarAside === 'function') window.__actualizarAside();
 };
@@ -3706,6 +3708,7 @@ window.pintarHubRetos = function(){
           <button class="syn-game" data-label="Agilidad" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><img src="assets/images/retos-pulso-clinico.png" alt="" loading="lazy"></span><strong>Pulso clínico</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
           <button class="syn-game" data-label="Criterio" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><img src="assets/images/retos-diagnostico-synova.png" alt="" loading="lazy"></span><strong>Diagnóstico SYNOVA</strong><span>${s.casosResueltos.length} casos resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
           <button class="syn-game" data-label="Repaso" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><img src="assets/images/retos-memoria-clinica.png" alt="" loading="lazy"></span><strong>Memoria clínica</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Arcade" style="--game:#0D5FA0" onclick="abrirArcadeSynova()"><span class="syn-game__icon syn-arcade-card-art" aria-hidden="true"><i>+</i><i>#</i><i>✓</i><i>Rx</i></span><strong>Juegos clínicos</strong><span>4 modalidades nuevas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
         </div>
         <section class="syn-ranking"><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
       </main>
@@ -6754,9 +6757,11 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="assets/synova-course-experience.js?v=2"></script>
 <script src="assets/synova-books-credits.js?v=9"></script>
+<script src="assets/synova-arcade.js?v=1"></script>
 <script src="assets/synova-materials.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>
+<script src="assets/synova-analytics.js?v=1"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({
   namespace: 'synova',
