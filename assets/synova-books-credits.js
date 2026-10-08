@@ -3,12 +3,12 @@
 
   var API = function(){ return window.__WEBHOOK_URL || 'https://synova-webhook-production.up.railway.app'; };
   var books = [
-    { id:'genetica-clinica', title:'Genética clínica', area:'Medicina genómica', cover:'assets/img/books/genetica-clinica.jpg', cost:120, available:true, desc:'Principios y aplicaciones clínicas para comprender la herencia, la variación genética y su impacto en el diagnóstico.' },
-    { id:'metabolismo', title:'Metabolismo', area:'Fisiología clínica', cover:'assets/img/books/metabolismo.jpg', cost:140, available:true, desc:'Una referencia visual para repasar rutas metabólicas y su relación con el equilibrio energético y la práctica clínica.' },
-    { id:'guia-sanford', title:'Guía Sanford', area:'Terapéutica antimicrobiana', cover:'assets/img/books/guia-sanford.jpg', cost:180, available:true, desc:'Consulta clínica de terapéutica antimicrobiana para apoyar decisiones informadas y el uso responsable de antibióticos.' },
-    { id:'vacunas-inmunizacion', title:'Vacunas e inmunización', area:'Medicina preventiva', cover:'assets/img/books/vacunas-inmunizacion.jpg', cost:180, available:true, desc:'Panorama de inmunización y vacunación para fortalecer la prevención y la actualización profesional.' },
-    { id:'enfermedades-infecciosas', title:'Enfermedades infecciosas · Mandell', area:'Infectología', cover:'assets/img/books/enfermedades-infecciosas.jpg', cost:260, available:true, desc:'Tratado de referencia para el estudio integral de las enfermedades infecciosas y sus fundamentos clínicos.' },
-    { id:'atlas-parasitologia', title:'Atlas de parasitología', area:'Parasitología', cover:'assets/img/books/alas-parasitologia.jpg', cost:180, available:true, desc:'Referencia ilustrada para identificar parásitos humanos, revisar sus características morfológicas y reforzar el diagnóstico parasitológico.' }
+    { id:'genetica-clinica', title:'Genética clínica', area:'Medicina genómica', cover:'assets/img/books/genetica-clinica.jpg', cost:800, available:true, desc:'Principios y aplicaciones clínicas para comprender la herencia, la variación genética y su impacto en el diagnóstico.' },
+    { id:'metabolismo', title:'Metabolismo', area:'Fisiología clínica', cover:'assets/img/books/metabolismo.jpg', cost:800, available:true, desc:'Una referencia visual para repasar rutas metabólicas y su relación con el equilibrio energético y la práctica clínica.' },
+    { id:'guia-sanford', title:'Guía Sanford', area:'Terapéutica antimicrobiana', cover:'assets/img/books/guia-sanford.jpg', cost:800, available:true, desc:'Consulta clínica de terapéutica antimicrobiana para apoyar decisiones informadas y el uso responsable de antibióticos.' },
+    { id:'vacunas-inmunizacion', title:'Vacunas e inmunización', area:'Medicina preventiva', cover:'assets/img/books/vacunas-inmunizacion.jpg', cost:800, available:true, desc:'Panorama de inmunización y vacunación para fortalecer la prevención y la actualización profesional.' },
+    { id:'enfermedades-infecciosas', title:'Enfermedades infecciosas · Mandell', area:'Infectología', cover:'assets/img/books/enfermedades-infecciosas.jpg', cost:800, available:true, desc:'Tratado de referencia para el estudio integral de las enfermedades infecciosas y sus fundamentos clínicos.' },
+    { id:'atlas-parasitologia', title:'Atlas de parasitología', area:'Parasitología', cover:'assets/img/books/alas-parasitologia.jpg', cost:800, available:true, desc:'Referencia ilustrada para identificar parásitos humanos, revisar sus características morfológicas y reforzar el diagnóstico parasitológico.' }
   ];
   var state = { balance:0, lifetimeEarned:0, unlocked:[], loaded:false, notices:[] };
   var currentBook = null, pdfDoc = null, pageNumber = 1, renderTask = null;
