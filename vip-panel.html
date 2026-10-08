@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=13">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=6">
+<link rel="stylesheet" href="assets/synova-course-experience.css?v=1">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -1350,7 +1351,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 
 <div class="member-offer-bar" id="member-offer-bar" role="status" aria-live="polite">
   <span class="member-offer-bar__star" aria-hidden="true">★</span>
-  <span>Tu primera clase y tu primer material son gratis. Desbloquea para ver más.</span>
+  <span>Elige tu curso de bienvenida y completa gratis sus primeras clases. Desbloquea VIP para ver más.</span>
   <button class="member-offer-bar__cta" type="button" onclick="window.navigateTo && window.navigateTo('suscripcion')">Suscribirme →</button>
 </div>
 
@@ -1993,7 +1994,7 @@ onAuthStateChanged(auth, async (user) => {
       const esVipActual = (modo === 'vip' || isAdmin);
       if (!tarjetaSnap.exists()) {
         await setDoc(tarjetaRef, {
-          uid: user.uid, nombre: nombreCuenta, email,
+          uid: user.uid, nombre: nombreCuenta,
           foto: foto || '', vip: esVipActual, plan: plan || null,
           visible: true, autoAlta: true, updatedAt: serverTimestamp()
         }, { merge: true });
@@ -2002,7 +2003,19 @@ onAuthStateChanged(auth, async (user) => {
         const upd = { vip: esVipActual, plan: plan || null, updatedAt: serverTimestamp() };
         if (!td.nombre) upd.nombre = nombreCuenta;
         if (!td.foto && foto) upd.foto = foto;
-        if (td.email === undefined) upd.email = email;
+        /* Migra contacto legado al almacén protegido y después lo elimina de
+           la tarjeta pública. Si la API aún no responde, se conserva para no
+           perder información. */
+        if (td.email || td.whatsapp || td.linkedin || td.web) {
+          try {
+            const token = await user.getIdToken();
+            const move = await fetch(WEBHOOK_URL + '/directory/contact', {
+              method:'PUT', headers:{ Authorization:'Bearer ' + token, 'Content-Type':'application/json' },
+              body:JSON.stringify({ email:td.email||'', whatsapp:td.whatsapp||'', linkedin:td.linkedin||'', web:td.web||'' })
+            });
+            if (move.ok) Object.assign(upd, { email:'', whatsapp:'', linkedin:'', web:'' });
+          } catch (_) {}
+        }
         await setDoc(tarjetaRef, upd, { merge: true });
       }
     }
@@ -2072,7 +2085,7 @@ window.__guardarPerfilCuenta = async function(nombre){
   const tarjetaRef = doc(db, 'directorio', user.uid);
   const tarjetaSnap = await getDoc(tarjetaRef);
   if (tarjetaSnap.exists()) {
-    await setDoc(tarjetaRef, { nombre: limpio, email: S.email, updatedAt: serverTimestamp() }, { merge: true });
+    await setDoc(tarjetaRef, { nombre: limpio, updatedAt: serverTimestamp() }, { merge: true });
   }
   S.nombre = limpio;
   S.displayName = limpio;
@@ -2138,14 +2151,20 @@ window.__guardarFichaInicial = async function(datos){
   const tarjetaSnap = await getDoc(tarjetaRef);
   if (tarjetaSnap.exists()) {
     const actual = tarjetaSnap.data() || {};
-    const parche = { email: S.email, updatedAt: serverTimestamp() };
-    if (!actual.whatsapp) parche.whatsapp = limpio.whatsapp;
+    const parche = { updatedAt: serverTimestamp() };
     if (!actual.puesto) parche.puesto = limpio.especialidad;
     if (!actual.empresa && limpio.institucion) parche.empresa = limpio.institucion;
     if (!actual.ciudad && limpio.ciudad) parche.ciudad = limpio.ciudad;
     if (!actual.foto && S.foto) parche.foto = S.foto;
     await setDoc(tarjetaRef, parche, { merge: true });
   }
+  try {
+    const token = await user.getIdToken();
+    await fetch(WEBHOOK_URL + '/directory/contact', {
+      method:'PUT', headers:{ Authorization:'Bearer ' + token, 'Content-Type':'application/json' },
+      body:JSON.stringify({ email:S.email||'', whatsapp:limpio.whatsapp })
+    });
+  } catch (_) {}
   Object.assign(S, limpio, { perfilCompleto: true, fichaInicialVista: true });
   return S;
 };
@@ -3780,7 +3799,7 @@ async function sincronizarProgresoReto(s){
   try{
     const S=window.UserState,{doc,getDoc,setDoc,db,serverTimestamp}=window.__fs;if(!S?.uid||!db)return;
     const ref=doc(db,'directorio',S.uid);
-    await setDoc(ref,{uid:S.uid,nombre:S.nombre||'Miembro SYNOVA',email:S.email||'',foto:S.foto||'',retoXp:s.xp,retoNivel:nivelReto(s.xp).actual.nombre,retoCorrectas:s.correctas,retoUpdatedAt:serverTimestamp()},{merge:true});
+    await setDoc(ref,{uid:S.uid,nombre:S.nombre||'Miembro SYNOVA',foto:S.foto||'',retoXp:s.xp,retoNivel:nivelReto(s.xp).actual.nombre,retoCorrectas:s.correctas,retoUpdatedAt:serverTimestamp()},{merge:true});
     window.__dirFotos=null;
   }catch(e){console.warn('[SYNOVA] progreso de retos:',e.message);}
 }
@@ -3920,6 +3939,7 @@ let _dirFiltroSector = 'todos';
 let _dirBusqueda = '';
 let _dirSoloVip = false;
 let _dirPortadaTmp = undefined;
+let _dirMeta = { cargado:false, viewerVip:false, vip:new Set(), contacts:{}, myContact:{} };
 const DIR_PORTADAS = {
   dorado:{label:'Dorado',bg:'linear-gradient(135deg,#f6e2b3,#e8c071)'},
   arena:{label:'Arena',bg:'linear-gradient(135deg,#f1e7d6,#d9c3a0)'},
@@ -3936,8 +3956,13 @@ const DIR_WEB_SVG = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="cur
 function dirFotoSeguraDir(v){ const f=String(v||'').trim(); if(/^data:image\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=]+$/i.test(f))return f; return /^https:\/\/[^\s"'<>]+$/i.test(f)?f:''; }
 function dirEnlaceSeguro(v){ const raw=String(v||'').trim(); if(!raw)return ''; const url=/^https?:\/\//i.test(raw)?raw:'https://'+raw; try{const u=new URL(url);return /^https?:$/.test(u.protocol)?u.href:'';}catch(e){return '';} }
 function dirPortadaStyle(c){ const img=dirFotoSeguraDir(c&&c.portadaImg); if(img)return "background-image:url('"+img+"')"; return "background:"+((DIR_PORTADAS[c&&c.portadaColor]||DIR_PORTADAS.dorado).bg); }
-function dirEsVipCard(c){ const S=window.UserState; return (c.uid||c.id)===(S&&S.uid) ? toolEsVIP() : (c.vip!==false); }
-function dirContactoVisible(c){ const S=window.UserState; const own=(c.uid||c.id)===(S&&S.uid); const datos={whatsapp:c.whatsapp||'',email:c.email||'',linkedin:c.linkedin||'',web:c.web||''}; if(own) return datos; if(!toolEsVIP()) return null; return datos; }
+function dirEsVipCard(c){ return _dirMeta.vip.has(String(c.uid||c.id)); }
+function dirContactoVisible(c){
+  const S=window.UserState; const id=String(c.uid||c.id); const own=id===String(S&&S.uid);
+  if(own) return _dirMeta.myContact || {};
+  if(!_dirMeta.viewerVip) return null;
+  return _dirMeta.contacts[id] || {};
+}
 function dirTieneContacto(c){ return !!(c && (c.email||c.whatsapp||c.linkedin||c.web)); }
 function dirPaywallContacto(){ if(window.__showPaywallModal) window.__showPaywallModal('Hazte VIP para ver el WhatsApp, correo, LinkedIn y sitio web de los miembros del Directorio VIP.'); }
 Sections.directorio = function(){
@@ -3950,7 +3975,7 @@ Sections.directorio = function(){
     `<div class="dir-bar">
       <div class="dir-search"><svg class="ic"><use href="#i-search"/></svg><input id="dir-buscar" placeholder="Buscar por nombre, puesto o sector…"></div>
       ${S.isAdmin ? `<button class="btn btn--ghost btn--sm" id="dir-sync-fotos"><svg class="ic"><use href="#i-image"/></svg>Sincronizar fotos</button>` : ''}
-      ${esVip ? `<button class="btn btn--accent btn--sm" id="dir-mi-tarjeta"><svg class="ic"><use href="#i-edit"/></svg>Mi tarjeta</button>` : ''}
+      <button class="btn btn--accent btn--sm" id="dir-mi-tarjeta"><svg class="ic"><use href="#i-edit"/></svg>Mi tarjeta</button>
     </div>
     <div class="dir-chips" id="dir-chips">
       <button class="dir-chip dir-chip--vip ${_dirSoloVip?'is-active':''}" data-vipfilter><svg class="ic"><use href="#i-crown"/></svg>Solo VIP</button>
@@ -4008,9 +4033,20 @@ async function cargarDirectorio(){
       window.__dirPhotoSyncDone = true;
       await sincronizarFotosGoogleDirectorio(true);
     }
-    const { collection, getDocs, db } = window.__fs;
-    const snap = await getDocs(collection(db, 'directorio'));
-    const items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+    const user = window.__auth && window.__auth.currentUser;
+    if (!user) throw new Error('Tu sesión venció. Vuelve a iniciar sesión.');
+    const token = await user.getIdToken();
+    const response = await fetch(window.__WEBHOOK_URL + '/directory/overview', { cache:'no-store', headers:{ Authorization:'Bearer ' + token } });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'No se pudo cargar el directorio');
+    const items = Array.isArray(data.cards) ? data.cards : [];
+    _dirMeta = {
+      cargado:true,
+      viewerVip:data.viewerVip === true,
+      vip:new Set(Array.isArray(data.vip) ? data.vip.map(String) : []),
+      contacts:data.contacts || {},
+      myContact:data.myContact || {}
+    };
     window.__dirCache = items;
     window.__dirFotos = Object.fromEntries(items.filter(p => p.uid && p.foto).map(p => [p.uid, p.foto]));
     pintarDirectorio();
@@ -4137,7 +4173,7 @@ function abrirTarjetaDetalle(id){
       ${contactoHtml}
     </div>`;
   const footer = esMia
-    ? `<button class="btn btn--ghost" onclick="Modal.close('dir-detalle')">Cerrar</button>${toolEsVIP() ? `<button class="btn btn--accent" onclick="Modal.close('dir-detalle');setTimeout(abrirEditorTarjeta,150)">Editar mi tarjeta</button>` : ''}`
+    ? `<button class="btn btn--ghost" onclick="Modal.close('dir-detalle')">Cerrar</button><button class="btn btn--accent" onclick="Modal.close('dir-detalle');setTimeout(abrirEditorTarjeta,150)">Editar mi tarjeta</button>`
     : `<button class="btn btn--ghost" onclick="Modal.close('dir-detalle')">Cerrar</button>`;
   Modal.open({ id: 'dir-detalle', title: esVip ? 'Tarjeta profesional VIP' : 'Tarjeta del directorio', subtitle: esMia ? 'Tu tarjeta' : 'Directorio VIP', icon: esVip ? 'i-crown' : 'i-users', size: 'sm', body, footer });
   document.querySelector('[data-dirdet-vip]')?.addEventListener('click', () => { Modal.close('dir-detalle'); setTimeout(dirPaywallContacto, 150); });
@@ -4170,13 +4206,15 @@ function dirComprimirFoto(file){
 function abrirEditorTarjeta(){
   const S = window.UserState;
   const mia = (window.__dirCache || []).find(x => x.uid === S.uid) || {};
+  const esVip = toolEsVIP();
+  const contacto = _dirMeta.myContact || {};
   _dirFotoTmp = undefined;
   _dirPortadaTmp = undefined;
   window.__dirPortadaColorSel = (DIR_PORTADAS[mia.portadaColor] ? mia.portadaColor : 'dorado');
   const fotoActual = mia.foto || S.foto || '';
   const body = `
     <div class="dir-form">
-      <div class="dir-form__plan is-vip"><svg class="ic"><use href="#i-crown"/></svg><span><b>Tarjeta profesional VIP</b> · insignia verificada, portada personalizable y contacto visible para la comunidad.</span></div>
+      <div class="dir-form__plan ${esVip?'is-vip':''}"><svg class="ic"><use href="#${esVip?'i-crown':'i-user'}"/></svg><span>${esVip?'<b>Tarjeta profesional VIP</b> · insignia verificada, portada personalizable y contacto visible para miembros VIP.':'<b>Tarjeta de miembro</b> · puedes editar tu foto y todos tus datos. La portada y el contacto con otros miembros se activan al ser VIP.'}</span></div>
       <div class="dir-form__foto-wrap">
         <div class="dir-form__foto" id="df-foto-prev">
           ${fotoActual ? `<img src="${fotoActual}" alt="">` : `<svg class="ic"><use href="#i-user"/></svg>`}
@@ -4188,13 +4226,13 @@ function abrirEditorTarjeta(){
         </div>
         <div style="font-size:11px;color:var(--text-3);text-align:center">Si no subes una foto, usaremos la imagen de tu cuenta de Google.</div>
       </div>
-      <label class="dir-form__lbl">Portada de tu tarjeta</label>
-      <div class="dir-form__portada">
+      <label class="dir-form__lbl">Portada de tu tarjeta ${esVip?'':'<span class="dir-form__vip"><svg class="ic"><use href="#i-crown"/></svg>Solo VIP</span>'}</label>
+      <div class="dir-form__portada ${esVip?'':'is-locked'}">
         <div class="dir-form__portada-prev" id="df-portada-prev" style="${dirPortadaStyle(mia)}"></div>
         <div class="dir-form__swatches">
-          ${Object.entries(DIR_PORTADAS).map(([pid,pp])=>`<button type="button" class="dir-form__swatch ${((DIR_PORTADAS[mia.portadaColor]?mia.portadaColor:'dorado')===pid && !dirFotoSeguraDir(mia.portadaImg))?'is-active':''}" data-portada="${pid}" title="${escHtml(pp.label)}" style="background:${pp.bg}"></button>`).join('')}
-          <button type="button" class="btn btn--ghost btn--sm" id="df-portada-btn"><svg class="ic"><use href="#i-image"/></svg>Subir portada</button>
-          ${dirFotoSeguraDir(mia.portadaImg)?'<button type="button" class="btn btn--ghost btn--sm" id="df-portada-quitar">Quitar imagen</button>':''}
+          ${Object.entries(DIR_PORTADAS).map(([pid,pp])=>`<button type="button" class="dir-form__swatch ${((DIR_PORTADAS[mia.portadaColor]?mia.portadaColor:'dorado')===pid && !dirFotoSeguraDir(mia.portadaImg))?'is-active':''}" data-portada="${pid}" title="${escHtml(pp.label)}" style="background:${pp.bg}" ${esVip?'':'disabled'}></button>`).join('')}
+          <button type="button" class="btn btn--ghost btn--sm" id="df-portada-btn" ${esVip?'':'disabled'}><svg class="ic"><use href="#i-image"/></svg>Subir portada</button>
+          ${dirFotoSeguraDir(mia.portadaImg)&&esVip?'<button type="button" class="btn btn--ghost btn--sm" id="df-portada-quitar">Quitar imagen</button>':''}
           <input type="file" id="df-portada-file" accept="image/*" style="display:none">
         </div>
       </div>
@@ -4215,10 +4253,10 @@ function abrirEditorTarjeta(){
       </select>
       <label class="dir-form__lbl">Bio corta</label><textarea class="dir-form__in" id="df-bio" rows="2">${escHtml(mia.bio || '')}</textarea>
       <div class="dir-form__sep">Contacto <span class="dir-form__opt">(todos opcionales)</span></div>
-      <label class="dir-form__lbl">WhatsApp (10 dígitos)</label><input class="dir-form__in" id="df-whatsapp" value="${escHtml(mia.whatsapp || '')}">
-      <label class="dir-form__lbl">Correo de contacto</label><input class="dir-form__in" id="df-email" value="${escHtml(mia.email || S.email || '')}">
-      <label class="dir-form__lbl">LinkedIn (URL)</label><input class="dir-form__in" id="df-linkedin" value="${escHtml(mia.linkedin || '')}">
-      <label class="dir-form__lbl">Sitio web <span class="dir-form__opt">(opcional)</span></label><input class="dir-form__in" id="df-web" placeholder="tusitio.com" value="${escHtml(mia.web || '')}">
+      <label class="dir-form__lbl">WhatsApp (10 dígitos)</label><input class="dir-form__in" id="df-whatsapp" value="${escHtml(contacto.whatsapp || '')}">
+      <label class="dir-form__lbl">Correo de contacto</label><input class="dir-form__in" id="df-email" value="${escHtml(contacto.email || S.email || '')}">
+      <label class="dir-form__lbl">LinkedIn (URL)</label><input class="dir-form__in" id="df-linkedin" value="${escHtml(contacto.linkedin || '')}">
+      <label class="dir-form__lbl">Sitio web <span class="dir-form__opt">(opcional)</span></label><input class="dir-form__in" id="df-web" placeholder="tusitio.com" value="${escHtml(contacto.web || '')}">
       <label class="dir-form__check"><input type="checkbox" id="df-visible" ${mia.visible!==false?'checked':''}> Mostrar mi tarjeta en el directorio</label>
     </div>`;
   Modal.open({ id: 'dir-editor', title: 'Mi tarjeta profesional', icon: 'i-edit', size: 'sm', body, footer: '<button class="btn btn--ghost" onclick="Modal.close(\'dir-editor\')">Cancelar</button><button class="btn btn--accent" onclick="guardarTarjeta()">Guardar</button>' });
@@ -4280,6 +4318,7 @@ function dirComprimirPortada(file){
 window.guardarTarjeta = async function(){
   const S = window.UserState;
   const mia = (window.__dirCache || []).find(x => x.uid === S.uid) || {};
+  const esVip = toolEsVIP();
   try {
     const { doc, setDoc, db, serverTimestamp } = window.__fs;
     const data = {
@@ -4289,23 +4328,40 @@ window.guardarTarjeta = async function(){
       empresa: document.getElementById('df-empresa').value.trim(),
       sector: document.getElementById('df-sector').value.trim(),
       bio: document.getElementById('df-bio').value.trim(),
-      whatsapp: document.getElementById('df-whatsapp').value.trim(),
-      email: document.getElementById('df-email').value.trim(),
-      linkedin: document.getElementById('df-linkedin').value.trim(),
-      web: document.getElementById('df-web').value.trim(),
+      /* El contacto real se guarda aparte por API. Estos campos se limpian de
+         la tarjeta pública para que un usuario no VIP no pueda leerlos desde
+         Firestore aunque inspeccione las solicitudes de red. */
+      whatsapp: '', email: '', linkedin: '', web: '',
       visible: document.getElementById('df-visible').checked,
-      vip: (window.UserState && (window.UserState.modo === 'vip' || window.UserState.isAdmin)) || false,
+      vip: esVip,
       plan: (window.UserState && window.UserState.plan) || null,
       estado: (document.getElementById('df-estado') && document.getElementById('df-estado').value) || '',
-      portadaColor: window.__dirPortadaColorSel || 'dorado',
       updatedAt: serverTimestamp()
     };
-    if (_dirPortadaTmp === null) data.portadaImg = null;
-    else if (_dirPortadaTmp !== undefined) data.portadaImg = _dirPortadaTmp;
+    if (esVip) {
+      data.portadaColor = window.__dirPortadaColorSel || 'dorado';
+      if (_dirPortadaTmp === null) data.portadaImg = null;
+      else if (_dirPortadaTmp !== undefined) data.portadaImg = _dirPortadaTmp;
+    }
     if (_dirFotoTmp === null) data.foto = S.foto || null;          // volver a la foto de Google
     else if (_dirFotoTmp !== undefined) data.foto = _dirFotoTmp;   // foto personalizada nueva
     else if (mia.foto) data.foto = mia.foto;                       // conservar la existente
     else if (S.foto) data.foto = S.foto;                           // autollenado desde Google
+    const token = await window.__auth.currentUser.getIdToken();
+    const contacto = {
+      whatsapp:document.getElementById('df-whatsapp').value.trim(),
+      email:document.getElementById('df-email').value.trim(),
+      linkedin:document.getElementById('df-linkedin').value.trim(),
+      web:document.getElementById('df-web').value.trim()
+    };
+    const response = await fetch(window.__WEBHOOK_URL + '/directory/contact', {
+      method:'PUT',
+      headers:{ Authorization:'Bearer ' + token, 'Content-Type':'application/json' },
+      body:JSON.stringify(contacto)
+    });
+    const contactoGuardado = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(contactoGuardado.error || 'No se pudo guardar tu contacto');
+    _dirMeta.myContact = contactoGuardado.contact || contacto;
     await setDoc(doc(db, 'directorio', S.uid), data, { merge: true });
     Modal.close('dir-editor');
     Toast.success('Tarjeta guardada', 'Ya apareces en el Directorio VIP.');
@@ -5524,6 +5580,8 @@ function mountNutricion(c){
   const _p = new URLSearchParams(location.search);
   const PREVIEW_DIAS = _p.get('dias') !== null ? parseInt(_p.get('dias'),10) : null;
   const DRIP_DIAS = 6;
+  const CLASES_GRATIS_TOPE = 4;
+  const cursoGratisEstado = { cargado:false, error:false, elegido:null, elegible:false };
 
   function esAdminReal(){ return !!(window.UserState && window.UserState.isAdmin); }
   function esVip(){ return !!(window.UserState && (window.UserState.modo === 'vip' || window.UserState.isAdmin)); }
@@ -5558,16 +5616,24 @@ function mountNutricion(c){
   function setProg(p){ try { localStorage.setItem(progKey(), JSON.stringify(p)); } catch(e){} }
   function cursoProg(id){ const p = getProg(); return p[id] || { vistas: [] }; }
 
+  function cantidadClasesGratis(total){ const n=Math.max(0,Number(total)||0); return !n?0:(n<=CLASES_GRATIS_TOPE?Math.max(1,n-1):CLASES_GRATIS_TOPE); }
+  function cursoPuedeSerGratis(c){ return !!c && c.activo!==false && c.publicado!==false && c.marcarProximamente!==true && Array.isArray(c.sesiones) && c.sesiones.some(s=>s&&s.videoId); }
+  function coleccionCurso(c){ return String(c?.bunnyCollectionId || c?.id || ''); }
+  function cursoGratisElegido(){ return (window.__cursosCache||[]).find(c=>cursoPuedeSerGratis(c)&&coleccionCurso(c)===cursoGratisEstado.elegido) || null; }
   function primerCursoGratisId(){
-    const primero = (window.__cursosCache || []).find(c => c.activo !== false && c.publicado !== false && c.marcarProximamente !== true && Array.isArray(c.sesiones) && c.sesiones.length);
-    return primero ? String(primero.id) : '';
+    const elegido=cursoGratisElegido(); if(elegido)return String(elegido.id);
+    if(window.UserState?.uid && cursoGratisEstado.cargado && !cursoGratisEstado.error)return '';
+    const primero=(window.__cursosCache||[]).find(cursoPuedeSerGratis);return primero?String(primero.id):'';
   }
+  function cursoGratisPendiente(){ return !!window.UserState?.uid && !esVip() && cursoGratisEstado.cargado && cursoGratisEstado.elegible && !cursoGratisEstado.elegido; }
   function esClaseGratisGlobal(cursoId, indexClase){
-    return indexClase === 0 && String(cursoId) === primerCursoGratisId();
+    const c=(window.__cursosCache||[]).find(x=>String(x.id)===String(cursoId));
+    return String(cursoId) === primerCursoGratisId() && indexClase < cantidadClasesGratis(c?.sesiones?.length || 0);
   }
 
   function primerMaterialGratisRef(){
-    const cursos = window.__cursosCache || [];
+    const elegido=cursoGratisElegido();
+    const cursos = elegido ? [elegido] : (window.__cursosCache || []);
     for (const c of cursos){
       if (c.activo === false || c.publicado === false || c.marcarProximamente === true) continue;
       if (Array.isArray(c.materiales) && c.materiales.length) return { cursoId:String(c.id), index:0 };
@@ -5579,11 +5645,14 @@ function mountNutricion(c){
     return !!primero && primero.cursoId === String(cursoId) && primero.index === indexMaterial;
   }
 
-  /* Sin pago solo se permite una clase global: la primera del primer curso. */
+  /* Sin pago se permiten las primeras clases del curso elegido por la cuenta. */
   function claseDesbloqueada(cursoId, indexClase, totalClases){
-    if (esAdminReal()) return true;
-    if (esVip()) return true;
-    return esClaseGratisGlobal(cursoId, indexClase);
+    const tieneAcceso = esAdminReal() || esVip() || esClaseGratisGlobal(cursoId, indexClase);
+    if (!tieneAcceso) return false;
+    if (indexClase <= 0) return true;
+    /* La progresión académica es secuencial para todos: la clase anterior se
+       completa únicamente al superar su ejercicio. */
+    return cursoProg(cursoId).vistas.includes(indexClase - 1);
   }
   window.__synMarcarVista = function(cursoId, idx){
     const p = getProg(); if (!p[cursoId]) p[cursoId] = { vistas: [] };
@@ -5640,7 +5709,7 @@ function mountNutricion(c){
     const url = typeof recurso === 'string' ? recurso : (recurso && recurso.url || '');
     if (!esBunny && !url){ Toast.info('Sin contenido','Este recurso aún no tiene enlace.'); return; }
     if (esBunny && !claseDesbloqueada(cursoId, idx)) {
-      window.__showPaywallModal('Tu primera clase y tu primer material son gratis. Activa tu membresía para abrir el resto del contenido del curso.');
+      window.__showPaywallModal('Las primeras clases de tu curso elegido son gratis. Activa tu membresía para abrir el resto del contenido.');
       return;
     }
     frame.src = 'about:blank';
@@ -5757,6 +5826,47 @@ function mountNutricion(c){
     return pool[i % pool.length] || PORTADA_DEFAULT;
   }
 
+  function asignarOrdenDesbloqueo(lista){
+    const orden=(lista||[]).slice();
+    const elegido=cursoGratisEstado.elegido;
+    const pos=elegido?orden.findIndex(c=>coleccionCurso(c)===elegido):-1;
+    if(pos>0)orden.unshift(orden.splice(pos,1)[0]);
+    let rank=0;
+    orden.forEach(c=>{ if(c.marcarProximamente===true)c._unlockDay=Number.MAX_SAFE_INTEGER; else if(c.disponibleSiempre)c._unlockDay=0; else{c._unlockDay=rank*DRIP_DIAS;rank++;} });
+  }
+  async function cargarCursoGratisEstado(){
+    const user=window.__auth&&window.__auth.currentUser;
+    if(!user||esAdminReal()){cursoGratisEstado.cargado=true;return cursoGratisEstado;}
+    try{
+      const token=await user.getIdToken();
+      const response=await fetch(window.__WEBHOOK_URL+'/api/bunny/free-course',{cache:'no-store',headers:{Authorization:'Bearer '+token}});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data.error||'No pudimos leer tu curso gratis');
+      cursoGratisEstado.elegido=data.elegido||null;cursoGratisEstado.elegible=data.elegible===true;cursoGratisEstado.error=false;
+    }catch(error){console.warn('[curso gratis]',error.message);cursoGratisEstado.error=true;}
+    cursoGratisEstado.cargado=true;asignarOrdenDesbloqueo(window.__cursosCache||[]);
+    if(cursoGratisPendiente())setTimeout(mostrarInvitacionCursoGratis,900);
+    return cursoGratisEstado;
+  }
+  function mostrarInvitacionCursoGratis(){
+    if(!cursoGratisPendiente()||document.querySelector('.fci'))return;
+    if(document.querySelector('#synova-ficha-inicial,.onboarding-tour-open,.tour-overlay,.modal-backdrop')){setTimeout(mostrarInvitacionCursoGratis,1800);return;}
+    const storage='synova:free-course-intro:'+window.UserState.uid;try{if(sessionStorage.getItem(storage))return;sessionStorage.setItem(storage,'1');}catch(_){}
+    const opciones=(window.__cursosCache||[]).filter(cursoPuedeSerGratis),gratis=Math.max(0,...opciones.map(c=>cantidadClasesGratis(c.sesiones.length)));
+    const portadas=opciones.slice(0,3).map(c=>'<span class="fci__cover" style="background-image:url(\''+String(portadaDe(c)||'').replace(/'/g,'%27')+'\')"></span>').join('');
+    const nombre=String(window.UserState.nombre||'').split(' ')[0],pop=document.createElement('div');pop.className='fci';
+    pop.innerHTML='<section class="fci__card" role="dialog" aria-modal="true"><button class="fci__close" type="button">×</button><div class="fci__art">'+portadas+'<span class="fci__badge">Regalo de bienvenida</span></div><span class="fci__kicker">Para tu primera visita</span><h2>'+(nombre?escHtml(nombre)+', elige':'Elige')+' tu <em>curso gratis</em></h2><p>Abre gratis las primeras <strong>'+gratis+' clases</strong> del curso que más te interese. Después podrás activar VIP para continuar.</p><ol class="fci__steps"><li><b>1</b>Elige un curso</li><li><b>2</b>Completa sus ejercicios</li><li><b>3</b>Gana créditos</li></ol><div class="fci__actions"><button class="fci__later" type="button">Más tarde</button><button class="fci__cta" type="button">Elegir mi curso gratis →</button></div></section>';
+    document.body.appendChild(pop);requestAnimationFrame(()=>pop.classList.add('is-open'));
+    const close=(go)=>{pop.classList.add('is-closing');setTimeout(()=>{pop.remove();if(go){window.navigateTo('cursos');setTimeout(()=>document.querySelector('.free-course-banner')?.scrollIntoView({behavior:'smooth',block:'center'}),350);}},220);};
+    pop.querySelector('.fci__close').onclick=()=>close(false);pop.querySelector('.fci__later').onclick=()=>close(false);pop.querySelector('.fci__cta').onclick=()=>close(true);
+  }
+  function confirmarCursoGratis(curso){
+    if(!cursoGratisPendiente()||!cursoPuedeSerGratis(curso))return;
+    const gratis=cantidadClasesGratis(curso.sesiones.length);
+    Modal.open({id:'free-course-confirm',title:'¿Este será tu curso gratis?',subtitle:'Regalo de bienvenida SYNOVA',icon:'i-gift',size:'sm',body:'<div class="free-course-confirm"><div class="free-course-confirm__cover" style="background-image:url(\''+String(portadaDe(curso)||'').replace(/'/g,'%27')+'\')"></div><h3>'+escHtml(curso.nombre||'Curso SYNOVA')+'</h3><p>Podrás ver sus primeras <strong>'+gratis+' clases</strong>, resolver cada ejercicio y ganar créditos.</p><p class="free-course-confirm__warn"><svg class="ic"><use href="#i-shield-check"/></svg>Solo puedes elegir un curso y después no se puede cambiar.</p></div>',footer:'<button class="btn btn--ghost" onclick="Modal.close(\'free-course-confirm\')">Ver otros</button><button class="btn btn--accent" id="confirm-free-course">Sí, elegir este curso</button>'});
+    setTimeout(()=>{const button=document.getElementById('confirm-free-course');if(!button)return;button.onclick=async()=>{button.disabled=true;button.textContent='Guardando…';try{const token=await window.__auth.currentUser.getIdToken();const response=await fetch(window.__WEBHOOK_URL+'/api/bunny/free-course',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({collectionId:coleccionCurso(curso)})});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'No se pudo guardar');cursoGratisEstado.elegido=data.elegido||coleccionCurso(curso);cursoGratisEstado.elegible=false;asignarOrdenDesbloqueo(window.__cursosCache||[]);Modal.close('free-course-confirm');Toast.success('¡Curso gratis elegido!',curso.nombre||'Ya puedes comenzar');renderCursos();}catch(error){button.disabled=false;button.textContent='Sí, elegir este curso';Toast.error('No se pudo elegir el curso',error.message);}};},0);
+  }
+
   /* ── Carga de cursos + precálculo de desbloqueo ── */
   async function loadCursos(force){
     if (window.__cursosCache && !force) return window.__cursosCache;
@@ -5767,11 +5877,7 @@ function mountNutricion(c){
     const cursos = []; snap.forEach(d => cursos.push({ id: d.id, ...d.data() }));
     cursos.sort((a,b)=>((Number(a.orden)||999)-(Number(b.orden)||999)) || String(a.id).localeCompare(String(b.id)));
     _resetPortadas();
-    let rank = 0;
     cursos.forEach(c => {
-      if (c.marcarProximamente === true) c._unlockDay = Number.MAX_SAFE_INTEGER;
-      else if (c.disponibleSiempre) c._unlockDay = 0;
-      else { c._unlockDay = rank * DRIP_DIAS; rank++; }
       /* Portada real: si la guardada es SVG genérico (o no hay), se asigna imagen real por tema */
       c._portadaSvg = (c.portada && esPortadaGenerica(c.portada)) ? c.portada : '';
       c.portada = getPortadaCurso(c);
@@ -5779,6 +5885,8 @@ function mountNutricion(c){
       (c.materiales || []).forEach(m => { if (esPortadaGenerica(m.portada)) m.portada = c.portada; });
     });
     window.__cursosCache = cursos;
+    asignarOrdenDesbloqueo(cursos);
+    if(!cursoGratisEstado.cargado)await cargarCursoGratisEstado();
     _precargarPortadas(cursos);
     return cursos;
   }
@@ -5808,7 +5916,7 @@ function mountNutricion(c){
   /* ── SECCIÓN CURSOS ── */
   window.Sections.cursos = function(){
     document.getElementById('content').innerHTML =
-      secHero('Catálogo VIP', 'Mis cursos', 'Tu primera clase y tu primer material son gratis. Activa tu membresía para desbloquear cursos completos progresivamente cada 6 días.') +
+      secHero('Formación clínica', 'Mis cursos', 'Elige el curso que quieras probar gratis. Con VIP desbloqueas cursos completos progresivamente cada 6 días.') +
       '<div id="cursos-grid" class="cursos-grid"></div>';
     renderCursos();
   };
@@ -5818,7 +5926,10 @@ function mountNutricion(c){
     try { cursos = await loadCursos(); } catch(e){ grid.outerHTML = '<div id="cursos-grid">' + emptyState('i-book','No se pudo cargar el catálogo', e.message) + '</div>'; return; }
     if (!cursos.length){ grid.outerHTML = '<div id="cursos-grid">' + emptyState('i-book','Aún no hay cursos cargados','El equipo SYNOVA está subiendo el catálogo.') + '</div>'; return; }
     const vip = esVip();
-    grid.innerHTML = cursos.map(c => {
+    const eligiendo=cursoGratisPendiente();
+    const maxGratis=Math.max(0,...cursos.filter(cursoPuedeSerGratis).map(c=>cantidadClasesGratis(c.sesiones.length)));
+    const banner=eligiendo?'<section class="free-course-banner"><span class="free-course-banner__icon"><svg class="ic"><use href="#i-gift"/></svg></span><div class="free-course-banner__copy"><span>Tu regalo de bienvenida</span><strong>Elige tu curso gratis</strong><p>Toca el curso que más te interese. Verás gratis hasta '+maxGratis+' clases y ganarás créditos con sus ejercicios.</p></div><span class="free-course-banner__hint">Elige abajo ↓</span></section>':'';
+    grid.innerHTML = banner+cursos.map(c => {
       const color = c.color || colorForArea(c.area || c.nombre);
       const nClases = (c.sesiones && c.sesiones.length) || 0;
       const desbloqueado = cursoDesbloqueado(c);
@@ -5829,15 +5940,17 @@ function mountNutricion(c){
         if (c.marcarProximamente === true) lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Próximamente</div><div class="drip-lock__d">Te avisaremos cuando este curso esté listo.</div></div>';
         else { const d = diasRestantes(c); lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div><div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div></div>'; }
       }
-      return '<div class="curso-card" style="--area-color:' + color + '" data-locked="false" data-cid="' + c.id + '" data-ok="' + desbloqueado + '">' +
-        '<div class="curso-card__cover"' + cover + '>' + (portadaDe(c) ? '' : iconoParaArea()) + '<div class="curso-card__cover-badge">' + escHtml(c.area || 'SYNOVA') + '</div></div>' +
+      const elegible=eligiendo&&cursoPuedeSerGratis(c);
+      return '<div class="curso-card' + (elegible?' is-free-choice':'') + '" style="--area-color:' + color + '" data-locked="false" data-cid="' + c.id + '" data-ok="' + desbloqueado + '">' +
+        '<div class="curso-card__cover"' + cover + '>' + (portadaDe(c) ? '' : iconoParaArea()) + '<div class="curso-card__cover-badge">' + escHtml(c.area || 'SYNOVA') + '</div>'+(elegible?'<span class="curso-card__free-badge">ELÍGELO GRATIS · '+cantidadClasesGratis(nClases)+' CLASES</span>':(!vip&&String(c.id)===primerCursoGratisId()?'<span class="curso-card__free-badge">TU CURSO GRATIS · '+cantidadClasesGratis(nClases)+' CLASES</span>':''))+'</div>' +
         '<div class="curso-card__body"><div class="curso-card__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div>' +
         '<div class="curso-card__desc">' + escHtml(c.descripcion || 'Contenido clínico incluido en tu membresía VIP.') + '</div>' +
-        '<div class="curso-card__meta"><span><svg class="ic"><use href="#i-book"/></svg>' + nClases + ' clase' + (nClases===1?'':'s') + pend + '</span>' + (!vip && String(c.id)===primerCursoGratisId()?'<span style="color:var(--success);font-weight:800">1 CLASE GRATIS</span>':'') + '</div></div>' +
+        '<div class="curso-card__meta"><span><svg class="ic"><use href="#i-book"/></svg>' + nClases + ' clase' + (nClases===1?'':'s') + pend + '</span></div></div>' +
         lock + '</div>';
     }).join('');
     grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
       const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
+      if(cursoGratisPendiente()&&cursoPuedeSerGratis(c)){confirmarCursoGratis(c);return;}
       window.__cursoActualId = String(c.id);
       window.__claseActualIndex = null;
       window.navigateTo('curso');
@@ -5955,7 +6068,7 @@ function mountNutricion(c){
     cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => {
       const i = +el.dataset.clase;
       if (!claseDesbloqueada(id, i, sesiones.length)) {
-        window.__showPaywallModal(`Tu primera clase y tu primer material son gratis. Activa tu membresía para abrir el resto del contenido del curso.`);
+        window.__showPaywallModal(`Las primeras clases de tu curso elegido son gratis. Activa tu membresía para abrir el resto del contenido.`);
         return;
       }
       window.__claseActualIndex = i;
@@ -5988,6 +6101,19 @@ function mountNutricion(c){
     return data.embedUrl;
   }
 
+  async function acreditarEjercicioClase(curso, idx){
+    try{
+      const user=window.__auth&&window.__auth.currentUser;if(!user)return;
+      const token=await user.getIdToken();
+      const response=await fetch(window.__WEBHOOK_URL+'/api/bunny/class-game-reward',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({collectionId:coleccionCurso(curso),classNumber:idx+1})});
+      const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||'No se pudieron acreditar los créditos');
+      if(data.awarded){
+        if(window.SynovaCredits){window.SynovaCredits.state.balance=Number(data.balance||window.SynovaCredits.state.balance);window.dispatchEvent(new CustomEvent('synova:credits-changed',{detail:window.SynovaCredits.state}));}
+        setTimeout(()=>window.SynovaCoinChest?.show({amount:data.credits,total:data.balance,title:'¡Ejercicio superado!'}),500);
+      }
+    }catch(error){console.warn('[ejercicio de clase]',error.message);}
+  }
+
   async function abrirClaseEnCurso(id, idx){
     const c = (window.__cursosCache || []).find(function(x){ return String(x.id) === String(id); });
     if (!c) return;
@@ -6018,7 +6144,7 @@ function mountNutricion(c){
       '<div class="lesson-page__nav"><button class="lesson-back-btn" id="lessonBackContent"><span class="lesson-back-btn__arrow">←</span>Volver al curso</button><button class="lesson-back-btn lesson-back-btn--quiet" id="lessonBackCourse"><span class="lesson-back-btn__arrow">←</span>Mis cursos</button></div>' +
       '<div class="lesson-page__crumbs"><span>' + escHtml(c.nombre || 'Curso') + '</span><span>›</span><strong>' + escHtml(s.titulo || ('Clase '+(idx+1))) + '</strong></div>' +
       '<div class="lesson-page__layout"><main><div class="lesson-player"><div class="lesson-player__frame" id="lessonPlayerFrame"><div class="lesson-player__loading"><div class="sub-loading__spin"></div><span>Preparando la clase…</span></div></div></div>' +
-      '<section class="lesson-info"><div class="lesson-info__eyebrow">Clase ' + (idx+1) + ' de ' + sesiones.length + '</div><h1 class="lesson-info__title">' + escHtml(s.titulo || ('Clase '+(idx+1))) + '</h1><p class="lesson-info__desc">' + escHtml(s.descripcion || c.descripcion || 'Contenido clínico preparado por SYNOVA para fortalecer tu práctica profesional.') + '</p><div class="lesson-info__actions"><button class="lesson-complete' + (vista?' is-done':'') + '" id="lessonMark"><svg class="ic"><use href="' + (vista?'#i-check-circle':'#i-check') + '"/></svg>' + (vista?'Clase completada':'Marcar como completada') + '</button>' + (siguiente>=0?'<button class="lesson-next" id="lessonNext">Siguiente clase <svg class="ic"><use href="#i-arrow-right"/></svg></button>':'') + '</div></section>' +
+      '<section class="lesson-info"><div class="lesson-info__eyebrow">Clase ' + (idx+1) + ' de ' + sesiones.length + '</div><h1 class="lesson-info__title">' + escHtml(s.titulo || ('Clase '+(idx+1))) + '</h1><p class="lesson-info__desc">' + escHtml(s.descripcion || c.descripcion || 'Contenido clínico preparado por SYNOVA para fortalecer tu práctica profesional.') + '</p><div class="lesson-game-note"><svg class="ic"><use href="#i-trophy"/></svg><span>'+(vista?'Ejercicio completado. Puedes repetirlo para practicar.':'Resuelve un ejercicio breve para completar la clase, desbloquear la siguiente y ganar 10 créditos SYNOVA.')+'</span></div><div class="lesson-info__actions"><button class="lesson-complete' + (vista?' is-done':'') + '" id="lessonMark"><svg class="ic"><use href="' + (vista?'#i-check-circle':'#i-trophy') + '"/></svg>' + (vista?'Practicar otra vez':'Resolver ejercicio y completar') + '</button>' + (vista&&siguiente>=0?'<button class="lesson-next" id="lessonNext">Siguiente clase <svg class="ic"><use href="#i-arrow-right"/></svg></button>':'') + '</div></section>' +
       '<section class="course-section lesson-resources"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + recursos + '</section></main>' +
       '<aside class="lesson-syllabus"><div class="lesson-syllabus__head"><div class="lesson-syllabus__kicker">Contenido del curso</div><div class="lesson-syllabus__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div><div class="lesson-syllabus__progress">' + prog.vistas.length + ' de ' + sesiones.length + ' clases completadas</div></div><div class="lesson-syllabus__list">' + syllabus + '</div></aside></div></div>';
 
@@ -6027,7 +6153,14 @@ function mountNutricion(c){
     root.querySelector('#lessonBackContent').onclick = function(){ window.__claseActualIndex=null; const u=new URL(location.href);u.searchParams.delete('clase');history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirCurso(id,true); };
     root.querySelectorAll('[data-lesson-index]').forEach(function(btn){ btn.onclick=function(){ const i=+btn.dataset.lessonIndex;if(!claseDesbloqueada(id,i,sesiones.length)){window.__showPaywallModal('Activa tu membresía para abrir esta clase.');return;}const u=new URL(location.href);u.searchParams.set('clase',i);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,i); }; });
     root.querySelectorAll('[data-lesson-mat]').forEach(function(el){ el.onclick=function(){const i=+el.dataset.lessonMat;if(el.dataset.open!=='true'){window.__showPaywallModal('Activa tu membresía para abrir los demás recursos del curso.');return;}const m=materiales[i];window.__abrirVisor(m.url,m.titulo||('Material '+(i+1)),null,null);}; });
-    root.querySelector('#lessonMark').onclick = function(){ if(!cursoProg(id).vistas.includes(idx)) window.__synMarcarVista(id,idx); abrirClaseEnCurso(id,idx); };
+    root.querySelector('#lessonMark').onclick = async function(){
+      const yaVista=cursoProg(id).vistas.includes(idx);
+      if(!window.SynovaClassGames){Toast.info('Preparando ejercicio','Intenta de nuevo en un momento.');return;}
+      const ganado=await window.SynovaClassGames.play({courseId:String(id),courseTitle:c.nombre||'Curso SYNOVA',classNumber:idx+1,lessonIndex:idx,lessonTitle:s.titulo||('Clase '+(idx+1)),session:s,practica:yaVista,credits:yaVista?0:10});
+      if(!ganado)return;
+      if(!yaVista){window.__synMarcarVista(id,idx);void acreditarEjercicioClase(c,idx);}
+      abrirClaseEnCurso(id,idx);
+    };
     const nextBtn = root.querySelector('#lessonNext'); if(nextBtn) nextBtn.onclick=function(){const u=new URL(location.href);u.searchParams.set('clase',siguiente);history.replaceState(null,'',u.pathname+'?'+u.searchParams.toString());abrirClaseEnCurso(id,siguiente);};
 
     try {
@@ -6085,6 +6218,9 @@ function mountNutricion(c){
       const it = items[+card.dataset.k]; if (it) window.__abrirVisor(it.m.url, it.m.titulo || 'Material', null, null);
     }));
   }
+  window.addEventListener('synova:ready', function(){
+    loadCursos().catch(function(error){ console.warn('[cursos]', error.message); });
+  }, { once:true });
 })();
 </script>
 
@@ -6530,6 +6666,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="assets/synova-course-experience.js?v=1"></script>
 <script src="assets/synova-books-credits.js?v=8"></script>
 <script src="assets/synova-materials.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
