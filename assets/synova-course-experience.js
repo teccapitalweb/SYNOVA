@@ -29,6 +29,12 @@
   }
   function play(options){
     options=options||{};
+    if(window.SynovaGameSuite&&typeof window.SynovaGameSuite.playLesson==='function'){
+      return window.SynovaGameSuite.playLesson(options).then(function(won){
+        if(won){try{localStorage.setItem(key(options.courseId,options.classNumber),'1');}catch(_){}}
+        return !!won;
+      });
+    }
     if(activeGame)activeGame.remove();
     return new Promise(function(resolve){
       var qs=questions(options),index=0,finished=false;
