@@ -170,6 +170,28 @@
   const quickBox = root.querySelector('.syg-quick');
   const input = root.querySelector('.syg-input');
   const send = root.querySelector('.syg-send');
+  let panelScrollY = 0;
+  let panelBackgroundLocked = false;
+
+  function lockPanelBackground() {
+    if (window.innerWidth > 760 || panelBackgroundLocked) return;
+    panelScrollY = Math.max(0, window.scrollY || document.documentElement.scrollTop || 0);
+    document.body.style.setProperty('--syg-panel-scroll-top', `-${panelScrollY}px`);
+    document.body.classList.add('syg-panel-open');
+    panelBackgroundLocked = true;
+  }
+
+  function unlockPanelBackground() {
+    if (!panelBackgroundLocked) return;
+    const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.body.classList.remove('syg-panel-open');
+    document.body.style.removeProperty('--syg-panel-scroll-top');
+    panelBackgroundLocked = false;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo({ left:0, top:panelScrollY, behavior:'auto' });
+    if (previousScrollBehavior) document.documentElement.style.scrollBehavior = previousScrollBehavior;
+    else document.documentElement.style.removeProperty('scroll-behavior');
+  }
 
   function courseCards(items) {
     if (!items?.length) return '';
@@ -271,6 +293,7 @@
   function openAssistant() {
     launcher.hidden = true;
     panel.hidden = false;
+    lockPanelBackground();
     restorePosition(panel, 'panel');
     renderMessages();
     if (!quickActions.length) homeActions(); else setQuick(quickActions);
@@ -281,6 +304,7 @@
   function closeAssistant() {
     panel.hidden = true;
     launcher.hidden = false;
+    unlockPanelBackground();
     restorePosition(launcher, 'launcher');
     setMotion('wave');
   }
@@ -574,6 +598,10 @@
   window.addEventListener('resize', () => {
     const visible = panel.hidden ? launcher : panel;
     const nextBucket = window.innerWidth <= 760 ? 'mobile' : 'desktop';
+    if (!panel.hidden) {
+      if (nextBucket === 'mobile') lockPanelBackground();
+      else unlockPanelBackground();
+    }
     if (nextBucket !== positionBucket) {
       positionBucket = nextBucket;
       restorePosition(visible, panel.hidden ? 'launcher' : 'panel');

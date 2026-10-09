@@ -786,7 +786,22 @@ body::after{
 .club-lb__row-xp{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:12px;color:var(--primary);flex-shrink:0}
 .club-lb__note{display:flex;align-items:center;gap:8px;margin-top:22px;padding-top:14px;border-top:1px solid var(--border);font-size:11px;color:var(--text-3)}
 .club-lb__note svg{width:14px;height:14px;flex:none;color:var(--text-3)}
-@media(max-width:560px){.club-lb__podium{grid-template-columns:1fr;gap:10px}.club-pod--1{transform:none}}
+@media(max-width:560px){
+  .syn-ranking,.club-lb,.club-lb__list{width:100%;min-width:0;max-width:100%}
+  .syn-ranking{overflow:hidden}
+  .club-lb{padding:22px 14px 18px;overflow:hidden}
+  .club-lb__podium{grid-template-columns:1fr;gap:10px;width:100%;min-width:0}
+  .club-pod{min-width:0;padding-inline:12px}
+  .club-pod--1{transform:none}
+  .club-lb__row{display:grid;grid-template-columns:24px 40px minmax(0,1fr) auto;grid-template-rows:auto auto;column-gap:9px;row-gap:3px;width:100%;min-width:0;padding:10px 9px}
+  .club-lb__row-rk{grid-column:1;grid-row:1/3;width:auto;align-self:center;text-align:center}
+  .club-lb__row-av{grid-column:2;grid-row:1/3;width:40px;height:40px;align-self:center}
+  .club-lb__row-nm{grid-column:3;grid-row:1/3;align-self:center;min-width:0}
+  .club-lb__row-nm strong{font-size:12px}
+  .club-lb__row .syn-tier{grid-column:4;grid-row:1;justify-self:end;align-self:end}
+  .club-lb__row-xp{grid-column:4;grid-row:2;justify-self:end;align-self:start;min-width:0;text-align:right}
+  .club-lb__note{align-items:flex-start;line-height:1.5}
+}
 /* ===== DIRECTORIO estilo IMFRA: VIP vs básica, portada, candado ===== */
 .dir-chip--vip{display:inline-flex;align-items:center;gap:6px;border-color:color-mix(in srgb,#e0a83a 55%,transparent);color:#b07a12}
 .dir-chip--vip .ic{width:14px;height:14px}

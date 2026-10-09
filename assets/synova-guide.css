@@ -13,6 +13,17 @@
 
 body.syg-lock { overflow: hidden !important; }
 
+/* En móvil el panel es una experiencia de pantalla completa: conserva la
+   posición de la página y evita que el gesto dentro del chat mueva el fondo. */
+body.syg-panel-open {
+  position: fixed !important;
+  inset-inline: 0;
+  top: var(--syg-panel-scroll-top, 0);
+  width: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
 .syg-root,
 .syg-route,
 .syg-cookie { font-family: "DM Sans", Arial, sans-serif; color: var(--syg-ink); }
@@ -166,6 +177,7 @@ body.syg-lock { overflow: hidden !important; }
   backdrop-filter: blur(20px);
   transform-origin: 90% 100%;
   animation: syg-panel-in 260ms cubic-bezier(.2,.8,.2,1) both;
+  overscroll-behavior: contain;
 }
 
 .syg-panel[hidden], .syg-launcher[hidden] { display: none !important; }
@@ -247,6 +259,9 @@ body.syg-lock { overflow: hidden !important; }
   overflow-y: auto;
   padding: 15px 14px 10px;
   scroll-behavior: smooth;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   scrollbar-width: thin;
   scrollbar-color: rgba(11,84,131,.25) transparent;
 }
