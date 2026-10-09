@@ -132,7 +132,7 @@
 
   function sourceCard(source) {
     if (!source?.items?.length) return '';
-    return `<div class="syg-source"><span aria-hidden="true">ⓘ</span><span>Información pública de ${escapeHtml(source.name || 'MedlinePlus.gov')}. ${source.items.map(item => `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a>`).join(' · ')}</span></div>`;
+    return `<div class="syg-source"><span aria-hidden="true">ⓘ</span><span>Información pública de ${escapeHtml(source.name || 'MedlinePlus.gov')} ${source.items.map(item => `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a>`).join(' · ')}</span></div>`;
   }
 
   function renderMessages() {
@@ -294,7 +294,7 @@
       const body = await response.json().catch(() => ({}));
       if (!response.ok || !Array.isArray(body.items) || !body.items.length) throw new Error(body.error || 'Sin resultados');
       const lead = body.items[0];
-      const related = rankCourses([value, lead.title, lead.summary], 3);
+      const related = rankCourses([value, lead.title], 3);
       const text = `${lead.summary || `Encontré información educativa sobre ${lead.title}.`}${related.length ? '\n\nTambién encontré formación relacionada dentro de SYNOVA:' : ''}`;
       reply(text, { items:related, source:{ name:body.source, items:body.items.slice(0, 2) } });
       setQuick([
