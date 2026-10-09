@@ -2035,6 +2035,11 @@ onAuthStateChanged(auth, async (user) => {
     }
   } catch (e) {}
 
+  // Restaura el avance de la cuenta antes de pintar la primera pantalla. La
+  // copia local se conserva como respaldo si el dispositivo está sin conexión.
+  try { if (window.__prepareLearningProgress) await window.__prepareLearningProgress(); }
+  catch (e) { console.warn('[SYNOVA] avance inicial:', e.message); }
+
   hidratarUI(window.UserState);
   document.body.style.visibility = 'visible';
   window.dispatchEvent(new CustomEvent('synova:ready'));
@@ -2527,7 +2532,10 @@ function emptyState(icon, title, sub){
 /* Progreso local de cursos vistos (por uid), usado para las cards y para habilitar "marcar completado" */
 function progresoKey(){ return 'synova_progreso_' + (window.UserState?.uid || 'anon'); }
 function getProgreso(){ try { return JSON.parse(localStorage.getItem(progresoKey()) || '{}'); } catch (e) { return {}; } }
-function setProgreso(p){ try { localStorage.setItem(progresoKey(), JSON.stringify(p)); } catch (e) {} }
+function setProgreso(p){
+  try { localStorage.setItem(progresoKey(), JSON.stringify(p)); } catch (e) {}
+  window.SynovaLearningSync?.schedule?.();
+}
 
 /* ══════════════════════ INICIO ══════════════════════ */
 Sections.inicio = function(){
@@ -2849,7 +2857,203 @@ function getRetosState(){
   const base = { xp: 0, correctas: 0, respondidas: 0, mejor: 0, racha: 0, ultimoDia: '', diarios: [], casos: 0, quizBest: 0, quizzes: 0, flash: {}, flashEstudiadas: 0, flashDominadas: 0, historia: [], casosResueltos: [], semana: '', quizSemana: 0, flashSemana: 0 };
   try { return { ...base, ...JSON.parse(localStorage.getItem(retosKey()) || '{}') }; } catch (e) { return base; }
 }
-function setRetosState(s){ try { localStorage.setItem(retosKey(), JSON.stringify(s)); } catch (e) {} }
+function setRetosState(s){
+  try { localStorage.setItem(retosKey(), JSON.stringify(s)); } catch (e) {}
+  window.SynovaLearningSync?.schedule?.();
+}
+
+/* ═════ AVANCE MULTIDISPOSITIVO ═════
+   Firestore/servidor es la copia compartida y localStorage queda como respaldo
+   sin conexión. La fusión es acumulativa: un dispositivo vacío no borra. */
+let synLearningReady = false;
+let synLearningTimer = 0;
+let synLearningPromise = null;
+let synLearningCatalog = null;
+
+async function catalogoParaSincronizacion(){
+  if (synLearningCatalog) return synLearningCatalog;
+  const { collection, getDocs, db, query, orderBy } = window.__fs || {};
+  if (!db || !getDocs) throw new Error('Firestore no está disponible');
+  let snapshot;
+  try { snapshot = await getDocs(query(collection(db, 'cursos'), orderBy('orden', 'asc'))); }
+  catch (e) { snapshot = await getDocs(collection(db, 'cursos')); }
+  synLearningCatalog = [];
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data() || {};
+    synLearningCatalog.push({ id:String(docSnap.id), sesiones:Array.isArray(data.sesiones) ? data.sesiones : [] });
+  });
+  return synLearningCatalog;
+}
+
+function leerJsonLocal(key, fallback){
+  try { return JSON.parse(localStorage.getItem(key) || 'null') || fallback; }
+  catch (e) { return fallback; }
+}
+
+function juegosClaseLocales(catalogo, uid){
+  const classGames = {};
+  catalogo.forEach(curso => {
+    const ganados = [];
+    curso.sesiones.forEach((sesion, index) => {
+      try {
+        if (localStorage.getItem('synova:class-game:' + uid + ':' + curso.id + ':' + (index + 1)) === '1') ganados.push(index + 1);
+      } catch (e) {}
+    });
+    if (ganados.length) classGames[curso.id] = ganados;
+  });
+  return classGames;
+}
+
+function arcadeLocal(uid){
+  const day = new Date().toLocaleDateString('en-CA');
+  const wins = leerJsonLocal('synova:arcade-wins:' + uid + ':' + day, []);
+  return { day, wins:Array.isArray(wins) ? wins : [] };
+}
+
+function construirAvanceSynova(catalogo){
+  const uid = window.UserState?.uid || 'anon';
+  const clases = leerJsonLocal('synova_curso_prog_' + uid, {});
+  const legado = getProgreso();
+  const courses = {};
+  catalogo.forEach(curso => {
+    const actual = clases[curso.id] || {};
+    const anterior = legado[curso.id] || {};
+    const viewed = [...new Set((Array.isArray(actual.vistas) ? actual.vistas : [])
+      .map(Number)
+      .filter(index => Number.isInteger(index) && index >= 0 && index < curso.sesiones.length))]
+      .sort((a, b) => a - b);
+    const completed = actual.cert === true || anterior.completado === true || (curso.sesiones.length > 0 && viewed.length >= curso.sesiones.length);
+    if (viewed.length || completed) {
+      courses[curso.id] = {
+        viewed,
+        completed,
+        completedAt:anterior.fechaCompletado || actual.fechaCompletado || null
+      };
+    }
+  });
+  return {
+    version:1,
+    courses,
+    classGames:juegosClaseLocales(catalogo, uid),
+    arcade:arcadeLocal(uid),
+    retos:getRetosState()
+  };
+}
+
+function fotoAvanceLocal(catalogo){
+  const uid = window.UserState?.uid || 'anon';
+  return JSON.stringify({
+    courses:leerJsonLocal('synova_curso_prog_' + uid, {}),
+    legacy:getProgreso(),
+    classGames:juegosClaseLocales(catalogo, uid),
+    arcade:arcadeLocal(uid),
+    retos:getRetosState()
+  });
+}
+
+function aplicarAvanceSynova(remote, catalogo){
+  if (!remote || typeof remote !== 'object') return false;
+  const uid = window.UserState?.uid || 'anon';
+  const antes = fotoAvanceLocal(catalogo);
+  const clasesKey = 'synova_curso_prog_' + uid;
+  const clases = leerJsonLocal(clasesKey, {});
+  const legado = getProgreso();
+
+  catalogo.forEach(curso => {
+    const nube = remote.courses?.[curso.id];
+    if (nube) {
+      const actual = clases[curso.id] || { vistas:[] };
+      const vistas = [...new Set([...(actual.vistas || []), ...(nube.viewed || [])]
+        .map(Number)
+        .filter(index => Number.isInteger(index) && index >= 0 && index < curso.sesiones.length))]
+        .sort((a, b) => a - b);
+      const completado = actual.cert === true || nube.completed === true || (curso.sesiones.length > 0 && vistas.length >= curso.sesiones.length);
+      clases[curso.id] = { ...actual, vistas, cert:completado, fechaCompletado:actual.fechaCompletado || nube.completedAt || null };
+      if (completado) {
+        legado[curso.id] = {
+          ...(legado[curso.id] || {}),
+          completado:true,
+          fechaCompletado:legado[curso.id]?.fechaCompletado || nube.completedAt || null
+        };
+      }
+    }
+    (remote.classGames?.[curso.id] || []).forEach(classNumber => {
+      try { localStorage.setItem('synova:class-game:' + uid + ':' + curso.id + ':' + Number(classNumber), '1'); }
+      catch (e) {}
+    });
+  });
+
+  try {
+    localStorage.setItem(clasesKey, JSON.stringify(clases));
+    localStorage.setItem(progresoKey(), JSON.stringify(legado));
+    localStorage.setItem(retosKey(), JSON.stringify({ ...getRetosState(), ...(remote.retos || {}) }));
+    if (remote.arcade?.day) {
+      localStorage.setItem('synova:arcade-wins:' + uid + ':' + remote.arcade.day, JSON.stringify(remote.arcade.wins || []));
+    }
+  } catch (e) {
+    console.warn('[SYNOVA] No se pudo actualizar la copia local:', e.message);
+  }
+
+  const cambio = antes !== fotoAvanceLocal(catalogo);
+  window.dispatchEvent(new CustomEvent('synova:learning-progress-synced', { detail:{ changed:cambio } }));
+  if (cambio && getComputedStyle(document.body).visibility !== 'hidden') {
+    const section = new URLSearchParams(location.search).get('seccion') || 'inicio';
+    if (section === 'cursos') window.Sections?.cursos?.();
+    else if (section === 'logros') window.Sections?.logros?.();
+    else if (section === 'retos' && document.querySelector('.syn-league')) window.pintarHubRetos?.();
+    else if (section === 'curso' && document.getElementById('curso-detalle-body')) window.Sections?.curso?.();
+  }
+  return cambio;
+}
+
+async function sincronizarAvanceSynova(){
+  const user = window.__auth?.currentUser;
+  if (!user || !window.UserState?.uid) return null;
+  if (synLearningPromise) return synLearningPromise;
+
+  synLearningPromise = (async () => {
+    const catalogo = await catalogoParaSincronizacion();
+    if (!catalogo.length) throw new Error('El catálogo aún no está disponible');
+    const token = await user.getIdToken();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    let response;
+    try {
+      response = await fetch(window.__WEBHOOK_URL + '/api/bunny/learning-progress', {
+        method:'POST',
+        cache:'no-store',
+        signal:controller.signal,
+        headers:{ 'Authorization':'Bearer ' + token, 'Content-Type':'application/json' },
+        body:JSON.stringify(construirAvanceSynova(catalogo))
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'No pudimos sincronizar tu avance');
+    aplicarAvanceSynova(data, catalogo);
+    return data;
+  })().catch(error => {
+    console.warn('[SYNOVA] Se conserva la copia local para reintentar:', error.message);
+    return null;
+  }).finally(() => {
+    synLearningReady = true;
+    synLearningPromise = null;
+  });
+  return synLearningPromise;
+}
+
+function programarSincronizacionSynova(){
+  if (!synLearningReady || !window.__auth?.currentUser) return;
+  clearTimeout(synLearningTimer);
+  synLearningTimer = setTimeout(() => { void sincronizarAvanceSynova(); }, 650);
+}
+
+window.__prepareLearningProgress = sincronizarAvanceSynova;
+window.SynovaLearningSync = { syncNow:sincronizarAvanceSynova, schedule:programarSincronizacionSynova };
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && synLearningReady) void sincronizarAvanceSynova();
+});
 
 const LOGROS_DEF = [
   { id:'primer-paso', name:'Primer paso', desc:'Completa tu primera clase.', xp:30, cat:'Constancia', color:'#0D5FA0', icon:'i-play', value:s=>s.clasesVistas, goal:1 },
@@ -5673,7 +5877,10 @@ function mountNutricion(c){
   /* Progreso por curso (clases vistas) */
   function progKey(){ return 'synova_curso_prog_' + (window.UserState && window.UserState.uid || 'anon'); }
   function getProg(){ try { return JSON.parse(localStorage.getItem(progKey()) || '{}'); } catch(e){ return {}; } }
-  function setProg(p){ try { localStorage.setItem(progKey(), JSON.stringify(p)); } catch(e){} }
+  function setProg(p){
+    try { localStorage.setItem(progKey(), JSON.stringify(p)); } catch(e){}
+    window.SynovaLearningSync?.schedule?.();
+  }
   function cursoProg(id){ const p = getProg(); return p[id] || { vistas: [] }; }
 
   function cantidadClasesGratis(total){ const n=Math.max(0,Number(total)||0); return !n?0:(n<=CLASES_GRATIS_TOPE?Math.max(1,n-1):CLASES_GRATIS_TOPE); }
@@ -6755,9 +6962,9 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="assets/synova-course-experience.js?v=3"></script>
+<script src="assets/synova-course-experience.js?v=4"></script>
 <script src="assets/synova-books-credits.js?v=9"></script>
-<script src="assets/synova-arcade.js?v=3"></script>
+<script src="assets/synova-arcade.js?v=4"></script>
 <script src="assets/synova-materials.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>

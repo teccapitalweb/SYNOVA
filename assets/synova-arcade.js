@@ -12,7 +12,7 @@ var clock=function(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 var uid=function(){return(window.UserState&&window.UserState.uid)||'guest';};
 var winKey=function(){return'synova:arcade-wins:'+uid()+':'+today();};
 function wins(){try{return JSON.parse(localStorage.getItem(winKey())||'[]');}catch(_){return[];}}
-function saveWin(type){var list=wins();if(!list.includes(type))list.push(type);try{localStorage.setItem(winKey(),JSON.stringify(list));}catch(_){}updateWonCount();}
+function saveWin(type){var list=wins();if(!list.includes(type))list.push(type);try{localStorage.setItem(winKey(),JSON.stringify(list));}catch(_){}if(window.SynovaLearningSync)window.SynovaLearningSync.schedule();updateWonCount();}
 function updateWonCount(){var el=document.querySelector('[data-arcade-won]');if(el)el.textContent=wins().length+'/6 ganados hoy';}
 function root(){return document.getElementById('content');}
 function hash(s){return String(s).split('').reduce(function(n,c){return((n<<5)-n+c.charCodeAt(0))|0;},0)>>>0;}

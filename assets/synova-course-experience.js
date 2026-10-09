@@ -31,7 +31,7 @@
     options=options||{};
     if(window.SynovaGameSuite&&typeof window.SynovaGameSuite.playLesson==='function'){
       return window.SynovaGameSuite.playLesson(options).then(function(won){
-        if(won){try{localStorage.setItem(key(options.courseId,options.classNumber),'1');}catch(_){}}
+        if(won){try{localStorage.setItem(key(options.courseId,options.classNumber),'1');}catch(_){}if(window.SynovaLearningSync)window.SynovaLearningSync.schedule();}
         return !!won;
       });
     }
@@ -59,6 +59,7 @@
           feedback.querySelector('.cg-next').onclick=function(){
             if(index<qs.length-1){index++;render();return;}
             try{localStorage.setItem(key(options.courseId,options.classNumber),'1');}catch(_){}
+            if(window.SynovaLearningSync)window.SynovaLearningSync.schedule();
             layer.querySelector('.cg-progress span').style.width='100%';close(true);
           };
         };});
