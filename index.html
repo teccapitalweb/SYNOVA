@@ -1128,10 +1128,10 @@ img {
   }
 
   .nav-cta {
-    width: 94px;
+    width: 102px;
     min-height: 42px;
-    padding: 0 8px;
-    gap: 4px;
+    padding: 0 9px 0 11px;
+    gap: 7px;
     justify-content: center;
     background: var(--ink);
     color: var(--white);
@@ -1139,15 +1139,23 @@ img {
   }
 
   .nav-cta::before {
-    content: "Entrar al\A Club VIP";
-    font-size: 0.58rem;
-    letter-spacing: 0.055em;
-    line-height: 1.15;
-    white-space: pre-line;
+    content: "Entrar VIP";
+    font-size: 0.59rem;
+    letter-spacing: 0.065em;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .nav-cta span {
-    font-size: 0.72rem;
+    width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--aqua);
+    color: var(--ink);
+    font-size: 0.62rem;
   }
 
   .mobile-menu {
@@ -1454,13 +1462,13 @@ img {
   }
 
   .nav-cta {
-    width: 88px;
-    padding-inline: 6px;
+    width: 94px;
+    padding-inline: 7px;
   }
 
   .nav-cta::before {
-    font-size: 0.56rem;
-    letter-spacing: 0.035em;
+    font-size: 0.55rem;
+    letter-spacing: 0.04em;
   }
 }
 
