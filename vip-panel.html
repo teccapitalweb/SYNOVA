@@ -2567,10 +2567,10 @@ Sections.inicio = function(){
         ${!toolEsVIP() ? `<div class="home-premium__actions"><button class="btn btn--accent btn--lg" data-section="suscripcion">Activar VIP<svg class="ic"><use href="#i-arrow-right"/></svg></button></div>` : ''}
       </div>
       <div class="banner__stats">
-        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Cursos">Cursos</div><div class="banner__stat-val" id="stat-cursos">—</div></div>
-        <div class="banner__stat" data-section="webinars" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Clases">Clases</div><div class="banner__stat-val" id="stat-webinars">—</div></div>
-        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Recursos">Recursos</div><div class="banner__stat-val" id="stat-pdfs">—</div></div>
-        <div class="banner__stat" data-section="certificados" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Certif.">Certificados</div><div class="banner__stat-val" id="stat-certs">—</div></div>
+        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl"><span class="banner__stat-lbl-full">Cursos</span><span class="banner__stat-lbl-short">Cursos</span></div><div class="banner__stat-val" id="stat-cursos">—</div></div>
+        <div class="banner__stat" data-section="webinars" style="cursor:pointer"><div class="banner__stat-lbl"><span class="banner__stat-lbl-full">Clases</span><span class="banner__stat-lbl-short">Clases</span></div><div class="banner__stat-val" id="stat-webinars">—</div></div>
+        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl"><span class="banner__stat-lbl-full">Recursos</span><span class="banner__stat-lbl-short">Recursos</span></div><div class="banner__stat-val" id="stat-pdfs">—</div></div>
+        <div class="banner__stat" data-section="certificados" style="cursor:pointer"><div class="banner__stat-lbl"><span class="banner__stat-lbl-full">Certificados</span><span class="banner__stat-lbl-short">Certif.</span></div><div class="banner__stat-val" id="stat-certs">—</div></div>
       </div>
     </section>
 
@@ -6925,6 +6925,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 .home-premium .banner__stat:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.12)}
 .home-premium .banner__stat::before{display:none}
 .home-premium .banner__stat-lbl{margin:0 0 8px;color:rgba(218,232,239,.62);font-size:7.5px;letter-spacing:1.5px}
+.home-premium .banner__stat-lbl-short{display:none}
 .home-premium .banner__stat-lbl::before{display:none}
 .home-premium .banner__stat-val{color:#FFFFFF;background:none;-webkit-text-fill-color:currentColor;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:30px;font-weight:800;letter-spacing:-.8px}
 
@@ -6960,8 +6961,9 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
   .home-premium .banner__stat{padding:12px 4px 11px;text-align:center}
   .home-premium .banner__stat:nth-child(-n+2){border-bottom:0}
   .home-premium .banner__stat:nth-child(2){border-right:1px solid rgba(255,255,255,.12)}
-  .home-premium .banner__stat-lbl{margin-bottom:5px;font-size:0;line-height:1;white-space:nowrap}
-  .home-premium .banner__stat-lbl::after{content:attr(data-short);font:700 6.5px/1 'JetBrains Mono',monospace;letter-spacing:.55px;text-transform:uppercase}
+  .home-premium .banner__stat-lbl{margin-bottom:5px;font-size:6.5px;line-height:1;letter-spacing:.55px;white-space:nowrap}
+  .home-premium .banner__stat-lbl-full{display:none}
+  .home-premium .banner__stat-lbl-short{display:inline}
   .home-premium .banner__stat-val{font-size:24px;letter-spacing:-.5px}
   .cert-summary__item{padding:15px 12px;flex-direction:column;align-items:flex-start;gap:9px}
   .cert-summary__item strong{font-size:27px;flex:none}
