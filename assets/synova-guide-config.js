@@ -43,7 +43,7 @@ window.SYNOVA_GUIDE_CONFIG = Object.freeze({
         overline:'SOBRE TI', title:'¿Cuál de estas opciones te describe mejor actualmente?', detail:'No hay respuestas correctas: queremos entender desde dónde comienzas.',
         options:[
           { icon:'🎓', label:'Estoy estudiando', detail:'Me estoy formando en un área de salud.', tags:['fundamentos','enfermeria'] },
-          { icon:'🌱', label:'Recién egresé', detail:'Quiero convertir teoría en práctica segura.', tags:['fundamentos','procedimientos','seguridad'] },
+          { icon:'⚕️', label:'Recién egresé', detail:'Quiero convertir teoría en práctica segura.', tags:['fundamentos','procedimientos','seguridad'] },
           { icon:'🩺', label:'Trabajo en atención clínica', detail:'Atiendo pacientes o colaboro en servicios de salud.', tags:['enfermeria','actualizacion','procedimientos'] },
           { icon:'🔬', label:'Soy especialista', detail:'Busco profundizar y actualizar criterios.', tags:['especialidad','avanzado','actualizacion'] },
           { icon:'🏥', label:'Coordino un equipo o servicio', detail:'Me interesan calidad, prevención y protocolos.', tags:['calidad','seguridad','prevencion'] },

@@ -5,9 +5,10 @@
   const knowledge = window.SYNOVA_GUIDE_KNOWLEDGE || {};
   if (!config || document.querySelector('[data-syg-root]')) return;
 
-  const sessionKey = 'synova:guide:session:v1';
+  const sessionKey = 'synova:guide:session:v2';
   const cookieKey = 'synova:privacy:consent:v1';
   const welcomeKey = 'synova:guide:welcome:v1';
+  const positionKey = 'synova:guide:position:v1';
   const emergency = /(?:no\s+respira|dificultad\s+(?:grave\s+)?para\s+respirar|dolor\s+(?:fuerte\s+)?(?:en\s+el\s+)?pecho|convulsi|inconsciente|desmayo|sangrado\s+(?:abundante|que\s+no\s+para)|debilidad\s+repentina|cara\s+caida|habla\s+arrastrada|intento\s+de\s+suicidio|sobredosis|paro\s+cardiaco)/i;
   const personalSymptoms = /(?:yo\s+tengo|me\s+duele|mi\s+hijo|mi\s+bebe|mi\s+paciente|que\s+medicamento\s+tomo|que\s+dosis|diagnostica|tengo\s+estos\s+sintomas)/i;
   const stopwords = new Set(['quiero','curso','cursos','sobre','para','como','algo','una','uno','unos','unas','del','las','los','que','con','por','me','interesa','busco','aprender','capacitacion','tema','pregunta','salud','clinica','clinico','medicina']);
@@ -16,7 +17,36 @@
   let quickActions = [];
   let waiting = false;
   let motionTimer = 0;
-  let route = { step:-1, answers:[], result:[] };
+  let suppressLauncherClick = false;
+  let positionBucket = window.innerWidth <= 760 ? 'mobile' : 'desktop';
+  let route = { step:-1, answers:[], selections:[], result:[] };
+
+  const courseImages = Object.freeze({
+    '9b86ca59-78c4-4ecd-b50f-47b8e3b76b28':'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=900&auto=format&fit=crop&q=82',
+    'b14dbbda-b07d-4c44-a229-bed647d83a0f':'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=900&auto=format&fit=crop&q=82',
+    '67a7eb13-72db-4140-9404-53d48e1afc68':'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=900&auto=format&fit=crop&q=82',
+    '03273029-51b4-4d21-8048-89af01cd49e6':'https://images.unsplash.com/photo-1584515933487-779824d29309?w=900&auto=format&fit=crop&q=82',
+    '40a9cdd0-79f5-42a8-8ccf-9043c769c85b':'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900&auto=format&fit=crop&q=82',
+    '1e5e8a07-cafd-419d-b463-5946fcc63baa':'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=900&auto=format&fit=crop&q=82',
+    '954637be-6048-4879-97da-25dc8f05748e':'https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=900&auto=format&fit=crop&q=82',
+    '8d243ae2-b293-4f3e-9147-61119a15b494':'https://images.unsplash.com/photo-1587370560942-ad2a04eabb6d?w=900&auto=format&fit=crop&q=82',
+    'bc3002cf-ef6b-4bc3-a939-2a8d74b47443':'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=900&auto=format&fit=crop&q=82',
+    'bfa9946e-0fdc-41ac-85ef-4e2673c7ce90':'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=900&auto=format&fit=crop&q=82',
+    '11d81c88-eec7-4039-9407-7247ec4716ea':'https://images.unsplash.com/photo-1551076805-e1869033e561?w=900&auto=format&fit=crop&q=82',
+    '0e2e8ab7-ac74-4440-af26-9fc79d1d599a':'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=900&auto=format&fit=crop&q=82',
+    'f21c8cf0-6f60-42ad-baa1-a21e40fa1f45':'https://images.unsplash.com/photo-1583911860205-72f8ac8ddcbe?w=900&auto=format&fit=crop&q=82',
+    'e91c16b0-20ca-45bc-b251-9e7891ac9afe':'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=900&auto=format&fit=crop&q=82',
+    '1f65357c-941a-4ee1-bcf9-6de1822e2a5d':'https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?w=900&auto=format&fit=crop&q=82',
+    '63573514-d69d-4627-816f-dfa4aee1ddf5':'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=900&auto=format&fit=crop&q=82',
+    '45d2d4ba-6ea7-4709-9d8c-78dffa05c1a6':'https://images.unsplash.com/photo-1576086213369-97a306d36557?w=900&auto=format&fit=crop&q=82',
+    '375e490d-e9fa-4b99-aa84-62a5a4ff0bce':'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&auto=format&fit=crop&q=82',
+    '9c69ea75-8f61-4e3a-8d4f-e74d0809fea8':'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=900&auto=format&fit=crop&q=82',
+    'c6e6d42a-a624-45d7-8ce2-ee089c3e3693':'https://images.unsplash.com/photo-1584744982491-665216d95f8b?w=900&auto=format&fit=crop&q=82',
+    '15ab9c56-bfe1-4b11-864e-bc5716b616ab':'https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=900&auto=format&fit=crop&q=82',
+    '9bf93256-6938-4a77-acda-5c71d4c3ed08':'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&auto=format&fit=crop&q=82',
+    '979b31a8-c853-427f-943c-8ac8f860aec8':'https://images.unsplash.com/photo-1544126592-807ade215a0b?w=900&auto=format&fit=crop&q=82',
+    'ab74f978-c7d1-4e9e-9570-3ccaa2a05368':'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=900&auto=format&fit=crop&q=82'
+  });
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[char]));
@@ -46,6 +76,10 @@
   function courseUrl(course) {
     const params = new URLSearchParams({ tab:'register', origen:'guia-synova', curso:course.id, programa:course.title });
     return `vip-auth.html?${params.toString()}`;
+  }
+
+  function courseImage(course) {
+    return courseImages[course.id] || 'assets/img/cursos-mini/curso-01.jpg';
   }
 
   function tokens(value) {
@@ -126,16 +160,16 @@
   function courseCards(items) {
     if (!items?.length) return '';
     return `<div class="syg-course-list">${items.map(course => `
-      <article class="syg-course">
-        <span class="syg-course__badge" aria-hidden="true">✦</span>
-        <div><strong>${escapeHtml(course.title)}</strong><span>${escapeHtml(`${course.area} · ${course.classes} clase${course.classes === 1 ? '' : 's'} · ${course.detail}`)}</span></div>
-        <a href="${escapeHtml(courseUrl(course))}" aria-label="Ver ${escapeHtml(course.title)} y registrarme">→</a>
-      </article>`).join('')}</div>`;
+      <a class="syg-course" href="${escapeHtml(courseUrl(course))}" aria-label="Ver ${escapeHtml(course.title)} y registrarme gratis">
+        <span class="syg-course__cover"><img src="${escapeHtml(courseImage(course))}" alt="" loading="lazy"></span>
+        <span class="syg-course__copy"><small>${escapeHtml(course.area)} · ${course.classes} clase${course.classes === 1 ? '' : 's'}</small><strong>${escapeHtml(course.title)}</strong><em>${escapeHtml(course.detail)}</em></span>
+        <span class="syg-course__arrow" aria-hidden="true">→</span>
+      </a>`).join('')}</div>`;
   }
 
   function sourceCard(source) {
     if (!source?.items?.length) return '';
-    return `<div class="syg-source"><span aria-hidden="true">ⓘ</span><span>Información pública de ${escapeHtml(source.name || 'MedlinePlus.gov')} ${source.items.map(item => `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a>`).join(' · ')}</span></div>`;
+    return `<div class="syg-source"><span aria-hidden="true">ⓘ</span><span>Respuesta contrastada con ${escapeHtml(source.name || 'MedlinePlus.gov')}. ${source.items.map(item => `<a href="${escapeHtml(item.url)}" target="_blank" rel="noreferrer">Consultar: ${escapeHtml(item.title)}</a>`).join(' · ')}</span></div>`;
   }
 
   function renderMessages() {
@@ -178,6 +212,7 @@
   function openAssistant() {
     launcher.hidden = true;
     panel.hidden = false;
+    restorePosition(panel, 'panel');
     renderMessages();
     if (!quickActions.length) homeActions(); else setQuick(quickActions);
     setMotion('wave');
@@ -187,7 +222,93 @@
   function closeAssistant() {
     panel.hidden = true;
     launcher.hidden = false;
+    restorePosition(launcher, 'launcher');
     setMotion('wave');
+  }
+
+  function readPositions() {
+    try { return JSON.parse(localStorage.getItem(positionKey) || '{}') || {}; }
+    catch (_) { return {}; }
+  }
+
+  function clampPosition(element, left, top) {
+    const rect = element.getBoundingClientRect();
+    const margin = 8;
+    return {
+      left:Math.max(margin, Math.min(left, window.innerWidth - rect.width - margin)),
+      top:Math.max(margin, Math.min(top, window.innerHeight - rect.height - margin))
+    };
+  }
+
+  function placeElement(element, left, top) {
+    if (element === panel && window.innerWidth <= 760) {
+      const currentWidth = element.getBoundingClientRect().width;
+      if (currentWidth) element.style.width = `${Math.round(currentWidth)}px`;
+    }
+    const next = clampPosition(element, left, top);
+    element.style.left = `${Math.round(next.left)}px`;
+    element.style.top = `${Math.round(next.top)}px`;
+    element.style.right = 'auto';
+    element.style.bottom = 'auto';
+    return next;
+  }
+
+  function restorePosition(element, name) {
+    const saved = readPositions()[`${name}:${positionBucket}`];
+    if (!saved || !Number.isFinite(saved.left) || !Number.isFinite(saved.top)) {
+      element.style.removeProperty('left');
+      element.style.removeProperty('top');
+      element.style.removeProperty('right');
+      element.style.removeProperty('bottom');
+      element.style.removeProperty('width');
+      return;
+    }
+    requestAnimationFrame(() => placeElement(element, saved.left, saved.top));
+  }
+
+  function savePosition(name, position) {
+    try {
+      const saved = readPositions();
+      saved[`${name}:${positionBucket}`] = position;
+      localStorage.setItem(positionKey, JSON.stringify(saved));
+    } catch (_) {}
+  }
+
+  function makeDraggable(element, handle, name) {
+    let drag = null;
+    handle.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || (name === 'panel' && event.target.closest('button,a,input'))) return;
+      const rect = element.getBoundingClientRect();
+      drag = { id:event.pointerId, x:event.clientX, y:event.clientY, left:rect.left, top:rect.top, moved:false };
+      try { handle.setPointerCapture(event.pointerId); } catch (_) {}
+    });
+    handle.addEventListener('pointermove', event => {
+      if (!drag || drag.id !== event.pointerId) return;
+      const dx = event.clientX - drag.x;
+      const dy = event.clientY - drag.y;
+      if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+      drag.moved = true;
+      root.dataset.dragging = 'true';
+      event.preventDefault();
+      placeElement(element, drag.left + dx, drag.top + dy);
+    });
+    const finish = event => {
+      if (!drag || drag.id !== event.pointerId) return;
+      const moved = drag.moved;
+      drag = null;
+      root.dataset.dragging = 'false';
+      try { handle.releasePointerCapture(event.pointerId); } catch (_) {}
+      if (!moved) return;
+      const rect = element.getBoundingClientRect();
+      savePosition(name, { left:rect.left, top:rect.top });
+      if (name === 'launcher') {
+        suppressLauncherClick = true;
+        window.setTimeout(() => { suppressLauncherClick = false; }, 80);
+      }
+      event.preventDefault();
+    };
+    handle.addEventListener('pointerup', finish);
+    handle.addEventListener('pointercancel', finish);
   }
 
   function addMessage(role, text, extra = {}) {
@@ -303,7 +424,10 @@
       if (!response.ok || !Array.isArray(body.items) || !body.items.length) throw new Error(body.error || 'Sin resultados');
       const lead = body.items[0];
       const related = rankCourses([value, lead.title], 3);
-      const text = `${lead.summary || `Encontré información educativa sobre ${lead.title}.`}${related.length ? '\n\nTambién encontré formación relacionada dentro de SYNOVA:' : ''}`;
+      const directAnswer = lead.summary
+        ? `${lead.title}: ${lead.summary}`
+        : `${lead.title} es el tema de salud que mejor coincide con tu consulta. Puedo ayudarte a relacionarlo con formación clínica disponible en SYNOVA.`;
+      const text = `${directAnswer}${related.length ? '\n\nSi quieres profundizar y llevarlo a la práctica, te recomiendo:' : ''}`;
       reply(text, { items:related, source:{ name:body.source, items:body.items.slice(0, 2) } });
       setQuick([
         { label:'Profundizar otro tema', value:'question' },
@@ -377,7 +501,24 @@
     if (value.startsWith('search:')) { searchCourses(value.slice(7)); return; }
   }
 
-  launcher.addEventListener('click', openAssistant);
+  launcher.addEventListener('click', event => {
+    if (suppressLauncherClick) { event.preventDefault(); return; }
+    openAssistant();
+  });
+  makeDraggable(launcher, launcher, 'launcher');
+  makeDraggable(panel, root.querySelector('.syg-header'), 'panel');
+  restorePosition(launcher, 'launcher');
+  window.addEventListener('resize', () => {
+    const visible = panel.hidden ? launcher : panel;
+    const nextBucket = window.innerWidth <= 760 ? 'mobile' : 'desktop';
+    if (nextBucket !== positionBucket) {
+      positionBucket = nextBucket;
+      restorePosition(visible, panel.hidden ? 'launcher' : 'panel');
+      return;
+    }
+    const rect = visible.getBoundingClientRect();
+    if (rect.width && rect.height) placeElement(visible, rect.left, rect.top);
+  }, { passive:true });
   root.querySelector('.syg-avatar').addEventListener('click', () => setMotion('wave'));
   root.addEventListener('click', event => {
     const action = event.target.closest('[data-action]')?.dataset.action;
@@ -428,6 +569,60 @@
       </div>`;
   }
 
+  function buildRouteProfile() {
+    const selected = route.selections || [];
+    const identity = selected[0]?.label || 'Quiero aprender algo nuevo';
+    const challenge = selected[2]?.label || 'Actualizarme';
+    const level = selected[3]?.label || 'Según mi necesidad';
+    const objective = selected[4]?.label || 'Atender con más seguridad';
+
+    const identityTraits = {
+      'Estoy estudiando':['Curiosidad formativa','Estás construyendo bases y haces preguntas antes de convertirlas en práctica.'],
+      'Recién egresé':['Iniciativa profesional','Quieres transformar la teoría reciente en decisiones clínicas cada vez más seguras.'],
+      'Trabajo en atención clínica':['Experiencia aplicada','Partes de situaciones reales y buscas mejorar lo que haces frente al paciente.'],
+      'Soy especialista':['Profundidad clínica','Tienes disposición para contrastar criterios y mantener tu práctica actualizada.'],
+      'Coordino un equipo o servicio':['Visión de equipo','Piensas en protocolos, calidad y resultados que también protegen a otras personas.'],
+      'Quiero aprender algo nuevo':['Apertura al aprendizaje','Exploras nuevas competencias con curiosidad y una actitud activa de crecimiento.']
+    };
+    const challengeTraits = {
+      'Decidir con rapidez':['Capacidad de priorización','Te orientas a reconocer lo importante y actuar con orden bajo presión.'],
+      'Entender el porqué':['Pensamiento analítico','No te conformas con memorizar: buscas comprender el fundamento de cada decisión.'],
+      'Dominar una técnica':['Enfoque práctico','Valoras la precisión, la repetición consciente y la seguridad del procedimiento.'],
+      'Prevenir complicaciones':['Mentalidad preventiva','Tu atención está puesta en anticipar riesgos antes de que se conviertan en daño.'],
+      'Ordenar y documentar':['Disciplina clínica','Reconoces que un cuidado seguro también debe ser trazable y comunicable.'],
+      'Actualizarme':['Aprendizaje continuo','Buscas contrastar lo que ya sabes con criterios y prácticas actuales.']
+    };
+    const objectiveTraits = {
+      'Atender con más seguridad':['Compromiso con la seguridad','Tu prioridad es reducir riesgos y tomar decisiones más confiables.'],
+      'Certificar mi aprendizaje':['Orientación al logro','Quieres convertir tu avance en una evidencia profesional verificable.'],
+      'Aplicar una técnica':['Ejecución responsable','Buscas que el aprendizaje se traduzca en acciones concretas y observables.'],
+      'Crecer profesionalmente':['Proyección profesional','Tienes claridad sobre la formación como una vía para ampliar tus oportunidades.']
+    };
+    const levelGrowth = {
+      'Comenzar desde cero':['Fundamentos clínicos','Te falta consolidar lenguaje, criterios esenciales y una secuencia de valoración antes de aumentar la dificultad.'],
+      'Nivel intermedio':['Transferencia a casos','Tu siguiente mejora es aplicar lo que sabes en escenarios variables y justificar cada decisión.'],
+      'Profundización clínica':['Resolución de escenarios complejos','Conviene entrenar incertidumbre, señales contradictorias y reevaluación para afinar tu criterio.'],
+      'Actualización puntual':['Actualización sistemática','Te ayudará comparar tu práctica con protocolos vigentes y registrar qué cambia en tu forma de actuar.']
+    };
+    const challengeGrowth = {
+      'Decidir con rapidez':['Velocidad con estructura','Practica casos cronometrados sin omitir ABCDE, verificación y reevaluación.'],
+      'Entender el porqué':['Integración fisiopatológica','Relaciona cada signo con su mecanismo y explica en voz alta por qué eliges una intervención.'],
+      'Dominar una técnica':['Práctica deliberada','Usa listas de verificación, repite el procedimiento y solicita retroalimentación sobre puntos críticos.'],
+      'Prevenir complicaciones':['Vigilancia anticipatoria','Entrena la detección de señales tempranas y define de antemano cuándo escalar la atención.'],
+      'Ordenar y documentar':['Comunicación clínica','Refuerza registros breves, objetivos y cronológicos que permitan continuar el cuidado sin ambigüedad.'],
+      'Actualizarme':['Criterio basado en evidencia','Convierte cada actualización en un cambio concreto de práctica y revisa su resultado.']
+    };
+
+    const strengths = [identityTraits[identity], challengeTraits[challenge], objectiveTraits[objective]].filter(Boolean);
+    const improvements = [levelGrowth[level], challengeGrowth[challenge]].filter(Boolean);
+    return {
+      headline:`Tu perfil combina ${strengths[0]?.[0]?.toLowerCase() || 'motivación'} y ${strengths[1]?.[0]?.toLowerCase() || 'aprendizaje continuo'}.`,
+      summary:`Tus respuestas muestran una ruta con intención clara: ${objective.toLowerCase()}. La recomendación prioriza práctica aplicable y un avance acorde con tu punto de partida.`,
+      strengths,
+      improvements
+    };
+  }
+
   function routeRecommendations() {
     const chosenTags = route.answers.flat();
     const wantsShort = chosenTags.includes('short');
@@ -442,19 +637,28 @@
 
   function renderRouteResult() {
     route.result = routeRecommendations();
+    const profile = buildRouteProfile();
     try { localStorage.setItem(welcomeKey, 'completed'); } catch (_) {}
     routeContent.innerHTML = `
       <div class="syg-result__hero">
-        <div><p class="syg-route__eyebrow">RUTA LISTA</p><h2 id="syg-route-title">Tu siguiente paso ya tiene dirección.</h2><p>Elegimos cursos reales del Club VIP según tu área, experiencia, objetivo y ritmo. Puedes empezar por el primero o comparar los tres.</p></div>
+        <div><p class="syg-route__eyebrow">TU PERFIL FORMATIVO</p><h2 id="syg-route-title">${escapeHtml(profile.headline)}</h2><p>${escapeHtml(profile.summary)}</p></div>
         <img src="${escapeHtml(config.image)}" alt="Asistente clínica virtual de SYNOVA celebrando tu ruta">
       </div>
+      <section class="syg-profile" aria-label="Fortalezas y áreas para mejorar">
+        <div class="syg-profile__intro"><span>DIAGNÓSTICO DE APRENDIZAJE</span><h3>Lo que ya tienes y tu siguiente oportunidad.</h3><p>Este perfil no califica tu práctica clínica; convierte tus respuestas en una guía concreta para seguir creciendo.</p></div>
+        <div class="syg-profile__grid">
+          <article class="syg-profile__column syg-profile__column--strength"><span class="syg-profile__label">Tus cualidades</span>${profile.strengths.map(item => `<div class="syg-profile__item"><b aria-hidden="true">✓</b><span><strong>${escapeHtml(item[0])}</strong><small>${escapeHtml(item[1])}</small></span></div>`).join('')}</article>
+          <article class="syg-profile__column syg-profile__column--growth"><span class="syg-profile__label">Lo que te conviene reforzar</span>${profile.improvements.map(item => `<div class="syg-profile__item"><b aria-hidden="true">↗</b><span><strong>${escapeHtml(item[0])}</strong><small>${escapeHtml(item[1])}</small></span></div>`).join('')}</article>
+        </div>
+      </section>
       <h3 class="syg-result__title">Tu ruta recomendada</h3>
-      <div class="syg-result__courses">${route.result.map((course, index) => `<article class="syg-result-card"><span class="syg-result-card__area">${index === 0 ? 'MEJOR COINCIDENCIA' : escapeHtml(course.area)}</span><strong>${escapeHtml(course.title)}</strong><p>${escapeHtml(course.detail)} · ${course.classes} clases.</p><a href="${escapeHtml(courseUrl(course))}">Ver curso y registrarme →</a></article>`).join('')}</div>
+      <p class="syg-result__lead">Seleccionamos cursos reales del Club VIP. Toca cualquier tarjeta para crear tu cuenta gratis y abrir el curso dentro del panel.</p>
+      <div class="syg-result__courses">${route.result.map((course, index) => `<a class="syg-result-card${index === 0 ? ' is-featured' : ''}" href="${escapeHtml(courseUrl(course))}" aria-label="Ver ${escapeHtml(course.title)} y registrarme gratis"><span class="syg-result-card__cover"><img src="${escapeHtml(courseImage(course))}" alt="" loading="lazy"><em>${index === 0 ? 'MEJOR COINCIDENCIA' : escapeHtml(course.area)}</em></span><span class="syg-result-card__body"><small>${escapeHtml(course.area)} · ${course.classes} clase${course.classes === 1 ? '' : 's'}</small><strong>${escapeHtml(course.title)}</strong><span>${escapeHtml(course.detail)}</span><b>Ver curso y registrarme gratis <i aria-hidden="true">→</i></b></span></a>`).join('')}</div>
       <div class="syg-route__actions"><button class="syg-btn syg-btn--primary" type="button" data-route-action="chat-result">Hablar con la guía</button><button class="syg-btn" type="button" data-route-action="restart">Repetir diagnóstico</button><a class="syg-btn syg-btn--ink" href="${escapeHtml(config.catalogUrl)}">Entrar al Club VIP →</a></div>`;
   }
 
   function openRoute(mode = 'welcome') {
-    route = { step:mode === 'question' ? 0 : -1, answers:[], result:[] };
+    route = { step:mode === 'question' ? 0 : -1, answers:[], selections:[], result:[] };
     routeRoot.hidden = false;
     document.body.classList.add('syg-lock');
     if (route.step < 0) renderRouteWelcome(); else renderRouteQuestion();
@@ -475,10 +679,10 @@
     if (action === 'dismiss') { closeRoute(true); return; }
     if (action === 'back') {
       if (route.step <= 0) { route.step = -1; renderRouteWelcome(); }
-      else { route.step -= 1; route.answers.pop(); renderRouteQuestion(); }
+      else { route.step -= 1; route.answers.pop(); route.selections.pop(); renderRouteQuestion(); }
       return;
     }
-    if (action === 'restart') { route = { step:0, answers:[], result:[] }; renderRouteQuestion(); return; }
+    if (action === 'restart') { route = { step:0, answers:[], selections:[], result:[] }; renderRouteQuestion(); return; }
     if (action === 'chat-result') {
       const result = route.result.slice();
       closeRoute();
@@ -495,6 +699,7 @@
     routeRoot.querySelectorAll('.syg-option').forEach(button => button.classList.remove('is-selected'));
     optionButton.classList.add('is-selected');
     route.answers[route.step] = option.tags || [];
+    route.selections[route.step] = { label:option.label, detail:option.detail, tags:option.tags || [] };
     setMotion('answer');
     window.setTimeout(() => {
       route.step += 1;

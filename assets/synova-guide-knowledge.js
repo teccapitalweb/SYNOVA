@@ -1,6 +1,31 @@
 /* Base editorial educativa de la guía SYNOVA.
    No sustituye valoración, diagnóstico, prescripción ni protocolos locales. */
 window.SYNOVA_GUIDE_KNOWLEDGE = Object.freeze({
+  medicina: {
+    label: 'Medicina', aliases: ['medicina','que es la medicina','ciencia medica','practica medica'],
+    answer: 'La medicina es la ciencia y la práctica dedicada a promover la salud, prevenir enfermedades, reconocer problemas clínicos y acompañar su diagnóstico, tratamiento y rehabilitación. Integra conocimientos biológicos, razonamiento clínico, comunicación, ética y trabajo interdisciplinario; no se limita al uso de medicamentos.',
+    courses: ['Aplicación del proceso de atención en enfermería (PAE)','Manejo del paciente politraumatizado en la sala de urgencia']
+  },
+  enfermeria: {
+    label: 'Enfermería', aliases: ['enfermeria','cuidado de enfermeria','profesion de enfermeria'],
+    answer: 'La enfermería es una disciplina profesional centrada en el cuidado integral de personas, familias y comunidades. Combina valoración, razonamiento clínico, procedimientos, educación, prevención y seguimiento para responder de forma segura a necesidades reales o potenciales de salud.',
+    courses: ['Aplicación del proceso de atención en enfermería (PAE)','Terapia de infusión en enfermería']
+  },
+  anatomia: {
+    label: 'Anatomía', aliases: ['anatomia','anatomia humana','estructura del cuerpo humano'],
+    answer: 'La anatomía estudia la estructura del cuerpo humano y las relaciones entre órganos, tejidos y sistemas. Es una base para comprender la exploración clínica, los procedimientos, la imagenología y la forma en que una lesión puede alterar funciones cercanas.',
+    courses: ['Manejo del paciente politraumatizado en la sala de urgencia']
+  },
+  fisiologia: {
+    label: 'Fisiología', aliases: ['fisiologia','fisiologia humana','funcion del cuerpo humano'],
+    answer: 'La fisiología estudia cómo funcionan las células, órganos y sistemas del cuerpo y cómo mantienen el equilibrio interno. Permite interpretar signos vitales, ventilación, circulación, metabolismo y las respuestas del organismo ante una enfermedad o intervención.',
+    courses: ['Manejo de la hipoxemia y mejora de la ventilación pulmonar en el contexto de la fisioterapia pulmonar','Actualización sobre el manejo de la diabetes mellitus tipo 2']
+  },
+  farmacologia: {
+    label: 'Farmacología', aliases: ['farmacologia','farmacos','medicamentos','como actuan los medicamentos'],
+    answer: 'La farmacología estudia cómo actúan los medicamentos en el organismo y cómo el cuerpo los absorbe, distribuye, transforma y elimina. Su uso seguro exige considerar indicación, dosis prescrita, vía, interacciones, contraindicaciones y vigilancia de efectos.',
+    courses: ['Terapia de infusión en enfermería','Aplicación del proceso de atención en enfermería (PAE)']
+  },
   triage: {
     label: 'Triage hospitalario', aliases: ['triage','triaje','clasificacion de urgencias','prioridad de atencion'],
     answer: 'El triage es un proceso de valoración rápida que ordena la atención según gravedad, riesgo vital y recursos necesarios; no funciona por orden de llegada. Debe reevaluarse porque el estado de una persona puede cambiar mientras espera.',
