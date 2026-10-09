@@ -288,11 +288,14 @@
 
   async function askMedlinePlus(value) {
     setWaiting(true);
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 9000);
     try {
       const response = await fetch(`${config.apiBase}/api/assistant/health-topic`, {
         method:'POST',
         headers:{ Accept:'application/json', 'Content-Type':'application/json' },
-        body:JSON.stringify({ query:value })
+        body:JSON.stringify({ query:value }),
+        signal:controller.signal
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok || !Array.isArray(body.items) || !body.items.length) throw new Error(body.error || 'Sin resultados');
@@ -313,6 +316,8 @@
         : 'No pude consultar la fuente clínica de respaldo en este momento. Puedo ayudarte a reformular el tema, explorar conceptos frecuentes o hablar con un asesor.';
       reply(text, { items:related });
       setQuick([{ label:'Ver conceptos', value:'concepts' }, { label:'Buscar cursos', value:'courses' }, { label:'Hablar con un asesor', value:'human' }]);
+    } finally {
+      window.clearTimeout(timeoutId);
     }
   }
 
