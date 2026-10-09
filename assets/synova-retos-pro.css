@@ -157,7 +157,7 @@
 .syn-game strong{grid-column:1;grid-row:3;max-width:none;font-size:17px;line-height:1.2;letter-spacing:-.3px}.syn-game>span:not(.syn-game__icon):not(.syn-game__go){grid-column:1;grid-row:4;margin:0}.syn-game__go{position:static;grid-column:2;grid-row:3/5;align-self:center;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#EDF4F8;color:#155D8D}
 .syn-game:hover{transform:translateY(-4px);border-color:#8CB6D0;box-shadow:0 18px 36px rgba(10,72,118,.13)}
 :root[data-theme="night"] .syn-league-hero{background-image:linear-gradient(90deg,#061E33 0%,rgba(6,30,51,.97) 32%,rgba(6,30,51,.72) 48%,rgba(6,30,51,.16) 68%,rgba(6,30,51,0) 82%),url("images/retos-hero-clinico.png");background-position:center;background-size:cover;background-color:#061E33}
-:root[data-theme="night"] .syn-story-entry{background-image:linear-gradient(90deg,#061E33 0%,rgba(6,30,51,.97) 34%,rgba(6,30,51,.68) 49%,rgba(6,30,51,.12) 67%,rgba(6,30,51,0) 80%),url("images/retos-ruta-clinica.png");background-position:center;background-color:#061E33}
+:root[data-theme="night"] .syn-story-entry{background-image:linear-gradient(90deg,#061E33 0%,rgba(6,30,51,.97) 34%,rgba(6,30,51,.68) 49%,rgba(6,30,51,.12) 67%,rgba(6,30,51,0) 80%),url("images/retos-ruta-clinica.png");background-position:center;background-size:cover;background-color:#061E33}
 :root[data-theme="night"] .syn-game{border-color:#294255;background:linear-gradient(180deg,#102638,#0E2131)}
 :root[data-theme="night"] .syn-daily__ic,:root[data-theme="night"] .syn-game__icon{border-color:#315069;background:#17364D}:root[data-theme="night"] .syn-game::before{color:#7892A5}:root[data-theme="night"] .syn-game__go{background:#19364C;color:#9CC5DD}
 
