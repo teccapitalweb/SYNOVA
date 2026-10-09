@@ -6056,8 +6056,9 @@ function mountNutricion(c){
   ov.addEventListener('click', e => { if (e.target === ov) cerrarVisor(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && ov.classList.contains('is-open')) cerrarVisor(); });
 
-  /* ── Portadas reales · pools médicos (Unsplash libres) con rotación, patrón OdonTeck ── */
-  const _IMG = id => 'https://images.unsplash.com/photo-' + id + '?w=900&auto=format&fit=crop&q=80';
+  /* ── Las mismas fotografías médicas, servidas localmente para evitar que
+     Safari, Android o bloqueadores de contenido las oculten. ── */
+  const _IMG = id => 'assets/images/course-covers/' + id + '.jpg';
   const PORTADA_POOLS = {
     urgencias:  ['1551601651-2a8555f1a136','1516574187841-cb9cc2ca948b','1538108149393-fbbd81895907','1551076805-e1869033e561'].map(_IMG),
     enfermeria: ['1576765608535-5f04d1e3f289','1579684385127-1ef15d508118','1584515933487-779824d29309','1584744982491-665216d95f8b'].map(_IMG),
@@ -6075,18 +6076,6 @@ function mountNutricion(c){
     ['laboratorio',['toxicológ','toxicolog','pericial','forense','laboratorio','vector','vigilancia']],
     ['enfermeria',['enfermer','infusión','infusion','herida','apósito','aposito','ostom','catéter','cateter','vascular','diálisis','dialisis','presión','presion','lecho','vacun','atención','atencion']]
   ];
-  /* Respaldo local garantizado. Las portadas remotas podían ser bloqueadas por
-     Safari, redes corporativas o content blockers y dejaban tarjetas sin foto. */
-  const _LOCAL_COVER = name => 'assets/images/courses/' + encodeURIComponent(name);
-  const PORTADAS_LOCALES = {
-    urgencias:['TRIAGE HOSPITALARIO.jpg','TRAQUESTOMIA.jpg','CODIGO MATER.jpg','HELLP.jpg'],
-    enfermeria:['MANEJO DE ACCESOS.jpg','ACCESO Y CUIDADOS.jpg','MANEJO DE HERIDAS.jpg','HEMODIALISIS.jpg','TRATAMIENTO DE HERIDAS.jpg'],
-    laboratorio:['TECNICAS.jpg','TECNICAS DE ESTERILIZACION.jpg','TERAPIAS CELULARES.jpg'],
-    pediatria:['PEDIATRICOS.jpg','CODIGO MATER.jpg'],
-    nutricion:['PIE DIABETICO.jpg','CERTIFICADO.jpg'],
-    estetica:['TERAPIAS CELULARES.jpg','APOSITOS INTERACTIVOS.jpg'],
-    general:['CERTIFICADO.jpg','MANEJO DE ULCERAS.jpg','APOSITOS INTERACTIVOS.jpg','TECNICAS.jpg']
-  };
   const PORTADA_DEFAULT = _IMG('1505751172876-fa1923c5c528');
   /* Portadas fijas por curso del catálogo (imágenes reales relacionadas al tema) */
   const PORTADAS_CURSO = {
@@ -6119,14 +6108,19 @@ function mountNutricion(c){
   let _portadaIdx = {};
   function _resetPortadas(){ _portadaIdx = {}; }
   function esPortadaGenerica(p){ return !p || String(p).indexOf('data:image/svg') === 0; }
+  function localizarPortada(p){
+    const match=String(p||'').match(/images\.unsplash\.com\/photo-(\d{10,}-[a-z0-9]+)/i);
+    return match?_IMG(match[1]):p;
+  }
   function getPortadaCurso(c){
-    if (!esPortadaGenerica(c.portada)) return c.portada;
+    if (PORTADAS_CURSO[c.id]) return PORTADAS_CURSO[c.id];
+    if (!esPortadaGenerica(c.portada)) return localizarPortada(c.portada);
     const titulo = ((c.nombre || '') + ' ' + (c.area || '')).toLowerCase();
     let tema = 'general';
     for (const [tm, kws] of PORTADA_TEMAS){ if (kws.some(k => titulo.includes(k))){ tema = tm; break; } }
+    const pool = PORTADA_POOLS[tema];
     const i = _portadaIdx[tema] || 0; _portadaIdx[tema] = i + 1;
-    const localPool = PORTADAS_LOCALES[tema] || PORTADAS_LOCALES.general;
-    return _LOCAL_COVER(localPool[i % localPool.length]);
+    return pool[i % pool.length] || PORTADA_DEFAULT;
   }
 
   function asignarOrdenDesbloqueo(lista){

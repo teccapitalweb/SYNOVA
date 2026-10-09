@@ -35,10 +35,10 @@
 }
 @media(prefers-reduced-motion:reduce){.auth-course-rail__track{animation:none}.auth-free-cta{transition:none}}
 
-/* Fotografía clínica real en la invitación de registro. Evita el antiguo
-   bloque verde genérico y mantiene el recorte estable en todos los tamaños. */
-.auth-offer__icon,.auth-free-cta__icon{display:grid;place-items:end center;overflow:hidden;border:1px solid #CDE3E4;background:linear-gradient(145deg,#fff,#DFF3F1);box-shadow:0 8px 18px rgba(13,94,134,.14)}
-.auth-offer__icon{width:46px;height:50px}
-.auth-free-cta__icon{width:46px;height:50px;border-color:rgba(154,230,223,.42)}
-.auth-offer__icon img,.auth-free-cta__icon img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;transform:scale(1.14);transform-origin:center bottom}
-@media(max-width:440px){.auth-offer__icon{width:42px;height:46px}}
+/* Firma institucional legible y estable en móvil, tableta y escritorio. */
+.brand__copy{min-width:0;display:flex;flex-direction:column;justify-content:center}
+.auth-main .brand__copy{flex:1}
+.auth-main .brand__sub{max-width:100%;font-size:9.5px;line-height:1.4;letter-spacing:.75px;white-space:normal}
+.brand--hero .brand__sub{font-size:9.5px;line-height:1.4;letter-spacing:1px;white-space:normal}
+@media(max-width:620px){.auth-main .wrap>.brand{align-items:center;gap:11px}.auth-main .brand__logo{width:50px;height:50px}.auth-main .brand__name{font-size:19px}.auth-main .brand__sub{font-size:9px;letter-spacing:.55px}}
+@media(max-width:360px){.auth-main .brand__sub{font-size:8.5px;letter-spacing:.35px}}

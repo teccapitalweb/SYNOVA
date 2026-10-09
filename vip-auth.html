@@ -302,7 +302,7 @@ body.auth-ready .auth-gate{display:none !important}
 @media (max-width:420px){.auth-gate::before{opacity:.5}.auth-gate{gap:18px}.ag-logo{width:64px;height:64px;border-radius:17px}.ag-name{font-size:19px}.ag-text{font-size:9.5px;letter-spacing:1.1px}}
 @media (prefers-reduced-motion:reduce){.ag-logo{animation:none}.ag-spinner{animation-duration:1.6s}}
 </style>
-<link rel="stylesheet" href="assets/synova-auth-premium.css?v=3">
+<link rel="stylesheet" href="assets/synova-auth-premium.css?v=4">
 </head>
 <body>
 
@@ -331,13 +331,12 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
       <div class="brand__logo">
         <img src="assets/img/synova-logo.png" alt="SYNOVA México">
       </div>
-      <div>
+      <div class="brand__copy">
         <div class="brand__name">SYNOVA</div>
         <div class="brand__sub">Consultoría · Capacitación Clínica en Salud</div>
       </div>
     </div>
     <div class="auth-premium-story">
-      <span class="auth-access-eyebrow">SYNOVA CLINICAL / ACCESS</span>
       <h1>Decisiones clínicas más seguras empiezan con <em>mejor preparación.</em></h1>
       <p>Una experiencia continua de aprendizaje para profesionales de la salud: contenido aplicable, práctica guiada y evidencia verificable de tu avance.</p>
       <div class="auth-value-grid">
@@ -346,11 +345,6 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
         <div class="auth-value"><span>03</span><div><strong>Herramientas clínicas</strong><small>Recursos listos para tu entorno profesional.</small></div></div>
         <div class="auth-value"><span>04</span><div><strong>Comunidad profesional</strong><small>Directorio, sesiones en vivo y conexión VIP.</small></div></div>
       </div>
-      <button class="auth-free-cta" type="button" data-focus-register>
-        <span class="auth-free-cta__icon" aria-hidden="true"><img src="assets/images/synova-assistant-doctor-v2.png" alt=""></span>
-        <span><strong>Regístrate gratis</strong><small>Recibe 120 créditos y comienza las primeras clases del curso que elijas.</small></span>
-        <i aria-hidden="true">→</i>
-      </button>
       <div class="auth-course-rail" aria-label="Cursos disponibles en SYNOVA">
         <div class="auth-course-rail__head"><span>Explora desde hoy</span><strong>Cursos destacados</strong></div>
         <div class="auth-course-rail__viewport"><div class="auth-course-rail__track">
@@ -415,17 +409,14 @@ setTimeout(function(){ if (window.__synAuthBooted) return; document.body.classLi
 
   <main class="auth-main">
 <div class="wrap">
-  <span class="auth-access-eyebrow">SYNOVA CLINICAL / ACCESS</span>
   <div class="brand">
     <div class="brand__logo">
       <img src="assets/img/synova-logo.png" alt="SYNOVA México">
     </div>
-    <div class="brand__name">SYNOVA</div>
-    <div class="brand__sub">Consultoría · Capacitación Clínica en Salud</div>
+    <div class="brand__copy"><div class="brand__name">SYNOVA</div><div class="brand__sub">Consultoría · Capacitación Clínica en Salud</div></div>
   </div>
 
   <div class="card">
-    <div class="auth-offer"><span class="auth-offer__icon" aria-hidden="true"><img src="assets/images/synova-assistant-doctor-v2.png" alt=""></span><div><strong><em>Regístrate gratis</em> en SYNOVA</strong><span>Recibe 120 créditos y comienza las primeras clases del curso que elijas.</span></div></div>
     <div class="tabs">
       <button class="tab" data-tab="login">Iniciar sesión</button>
       <button class="tab is-active" data-tab="register">Crear cuenta</button>
