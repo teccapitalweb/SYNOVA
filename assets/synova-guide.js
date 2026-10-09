@@ -17,6 +17,9 @@
   let quickActions = [];
   let waiting = false;
   let motionTimer = 0;
+  let ambientTimer = 0;
+  let gazeTimer = 0;
+  let ambientIndex = 0;
   let suppressLauncherClick = false;
   let positionBucket = window.innerWidth <= 760 ? 'mobile' : 'desktop';
   let route = { step:-1, answers:[], selections:[], result:[] };
@@ -50,6 +53,16 @@
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[char]));
+  }
+
+  function characterMarkup(alt) {
+    const blinkImage = config.blinkImage || config.image;
+    return `<span class="syg-character">
+      <span class="syg-character__motion">
+        <img class="syg-character__frame syg-character__frame--open" src="${escapeHtml(config.image)}" alt="${escapeHtml(alt)}" decoding="async">
+        <img class="syg-character__frame syg-character__frame--blink" src="${escapeHtml(blinkImage)}" alt="" aria-hidden="true" decoding="async" fetchpriority="low">
+      </span>
+    </span>`;
   }
 
   function normalize(value) {
@@ -123,15 +136,16 @@
   root.dataset.paused = 'false';
   root.innerHTML = `
     <button class="syg-launcher" type="button" aria-label="Abrir asistente virtual de SYNOVA">
-      <span class="syg-launcher__avatar"><img src="${escapeHtml(config.image)}" alt="Asistente clínica virtual de SYNOVA"></span>
+      <span class="syg-launcher__avatar">${characterMarkup('Asistente clínica virtual de SYNOVA')}</span>
       <span class="syg-launcher__copy">
         <span class="syg-launcher__bubble"><strong>¡Hola! Soy SYNOVA 👋</strong><span>Pregúntame sobre salud o encuentra tu siguiente curso.</span></span>
         <em class="syg-launcher__cta">Preparar mi ruta <b aria-hidden="true">→</b></em>
+        <small class="syg-launcher__drag"><span aria-hidden="true">✣</span> Arrástrame</small>
       </span>
     </button>
     <section class="syg-panel" aria-label="Conversación con SYNOVA, asistente virtual" hidden>
       <header class="syg-header">
-        <button class="syg-avatar" type="button" aria-label="Saludar a la asistente"><img src="${escapeHtml(config.image)}" alt="Asistente clínica virtual de SYNOVA"></button>
+        <button class="syg-avatar" type="button" aria-label="Saludar a la asistente">${characterMarkup('Asistente clínica virtual de SYNOVA')}</button>
         <span class="syg-header__title"><strong>${escapeHtml(config.assistantName)}</strong><small>${escapeHtml(config.assistantLabel)}</small></span>
         <span class="syg-header__actions">
           <button class="syg-icon-btn" type="button" data-action="reset" aria-label="Empezar de nuevo" title="Empezar de nuevo">↻</button>
@@ -207,6 +221,51 @@
     clearTimeout(motionTimer);
     root.dataset.motion = value;
     if (value !== 'idle') motionTimer = window.setTimeout(() => { root.dataset.motion = 'idle'; }, duration);
+  }
+
+  function activeCharacter() {
+    const host = panel.hidden ? launcher : panel;
+    return host.querySelector('.syg-character');
+  }
+
+  function resetCharacterGaze(character = activeCharacter()) {
+    if (!character) return;
+    character.style.setProperty('--syg-look-x', '0px');
+    character.style.setProperty('--syg-look-y', '0px');
+    character.style.setProperty('--syg-look-r', '0deg');
+  }
+
+  function followPointer(event) {
+    if (root.dataset.paused === 'true' || root.dataset.dragging === 'true') return;
+    const character = activeCharacter();
+    if (!character) return;
+    const rect = character.getBoundingClientRect();
+    const x = Math.max(-1, Math.min(1, (event.clientX - (rect.left + rect.width / 2)) / Math.max(rect.width, 1)));
+    const y = Math.max(-1, Math.min(1, (event.clientY - (rect.top + rect.height / 2)) / Math.max(rect.height, 1)));
+    character.style.setProperty('--syg-look-x', `${(x * 5).toFixed(2)}px`);
+    character.style.setProperty('--syg-look-y', `${(y * 3).toFixed(2)}px`);
+    character.style.setProperty('--syg-look-r', `${(x * 1.5).toFixed(2)}deg`);
+    window.clearTimeout(gazeTimer);
+    gazeTimer = window.setTimeout(() => resetCharacterGaze(character), 650);
+  }
+
+  function scheduleAmbientMotion() {
+    window.clearTimeout(ambientTimer);
+    if (root.dataset.paused === 'true') return;
+    const motions = [
+      ['look-left', 1000],
+      ['nod', 900],
+      ['look-right', 1000],
+      ['happy', 1050]
+    ];
+    ambientTimer = window.setTimeout(() => {
+      if (root.dataset.paused !== 'true' && root.dataset.motion === 'idle') {
+        const [motion, duration] = motions[ambientIndex % motions.length];
+        ambientIndex += 1;
+        setMotion(motion, duration);
+      }
+      scheduleAmbientMotion();
+    }, 4200 + Math.round(Math.random() * 2400));
   }
 
   function openAssistant() {
@@ -507,6 +566,10 @@
   });
   makeDraggable(launcher, launcher, 'launcher');
   makeDraggable(panel, root.querySelector('.syg-header'), 'panel');
+  launcher.addEventListener('pointermove', followPointer);
+  panel.addEventListener('pointermove', followPointer);
+  launcher.addEventListener('pointerleave', () => resetCharacterGaze(launcher.querySelector('.syg-character')));
+  panel.addEventListener('pointerleave', () => resetCharacterGaze(panel.querySelector('.syg-character')));
   restorePosition(launcher, 'launcher');
   window.addEventListener('resize', () => {
     const visible = panel.hidden ? launcher : panel;
@@ -530,6 +593,13 @@
       const button = root.querySelector('[data-action="pause"]');
       button.textContent = paused ? '▶' : 'Ⅱ';
       button.setAttribute('aria-label', paused ? 'Reanudar movimiento' : 'Pausar movimiento');
+      if (paused) {
+        window.clearTimeout(ambientTimer);
+        resetCharacterGaze();
+      } else {
+        setMotion('wave');
+        scheduleAmbientMotion();
+      }
     }
     const quick = event.target.closest('[data-quick]');
     if (quick) runQuick(quick.dataset.quick);
@@ -547,7 +617,7 @@
   function renderRouteWelcome() {
     const survey = config.survey;
     routeContent.innerHTML = `
-      <div class="syg-route__mascot"><img src="${escapeHtml(config.image)}" alt="Asistente clínica virtual de SYNOVA"></div>
+      <div class="syg-route__mascot">${characterMarkup('Asistente clínica virtual de SYNOVA')}</div>
       <p class="syg-route__eyebrow">${escapeHtml(survey.eyebrow)}</p>
       <h2 id="syg-route-title">${escapeHtml(survey.title)}</h2>
       <p class="syg-route__lead">${escapeHtml(survey.detail)}</p>
@@ -642,7 +712,7 @@
     routeContent.innerHTML = `
       <div class="syg-result__hero">
         <div><p class="syg-route__eyebrow">TU PERFIL FORMATIVO</p><h2 id="syg-route-title">${escapeHtml(profile.headline)}</h2><p>${escapeHtml(profile.summary)}</p></div>
-        <img src="${escapeHtml(config.image)}" alt="Asistente clínica virtual de SYNOVA celebrando tu ruta">
+        <div class="syg-result__mascot">${characterMarkup('Asistente clínica virtual de SYNOVA celebrando tu ruta')}</div>
       </div>
       <section class="syg-profile" aria-label="Fortalezas y áreas para mejorar">
         <div class="syg-profile__intro"><span>DIAGNÓSTICO DE APRENDIZAJE</span><h3>Lo que ya tienes y tu siguiente oportunidad.</h3><p>Este perfil no califica tu práctica clínica; convierte tus respuestas en una guía concreta para seguir creciendo.</p></div>
@@ -736,6 +806,7 @@
   renderMessages();
   homeActions();
   mountCookieNotice();
+  scheduleAmbientMotion();
   window.setTimeout(() => {
     let seen = false;
     try { seen = Boolean(localStorage.getItem(welcomeKey)); } catch (_) {}
