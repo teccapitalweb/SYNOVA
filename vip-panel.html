@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
+<link rel="stylesheet" href="assets/onboarding-tour.css?v=3">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=17">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=7">
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=3">
@@ -6075,6 +6075,18 @@ function mountNutricion(c){
     ['laboratorio',['toxicológ','toxicolog','pericial','forense','laboratorio','vector','vigilancia']],
     ['enfermeria',['enfermer','infusión','infusion','herida','apósito','aposito','ostom','catéter','cateter','vascular','diálisis','dialisis','presión','presion','lecho','vacun','atención','atencion']]
   ];
+  /* Respaldo local garantizado. Las portadas remotas podían ser bloqueadas por
+     Safari, redes corporativas o content blockers y dejaban tarjetas sin foto. */
+  const _LOCAL_COVER = name => 'assets/images/courses/' + encodeURIComponent(name);
+  const PORTADAS_LOCALES = {
+    urgencias:['TRIAGE HOSPITALARIO.jpg','TRAQUESTOMIA.jpg','CODIGO MATER.jpg','HELLP.jpg'],
+    enfermeria:['MANEJO DE ACCESOS.jpg','ACCESO Y CUIDADOS.jpg','MANEJO DE HERIDAS.jpg','HEMODIALISIS.jpg','TRATAMIENTO DE HERIDAS.jpg'],
+    laboratorio:['TECNICAS.jpg','TECNICAS DE ESTERILIZACION.jpg','TERAPIAS CELULARES.jpg'],
+    pediatria:['PEDIATRICOS.jpg','CODIGO MATER.jpg'],
+    nutricion:['PIE DIABETICO.jpg','CERTIFICADO.jpg'],
+    estetica:['TERAPIAS CELULARES.jpg','APOSITOS INTERACTIVOS.jpg'],
+    general:['CERTIFICADO.jpg','MANEJO DE ULCERAS.jpg','APOSITOS INTERACTIVOS.jpg','TECNICAS.jpg']
+  };
   const PORTADA_DEFAULT = _IMG('1505751172876-fa1923c5c528');
   /* Portadas fijas por curso del catálogo (imágenes reales relacionadas al tema) */
   const PORTADAS_CURSO = {
@@ -6108,14 +6120,13 @@ function mountNutricion(c){
   function _resetPortadas(){ _portadaIdx = {}; }
   function esPortadaGenerica(p){ return !p || String(p).indexOf('data:image/svg') === 0; }
   function getPortadaCurso(c){
-    if (PORTADAS_CURSO[c.id]) return PORTADAS_CURSO[c.id];
     if (!esPortadaGenerica(c.portada)) return c.portada;
     const titulo = ((c.nombre || '') + ' ' + (c.area || '')).toLowerCase();
     let tema = 'general';
     for (const [tm, kws] of PORTADA_TEMAS){ if (kws.some(k => titulo.includes(k))){ tema = tm; break; } }
-    const pool = PORTADA_POOLS[tema];
     const i = _portadaIdx[tema] || 0; _portadaIdx[tema] = i + 1;
-    return pool[i % pool.length] || PORTADA_DEFAULT;
+    const localPool = PORTADAS_LOCALES[tema] || PORTADAS_LOCALES.general;
+    return _LOCAL_COVER(localPool[i % localPool.length]);
   }
 
   function asignarOrdenDesbloqueo(lista){

@@ -34,3 +34,11 @@
   .auth-main{padding-inline:12px}.auth-main .wrap>.brand{margin-bottom:14px}.card{padding:14px}.auth-offer{grid-template-columns:42px minmax(0,1fr)}.pane{padding-top:16px}.pane-head h2{font-size:28px}
 }
 @media(prefers-reduced-motion:reduce){.auth-course-rail__track{animation:none}.auth-free-cta{transition:none}}
+
+/* Fotografía clínica real en la invitación de registro. Evita el antiguo
+   bloque verde genérico y mantiene el recorte estable en todos los tamaños. */
+.auth-offer__icon,.auth-free-cta__icon{display:grid;place-items:end center;overflow:hidden;border:1px solid #CDE3E4;background:linear-gradient(145deg,#fff,#DFF3F1);box-shadow:0 8px 18px rgba(13,94,134,.14)}
+.auth-offer__icon{width:46px;height:50px}
+.auth-free-cta__icon{width:46px;height:50px;border-color:rgba(154,230,223,.42)}
+.auth-offer__icon img,.auth-free-cta__icon img{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;transform:scale(1.14);transform-origin:center bottom}
+@media(max-width:440px){.auth-offer__icon{width:42px;height:46px}}

@@ -2,8 +2,9 @@
 .membership-tour *{box-sizing:border-box}
 .membership-tour{position:fixed;inset:0;z-index:2147482000;font-family:inherit;color:var(--text,#eef5ff);pointer-events:none}
 .membership-tour[aria-hidden="true"]{display:none}
-.membership-tour__shade{position:fixed;background:rgba(2,7,18,.78);pointer-events:auto;transition:all .22s ease}
-.membership-tour__spotlight{position:fixed;border:2px solid var(--tour-accent,var(--primary,#2a6df6));border-radius:14px;box-shadow:0 0 0 4px color-mix(in srgb,var(--tour-accent,var(--primary,#2a6df6)) 22%,transparent),0 0 34px color-mix(in srgb,var(--tour-accent,var(--primary,#2a6df6)) 50%,transparent);pointer-events:none;transition:all .22s ease}
+.membership-tour__shade{position:fixed;background:transparent;pointer-events:auto;transition:all .22s ease}
+/* Una máscara única evita las franjas y cortes entre sombras en Safari/iPad. */
+.membership-tour__spotlight{position:fixed;border:2px solid var(--tour-accent,var(--primary,#2a6df6));border-radius:14px;box-shadow:0 0 0 9999px rgba(2,7,18,.78),0 0 0 4px color-mix(in srgb,var(--tour-accent,var(--primary,#2a6df6)) 22%,transparent),0 0 34px color-mix(in srgb,var(--tour-accent,var(--primary,#2a6df6)) 50%,transparent);pointer-events:none;transition:all .22s ease;transform:translateZ(0);-webkit-transform:translateZ(0)}
 .membership-tour__guard{position:fixed;background:transparent;pointer-events:auto;cursor:default;transition:all .22s ease}
 .membership-tour__dialog{position:fixed;width:min(390px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto;padding:20px;background:color-mix(in srgb,var(--surface,#0b1530) 96%,transparent);border:1px solid color-mix(in srgb,var(--tour-accent,var(--primary,#2a6df6)) 35%,var(--border-2,transparent));border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.48);pointer-events:auto;outline:none;transition:left .22s ease,top .22s ease;overscroll-behavior:contain}
 .membership-tour__head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:15px}
