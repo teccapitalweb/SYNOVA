@@ -58,12 +58,15 @@
     return config.courses.map((course, index) => {
       const title = normalize(course.title);
       const haystack = normalize(`${course.title} ${course.area} ${course.detail} ${(course.tags || []).join(' ')}`);
+      const titleWords = new Set(title.split(' '));
+      const haystackWords = new Set(haystack.split(' '));
+      const hasPhrase = (text, phrase) => (` ${text} `).includes(` ${phrase} `);
       const phraseScore = wanted.reduce((score, term) => {
         const phrase = normalize(term);
         if (!phrase) return score;
-        return score + (title.includes(phrase) ? 14 : haystack.includes(phrase) ? 7 : 0);
+        return score + (hasPhrase(title, phrase) ? 14 : hasPhrase(haystack, phrase) ? 7 : 0);
       }, 0);
-      const tokenScore = queryTokens.reduce((score, token) => score + (title.includes(token) ? 5 : haystack.includes(token) ? 2 : 0), 0);
+      const tokenScore = queryTokens.reduce((score, token) => score + (titleWords.has(token) ? 5 : haystackWords.has(token) ? 2 : 0), 0);
       return { course, score:phraseScore + tokenScore, index };
     }).filter(item => item.score > 0).sort((a,b) => b.score - a.score || a.index - b.index).slice(0, limit).map(item => item.course);
   }
