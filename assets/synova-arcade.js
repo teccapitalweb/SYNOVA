@@ -28,8 +28,8 @@ var CATALOG=[
     {topic:'Signos vitales',config:{words:['PULSO','OXIGENO','PRESION','RITMO','DOLOR','GLUCOSA','ALERTA','FIEBRE']}},
     {topic:'Atención segura',config:{words:['ASEPSIA','PACIENTE','BARRERA','REGISTRO','ALERGIA','DOSIS','EQUIPO','RIESGO']}}]},
   {type:'puzzle',title:'Rompecabezas clínico',description:'Reconstruye una escena médica pieza por pieza',label:'Percepción',color:'#3479d7',boards:[
-    {topic:'Triage hospitalario',config:{image:'assets/images/courses/TRIAGE%20HOSPITALARIO.jpg',side:3}},
-    {topic:'Accesos vasculares',config:{image:'assets/images/courses/MANEJO%20DE%20ACCESOS.jpg',side:3}}]},
+    {topic:'Preparación de urgencias',config:{image:'assets/images/arcade-puzzle-clinical-v2.png',side:3}},
+    {topic:'Seguridad del entorno clínico',config:{image:'assets/images/arcade-puzzle-clinical-v2.png',side:4}}]},
   {type:'guess',title:'Adivina el concepto',description:'Descubre el término antes de agotar seis intentos',label:'Deducción',color:'#d0526b',boards:[
     {topic:'Evaluación clínica',config:{words:[['ANAMNESIS','Recopilación ordenada de antecedentes y síntomas'],['PRONOSTICO','Estimación de la evolución probable'],['DIAGNOSTICO','Identificación razonada de una enfermedad o condición']]}},
     {topic:'Seguridad asistencial',config:{words:[['TRAZABILIDAD','Capacidad de seguir el historial de una acción o producto'],['FARMACOVIGILANCIA','Detección y prevención de efectos adversos de medicamentos'],['BIOSEGURIDAD','Medidas para reducir riesgos biológicos']]}}]},

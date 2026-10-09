@@ -22,6 +22,7 @@
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=3">
 <link rel="stylesheet" href="assets/synova-certificates-credits.css?v=3">
 <link rel="stylesheet" href="assets/synova-arcade.css?v=3">
+<link rel="stylesheet" href="assets/synova-core-games.css?v=1">
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -3909,9 +3910,9 @@ window.pintarHubRetos = function(){
         <button class="syn-story-entry" onclick="abrirHistoriaSynova()"><span class="syn-story-entry__copy"><span>Ruta clínica</span><h2>Aprende con casos.</h2><span class="btn btn--light">Explorar <svg class="ic"><use href="#i-arrow-right"/></svg></span></span></button>
         <button class="syn-daily" ${hoy?'disabled':''} onclick="iniciarRetoClinico('diario')"><span class="syn-daily__ic"><img src="assets/images/retos-diario.png" alt="" loading="lazy"></span><span class="syn-daily__tx"><strong>${hoy?'Reto diario completado':'Reto diario'}</strong><span>${hoy?'Vuelve mañana para una nueva decisión':'Una pregunta rápida · hasta 30 XP'}</span></span><svg class="ic"><use href="#i-arrow-right"/></svg></button>
         <div class="syn-game-grid">
-          <button class="syn-game" data-label="Agilidad" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><img src="assets/images/retos-pulso-clinico.png" alt="" loading="lazy"></span><strong>Pulso clínico</strong><span>${s.quizBest}% récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" data-label="Criterio" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><img src="assets/images/retos-diagnostico-synova.png" alt="" loading="lazy"></span><strong>Diagnóstico SYNOVA</strong><span>${s.casosResueltos.length} casos resueltos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
-          <button class="syn-game" data-label="Repaso" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><img src="assets/images/retos-memoria-clinica.png" alt="" loading="lazy"></span><strong>Memoria clínica</strong><span>${s.flashDominadas} dominadas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Agilidad" style="--game:#0D5FA0" onclick="abrirQuizSynova()"><span class="syn-game__icon"><img src="assets/images/retos-pulso-clinico.png" alt="" loading="lazy"></span><strong>Pulso clínico</strong><span>${s.quizBest}% precisión récord</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Criterio" style="--game:#0D5FA0" onclick="abrirCasosSynova()"><span class="syn-game__icon"><img src="assets/images/retos-diagnostico-synova.png" alt="" loading="lazy"></span><strong>Diagnóstico SYNOVA</strong><span>${s.casosResueltos.length} simulaciones resueltas</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
+          <button class="syn-game" data-label="Repaso" style="--game:#0D5FA0" onclick="abrirFlashSynova()"><span class="syn-game__icon"><img src="assets/images/retos-memoria-clinica.png" alt="" loading="lazy"></span><strong>Memoria clínica</strong><span>${s.flashDominadas} pares dominados</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
           <button class="syn-game" data-label="Arcade" style="--game:#0D5FA0" onclick="abrirArcadeSynova()"><span class="syn-game__icon syn-game__icon--arcade"><img src="assets/images/retos-juegos-clinicos.png" alt="" loading="lazy" decoding="async"></span><strong>Juegos clínicos</strong><span>6 tableros interactivos</span><span class="syn-game__go"><svg class="ic"><use href="#i-arrow-right"/></svg></span></button>
         </div>
         <section class="syn-ranking"><div id="syn-ranking-content"><div class="empty-note">Cargando…</div></div></section>
@@ -6964,7 +6965,8 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="assets/synova-course-experience.js?v=4"></script>
 <script src="assets/synova-books-credits.js?v=9"></script>
-<script src="assets/synova-arcade.js?v=4"></script>
+<script src="assets/synova-arcade.js?v=5"></script>
+<script src="assets/synova-core-games.js?v=1"></script>
 <script src="assets/synova-materials.js?v=2"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>
