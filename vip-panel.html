@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
-<link rel="stylesheet" href="assets/synova-retos-pro.css?v=14">
+<link rel="stylesheet" href="assets/synova-retos-pro.css?v=15">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=6">
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=3">
 <link rel="stylesheet" href="assets/synova-certificates-credits.css?v=3">
@@ -1708,7 +1708,7 @@ window.cerrarModal = function(){ /* compat: cierra el modal más reciente */ con
 function applyGreeting(){
   const h = new Date().getHours();
   const greet = h < 12 ? 'Buenos días' : h < 19 ? 'Buenas tardes' : 'Buenas noches';
-  const eyebrow = h < 12 ? 'Modo enfoque · Mañana' : h < 19 ? 'Modo enfoque · Tarde' : 'Modo enfoque · Noche';
+  const eyebrow = h < 12 ? 'Tu panel · Mañana' : h < 19 ? 'Tu panel · Tarde' : 'Tu panel · Noche';
   return { greet, eyebrow };
 }
 
@@ -2563,14 +2563,14 @@ Sections.inicio = function(){
       <div class="banner__info">
         <div class="banner__overline"><span class="banner__eyebrow"><span class="banner__eyebrow__dot"></span>${escHtml(g.eyebrow)}</span><span class="banner__version">SYNOVA VIP</span></div>
         <h1 class="banner__title">${g.greet}, ${escHtml(nombre)}</h1>
-        <p class="banner__sub">Tu acceso a cursos clínicos, clases en vivo, normativa NOM en salud, auditoría de calidad de atención y la comunidad de profesionales de salud de SYNOVA México.</p>
-        ${!toolEsVIP() ? `<div style="margin-top:16px;position:relative;z-index:1"><button class="btn btn--accent btn--lg" data-section="suscripcion">Activar membresía VIP<svg class="ic"><use href="#i-arrow-right"/></svg></button></div>` : ''}
+        <p class="banner__sub">Cursos, práctica y avance profesional en un solo lugar.</p>
+        ${!toolEsVIP() ? `<div class="home-premium__actions"><button class="btn btn--accent btn--lg" data-section="suscripcion">Activar VIP<svg class="ic"><use href="#i-arrow-right"/></svg></button></div>` : ''}
       </div>
       <div class="banner__stats">
-        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl">Cursos</div><div class="banner__stat-val" id="stat-cursos">—</div></div>
-        <div class="banner__stat" data-section="webinars" style="cursor:pointer"><div class="banner__stat-lbl">Clases</div><div class="banner__stat-val" id="stat-webinars">—</div></div>
-        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl">Recursos</div><div class="banner__stat-val" id="stat-pdfs">—</div></div>
-        <div class="banner__stat" data-section="certificados" style="cursor:pointer"><div class="banner__stat-lbl">Certificados</div><div class="banner__stat-val" id="stat-certs">—</div></div>
+        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Cursos">Cursos</div><div class="banner__stat-val" id="stat-cursos">—</div></div>
+        <div class="banner__stat" data-section="webinars" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Clases">Clases</div><div class="banner__stat-val" id="stat-webinars">—</div></div>
+        <div class="banner__stat" data-section="cursos" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Recursos">Recursos</div><div class="banner__stat-val" id="stat-pdfs">—</div></div>
+        <div class="banner__stat" data-section="certificados" style="cursor:pointer"><div class="banner__stat-lbl" data-short="Certif.">Certificados</div><div class="banner__stat-val" id="stat-certs">—</div></div>
       </div>
     </section>
 
@@ -6916,6 +6916,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 .home-premium .banner__version{margin:0;padding:4px 8px;border:1px solid rgba(255,255,255,.18);border-radius:999px;color:rgba(255,255,255,.65);font-size:7.5px;letter-spacing:1.15px;white-space:nowrap}
 .home-premium .banner__title{margin-top:18px;color:#FFFFFF;background:none;-webkit-text-fill-color:currentColor;font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:clamp(39px,3.6vw,52px);font-weight:800;letter-spacing:-2.15px;line-height:1.04}
 .home-premium .banner__sub{max-width:650px;margin-top:13px;color:rgba(237,244,248,.76);font-size:13px;line-height:1.68}
+.home-premium__actions{position:relative;z-index:1;margin-top:16px}
 .home-premium .btn--accent{background:#F7F4ED;color:#0B2A46;border:1px solid rgba(255,255,255,.7);box-shadow:0 10px 26px rgba(0,0,0,.16)}
 .home-premium .btn--accent:hover{background:#FFFFFF;transform:translateY(-1px)}
 .home-premium .banner__stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;width:100%;border:1px solid rgba(255,255,255,.15);border-radius:18px;overflow:hidden;background:rgba(5,28,47,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
@@ -6945,7 +6946,27 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 .certs-list-head small{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-3);padding-bottom:3px}
 @media(max-width:1100px){.banner.home-premium,:root[data-theme="day"] .banner.home-premium{grid-template-columns:1fr;gap:28px}.home-premium .banner__stats{max-width:620px;grid-template-columns:repeat(4,minmax(0,1fr))}.home-premium .banner__stat{padding:17px 16px}.home-premium .banner__stat:nth-child(odd){border-right:1px solid rgba(255,255,255,.12)}.home-premium .banner__stat:nth-child(-n+2){border-bottom:0}.home-premium .banner__stat:not(:last-child){border-right:1px solid rgba(255,255,255,.12)}}
 @media(max-width:760px){.cert-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.cert-summary__item:nth-child(2){border-right:0}.cert-summary__item:nth-child(-n+2){border-bottom:1px solid var(--border)}}
-@media(max-width:560px){.banner.home-premium,:root[data-theme="day"] .banner.home-premium{padding:28px 22px;border-radius:20px}.home-premium .banner__overline{flex-wrap:wrap;gap:8px}.home-premium .banner__title{font-size:38px}.home-premium .banner__stats{grid-template-columns:repeat(2,minmax(0,1fr))}.home-premium .banner__stat:nth-child(-n+2){border-bottom:1px solid rgba(255,255,255,.12)}.home-premium .banner__stat:nth-child(2){border-right:0}.cert-summary__item{padding:15px 12px;flex-direction:column;align-items:flex-start;gap:9px}.cert-summary__item strong{font-size:27px;flex:none}.certs-page .certb__folio{word-break:break-all}}
+@media(max-width:560px){
+  .banner.home-premium,:root[data-theme="day"] .banner.home-premium{padding:23px 20px 21px;border-radius:20px;gap:21px}
+  .home-premium .banner__overline{flex-wrap:nowrap;gap:7px}
+  .home-premium .banner__eyebrow{font-size:7.5px;letter-spacing:1.2px}
+  .home-premium .banner__eyebrow::after{width:18px;margin-left:1px}
+  .home-premium .banner__version{padding:3px 7px;font-size:6.8px;letter-spacing:.9px}
+  .home-premium .banner__title{margin-top:13px;font-size:34px;letter-spacing:-1.6px;line-height:1.02}
+  .home-premium .banner__sub{margin-top:9px;font-size:12px;line-height:1.5}
+  .home-premium__actions{margin-top:13px}
+  .home-premium__actions .btn{min-height:42px;padding:9px 15px;font-size:11.5px}
+  .home-premium .banner__stats{grid-template-columns:repeat(4,minmax(0,1fr));border-radius:14px}
+  .home-premium .banner__stat{padding:12px 4px 11px;text-align:center}
+  .home-premium .banner__stat:nth-child(-n+2){border-bottom:0}
+  .home-premium .banner__stat:nth-child(2){border-right:1px solid rgba(255,255,255,.12)}
+  .home-premium .banner__stat-lbl{margin-bottom:5px;font-size:0;line-height:1;white-space:nowrap}
+  .home-premium .banner__stat-lbl::after{content:attr(data-short);font:700 6.5px/1 'JetBrains Mono',monospace;letter-spacing:.55px;text-transform:uppercase}
+  .home-premium .banner__stat-val{font-size:24px;letter-spacing:-.5px}
+  .cert-summary__item{padding:15px 12px;flex-direction:column;align-items:flex-start;gap:9px}
+  .cert-summary__item strong{font-size:27px;flex:none}
+  .certs-page .certb__folio{word-break:break-all}
+}
 </style>
 <script>
 /* ── KPIs con conteo animado · solo visual, no toca los datos ── */
