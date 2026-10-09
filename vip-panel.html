@@ -18,9 +18,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/onboarding-tour.css?v=2">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=17">
-<link rel="stylesheet" href="assets/synova-books-credits.css?v=6">
+<link rel="stylesheet" href="assets/synova-books-credits.css?v=7">
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=3">
-<link rel="stylesheet" href="assets/synova-certificates-credits.css?v=3">
+<link rel="stylesheet" href="assets/synova-certificates-credits.css?v=4">
 <link rel="stylesheet" href="assets/synova-arcade.css?v=3">
 <link rel="stylesheet" href="assets/synova-core-games.css?v=1">
 
@@ -943,6 +943,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .wa-hero__icon svg{width:36px;height:36px}
 .wa-hero__title{font-size:23px;font-weight:700;letter-spacing:-.5px;position:relative;z-index:1;background:linear-gradient(135deg,var(--text),color-mix(in srgb,var(--text) 60%,transparent));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .wa-hero__sub{font-size:13.5px;color:var(--text-2);margin:8px auto 0;max-width:440px;line-height:1.55;position:relative;z-index:1}
+.wa-channel-heading{display:inline-block;line-height:1.16}
 .wa-rules{background:var(--surface);border:0.5px solid var(--border);border-radius:14px;padding:18px 22px;margin-top:14px}
 .wa-rules__title{font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);margin-bottom:12px}
 .wa-rule{display:flex;gap:12px;align-items:flex-start;padding:8px 0}
@@ -2538,7 +2539,7 @@ function iconoParaArea(){
 }
 
 function secHero(eyebrow, title, sub){
-  return '<div class="sec-hero fade-up"><span class="sec-hero__eyebrow">' + escHtml(eyebrow) + '</span><h1 class="sec-hero__title">' + title + '</h1><p class="sec-hero__sub">' + sub + '</p></div>';
+  return '<div class="sec-hero fade-up"><span class="sec-hero__eyebrow">' + escHtml(eyebrow) + '</span><h1 class="sec-hero__title">' + title + '</h1>' + (sub ? '<p class="sec-hero__sub">' + sub + '</p>' : '') + '</div>';
 }
 
 function emptyState(icon, title, sub){
@@ -3166,7 +3167,7 @@ Sections.certificados = function(){
         <div class="certs-pro-hero__copy">
           <span class="certs-pro-hero__eyebrow"><i></i>Tu trayectoria</span>
           <h1>Mis certificados</h1>
-          <p>Cada certificado SYNOVA incluye <strong>folio único, código QR verificable y respaldo académico</strong>. Está listo para descargar, compartir y validar públicamente.</p>
+          <p>Certificados con folio único y QR verificable.</p>
         </div>
         <div class="certs-pro-hero__art" aria-hidden="true">
           <svg viewBox="0 0 250 170" fill="none">
@@ -4655,7 +4656,7 @@ Sections.canal = function(){
   const C = window.__CONTACTO || {};
   const waSoporte = `https://wa.me/${C.telefonoRaw || ''}?text=${encodeURIComponent(C.waMsg || 'Hola SYNOVA')}`;
   document.getElementById('content').innerHTML =
-    secHero('Comunidad y contacto', 'Canal WhatsApp SYNOVA', 'Recibe alertas de nuevos cursos, clases en vivo y noticias del sector salud directo en tu WhatsApp — y contáctanos para promociones, ventas y soporte.') +
+    secHero('Comunidad y contacto', '<span class="wa-channel-heading">Canal WhatsApp<br>SYNOVA</span>', '') +
     `<section class="wa-hero">
       <div class="wa-hero__icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg></div>
       <h2 class="wa-hero__title">Únete al canal oficial</h2>
@@ -7002,10 +7003,10 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="assets/synova-course-experience.js?v=4"></script>
-<script src="assets/synova-books-credits.js?v=9"></script>
+<script src="assets/synova-books-credits.js?v=10"></script>
 <script src="assets/synova-arcade.js?v=5"></script>
 <script src="assets/synova-core-games.js?v=1"></script>
-<script src="assets/synova-materials.js?v=2"></script>
+<script src="assets/synova-materials.js?v=3"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>
 <script src="assets/synova-analytics.js?v=1"></script>

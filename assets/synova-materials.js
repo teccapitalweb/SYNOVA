@@ -26,8 +26,8 @@
     var c = document.getElementById('content'); if (!c) return;
     var mine = materials.filter(function(m){ return owned(m.id); }).length;
     c.innerHTML = '<div class="books-page fade-up">' +
-      '<section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-file-text')+'Materiales SYNOVA</div><h1>Formatos clínicos<br>listos para usar.</h1><p>Plantillas en Excel para tu práctica diaria. Tus primeros 120 créditos son de regalo y alcanzan para tu primer material.</p></div>' +
-      '<div class="credit-wallet"><div class="credit-wallet__label">Tu saldo disponible</div><div class="credit-wallet__value"><span class="credit-coin">C</span><span>'+balance()+'</span></div><p class="credit-wallet__sub">Créditos SYNOVA · no transferibles</p></div></section>' +
+      '<section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-file-text')+'Materiales SYNOVA</div><h1>Recursos listos para usar.</h1><p>Canjea tus créditos por plantillas clínicas en Excel.</p></div>' +
+      '<div class="credit-wallet"><div class="credit-wallet__label">Saldo</div><div class="credit-wallet__value"><span class="credit-coin">C</span><span>'+balance()+'</span></div><p class="credit-wallet__sub">Créditos SYNOVA</p></div></section>' +
       '<div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu material</h2></div><small>'+materials.length+' materiales · '+mine+' tuyos</small></div>' +
       '<div class="mat-shelf">'+materials.map(card).join('')+'</div></div>';
     c.querySelectorAll('[data-material]').forEach(function(el){ el.addEventListener('click', function(){ open(el.dataset.material); }); });

@@ -102,20 +102,20 @@
   }
   window.SynovaCredits={ state:state, load:loadCredits, owned:owned, balance:function(){return state.balance;}, redeem:redeemReward, celebrate:celebrateRedemption };
   function wallet(){
-    return '<div class="credit-wallet"><div class="credit-wallet__label">Tu saldo disponible</div><div class="credit-wallet__value"><span class="credit-coin">C</span><span id="syn-credit-balance">'+state.balance+'</span></div><p class="credit-wallet__sub">Créditos SYNOVA · no transferibles</p></div>';
+    return '<div class="credit-wallet"><div class="credit-wallet__label">Saldo</div><div class="credit-wallet__value"><span class="credit-coin">C</span><span id="syn-credit-balance">'+state.balance+'</span></div><p class="credit-wallet__sub">Créditos SYNOVA</p></div>';
   }
   function renderLibrary(){
     var c=document.getElementById('content'); if(!c)return;
     var availableCount=books.filter(function(b){return b.available;}).length;
     var upcomingCount=books.length-availableCount;
     var catalogStatus=availableCount+' disponibles'+(upcomingCount?' · '+upcomingCount+' próximamente':'');
-    c.innerHTML='<div class="books-page fade-up"><section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-book')+'Biblioteca SYNOVA</div><h1>Conocimiento clínico<br>para conservar.</h1><p>Tus primeros 120 créditos son de regalo. Gana más en Retos y compartiendo SYNOVA, y canjéalos por libros y herramientas que permanecerán en tu cuenta.</p></div>'+wallet()+'</section><div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu próxima referencia</h2></div><small>'+catalogStatus+'</small></div><div class="book-shelf">'+books.map(card).join('')+'</div></div>';
+    c.innerHTML='<div class="books-page fade-up"><section class="books-hero"><div class="books-hero__copy"><div class="books-kicker">'+icon('i-book')+'Biblioteca SYNOVA</div><h1>Tu biblioteca clínica.</h1><p>Canjea créditos por referencias que conservarás en tu cuenta.</p></div>'+wallet()+'</section><div class="books-head"><div><span>Catálogo canjeable</span><h2>Elige tu próxima referencia</h2></div><small>'+catalogStatus+'</small></div><div class="book-shelf">'+books.map(card).join('')+'</div></div>';
     c.querySelectorAll('[data-book]').forEach(function(el){ el.addEventListener('click',function(){ renderDetail(el.dataset.book); }); });
     if(!state.loaded) loadCredits().then(function(){ if(document.querySelector('.books-page'))renderLibrary(); });
   }
   function card(book){
     var isOwned=owned(book.id), status=!book.available?'Próximamente':isOwned?'En tu biblioteca':'Canjeable';
-    return '<button class="book-card '+(isOwned?'is-owned ':'')+(!book.available?'is-coming':'')+'" data-book="'+book.id+'"><span class="book-badge">'+status+'</span><span class="book-card__cover"><img src="'+book.cover+'" alt="Portada de '+esc(book.title)+'" loading="lazy"></span><span class="book-card__body"><span class="book-card__tag">'+esc(book.area)+'</span><h3>'+esc(book.title)+'</h3><p>'+esc(book.desc)+'</p><span class="book-card__foot">'+(!book.available?'<span>En preparación</span>':isOwned?'<span class="book-cost">'+icon('i-check-circle')+'Canjeado</span>':'<span class="book-cost"><span class="credit-coin">C</span>'+book.cost+' créditos</span>')+'<span class="book-open">'+icon(isOwned?'i-book':'i-arrow-right')+'</span></span></span></button>';
+    return '<button class="book-card '+(isOwned?'is-owned ':'')+(!book.available?'is-coming':'')+'" data-book="'+book.id+'"><span class="book-card__cover"><img src="'+book.cover+'" alt="Portada de '+esc(book.title)+'" loading="lazy"><span class="book-badge">'+status+'</span></span><span class="book-card__body"><span class="book-card__tag">'+esc(book.area)+'</span><h3>'+esc(book.title)+'</h3><p>'+esc(book.desc)+'</p><span class="book-card__foot">'+(!book.available?'<span>En preparación</span>':isOwned?'<span class="book-cost">'+icon('i-check-circle')+'Canjeado</span>':'<span class="book-cost"><span class="credit-coin">C</span>'+book.cost+' créditos</span>')+'<span class="book-open">'+icon(isOwned?'i-book':'i-arrow-right')+'</span></span></span></button>';
   }
   function renderDetail(id){
     var book=books.find(function(b){return b.id===id;}); if(!book)return renderLibrary();
