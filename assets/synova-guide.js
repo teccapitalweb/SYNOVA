@@ -208,7 +208,7 @@
     waiting = value;
     send.disabled = value;
     renderMessages();
-    if (value) setMotion('think', 12000);
+    if (value) setMotion('think', 16000);
   }
 
   function findConcept(value) {
@@ -289,7 +289,9 @@
   async function askMedlinePlus(value) {
     setWaiting(true);
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 9000);
+    // Railway puede necesitar unos segundos extra al despertar; el servidor
+    // conserva su propio límite de 8 s para la consulta a MedlinePlus.
+    const timeoutId = window.setTimeout(() => controller.abort(), 15000);
     try {
       const response = await fetch(`${config.apiBase}/api/assistant/health-topic`, {
         method:'POST',
