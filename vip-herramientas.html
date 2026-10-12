@@ -373,10 +373,11 @@ async function resolverMembresia(uid){
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 6000);
-    const r = await fetch(`${WEBHOOK_URL}/membership/${uid}`, { signal: ctrl.signal });
+    const token = auth.currentUser ? await auth.currentUser.getIdToken() : '';
+    const r = await fetch(`${WEBHOOK_URL}/membership/me`, { signal: ctrl.signal, headers:token ? { 'Authorization':'Bearer ' + token } : {} });
     clearTimeout(t);
     if (r.ok) membership = await r.json();
-  } catch (e) { console.warn('[SYNOVA] webhook /membership no respondió, fallback Firestore:', e.message); }
+  } catch (e) { console.warn('[SYNOVA] webhook /membership/me no respondió, fallback Firestore:', e.message); }
   const snap = await getDoc(doc(db, 'miembros', uid));
   const d = snap.exists() ? snap.data() : {};
   if (!membership) {
@@ -407,7 +408,7 @@ onAuthStateChanged(auth, async (user) => {
   };
   document.getElementById('avatar-circle').textContent = window.UserState.iniciales;
   document.getElementById('avatar-name').textContent = window.UserState.nombre;
-  document.getElementById('avatar-plan').textContent = isAdmin ? 'ADMIN' : (modo === 'vip' ? (plan === 'anual' ? 'VIP ANUAL' : 'VIP MENSUAL') : 'SIN PLAN');
+  document.getElementById('avatar-plan').textContent = isAdmin ? 'ADMIN' : (membership?.accessType === 'trial' ? 'VIP · PRUEBA' : (modo === 'vip' ? (plan === 'anual' ? 'VIP ANUAL' : 'VIP MENSUAL') : 'SIN PLAN'));
   document.getElementById('loader').style.display = 'none';
   document.body.style.visibility = 'visible';
   window.dispatchEvent(new CustomEvent('synova:ready'));

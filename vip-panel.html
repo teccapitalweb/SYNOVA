@@ -1012,6 +1012,25 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .sub-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:14px;color:var(--text-3);font-size:13px}
 .sub-loading__spin{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--primary);animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.trial-offer{max-width:760px;margin:0 auto 18px;padding:1px;border-radius:20px;background:linear-gradient(135deg,#1ecdc1,#1c6fb0 55%,#7c5cff);box-shadow:0 18px 50px rgba(23,120,166,.18)}
+.trial-offer__inner{border-radius:19px;background:linear-gradient(145deg,color-mix(in srgb,var(--surface) 96%,#0f8f93),var(--surface));padding:24px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center}
+.trial-offer__icon{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;background:linear-gradient(135deg,#1ecdc1,#1c6fb0);color:#fff;box-shadow:0 10px 28px rgba(30,205,193,.25)}
+.trial-offer__icon .ic{width:27px;height:27px}
+.trial-offer__eyebrow{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:800;letter-spacing:1.35px;text-transform:uppercase;color:var(--primary);margin-bottom:5px}
+.trial-offer__title{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.35px;line-height:1.2}
+.trial-offer__copy{font-size:12.5px;color:var(--text-2);line-height:1.55;margin-top:5px;max-width:460px}
+.trial-active-card{background:linear-gradient(135deg,#0c6f7a,#194d83 64%,#273c78);color:#fff;border-radius:22px;padding:28px;margin-bottom:15px;position:relative;overflow:hidden;box-shadow:0 18px 45px rgba(9,67,100,.28)}
+.trial-active-card::after{content:"";position:absolute;width:240px;height:240px;border:1px solid rgba(255,255,255,.13);border-radius:50%;right:-85px;top:-115px;box-shadow:0 0 0 38px rgba(255,255,255,.035),0 0 0 76px rgba(255,255,255,.025)}
+.trial-active-card__top{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.trial-active-card__tag{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#8ff4eb}
+.trial-active-card h2{font-size:27px;letter-spacing:-.7px;margin:7px 0 8px}
+.trial-active-card p{font-size:13px;line-height:1.6;color:rgba(255,255,255,.8);max-width:520px}
+.trial-countdown{min-width:230px;background:rgba(4,21,38,.3);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:15px 18px;text-align:center;backdrop-filter:blur(8px)}
+.trial-countdown__value{font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:800;letter-spacing:.6px;font-variant-numeric:tabular-nums}
+.trial-countdown__label{font-size:9px;letter-spacing:1.25px;text-transform:uppercase;margin-top:5px;color:rgba(255,255,255,.7)}
+.trial-active-card__note{position:relative;z-index:1;margin-top:20px;padding-top:15px;border-top:1px solid rgba(255,255,255,.16);font-size:11.5px;color:rgba(255,255,255,.78)}
+@media(max-width:720px){.trial-offer__inner{grid-template-columns:auto 1fr}.trial-offer__inner .btn{grid-column:1/-1;width:100%}.trial-active-card{padding:22px}.trial-countdown{width:100%}.trial-active-card h2{font-size:23px}}
+@media(max-width:420px){.trial-offer__inner{grid-template-columns:1fr;text-align:center}.trial-offer__icon{margin:auto}.trial-offer__inner .btn{grid-column:auto}.trial-active-card{padding:20px 17px}.trial-countdown__value{font-size:22px}}
 .plan-card{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-deep) 100%);color:#fff;border-radius:20px;padding:26px 28px;position:relative;overflow:hidden;margin-bottom:14px;box-shadow:0 14px 40px var(--primary-glow)}
 .plan-card::before{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.08) 1px,transparent 1px);background-size:36px 36px;-webkit-mask-image:radial-gradient(ellipse at top right,#000 0%,transparent 75%);mask-image:radial-gradient(ellipse at top right,#000 0%,transparent 75%);pointer-events:none}
 .plan-card__header{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1;flex-wrap:wrap;gap:14px}
@@ -1902,10 +1921,15 @@ async function resolverMembresia(uid){
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 6000);
-    const r = await fetch(`${WEBHOOK_URL}/membership/${uid}`, { signal: ctrl.signal });
+    const current = auth.currentUser;
+    const token = current ? await current.getIdToken() : '';
+    const r = await fetch(`${WEBHOOK_URL}/membership/me`, {
+      signal: ctrl.signal,
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+    });
     clearTimeout(t);
     if (r.ok) membership = await r.json();
-  } catch (e) { console.warn('[SYNOVA] webhook /membership no respondió, usando fallback Firestore:', e.message); }
+  } catch (e) { console.warn('[SYNOVA] webhook /membership/me no respondió, usando fallback Firestore:', e.message); }
 
   const snap = await getDoc(doc(db, 'miembros', uid));
   const d = snap.exists() ? snap.data() : {};
@@ -1918,7 +1942,7 @@ async function resolverMembresia(uid){
           : (d.expiraEn || d.fechaFinAcceso || d.fechaProximaRenovacion || null));
     const expDate = exp ? (exp.toDate ? exp.toDate() : new Date(exp)) : null;
     const vigente = (d.activa === true || d.activo === true) && (!expDate || expDate.getTime() > Date.now());
-    membership = { activo: vigente, activa: vigente, plan: d.plan || null, estado: d.estado || null, proximaRenovacion: exp ? (expDate ? expDate.toISOString() : null) : null };
+    membership = { activo: vigente, activa: vigente, plan: d.plan || null, estado: d.estado || null, accessType:vigente ? 'paid' : 'free', trial:{ state:'none', active:false, canActivate:false }, proximaRenovacion: exp ? (expDate ? expDate.toISOString() : null) : null };
   }
   return {
     membership,
@@ -1930,12 +1954,12 @@ async function resolverMembresia(uid){
 
 function hidratarUI(S){
   document.getElementById('avatar-circle').innerHTML = avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`);
-  const cuentaPlan = S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? (S.plan === 'anual' ? 'VIP anual' : 'VIP mensual') : 'Sin membresía');
+  const cuentaPlan = S.isAdmin ? 'Administrador' : (S.isTrial ? 'VIP · prueba gratuita' : (S.modo === 'vip' ? (S.plan === 'anual' ? 'VIP anual' : 'VIP mensual') : 'Sin membresía'));
   ['sidebar-member-avatar','drawer-member-avatar'].forEach(id => { const el=document.getElementById(id); if(el)el.innerHTML=avatarHtml(S.foto,S.iniciales,`Foto de ${S.nombre}`); });
   ['sidebar-member-name','drawer-member-name'].forEach(id => { const el=document.getElementById(id); if(el)el.textContent=S.nombre; });
   ['sidebar-member-plan','drawer-member-plan'].forEach(id => { const el=document.getElementById(id); if(el)el.textContent=cuentaPlan; });
   const upgrade=document.getElementById('sidebar-upgrade'); if(upgrade)upgrade.hidden=S.isAdmin||S.modo==='vip';
-  const planTxt = S.isAdmin ? 'Administrador' : (S.modo === 'vip' ? ('VIP ' + (S.plan === 'anual' ? 'Anual' : 'Mensual')) : 'Sin membresía');
+  const planTxt = S.isAdmin ? 'Administrador' : (S.isTrial ? 'VIP · prueba' : (S.modo === 'vip' ? ('VIP ' + (S.plan === 'anual' ? 'Anual' : 'Mensual')) : 'Sin membresía'));
   const brandPlan=document.getElementById('brand-plan-badge'); if(brandPlan)brandPlan.textContent=planTxt;
   const drawerPlan=document.getElementById('drawer-plan-badge'); if(drawerPlan)drawerPlan.textContent=planTxt;
   document.getElementById('nav-badge-cursos').textContent = '';
@@ -1944,11 +1968,15 @@ function hidratarUI(S){
 }
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = 'vip-auth.html'; return; }
+  if (!user) {
+    const next = 'vip-panel.html' + location.search + location.hash;
+    window.location.href = 'vip-auth.html?next=' + encodeURIComponent(next);
+    return;
+  }
   const email = (user.email || '').toLowerCase();
   const isAdmin = ADMINS.includes(email);
 
-  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaMembresia = null, notifPendiente = null, datosMiembro = {};
+  let modo = 'sin-membresia', plan = null, membership = null, cancelacionProgramada = false, fechaFinAcceso = null, fechaMembresia = null, notifPendiente = null, datosMiembro = {}, trialActivatedNow = false;
 
   if (isAdmin) {
     modo = 'vip'; plan = 'admin'; membership = { activo: true, activa: true, plan: 'admin' };
@@ -1957,7 +1985,28 @@ onAuthStateChanged(auth, async (user) => {
       datosMiembro = adminSnap.exists() ? adminSnap.data() : {};
     } catch (e) { datosMiembro = {}; }
   } else {
-    const r = await resolverMembresia(user.uid);
+    let r = await resolverMembresia(user.uid);
+    const bootParams = new URLSearchParams(location.search);
+    if (bootParams.get('trial') === 'activate') {
+      try {
+        const token = await user.getIdToken();
+        const activation = await fetch(`${WEBHOOK_URL}/trial/activate`, {
+          method:'POST',
+          headers:{ 'Authorization':`Bearer ${token}`, 'Content-Type':'application/json' },
+          body:'{}'
+        });
+        const activationData = await activation.json().catch(() => ({}));
+        if (!activation.ok) throw new Error(activationData.error || 'No se pudo activar la prueba');
+        trialActivatedNow = true;
+        r = await resolverMembresia(user.uid);
+      } catch (error) {
+        window.__trialActivationError = error.message;
+      } finally {
+        bootParams.delete('trial');
+        const clean = location.pathname + (bootParams.toString() ? '?' + bootParams.toString() : '') + location.hash;
+        history.replaceState({}, '', clean);
+      }
+    }
     membership = r.membership;
     cancelacionProgramada = r.cancelacionProgramada;
     fechaFinAcceso = r.fechaFinAcceso;
@@ -1989,7 +2038,11 @@ onAuthStateChanged(auth, async (user) => {
     ciudad: datosMiembro.ciudad || '',
     perfilCompleto: datosMiembro.perfilCompleto === true,
     fichaInicialVista: datosMiembro.fichaInicialVista === true,
-    isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince
+    isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince,
+    isTrial:membership?.accessType === 'trial',
+    trial:membership?.trial || { state:'none', active:false, canActivate:false },
+    trialEndsAt:membership?.trialEndsAt || membership?.trial?.expiresAt || null,
+    serverClockOffset:membership?.serverNow ? (new Date(membership.serverNow).getTime() - Date.now()) : 0
   };
 
   /* Conserva la identidad de Google en Firestore para poder reutilizarla
@@ -2011,7 +2064,7 @@ onAuthStateChanged(auth, async (user) => {
          de facturación. El estatus VIP se refresca en cada sesión. */
       const tarjetaRef = doc(db, 'directorio', user.uid);
       const tarjetaSnap = await getDoc(tarjetaRef);
-      const esVipActual = (modo === 'vip' || isAdmin);
+      const esVipActual = ((modo === 'vip' && membership?.accessType !== 'trial') || isAdmin);
       if (!tarjetaSnap.exists()) {
         await setDoc(tarjetaRef, {
           uid: user.uid, nombre: nombreCuenta,
@@ -2064,6 +2117,8 @@ onAuthStateChanged(auth, async (user) => {
   const params = new URLSearchParams(location.search);
   const seccionInicial = params.get('seccion') || (params.get('checkout') === 'success' ? 'suscripcion' : 'inicio');
   navigateTo(seccionInicial);
+  if (trialActivatedNow) setTimeout(() => Toast.success('¡Prueba VIP activada!', 'Tienes 72 horas de acceso completo. Tu progreso quedará guardado.'), 450);
+  if (window.__trialActivationError) setTimeout(() => Toast.error('No pudimos activar la prueba', window.__trialActivationError), 450);
   setTimeout(() => { window.__mostrarFichaInicialSynova && window.__mostrarFichaInicialSynova(); }, 320);
 
   if (params.get('checkout') === 'success') {
@@ -4810,9 +4865,15 @@ function renderSuscripcionAdmin(){
 
 async function renderSuscripcionActivar(){
   const precios = await leerPrecios();
+  const S = window.UserState || {};
+  const trialOffer = S.trial?.canActivate ? `<section class="trial-offer"><div class="trial-offer__inner">
+    <div class="trial-offer__icon"><svg class="ic"><use href="#i-crown"/></svg></div>
+    <div><div class="trial-offer__eyebrow">Tu regalo está disponible</div><div class="trial-offer__title">Prueba SYNOVA VIP durante 3 días</div><div class="trial-offer__copy">Acceso completo durante 72 horas. Sin tarjeta y sin cobro automático; el reloj comienza cuando lo activas.</div></div>
+    <button class="btn btn--accent" id="btn-activate-vip-trial" type="button">Activar gratis</button>
+  </div></section>` : '';
   document.getElementById('content').innerHTML =
     secHero('Activa tu acceso', 'Suscripción', 'Estás a un paso de acceder a todo el contenido de SYNOVA VIP. Elige tu plan y completa tu suscripción de forma segura con Stripe.') +
-    `<div class="plan-picker" id="plan-picker">
+    trialOffer + `<div class="plan-picker" id="plan-picker">
       <button class="plan-picker__card is-active" data-plan="mensual" type="button">
         <div><div class="plan-picker__name">VIP Mensual</div><div class="plan-picker__sub">Cancela cuando quieras</div></div>
         <div style="text-align:right"><div class="plan-picker__price">${fmtMoney(precios.mes)}</div><div class="plan-picker__price-sub">MXN/mes</div></div>
@@ -4824,6 +4885,8 @@ async function renderSuscripcionActivar(){
     </div>
     <div id="sub-checkout-mount"><div class="sub-loading"><div class="sub-loading__spin"></div><div>Preparando tu plan…</div></div></div>
     <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);margin-top:16px;text-align:center">Pago seguro procesado por Stripe · precio vigente al momento del pago</p>`;
+
+  document.getElementById('btn-activate-vip-trial')?.addEventListener('click', activarPruebaVip);
 
   let selectedPlan = 'mensual';
   document.querySelectorAll('#plan-picker .plan-picker__card').forEach(btn => {
@@ -4868,6 +4931,7 @@ async function montarStripeCheckout(plan){
 
 function renderSuscripcionVIP(){
   const S = window.UserState;
+  if (S.isTrial) return renderSuscripcionPrueba();
   const prox = S.membership?.proximaRenovacion ? fmtDateLong(new Date(S.membership.proximaRenovacion)) : '—';
   document.getElementById('content').innerHTML =
     secHero('Tu plan', 'Suscripción', 'Detalles de tu membresía SYNOVA VIP y accesos rápidos para gestionarla.') +
@@ -4910,6 +4974,77 @@ function renderSuscripcionVIP(){
   document.getElementById('btn-reactivar-sub')?.addEventListener('click', reactivarSuscripcion);
 }
 
+async function activarPruebaVip(){
+  const button = document.getElementById('btn-activate-vip-trial');
+  if (button) { button.disabled = true; button.textContent = 'Activando…'; }
+  try {
+    const user = window.__auth.currentUser;
+    if (!user) throw new Error('Inicia sesión para activar tu prueba.');
+    const token = await user.getIdToken();
+    const response = await fetch(window.__WEBHOOK_URL + '/trial/activate', {
+      method:'POST', headers:{ 'Authorization':'Bearer ' + token, 'Content-Type':'application/json' }, body:'{}'
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'No se pudo activar la prueba');
+    const refreshed = await resolverMembresia(user.uid);
+    const S = window.UserState;
+    S.membership = refreshed.membership;
+    S.modo = 'vip'; S.plan = 'trial'; S.isTrial = true;
+    S.trial = refreshed.membership.trial || data;
+    S.trialEndsAt = refreshed.membership.trialEndsAt || data.expiresAt;
+    S.serverClockOffset = refreshed.membership.serverNow ? new Date(refreshed.membership.serverNow).getTime() - Date.now() : 0;
+    hidratarUI(S);
+    Toast.success('¡Prueba VIP activada!', 'Disfruta 72 horas de acceso completo.');
+    renderSuscripcionPrueba();
+  } catch (error) {
+    Toast.error('No pudimos activar la prueba', error.message);
+    if (button) { button.disabled = false; button.textContent = 'Activar gratis'; }
+  }
+}
+
+function renderSuscripcionPrueba(){
+  const S = window.UserState;
+  if (window.__trialCountdownTimer) { clearInterval(window.__trialCountdownTimer); window.__trialCountdownTimer = null; }
+  document.getElementById('content').innerHTML =
+    secHero('Acceso de bienvenida', 'Prueba VIP', 'Explora la experiencia completa de SYNOVA durante tu periodo de cortesía.') +
+    `<section class="trial-active-card">
+      <div class="trial-active-card__top">
+        <div><div class="trial-active-card__tag">Acceso VIP activo · sin tarjeta</div><h2>Tus 3 días VIP están en curso</h2><p>Tienes acceso completo a cursos, herramientas clínicas, materiales, retos y comunidad. Todo tu avance queda guardado en tu cuenta.</p></div>
+        <div class="trial-countdown"><div class="trial-countdown__value" id="trial-countdown-value">--:--:--</div><div class="trial-countdown__label">Tiempo restante</div></div>
+      </div>
+      <div class="trial-active-card__note">No se generará ningún cobro automático. Al terminar podrás conservar tu cuenta y contratar VIP sólo si tú lo decides.</div>
+    </section>
+    <div class="perfil-grid">
+      <div class="perfil-card"><div class="perfil-card__title">Incluido ahora</div><div style="font-size:13px;color:var(--text-2);line-height:1.9">✓ Cursos y clases VIP<br>✓ Herramientas y materiales clínicos<br>✓ Retos, créditos y comunidad<br>✓ Progreso sincronizado entre dispositivos</div></div>
+      <div class="perfil-card"><div class="perfil-card__title">Después de la prueba</div><div style="padding:3px 0 14px;font-size:13px;color:var(--text-2);line-height:1.55">Tu progreso no se borra. Puedes elegir un plan para continuar con acceso completo.</div><button class="btn btn--ghost btn--block" id="btn-see-paid-plans">Ver planes disponibles</button></div>
+    </div>`;
+  document.getElementById('btn-see-paid-plans')?.addEventListener('click', async () => {
+    S.isTrial = false; S.modo = 'sin-membresia';
+    await renderSuscripcionActivar();
+    S.isTrial = true; S.modo = 'vip';
+  });
+  const update = async () => {
+    const el = document.getElementById('trial-countdown-value');
+    if (!el) { clearInterval(window.__trialCountdownTimer); return; }
+    const end = new Date(S.trialEndsAt || S.trial?.expiresAt || 0).getTime();
+    const remaining = Math.max(0, end - (Date.now() + Number(S.serverClockOffset || 0)));
+    const total = Math.floor(remaining / 1000);
+    const days = Math.floor(total / 86400), hours = Math.floor((total % 86400) / 3600), mins = Math.floor((total % 3600) / 60), secs = total % 60;
+    el.textContent = (days ? days + 'd ' : '') + [hours, mins, secs].map(n => String(n).padStart(2, '0')).join(':');
+    if (total <= 0) {
+      clearInterval(window.__trialCountdownTimer); window.__trialCountdownTimer = null;
+      try {
+        const refreshed = await resolverMembresia(S.uid);
+        S.membership = refreshed.membership; S.isTrial = false; S.modo = 'sin-membresia'; S.plan = null;
+        S.trial = refreshed.membership.trial || { state:'expired' }; hidratarUI(S); renderSuscripcionActivar();
+        Toast.info('Tu prueba VIP terminó', 'Tu progreso sigue guardado. Puedes continuar cuando actives un plan.');
+      } catch (_) { location.reload(); }
+    }
+  };
+  update();
+  window.__trialCountdownTimer = setInterval(update, 1000);
+}
+
 function confirmarCancelacion(){
   Modal.open({ id: 'confirmar-cancelacion', title: '¿Cancelar tu membresía?', icon: 'i-alert-circle', size: 'sm',
     body: '<p style="font-size:13.5px;color:var(--text-2);line-height:1.6">Perderás acceso a los cursos y a la comunidad VIP al final de tu periodo actual. Puedes reactivar en cualquier momento antes de que expire.</p>',
@@ -4920,7 +5055,8 @@ window.cancelarSuscripcion = async function(){
   const S = window.UserState;
   Modal.close('confirmar-cancelacion');
   try {
-    const r = await fetch(window.__WEBHOOK_URL + '/stripe/cancel-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uid: S.uid, email: S.email }) });
+    const token = await window.__auth.currentUser.getIdToken();
+    const r = await fetch(window.__WEBHOOK_URL + '/stripe/cancel-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization':'Bearer ' + token }, body: '{}' });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
     S.cancelacionProgramada = true; S.fechaFinAcceso = data.finAcceso || data.fechaFinAcceso || null;
@@ -4932,7 +5068,8 @@ window.cancelarSuscripcion = async function(){
 async function reactivarSuscripcion(){
   const S = window.UserState;
   try {
-    const r = await fetch(window.__WEBHOOK_URL + '/stripe/reactivate-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uid: S.uid, email: S.email }) });
+    const token = await window.__auth.currentUser.getIdToken();
+    const r = await fetch(window.__WEBHOOK_URL + '/stripe/reactivate-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization':'Bearer ' + token }, body: '{}' });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
     S.cancelacionProgramada = false;
@@ -4944,7 +5081,8 @@ async function reactivarSuscripcion(){
 async function abrirPortalFacturacion(){
   const S = window.UserState;
   try {
-    const r = await fetch(window.__WEBHOOK_URL + '/stripe/create-billing-portal', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uid: S.uid, email: S.email, returnUrl: location.href }) });
+    const token = await window.__auth.currentUser.getIdToken();
+    const r = await fetch(window.__WEBHOOK_URL + '/stripe/create-billing-portal', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization':'Bearer ' + token }, body: JSON.stringify({ returnUrl: location.href }) });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
     window.location.href = data.url;
@@ -7014,7 +7152,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="assets/synova-materials.js?v=3"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
 <script src="assets/onboarding-tour.js?v=3"></script>
-<script src="assets/synova-analytics.js?v=1"></script>
+<script src="assets/synova-analytics.js?v=2"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({
   namespace: 'synova',

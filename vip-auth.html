@@ -654,6 +654,18 @@ const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence);
 window.__synAuthBooted = true;
 
+function safeNextPage(){
+  const raw = new URLSearchParams(location.search).get('next') || '';
+  if (!raw || raw.includes('\\') || raw.startsWith('//')) return 'vip-panel.html';
+  try {
+    const parsed = new URL(raw, location.href);
+    if (parsed.origin !== location.origin || !/\/vip-panel\.html$/i.test(parsed.pathname)) return 'vip-panel.html';
+    return parsed.pathname.split('/').pop() + parsed.search + parsed.hash;
+  } catch (_) { return 'vip-panel.html'; }
+}
+
+function destinationFor(isAdmin){ return isAdmin ? 'vip-admin.html' : safeNextPage(); }
+
 async function ensureMiembroDoc(user, displayName, origen) {
   if (!user || !user.uid) return { ok: false, reason: 'no-user' };
   try {
@@ -695,7 +707,7 @@ onAuthStateChanged(auth, async (user) => {
     await ensureMiembroDoc(user, user.displayName, 'login-web');
     try { localStorage.setItem('synova_last_user', JSON.stringify({ email:user.email||'', nombre:user.displayName||'' })); } catch(e){}
     const isAdmin = ADMINS.includes((user.email || "").toLowerCase());
-    window.location.href = isAdmin ? "vip-admin.html" : "vip-panel.html";
+    window.location.href = destinationFor(isAdmin);
   } else {
     revealAuthShell();
   }
@@ -736,7 +748,7 @@ document.getElementById('btn-login').addEventListener('click', async () => {
     await signInWithEmailAndPassword(auth, email, pass);
     const isAdmin = ADMINS.includes(email);
     showAlert('success', '¡Bienvenido!', 'Redirigiendo…');
-    setTimeout(() => { window.location.href = isAdmin ? 'vip-admin.html' : 'vip-panel.html'; }, 600);
+    setTimeout(() => { window.location.href = destinationFor(isAdmin); }, 600);
   } catch (e) {
     setLoading(btn, false, 'Iniciar sesión');
     showAlert('error', 'No pudimos iniciar sesión', translateError(e.code));
@@ -769,12 +781,12 @@ document.getElementById('btn-register').addEventListener('click', async () => {
         showAlert('error', '⚠️ Cuenta creada · advertencia',
           `Tu cuenta se creó pero hubo un problema al guardar tu perfil (${motivo}). Continúa al panel.`);
       }
-      setTimeout(() => { window.location.href = isAdmin ? 'vip-admin.html' : 'vip-panel.html'; }, 4500);
+      setTimeout(() => { window.location.href = destinationFor(isAdmin); }, 4500);
       return;
     }
     showAlert('success', '¡Cuenta creada!',
       isAdmin ? 'Redirigiendo al panel admin…' : '✅ Perfil guardado · entrando a tu panel gratuito…');
-    setTimeout(() => { window.location.href = isAdmin ? 'vip-admin.html' : 'vip-panel.html'; }, 900);
+    setTimeout(() => { window.location.href = destinationFor(isAdmin); }, 900);
   } catch (e) {
     setLoading(btn, false, 'Registrarme gratis');
     showAlert('error', 'No pudimos crear tu cuenta', translateError(e.code));
