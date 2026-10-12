@@ -16,13 +16,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/onboarding-tour.css?v=3">
+<link rel="stylesheet" href="assets/onboarding-tour.css?v=4">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=17">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=7">
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=3">
 <link rel="stylesheet" href="assets/synova-certificates-credits.css?v=4">
 <link rel="stylesheet" href="assets/synova-arcade.css?v=3">
 <link rel="stylesheet" href="assets/synova-core-games.css?v=1">
+<script src="assets/synova-experience-queue.js?v=1"></script>
 
 <style>
 /* SYNOVA México · Panel VIP · layout de 3 columnas (sidebar + contenido + panel de actividad) */
@@ -2270,8 +2271,22 @@ window.__signOut = async function(){
 // ═══════════════════════════════════════════════════════════════
 window.__showWelcomeSplash = function(opts) {
   opts = opts || {};
+  if (!opts.__fromExperienceQueue && window.SynovaExperienceQueue) {
+    const queuedOpts = Object.assign({}, opts, { __fromExperienceQueue:true });
+    window.SynovaExperienceQueue.request({
+      key:'welcome-splash',
+      priority:90,
+      open:function(done){ queuedOpts.__experienceDone=done; window.__showWelcomeSplash(queuedOpts); }
+    });
+    return;
+  }
+  const experienceDone = typeof opts.__experienceDone === 'function' ? opts.__experienceDone : null;
   if (document.getElementById('synova-ficha-inicial')) {
-    window.__pendingWelcomeSplash = opts;
+    const pendingOpts = Object.assign({}, opts);
+    delete pendingOpts.__fromExperienceQueue;
+    delete pendingOpts.__experienceDone;
+    window.__pendingWelcomeSplash = pendingOpts;
+    if (experienceDone) experienceDone();
     return;
   }
   const S = window.UserState || {};
@@ -2350,6 +2365,7 @@ window.__showWelcomeSplash = function(opts) {
   if (splash) splash.remove();
   splash = document.createElement('div');
   splash.id = 'splash-bienvenida';
+  splash.setAttribute('data-synova-experience', 'welcome-splash');
   splash.innerHTML = `
     <div class="splash-bnv__overlay"></div>
     <div class="splash-bnv__box splash-film">
@@ -2439,7 +2455,10 @@ window.__showWelcomeSplash = function(opts) {
     if (autoCierre) clearTimeout(autoCierre);
     if (!splash || !splash.parentNode) return; // evita doble cierre (auto + clic)
     splash.style.animation = 'bnvFadeOut .3s ease forwards';
-    setTimeout(() => { if (splash && splash.parentNode) splash.remove(); }, 300);
+    setTimeout(() => {
+      if (splash && splash.parentNode) splash.remove();
+      if (experienceDone) experienceDone();
+    }, 300);
   }
 
   nextBtn.addEventListener('click', () => goTo(cur+1));
@@ -6007,6 +6026,7 @@ function mountNutricion(c){
 
   function diasMembresia(){
     if (PREVIEW_DIAS !== null && !isNaN(PREVIEW_DIAS)) return PREVIEW_DIAS;
+    if (window.UserState && window.UserState.isTrial) return Number.POSITIVE_INFINITY;
     const ms = window.UserState && window.UserState.memberSince;
     if (!ms) return 0; // sin fecha verificable → empieza por el primer curso
     const t = new Date(ms).getTime();
@@ -6017,7 +6037,12 @@ function mountNutricion(c){
   function cursoDesbloqueado(c){
     if (esAdminReal()) return true;
     if (c && c.marcarProximamente === true) return false;
-    if (!esVip()) return true;
+    if (!esVip()) {
+      if (!cursoGratisEstado.cargado || cursoGratisEstado.error) return false;
+      if (cursoGratisPendiente()) return cursoPuedeSerGratis(c);
+      const elegido = cursoGratisElegido();
+      return !!elegido && String(c?.id) === String(elegido.id);
+    }
     return diasMembresia() >= unlockDay(c);
   }
   function diasRestantes(c){ return Math.max(0, unlockDay(c) - diasMembresia()); }
@@ -6044,8 +6069,7 @@ function mountNutricion(c){
   function cursoGratisElegido(){ return (window.__cursosCache||[]).find(c=>cursoPuedeSerGratis(c)&&coleccionCurso(c)===cursoGratisEstado.elegido) || null; }
   function primerCursoGratisId(){
     const elegido=cursoGratisElegido(); if(elegido)return String(elegido.id);
-    if(window.UserState?.uid && cursoGratisEstado.cargado && !cursoGratisEstado.error)return '';
-    const primero=(window.__cursosCache||[]).find(cursoPuedeSerGratis);return primero?String(primero.id):'';
+    return '';
   }
   function cursoGratisPendiente(){ return !!window.UserState?.uid && !esVip() && cursoGratisEstado.cargado && cursoGratisEstado.elegible && !cursoGratisEstado.elegido; }
   function esClaseGratisGlobal(cursoId, indexClase){
@@ -6055,7 +6079,7 @@ function mountNutricion(c){
 
   function primerMaterialGratisRef(){
     const elegido=cursoGratisElegido();
-    const cursos = elegido ? [elegido] : (window.__cursosCache || []);
+    const cursos = elegido ? [elegido] : [];
     for (const c of cursos){
       if (c.activo === false || c.publicado === false || c.marcarProximamente === true) continue;
       if (Array.isArray(c.materiales) && c.materiales.length) return { cursoId:String(c.id), index:0 };
@@ -6283,16 +6307,23 @@ function mountNutricion(c){
     if(cursoGratisPendiente())setTimeout(mostrarInvitacionCursoGratis,900);
     return cursoGratisEstado;
   }
-  function mostrarInvitacionCursoGratis(){
-    if(!cursoGratisPendiente()||document.querySelector('.fci'))return;
-    if(document.querySelector('#synova-ficha-inicial,.onboarding-tour-open,.tour-overlay,.modal-backdrop')){setTimeout(mostrarInvitacionCursoGratis,1800);return;}
-    const storage='synova:free-course-intro:'+window.UserState.uid;try{if(sessionStorage.getItem(storage))return;sessionStorage.setItem(storage,'1');}catch(_){}
+  function mostrarInvitacionCursoGratis(experienceDone){
+    if(!experienceDone&&window.SynovaExperienceQueue){
+      window.SynovaExperienceQueue.request({
+        key:'free-course-intro',priority:60,
+        ready:function(){return cursoGratisPendiente();},
+        open:function(done){mostrarInvitacionCursoGratis(done);}
+      });
+      return;
+    }
+    if(!cursoGratisPendiente()||document.querySelector('.fci')){if(experienceDone)experienceDone();return;}
+    const storage='synova:free-course-intro:'+window.UserState.uid;try{if(sessionStorage.getItem(storage)){if(experienceDone)experienceDone();return;}sessionStorage.setItem(storage,'1');}catch(_){}
     const opciones=(window.__cursosCache||[]).filter(cursoPuedeSerGratis),gratis=Math.max(0,...opciones.map(c=>cantidadClasesGratis(c.sesiones.length)));
     const portadas=opciones.slice(0,3).map(c=>'<span class="fci__cover" style="background-image:url(\''+String(portadaDe(c)||'').replace(/'/g,'%27')+'\')"></span>').join('');
-    const nombre=String(window.UserState.nombre||'').split(' ')[0],pop=document.createElement('div');pop.className='fci';
+    const nombre=String(window.UserState.nombre||'').split(' ')[0],pop=document.createElement('div');pop.className='fci';pop.setAttribute('data-synova-experience','free-course-intro');
     pop.innerHTML='<section class="fci__card" role="dialog" aria-modal="true"><button class="fci__close" type="button">×</button><div class="fci__art">'+portadas+'<span class="fci__badge">Regalo de bienvenida</span></div><span class="fci__kicker">Para tu primera visita</span><h2>'+(nombre?escHtml(nombre)+', elige':'Elige')+' tu <em>curso gratis</em></h2><p>Abre gratis las primeras <strong>'+gratis+' clases</strong> del curso que más te interese. Después podrás activar VIP para continuar.</p><ol class="fci__steps"><li><b>1</b>Elige un curso</li><li><b>2</b>Completa sus ejercicios</li><li><b>3</b>Gana créditos</li></ol><div class="fci__actions"><button class="fci__later" type="button">Más tarde</button><button class="fci__cta" type="button">Elegir mi curso gratis →</button></div></section>';
     document.body.appendChild(pop);requestAnimationFrame(()=>pop.classList.add('is-open'));
-    const close=(go)=>{pop.classList.add('is-closing');setTimeout(()=>{pop.remove();if(go){window.navigateTo('cursos');setTimeout(()=>document.querySelector('.free-course-banner')?.scrollIntoView({behavior:'smooth',block:'center'}),350);}},220);};
+    const close=(go)=>{pop.classList.add('is-closing');setTimeout(()=>{pop.remove();if(go){window.navigateTo('cursos');setTimeout(()=>document.querySelector('.free-course-banner')?.scrollIntoView({behavior:'smooth',block:'center'}),350);}if(experienceDone)experienceDone();},220);};
     pop.querySelector('.fci__close').onclick=()=>close(false);pop.querySelector('.fci__later').onclick=()=>close(false);pop.querySelector('.fci__cta').onclick=()=>close(true);
   }
   function confirmarCursoGratis(curso){
@@ -6374,9 +6405,11 @@ function mountNutricion(c){
       if (vip && !desbloqueado){
         if (c.marcarProximamente === true) lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Próximamente</div><div class="drip-lock__d">Te avisaremos cuando este curso esté listo.</div></div>';
         else { const d = diasRestantes(c); lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div><div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div></div>'; }
+      } else if (!vip && !desbloqueado && !eligiendo) {
+        lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-shield-check"/></svg></div><div class="drip-lock__t">Disponible con VIP</div><div class="drip-lock__d">Tu curso gratuito ya quedó fijado a tu cuenta.</div></div>';
       }
       const elegible=eligiendo&&cursoPuedeSerGratis(c);
-      return '<div class="curso-card' + (elegible?' is-free-choice':'') + '" style="--area-color:' + color + '" data-locked="false" data-cid="' + c.id + '" data-ok="' + desbloqueado + '">' +
+      return '<div class="curso-card' + (elegible?' is-free-choice':'') + '" style="--area-color:' + color + '" data-locked="' + (!desbloqueado&&!elegible) + '" data-cid="' + c.id + '" data-ok="' + desbloqueado + '">' +
         '<div class="curso-card__cover"' + cover + '>' + (portadaDe(c) ? '' : iconoParaArea()) + '<div class="curso-card__cover-badge">' + escHtml(c.area || 'SYNOVA') + '</div>'+(elegible?'<span class="curso-card__free-badge">ELÍGELO GRATIS · '+cantidadClasesGratis(nClases)+' CLASES</span>':(!vip&&String(c.id)===primerCursoGratisId()?'<span class="curso-card__free-badge">TU CURSO GRATIS · '+cantidadClasesGratis(nClases)+' CLASES</span>':''))+'</div>' +
         '<div class="curso-card__body"><div class="curso-card__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div>' +
         '<div class="curso-card__desc">' + escHtml(c.descripcion || 'Contenido clínico incluido en tu membresía VIP.') + '</div>' +
@@ -6386,6 +6419,11 @@ function mountNutricion(c){
     grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
       const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
       if(cursoGratisPendiente()&&cursoPuedeSerGratis(c)){confirmarCursoGratis(c);return;}
+      if(card.dataset.ok!=='true'){
+        if(cursoGratisEstado.error) Toast.error('No pudimos verificar tu acceso','Recarga la página antes de abrir un curso.');
+        else window.__showPaywallModal('Tu curso gratuito ya está vinculado a tu cuenta. Activa SYNOVA VIP para abrir otro curso.');
+        return;
+      }
       window.__cursoActualId = String(c.id);
       window.__claseActualIndex = null;
       window.navigateTo('curso');
@@ -6405,6 +6443,12 @@ function mountNutricion(c){
         return;
       }
       const curso = cursos.find(function(c){ return String(c.id) === id; });
+      if (!cursoDesbloqueado(curso)) {
+        document.getElementById('content').innerHTML = '<div class="course-legacy-note"><h2>Este curso requiere membresía VIP</h2><p style="color:var(--text-2);margin:10px 0 20px">Tu curso gratuito está vinculado a tu cuenta y no cambia al recargar la página.</p><button class="btn btn--accent" data-section="cursos">Volver a mis cursos</button></div>';
+        document.getElementById('content').querySelector('[data-section="cursos"]')?.addEventListener('click',function(){window.navigateTo('cursos');});
+        if (!cursoGratisEstado.error) setTimeout(function(){window.__showPaywallModal('Activa SYNOVA VIP para abrir este curso y el resto del catálogo.');},180);
+        return;
+      }
       if (Number.isInteger(claseParam) && claseParam >= 0 && claseParam < ((curso.sesiones || []).length)) {
         window.__claseActualIndex = claseParam;
         abrirClaseEnCurso(id, claseParam);
@@ -6706,7 +6750,7 @@ function mountNutricion(c){
     }, 420);
   }
 
-  function cerrar(omitida){
+  function cerrar(omitida, experienceDone){
     var ficha = document.getElementById('synova-ficha-inicial');
     if (ficha) ficha.remove();
     if (omitida && window.UserState) {
@@ -6714,19 +6758,30 @@ function mountNutricion(c){
       if (window.__marcarFichaInicialVista) window.__marcarFichaInicialVista();
     }
     continuar();
+    if (experienceDone) experienceDone();
   }
 
-  window.__mostrarFichaInicialSynova = function(){
+  window.__mostrarFichaInicialSynova = function(experienceDone){
     var S = window.UserState;
-    if (!S || S.perfilCompleto || S.fichaInicialVista || document.getElementById('synova-ficha-inicial')) return;
+    if (!S || S.perfilCompleto || S.fichaInicialVista) { if(experienceDone)experienceDone(); return; }
+    if (!experienceDone && window.SynovaExperienceQueue) {
+      window.SynovaExperienceQueue.request({
+        key:'profile-card',priority:100,
+        ready:function(){var state=window.UserState;return !!state&&!state.perfilCompleto&&!state.fichaInicialVista;},
+        open:function(done){window.__mostrarFichaInicialSynova(done);}
+      });
+      return;
+    }
+    if (document.getElementById('synova-ficha-inicial')) { if(experienceDone)experienceDone(); return; }
     try {
-      if (localStorage.getItem('synova:ficha:vista:' + S.uid)) return;
-      if (sessionStorage.getItem('synova:ficha:omitida:' + S.uid)) { localStorage.setItem('synova:ficha:vista:' + S.uid,'1'); if(window.__marcarFichaInicialVista)window.__marcarFichaInicialVista(); return; }
+      if (localStorage.getItem('synova:ficha:vista:' + S.uid)) { if(experienceDone)experienceDone(); return; }
+      if (sessionStorage.getItem('synova:ficha:omitida:' + S.uid)) { localStorage.setItem('synova:ficha:vista:' + S.uid,'1'); if(window.__marcarFichaInicialVista)window.__marcarFichaInicialVista(); if(experienceDone)experienceDone(); return; }
     } catch (e) {}
     var foto = window.__avatarHtml ? window.__avatarHtml(S.foto, S.iniciales, 'Foto de ' + S.nombre) : escHtml(S.iniciales || 'SN');
     var ficha = document.createElement('div');
     ficha.className = 'ficha-inicial';
     ficha.id = 'synova-ficha-inicial';
+    ficha.setAttribute('data-synova-experience', 'profile-card');
     ficha.setAttribute('role', 'dialog');
     ficha.setAttribute('aria-modal', 'true');
     ficha.setAttribute('aria-labelledby', 'ficha-inicial-titulo');
@@ -6751,10 +6806,10 @@ function mountNutricion(c){
           '<div class="ficha-inicial__actions"><button class="btn btn--ghost" type="button" id="fi-omitir">Ahora no</button><button class="btn btn--accent" type="submit" id="fi-guardar">Guardar y conocer SYNOVA <svg class="ic"><use href="#i-arrow-right"/></svg></button></div>' +
         '</form></section>';
     document.body.appendChild(ficha);
-    document.getElementById('fi-omitir').addEventListener('click', function(){ cerrar(true); });
-    document.getElementById('fi-cerrar').addEventListener('click', function(){ cerrar(true); });
-    document.getElementById('fi-veil').addEventListener('click', function(){ cerrar(true); });
-    ficha.addEventListener('keydown', function(event){ if (event.key === 'Escape') cerrar(true); });
+    document.getElementById('fi-omitir').addEventListener('click', function(){ cerrar(true, experienceDone); });
+    document.getElementById('fi-cerrar').addEventListener('click', function(){ cerrar(true, experienceDone); });
+    document.getElementById('fi-veil').addEventListener('click', function(){ cerrar(true, experienceDone); });
+    ficha.addEventListener('keydown', function(event){ if (event.key === 'Escape') cerrar(true, experienceDone); });
     document.getElementById('ficha-inicial-form').addEventListener('submit', async function(event){
       event.preventDefault();
       var btn = document.getElementById('fi-guardar');
@@ -6771,7 +6826,7 @@ function mountNutricion(c){
           institucion: document.getElementById('fi-institucion').value,
           ciudad: document.getElementById('fi-ciudad').value
         });
-        cerrar(false);
+        cerrar(false, experienceDone);
         window.celebrarSynova('normal');
         Toast.success('Perfil listo', 'Tu experiencia SYNOVA ya está personalizada.');
       } catch (e) {
@@ -6874,22 +6929,31 @@ function mountNutricion(c){
     var splash = document.querySelector('#splash-bienvenida,#splash-completado,#cancel-success-splash,.modal-backdrop');
     return !!(tour || ficha || splash);
   }
-  function mostrar(intentos){
+  function abrirDesdeCola(done){
+    if (yaInstalada() || fueDescartada()){done();return;}
+    pop.setAttribute('data-synova-experience','install-app');
+    pop.__synovaExperienceDone=done;
+    pop.classList.add('show');
+  }
+  function mostrar(){
     if (yaInstalada() || fueDescartada()) return;
-    if (experienciaOcupada()) {
-      if ((intentos || 0) < 150) setTimeout(function(){ mostrar((intentos || 0) + 1); }, 600);
+    if(window.SynovaExperienceQueue){
+      window.SynovaExperienceQueue.request({key:'install-app',priority:40,open:abrirDesdeCola});
       return;
     }
+    if (experienciaOcupada()){setTimeout(mostrar,600);return;}
     pop.classList.add('show');
   }
   function ocultar(recordar){
     pop.classList.remove('show');
+    pop.removeAttribute('data-synova-experience');
     if (recordar){ try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch(e){} }
+    if(pop.__synovaExperienceDone){var done=pop.__synovaExperienceDone;pop.__synovaExperienceDone=null;done();}
   }
 
   // Las experiencias de primera visita se presentan una por una.
   window.addEventListener('membership-tour:start', function(){ ocultar(false); });
-  window.addEventListener('membership-tour:end', function(){ setTimeout(function(){ mostrar(0); }, 800); });
+  window.addEventListener('membership-tour:end', function(){ setTimeout(mostrar, 800); });
 
   // Android/Chrome/Edge: capturamos el evento y mostramos NUESTRO popup
   window.addEventListener('beforeinstallprompt', function(e){
@@ -7151,7 +7215,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="assets/synova-core-games.js?v=1"></script>
 <script src="assets/synova-materials.js?v=3"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
-<script src="assets/onboarding-tour.js?v=3"></script>
+<script src="assets/onboarding-tour.js?v=4"></script>
 <script src="assets/synova-analytics.js?v=2"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({

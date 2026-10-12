@@ -161,10 +161,24 @@
     return found;
   };
 
-  MembershipTour.prototype.start = function (force) {
-    if (this.active || !this.steps.length || (!force && this.wasSeen())) return;
+  MembershipTour.prototype.start = function (force, queueDone) {
+    var self = this;
+    if (!force && !queueDone && window.SynovaExperienceQueue) {
+      window.SynovaExperienceQueue.request({
+        key: 'onboarding-tour',
+        priority: 80,
+        ready: function () { return self.isReady() && !self.wasSeen(); },
+        open: function (done) { self.start(false, done); }
+      });
+      return;
+    }
+    if (this.active || !this.steps.length || (!force && this.wasSeen())) {
+      if (queueDone) queueDone();
+      return;
+    }
     this.build();
     this.active = true;
+    this.queueDone = queueDone || null;
     window.dispatchEvent(new CustomEvent('membership-tour:start', { detail: { namespace: this.config.namespace || 'membership' } }));
     this.previousFocus = document.activeElement;
     this.root.setAttribute('aria-hidden', 'false');
@@ -297,6 +311,11 @@
     if (this.previousFocus && this.previousFocus.isConnected && typeof this.previousFocus.focus === 'function') this.previousFocus.focus({ preventScroll: true });
     if (completed && typeof this.config.onFinish === 'function') this.config.onFinish();
     window.dispatchEvent(new CustomEvent('membership-tour:end', { detail: { namespace: this.config.namespace || 'membership', completed: !!completed } }));
+    if (this.queueDone) {
+      var done = this.queueDone;
+      this.queueDone = null;
+      done();
+    }
   };
 
   window.MembershipTour = MembershipTour;
