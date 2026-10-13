@@ -2496,21 +2496,22 @@ window.__showWelcomeSplash = function(opts) {
   splash.querySelector('.splash-bnv__close').addEventListener('click', close);
   splash.querySelector('.splash-bnv__overlay').addEventListener('click', close);
   dots.forEach(d => d.addEventListener('click', () => goTo(parseInt(d.dataset.i,10))));
-  let swipeStartX = 0, swipeStartY = 0;
-  stage.addEventListener('touchstart', (event) => {
-    const touch = event.changedTouches && event.changedTouches[0];
-    if (!touch) return;
-    swipeStartX = touch.clientX;
-    swipeStartY = touch.clientY;
-  }, { passive:true });
-  stage.addEventListener('touchend', (event) => {
-    const touch = event.changedTouches && event.changedTouches[0];
-    if (!touch) return;
-    const dx = touch.clientX - swipeStartX;
-    const dy = touch.clientY - swipeStartY;
+  let swipeStartX = 0, swipeStartY = 0, swipePointerId = null;
+  stage.addEventListener('pointerdown', (event) => {
+    swipePointerId = event.pointerId;
+    swipeStartX = event.clientX;
+    swipeStartY = event.clientY;
+    try { stage.setPointerCapture(event.pointerId); } catch (e) {}
+  });
+  stage.addEventListener('pointerup', (event) => {
+    if (swipePointerId !== event.pointerId) return;
+    swipePointerId = null;
+    const dx = event.clientX - swipeStartX;
+    const dy = event.clientY - swipeStartY;
     if (Math.abs(dx) < 46 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
     goTo(cur + (dx < 0 ? 1 : -1));
-  }, { passive:true });
+  });
+  stage.addEventListener('pointercancel', () => { swipePointerId = null; });
 
   goTo(0);
 };
@@ -7285,7 +7286,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="assets/synova-core-games.js?v=1"></script>
 <script src="assets/synova-materials.js?v=3"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
-<script src="assets/onboarding-tour.js?v=6"></script>
+<script src="assets/onboarding-tour.js?v=7"></script>
 <script src="assets/synova-analytics.js?v=2"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({

@@ -121,22 +121,23 @@
     this.backButton.addEventListener('click', this.previous.bind(this));
     this.nextButton.addEventListener('click', this.next.bind(this));
     var self = this;
-    var touchStartX = 0, touchStartY = 0;
-    this.dialog.addEventListener('touchstart', function (event) {
-      var touch = event.changedTouches && event.changedTouches[0];
-      if (!touch) return;
-      touchStartX = touch.clientX;
-      touchStartY = touch.clientY;
-    }, { passive: true });
-    this.dialog.addEventListener('touchend', function (event) {
-      var touch = event.changedTouches && event.changedTouches[0];
-      if (!touch) return;
-      var dx = touch.clientX - touchStartX;
-      var dy = touch.clientY - touchStartY;
+    var swipeStartX = 0, swipeStartY = 0, swipePointerId = null;
+    this.dialog.addEventListener('pointerdown', function (event) {
+      swipePointerId = event.pointerId;
+      swipeStartX = event.clientX;
+      swipeStartY = event.clientY;
+      try { self.dialog.setPointerCapture(event.pointerId); } catch (_) {}
+    });
+    this.dialog.addEventListener('pointerup', function (event) {
+      if (swipePointerId !== event.pointerId) return;
+      swipePointerId = null;
+      var dx = event.clientX - swipeStartX;
+      var dy = event.clientY - swipeStartY;
       if (Math.abs(dx) < 46 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
       if (dx < 0) self.next();
       else self.previous();
-    }, { passive: true });
+    });
+    this.dialog.addEventListener('pointercancel', function () { swipePointerId = null; });
   };
 
   MembershipTour.prototype.isMobile = function () {
