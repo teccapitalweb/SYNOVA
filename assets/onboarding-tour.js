@@ -78,7 +78,7 @@
     clearTimeout(this.autoTimer);
     this.autoTimer = setTimeout(function tick() {
       if (self.active || self.wasSeen()) return;
-      if (self.isReady() && !self.hasBlockingDialog()) {
+      if (self.isReady() && (window.SynovaExperienceQueue || !self.hasBlockingDialog())) {
         self.start(false);
         return;
       }
@@ -120,6 +120,23 @@
     root.querySelector('[data-tour-skip]').addEventListener('click', this.finish.bind(this, true, false));
     this.backButton.addEventListener('click', this.previous.bind(this));
     this.nextButton.addEventListener('click', this.next.bind(this));
+    var self = this;
+    var touchStartX = 0, touchStartY = 0;
+    this.dialog.addEventListener('touchstart', function (event) {
+      var touch = event.changedTouches && event.changedTouches[0];
+      if (!touch) return;
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }, { passive: true });
+    this.dialog.addEventListener('touchend', function (event) {
+      var touch = event.changedTouches && event.changedTouches[0];
+      if (!touch) return;
+      var dx = touch.clientX - touchStartX;
+      var dy = touch.clientY - touchStartY;
+      if (Math.abs(dx) < 46 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
+      if (dx < 0) self.next();
+      else self.previous();
+    }, { passive: true });
   };
 
   MembershipTour.prototype.isMobile = function () {
@@ -176,7 +193,7 @@
     if (!force && !queueDone && window.SynovaExperienceQueue) {
       window.SynovaExperienceQueue.request({
         key: 'onboarding-tour',
-        priority: 80,
+        priority: 100,
         ready: function () { return self.isReady() && !self.wasSeen(); },
         open: function (done) { self.start(false, done); }
       });

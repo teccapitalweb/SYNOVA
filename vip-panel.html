@@ -16,10 +16,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/onboarding-tour.css?v=5">
+<link rel="stylesheet" href="assets/onboarding-tour.css?v=6">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=17">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=7">
-<link rel="stylesheet" href="assets/synova-course-experience.css?v=3">
+<link rel="stylesheet" href="assets/synova-course-experience.css?v=4">
 <link rel="stylesheet" href="assets/synova-certificates-credits.css?v=4">
 <link rel="stylesheet" href="assets/synova-arcade.css?v=3">
 <link rel="stylesheet" href="assets/synova-core-games.css?v=1">
@@ -567,7 +567,7 @@ body::after{
 @keyframes synConfettiFall{0%{opacity:0;transform:translate3d(0,-18px,0) rotate(var(--r))}8%{opacity:1}100%{opacity:0;transform:translate3d(var(--drift),105vh,0) rotate(calc(var(--r) + 720deg))}}
 .ficha-inicial{position:fixed;inset:0;z-index:2147482500;display:grid;place-items:center;padding:20px;font-family:inherit}
 .ficha-inicial__veil{position:absolute;inset:0;background:rgba(5,14,28,.78);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.ficha-inicial__panel{position:relative;width:min(760px,100%);max-height:min(780px,calc(100vh - 40px));overflow:auto;background:var(--surface);border:1px solid color-mix(in srgb,var(--primary) 32%,var(--border));border-radius:28px;box-shadow:0 34px 110px rgba(2,12,26,.5);padding:0;animation:fichaEntrada .48s cubic-bezier(.16,1,.3,1)}
+.ficha-inicial__panel{position:relative;width:min(760px,100%);max-height:min(780px,calc(100dvh - 40px));overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:var(--surface);border:1px solid color-mix(in srgb,var(--primary) 32%,var(--border));border-radius:28px;box-shadow:0 34px 110px rgba(2,12,26,.5);padding:0;animation:fichaEntrada .48s cubic-bezier(.16,1,.3,1)}
 .ficha-inicial__close{position:absolute;z-index:4;top:16px;right:16px;width:38px;height:38px;display:grid;place-items:center;border:1px solid rgba(10,52,92,.12);border-radius:50%;background:rgba(255,255,255,.82);color:#163C60;box-shadow:0 6px 20px rgba(8,43,76,.12);cursor:pointer;transition:transform .16s,background .16s}
 .ficha-inicial__close:hover{transform:scale(1.05);background:#fff}.ficha-inicial__close .ic{width:17px;height:17px}
 .ficha-inicial__head{position:relative;overflow:hidden;padding:30px 32px 26px;background:linear-gradient(135deg,color-mix(in srgb,var(--primary) 17%,var(--surface)),color-mix(in srgb,var(--highlight) 10%,var(--surface)))}
@@ -1254,7 +1254,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
    La caja del splash SIEMPRE es oscura (colores fijos), sin depender del tema día/noche */
 #splash-bienvenida{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;animation:bnvFadeIn .4s ease}
 .splash-bnv__overlay{position:absolute;inset:0;background:rgba(3,7,13,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-.splash-bnv__box{position:relative;width:100%;max-width:600px;background:linear-gradient(160deg,#101A2C,#0B121F);border:1px solid rgba(95,182,224,.28);border-radius:24px;padding:40px 36px 32px;text-align:center;box-shadow:0 36px 100px rgba(0,0,0,.7),0 0 80px color-mix(in srgb,var(--primary) 28%,transparent),inset 0 0 0 1px rgba(255,255,255,.04);animation:bnvPop .65s cubic-bezier(.22,1.4,.36,1)}
+.splash-bnv__box{position:relative;width:100%;max-width:600px;max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:linear-gradient(160deg,#101A2C,#0B121F);border:1px solid rgba(95,182,224,.28);border-radius:24px;padding:40px 36px 32px;text-align:center;box-shadow:0 36px 100px rgba(0,0,0,.7),0 0 80px color-mix(in srgb,var(--primary) 28%,transparent),inset 0 0 0 1px rgba(255,255,255,.04);animation:bnvPop .65s cubic-bezier(.22,1.4,.36,1)}
 .splash-bnv__close{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#A9BBD1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s ease;z-index:2}
 .splash-bnv__close:hover{background:rgba(255,255,255,.06);color:#EAF2FA}
 .splash-bnv__confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:24px}
@@ -1284,7 +1284,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .splash-film{padding-top:34px}
 .splash-film__progress{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.07);border-radius:0;overflow:hidden}
 .splash-film__bar{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--highlight));transition:width .5s cubic-bezier(.4,0,.2,1)}
-.splash-film__stage{min-height:230px;display:flex;align-items:center;justify-content:center}
+.splash-film__stage{min-height:230px;display:flex;align-items:center;justify-content:center;touch-action:pan-y;user-select:none;-webkit-user-select:none}
 .splash-film__slide{width:100%;animation:filmIn .5s cubic-bezier(.22,1,.36,1)}
 @keyframes filmIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 .splash-film__feat{text-align:center;padding:8px 4px}
@@ -2043,6 +2043,9 @@ onAuthStateChanged(auth, async (user) => {
     ciudad: datosMiembro.ciudad || '',
     perfilCompleto: datosMiembro.perfilCompleto === true,
     fichaInicialVista: datosMiembro.fichaInicialVista === true,
+    recorridoInicialVisto: datosMiembro.recorridoInicialVisto === true,
+    cursoGratisIntroVista: datosMiembro.cursoGratisIntroVista === true,
+    bienvenidaVipVista: datosMiembro.bienvenidaVipVista === true,
     isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince,
     isTrial:membership?.accessType === 'trial',
     trial:membership?.trial || { state:'none', active:false, canActivate:false },
@@ -2124,7 +2127,9 @@ onAuthStateChanged(auth, async (user) => {
   navigateTo(seccionInicial);
   if (trialActivatedNow) setTimeout(() => Toast.success('¡Prueba VIP activada!', 'Tienes 72 horas de acceso completo. Tu progreso quedará guardado.'), 450);
   if (window.__trialActivationError) setTimeout(() => Toast.error('No pudimos activar la prueba', window.__trialActivationError), 450);
-  setTimeout(() => { window.__mostrarFichaInicialSynova && window.__mostrarFichaInicialSynova(); }, 320);
+  /* Las experiencias de primera visita se solicitan por orden lógico:
+     bienvenida VIP → recorrido → ficha profesional → curso gratis. */
+  setTimeout(() => { window.__mostrarFichaInicialSynova && window.__mostrarFichaInicialSynova(); }, 2100);
 
   if (params.get('checkout') === 'success') {
     if (window.UserState.modo === 'vip') {
@@ -2263,6 +2268,19 @@ window.__marcarFichaInicialVista = async function(){
   try{await setDoc(doc(db,'miembros',user.uid),{fichaInicialVista:true,fichaInicialVistaAt:serverTimestamp()},{merge:true});}catch(e){}
 };
 
+window.__marcarExperienciaInicialVista = async function(campo){
+  const permitidos = ['recorridoInicialVisto','cursoGratisIntroVista','bienvenidaVipVista'];
+  const user = auth.currentUser;
+  const S = window.UserState;
+  if (!user || !S || !permitidos.includes(campo)) return;
+  S[campo] = true;
+  try { localStorage.setItem('synova:experience:' + campo + ':' + user.uid, '1'); } catch (e) {}
+  const payload = {};
+  payload[campo] = true;
+  payload[campo + 'At'] = serverTimestamp();
+  try { await setDoc(doc(db,'miembros',user.uid),payload,{merge:true}); } catch (e) {}
+};
+
 window.__signOut = async function(){
   try { await signOut(auth); window.location.href = 'vip-auth.html'; }
   catch (e) { Toast.error('No pudimos cerrar sesión', e.message); }
@@ -2275,11 +2293,25 @@ window.__signOut = async function(){
 // ═══════════════════════════════════════════════════════════════
 window.__showWelcomeSplash = function(opts) {
   opts = opts || {};
+  const welcomeState = window.UserState || {};
+  const welcomeStorage = 'synova:experience:bienvenidaVipVista:' + (welcomeState.uid || 'guest');
+  let welcomeSeen = welcomeState.bienvenidaVipVista === true;
+  try { welcomeSeen = welcomeSeen || !!localStorage.getItem(welcomeStorage); } catch (e) {}
+  if (window.history.replaceState) {
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('checkout');
+    cleanUrl.searchParams.delete('session_id');
+    window.history.replaceState({}, '', cleanUrl.toString());
+  }
+  if (!opts.force && welcomeSeen) {
+    if (typeof opts.__experienceDone === 'function') opts.__experienceDone();
+    return;
+  }
   if (!opts.__fromExperienceQueue && window.SynovaExperienceQueue) {
     const queuedOpts = Object.assign({}, opts, { __fromExperienceQueue:true });
     window.SynovaExperienceQueue.request({
       key:'welcome-splash',
-      priority:90,
+      priority:120,
       open:function(done){ queuedOpts.__experienceDone=done; window.__showWelcomeSplash(queuedOpts); }
     });
     return;
@@ -2312,14 +2344,6 @@ window.__showWelcomeSplash = function(opts) {
     cert:   _sv('<circle cx="12" cy="8" r="6"/><path d="M15.5 12.9 17 22l-5-3-5 3 1.5-9.1"/>'),
     comunidad: _sv('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>')
   };
-
-  // Quitar el query param de la URL (para que al recargar no se re-muestre)
-  if (window.history.replaceState) {
-    const url = new URL(window.location.href);
-    url.searchParams.delete('checkout');
-    url.searchParams.delete('session_id');
-    window.history.replaceState({}, '', url.toString());
-  }
 
   // ── Portada según el caso: regalo / anual / mensual ──
   let kicker, titulo, desc;
@@ -2388,6 +2412,8 @@ window.__showWelcomeSplash = function(opts) {
     </div>
   `;
   document.body.appendChild(splash);
+  try { localStorage.setItem(welcomeStorage, '1'); } catch (e) {}
+  if (window.__marcarExperienciaInicialVista) window.__marcarExperienciaInicialVista('bienvenidaVipVista');
 
   const stage   = splash.querySelector('#splash-stage');
   const barEl   = splash.querySelector('.splash-film__bar');
@@ -2470,6 +2496,21 @@ window.__showWelcomeSplash = function(opts) {
   splash.querySelector('.splash-bnv__close').addEventListener('click', close);
   splash.querySelector('.splash-bnv__overlay').addEventListener('click', close);
   dots.forEach(d => d.addEventListener('click', () => goTo(parseInt(d.dataset.i,10))));
+  let swipeStartX = 0, swipeStartY = 0;
+  stage.addEventListener('touchstart', (event) => {
+    const touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+    swipeStartX = touch.clientX;
+    swipeStartY = touch.clientY;
+  }, { passive:true });
+  stage.addEventListener('touchend', (event) => {
+    const touch = event.changedTouches && event.changedTouches[0];
+    if (!touch) return;
+    const dx = touch.clientX - swipeStartX;
+    const dy = touch.clientY - swipeStartY;
+    if (Math.abs(dx) < 46 || Math.abs(dx) <= Math.abs(dy) * 1.15) return;
+    goTo(cur + (dx < 0 ? 1 : -1));
+  }, { passive:true });
 
   goTo(0);
 };
@@ -5869,7 +5910,7 @@ function mountNutricion(c){
 <!-- ══════════════════════ CURSOS · visor embebido + desbloqueo progresivo (6 días) ══════════════════════ -->
 <style>
 /* Portada 16:9 (antes 114px la recortaba) */
-.curso-card__cover{height:auto;aspect-ratio:16/9;background-size:cover;background-position:center}
+.curso-card__cover{height:auto;aspect-ratio:16/9;background-size:cover;background-position:center;background-repeat:no-repeat;background-color:var(--surface-3)}
 .curso-card__cover svg{opacity:.9}
 /* Chip de días para desbloqueo */
 .drip-lock{position:absolute;inset:0;background:color-mix(in srgb,var(--bg-deep) 82%,transparent);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:inherit;z-index:6;text-align:center;padding:14px}
@@ -6321,7 +6362,7 @@ function mountNutricion(c){
       cursoGratisEstado.elegido=data.elegido||null;cursoGratisEstado.elegible=data.elegible===true;cursoGratisEstado.error=false;
     }catch(error){console.warn('[curso gratis]',error.message);cursoGratisEstado.error=true;}
     cursoGratisEstado.cargado=true;asignarOrdenDesbloqueo(window.__cursosCache||[]);
-    if(cursoGratisPendiente())setTimeout(mostrarInvitacionCursoGratis,900);
+    if(cursoGratisPendiente())setTimeout(mostrarInvitacionCursoGratis,2700);
     return cursoGratisEstado;
   }
   function mostrarInvitacionCursoGratis(experienceDone){
@@ -6334,12 +6375,17 @@ function mountNutricion(c){
       return;
     }
     if(!cursoGratisPendiente()||document.querySelector('.fci')){if(experienceDone)experienceDone();return;}
-    const storage='synova:free-course-intro:'+window.UserState.uid;try{if(sessionStorage.getItem(storage)){if(experienceDone)experienceDone();return;}sessionStorage.setItem(storage,'1');}catch(_){}
+    const storage='synova:experience:cursoGratisIntroVista:'+window.UserState.uid;
+    try{if(window.UserState.cursoGratisIntroVista||localStorage.getItem(storage)){if(experienceDone)experienceDone();return;}}catch(_){}
     const opciones=(window.__cursosCache||[]).filter(cursoPuedeSerGratis),gratis=Math.max(0,...opciones.map(c=>cantidadClasesGratis(c.sesiones.length)));
     const portadas=opciones.slice(0,3).map(c=>'<span class="fci__cover" style="background-image:url(\''+String(portadaDe(c)||'').replace(/'/g,'%27')+'\')"></span>').join('');
     const nombre=String(window.UserState.nombre||'').split(' ')[0],pop=document.createElement('div');pop.className='fci';pop.setAttribute('data-synova-experience','free-course-intro');
     pop.innerHTML='<section class="fci__card" role="dialog" aria-modal="true"><button class="fci__close" type="button">×</button><div class="fci__art">'+portadas+'<span class="fci__badge">Regalo de bienvenida</span></div><span class="fci__kicker">Para tu primera visita</span><h2>'+(nombre?escHtml(nombre)+', elige':'Elige')+' tu <em>curso gratis</em></h2><p>Abre gratis las primeras <strong>'+gratis+' clases</strong> del curso que más te interese. Después podrás activar VIP para continuar.</p><ol class="fci__steps"><li><b>1</b>Elige un curso</li><li><b>2</b>Completa sus ejercicios</li><li><b>3</b>Gana créditos</li></ol><div class="fci__actions"><button class="fci__later" type="button">Más tarde</button><button class="fci__cta" type="button">Elegir mi curso gratis →</button></div></section>';
-    document.body.appendChild(pop);requestAnimationFrame(()=>pop.classList.add('is-open'));
+    document.body.appendChild(pop);
+    try{localStorage.setItem(storage,'1');}catch(_){}
+    window.UserState.cursoGratisIntroVista=true;
+    if(window.__marcarExperienciaInicialVista)window.__marcarExperienciaInicialVista('cursoGratisIntroVista');
+    requestAnimationFrame(()=>pop.classList.add('is-open'));
     const close=(go)=>{pop.classList.add('is-closing');setTimeout(()=>{pop.remove();if(go){window.navigateTo('cursos');setTimeout(()=>document.querySelector('.free-course-banner')?.scrollIntoView({behavior:'smooth',block:'center'}),350);}if(experienceDone)experienceDone();},220);};
     pop.querySelector('.fci__close').onclick=()=>close(false);pop.querySelector('.fci__later').onclick=()=>close(false);pop.querySelector('.fci__cta').onclick=()=>close(true);
   }
@@ -6783,7 +6829,7 @@ function mountNutricion(c){
     if (!S || S.perfilCompleto || S.fichaInicialVista) { if(experienceDone)experienceDone(); return; }
     if (!experienceDone && window.SynovaExperienceQueue) {
       window.SynovaExperienceQueue.request({
-        key:'profile-card',priority:100,
+        key:'profile-card',priority:80,
         ready:function(){var state=window.UserState;return !!state&&!state.perfilCompleto&&!state.fichaInicialVista;},
         open:function(done){window.__mostrarFichaInicialSynova(done);}
       });
@@ -7102,7 +7148,7 @@ body{
 .curso-card__progress-fill{background:linear-gradient(90deg,var(--primary),color-mix(in srgb,var(--primary) 72%,var(--highlight)));box-shadow:none}.curso-card__progress-fill::after{display:none}
 
 .news-grid{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.news-card{border-radius:18px}.news-card__cover{height:142px}.news-card__cover::before{opacity:.35}.news-card__body{padding:17px 17px 16px;gap:9px}.news-card__title{font-size:14px;line-height:1.42}.news-card__excerpt{color:var(--text-2)}
+.news-card{border-radius:18px}.news-card__cover{height:auto;aspect-ratio:16/9}.news-card__cover::before{opacity:.35}.news-card__body{padding:17px 17px 16px;gap:9px}.news-card__title{font-size:14px;line-height:1.42}.news-card__excerpt{color:var(--text-2)}
 .news-card__date,.news-card__cat{font-size:8px;letter-spacing:1.2px}.news-card__date::before{background:var(--highlight);animation:none}
 
 .btn{border-radius:10px;font-weight:700}.btn--primary,.btn--accent{background:var(--primary-deep);color:#fff;box-shadow:0 7px 18px rgba(16,47,75,.16)}.btn--ghost{background:var(--surface);border:1px solid var(--border-2)}
@@ -7128,7 +7174,8 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
   .mobile-nav__item{min-width:54px;min-height:48px;justify-content:center;gap:3px;font-size:9.5px;padding:6px 9px;border-radius:14px}.mobile-nav__item .ic{width:20px;height:20px}.mobile-nav__item.is-active{background:var(--surface-3);color:var(--primary-deep)}
   .banner__stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;width:100%}.banner__stat{min-width:0}.sec-hero__title{font-size:38px}
 }
-@media(max-width:560px){.banner{padding:23px 18px}.banner__title{font-size:32px}.banner__stats{grid-template-columns:repeat(2,minmax(0,1fr))}.news-card__cover{height:126px}.sec-hero__title{font-size:34px}}
+@media(min-width:600px) and (max-width:900px){.cursos-grid,.news-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+@media(max-width:599px){.cursos-grid,.news-grid{grid-template-columns:1fr}.banner{padding:23px 18px}.banner__title{font-size:32px}.banner__stats{grid-template-columns:repeat(2,minmax(0,1fr))}.sec-hero__title{font-size:34px}}
 @media(prefers-reduced-motion:reduce){#content.sec-anim > *{animation:none!important}.kpi-card:hover,.curso-card:hover,.certb:hover,.pdf-card:hover,.webinar-card:hover,.news-card:hover{transform:none}}
 
 /* Inicio premium · composición editorial unificada */
@@ -7238,7 +7285,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="assets/synova-core-games.js?v=1"></script>
 <script src="assets/synova-materials.js?v=3"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
-<script src="assets/onboarding-tour.js?v=5"></script>
+<script src="assets/onboarding-tour.js?v=6"></script>
 <script src="assets/synova-analytics.js?v=2"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({
@@ -7253,7 +7300,7 @@ window.SynovaOnboarding = new window.MembershipTour({
   },
   ready: function(){
     var state = window.UserState || {};
-    return !!(state.uid || state.email) && !!state.modo && getComputedStyle(document.body).visibility !== 'hidden';
+    return !!(state.uid || state.email) && !!state.modo && !state.recorridoInicialVisto && getComputedStyle(document.body).visibility !== 'hidden';
   },
   steps: [
     {
@@ -7303,6 +7350,10 @@ window.SynovaOnboarding = new window.MembershipTour({
     }
   ],
   onFinish: function(){ window.celebrarSynova('normal'); }
+});
+window.addEventListener('membership-tour:end', function(event){
+  if (!event.detail || event.detail.namespace !== 'synova') return;
+  if (window.__marcarExperienciaInicialVista) window.__marcarExperienciaInicialVista('recorridoInicialVisto');
 });
 </script>
 </body>
