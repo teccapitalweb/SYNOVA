@@ -2620,7 +2620,8 @@ function iconoParaArea(){
 }
 
 function secHero(eyebrow, title, sub){
-  return '<div class="sec-hero fade-up"><span class="sec-hero__eyebrow">' + escHtml(eyebrow) + '</span><h1 class="sec-hero__title">' + title + '</h1>' + (sub ? '<p class="sec-hero__sub">' + sub + '</p>' : '') + '</div>';
+  const eyebrowHtml = eyebrow ? '<span class="sec-hero__eyebrow">' + escHtml(eyebrow) + '</span>' : '';
+  return '<div class="sec-hero fade-up' + (eyebrow ? '' : ' sec-hero--compact') + '">' + eyebrowHtml + '<h1 class="sec-hero__title">' + title + '</h1>' + (sub ? '<p class="sec-hero__sub">' + sub + '</p>' : '') + '</div>';
 }
 
 function emptyState(icon, title, sub){
@@ -2690,7 +2691,7 @@ Sections.inicio = function(){
 /* ══════════════════════ CURSOS ══════════════════════ */
 Sections.cursos = function(){
   document.getElementById('content').innerHTML =
-    secHero('Catálogo VIP', 'Mis cursos', 'Cursos clínicos y de procesos incluidos en tu membresía SYNOVA VIP: normativa NOM en salud (expediente clínico, RPBI, infraestructura), calidad de atención, auditoría y gestión de consultorios, clínicas e instituciones.') +
+    secHero('', 'Mis cursos', 'Cursos clínicos y de procesos incluidos en tu membresía SYNOVA VIP: normativa NOM en salud (expediente clínico, RPBI, infraestructura), calidad de atención, auditoría y gestión de consultorios, clínicas e instituciones.') +
     '<div id="cursos-grid" class="cursos-grid"></div>';
   cargarCursos();
 };
@@ -2815,7 +2816,7 @@ async function cargarCertificadosCache(){
 /* ══════════════════════ CLASES EN VIVO ══════════════════════ */
 Sections.webinars = function(){
   document.getElementById('content').innerHTML =
-    secHero('En vivo', 'Clases en vivo', 'Webinars y sesiones en vivo con especialistas en salud: normativa, procesos clínicos y calidad de atención.') +
+    secHero('', 'Clases en vivo', 'Webinars y sesiones en vivo con especialistas en salud: normativa, procesos clínicos y calidad de atención.') +
     '<div id="webinars-wrap"></div>';
   cargarWebinars();
 };
@@ -3169,8 +3170,8 @@ const LOGROS_DEF = [
 ];
 
 Sections.logros = function(){
-  document.getElementById('content').innerHTML = `<div class="syn-achievements">
-    <header class="syn-achievements__header"><span class="syn-eyebrow">Tu trayectoria</span><h1>Mis logros</h1><p>Formación, práctica y comunidad. Solo lo que cuenta.</p></header>
+  document.getElementById('content').innerHTML = `<div class="syn-achievements syn-achievements--compact">
+    <header class="syn-achievements__header"><h1>Mis logros</h1><p>Formación, práctica y comunidad. Solo lo que cuenta.</p></header>
     <div id="logros-wrap"><div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto"></div></div></div>
   </div>`;
   cargarLogros();
@@ -3693,7 +3694,7 @@ window.__foroLightbox = function(src){
 Sections.foro = function(){
   const S = window.UserState;
   document.getElementById('content').innerHTML =
-    secHero('Comunidad SYNOVA', 'Foro VIP', 'Comunidad de profesionales de la salud de SYNOVA. Comparte texto e imágenes. Leer es libre; publicar, dar like y comentar es exclusivo para miembros VIP.') +
+    secHero('', 'Foro VIP', 'Comunidad de profesionales de la salud de SYNOVA. Comparte texto e imágenes. Leer es libre; publicar, dar like y comentar es exclusivo para miembros VIP.') +
     `<div class="foro-aviso"><svg class="ic"><use href="#i-clock"/></svg><span>Las publicaciones se eliminan automáticamente <strong>${FORO_DIAS_VIDA} días</strong> después de publicarse.</span></div>` +
     (toolEsVIP()
       ? `<div class="foro-composer">
@@ -4332,7 +4333,7 @@ Sections.directorio = function(){
   _dirFiltroSector = 'todos'; _dirBusqueda = ''; _dirSoloVip = false;
   const esVip = toolEsVIP();
   document.getElementById('content').innerHTML =
-    secHero('Networking', 'Directorio VIP', 'Profesionales de la salud aliados de SYNOVA. Crea tu tarjeta profesional y conecta con la comunidad.') +
+    secHero('', 'Directorio VIP', 'Profesionales de la salud aliados de SYNOVA. Crea tu tarjeta profesional y conecta con la comunidad.') +
     (esVip ? '' : `<section class="dir-upsell"><span class="dir-upsell__ic"><svg class="ic"><use href="#i-crown"/></svg></span><div class="dir-upsell__txt"><strong>Destaca con tu tarjeta VIP</strong><p>Perfil verificado, portada personalizable y contacto directo con todos los miembros.</p></div><button type="button" class="btn btn--accent" data-section="suscripcion">Hazte VIP</button></section>`) +
     `<div class="dir-bar">
       <div class="dir-search"><svg class="ic"><use href="#i-search"/></svg><input id="dir-buscar" placeholder="Buscar por nombre, puesto o sector…"></div>
@@ -4737,7 +4738,7 @@ Sections.canal = function(){
   const C = window.__CONTACTO || {};
   const waSoporte = `https://wa.me/${C.telefonoRaw || ''}?text=${encodeURIComponent(C.waMsg || 'Hola SYNOVA')}`;
   document.getElementById('content').innerHTML =
-    secHero('Comunidad y contacto', '<span class="wa-channel-heading">Canal WhatsApp<br>SYNOVA</span>', '') +
+    secHero('', '<span class="wa-channel-heading">Canal WhatsApp<br>SYNOVA</span>', '') +
     `<section class="wa-hero">
       <div class="wa-hero__icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.05 4.91A9.816 9.816 0 0 0 12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01zm-7.01 15.24c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24 2.2 0 4.27.86 5.82 2.42a8.183 8.183 0 0 1 2.41 5.83c.02 4.54-3.68 8.23-8.22 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43s.17-.25.25-.41c.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18s-.22-.16-.47-.28z"/></svg></div>
       <h2 class="wa-hero__title">Únete al canal oficial</h2>
@@ -4784,7 +4785,7 @@ Sections.canal = function(){
 Sections.perfil = function(){
   const S = window.UserState;
   document.getElementById('content').innerHTML =
-    secHero('Tu cuenta', 'Mi perfil', 'Tus datos personales y el estado de tu membresía SYNOVA.') +
+    secHero('', 'Mi perfil', 'Tus datos personales y el estado de tu membresía SYNOVA.') +
     `<section class="perfil-hero">
       <div class="perfil-hero__avatar">${window.__avatarHtml(S.foto, S.iniciales, `Foto de ${S.nombre}`)}</div>
       <div class="perfil-hero__info">
@@ -4879,7 +4880,7 @@ async function leerPrecios(){
 
 function renderSuscripcionAdmin(){
   document.getElementById('content').innerHTML =
-    secHero('Cuenta administrativa', 'Suscripción', 'Tu cuenta tiene acceso de administrador a SYNOVA. No requiere pago.') +
+    secHero('', 'Suscripción', 'Tu cuenta tiene acceso de administrador a SYNOVA. No requiere pago.') +
     `<div class="sub-empty">
       <div class="sub-empty__ic" style="background:color-mix(in srgb,var(--success) 14%,transparent);color:var(--success)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7l7 0l-6 5l3 7l-7-4l-7 4l3-7l-6-5l7 0z"/></svg>
@@ -4898,7 +4899,7 @@ async function renderSuscripcionActivar(){
     <button class="btn btn--accent" id="btn-activate-vip-trial" type="button">Activar gratis</button>
   </div></section>` : '';
   document.getElementById('content').innerHTML =
-    secHero('Activa tu acceso', 'Suscripción', 'Estás a un paso de acceder a todo el contenido de SYNOVA VIP. Elige tu plan y completa tu suscripción de forma segura con Stripe.') +
+    secHero('', 'Suscripción', 'Estás a un paso de acceder a todo el contenido de SYNOVA VIP. Elige tu plan y completa tu suscripción de forma segura con Stripe.') +
     trialOffer + `<div class="plan-picker" id="plan-picker">
       <button class="plan-picker__card is-active" data-plan="mensual" type="button">
         <div><div class="plan-picker__name">VIP Mensual</div><div class="plan-picker__sub">Cancela cuando quieras</div></div>
@@ -4960,7 +4961,7 @@ function renderSuscripcionVIP(){
   if (S.isTrial) return renderSuscripcionPrueba();
   const prox = S.membership?.proximaRenovacion ? fmtDateLong(new Date(S.membership.proximaRenovacion)) : '—';
   document.getElementById('content').innerHTML =
-    secHero('Tu plan', 'Suscripción', 'Detalles de tu membresía SYNOVA VIP y accesos rápidos para gestionarla.') +
+    secHero('', 'Suscripción', 'Detalles de tu membresía SYNOVA VIP y accesos rápidos para gestionarla.') +
     `<section class="plan-card">
       <div class="plan-card__header">
         <div><div class="plan-card__lbl">Plan activo · pagado</div><h2 class="plan-card__name">VIP ${S.plan === 'anual' ? 'Anual' : 'Mensual'}</h2></div>
@@ -5032,7 +5033,7 @@ function renderSuscripcionPrueba(){
   const S = window.UserState;
   if (window.__trialCountdownTimer) { clearInterval(window.__trialCountdownTimer); window.__trialCountdownTimer = null; }
   document.getElementById('content').innerHTML =
-    secHero('Acceso de bienvenida', 'Prueba VIP', 'Explora la experiencia completa de SYNOVA durante tu periodo de cortesía.') +
+    secHero('', 'Prueba VIP', 'Explora la experiencia completa de SYNOVA durante tu periodo de cortesía.') +
     `<section class="trial-active-card">
       <div class="trial-active-card__top">
         <div><div class="trial-active-card__tag">Acceso VIP activo · sin tarjeta</div><h2>Tus 3 días VIP están en curso</h2><p>Tienes acceso completo a cursos, herramientas clínicas, materiales, retos y comunidad. Todo tu avance queda guardado en tu cuenta.</p></div>
@@ -6386,7 +6387,7 @@ function mountNutricion(c){
   /* ── SECCIÓN CURSOS ── */
   window.Sections.cursos = function(){
     document.getElementById('content').innerHTML =
-      secHero('Formación clínica', 'Mis cursos', 'Elige el curso que quieras probar gratis. Con VIP desbloqueas cursos completos progresivamente cada 6 días.') +
+      secHero('', 'Mis cursos', 'Elige el curso que quieras probar gratis. Con VIP desbloqueas cursos completos progresivamente cada 6 días.') +
       '<div id="cursos-grid" class="cursos-grid"></div>';
     renderCursos();
   };
@@ -7064,6 +7065,11 @@ body{
 .sec-hero__eyebrow{padding:0;border:0;background:none;color:var(--primary);font-size:9px}.sec-hero__eyebrow::before{width:28px;height:1px;border-radius:0;background:var(--highlight);animation:none;box-shadow:none}
 .sec-hero__title{font-family:'Plus Jakarta Sans','Inter',sans-serif;font-size:clamp(36px,4vw,48px);font-weight:800;letter-spacing:-1.8px;line-height:1.04;margin-top:15px;background:none;-webkit-text-fill-color:currentColor;color:var(--text)}
 .sec-hero__sub{max-width:700px;font-size:13px;line-height:1.7}
+.sec-hero--compact{padding-top:0;margin-top:-20px}
+.sec-hero--compact .sec-hero__title{margin-top:0}
+.syn-achievements--compact{margin-top:-20px}
+.syn-achievements--compact .syn-achievements__header{padding-top:0}
+.syn-achievements--compact .syn-achievements__header h1{margin-top:0}
 
 .aside{background:color-mix(in srgb,var(--surface-2) 82%,transparent);padding:20px 16px 26px;border-left:1px solid var(--border);gap:11px}
 .widget{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px 18px;box-shadow:0 8px 24px rgba(19,40,63,.045);gap:9px}
@@ -7104,6 +7110,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 @media(max-width:900px){
   .app{grid-template-columns:minmax(0,1fr)}
   .main{padding:calc(14px + env(safe-area-inset-top)) 15px 142px;gap:18px}
+  .sec-hero--compact,.syn-achievements--compact{margin-top:-14px}
   .banner{min-height:0;padding:26px 22px;border-radius:20px}.banner__title{font-size:36px}.banner::after{width:260px;height:260px;right:-110px;bottom:-130px}.banner__sub{font-size:12.5px}
   .mobile-nav{left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));border:1px solid var(--border-2);border-radius:20px;background:color-mix(in srgb,var(--surface) 94%,transparent);box-shadow:0 16px 40px rgba(19,40,63,.16);padding:7px 6px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
   .mobile-nav__item{min-width:54px;min-height:48px;justify-content:center;gap:3px;font-size:9.5px;padding:6px 9px;border-radius:14px}.mobile-nav__item .ic{width:20px;height:20px}.mobile-nav__item.is-active{background:var(--surface-3);color:var(--primary-deep)}
