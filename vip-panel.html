@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/onboarding-tour.css?v=4">
+<link rel="stylesheet" href="assets/onboarding-tour.css?v=5">
 <link rel="stylesheet" href="assets/synova-retos-pro.css?v=17">
 <link rel="stylesheet" href="assets/synova-books-credits.css?v=7">
 <link rel="stylesheet" href="assets/synova-course-experience.css?v=3">
@@ -1168,11 +1168,17 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .news-card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--cat-color,var(--primary)) 35%,transparent);box-shadow:0 14px 36px rgba(0,0,0,.14)}
 .news-card__cover{
   height:120px;
-  background:linear-gradient(135deg,var(--cat-color,var(--primary)),color-mix(in srgb,var(--cat-color,var(--primary)) 60%,#000));
+  background:
+    linear-gradient(135deg,color-mix(in srgb,var(--cat-color,var(--primary)) 76%,transparent),color-mix(in srgb,var(--cat-color,var(--primary)) 72%,#000)),
+    url('assets/images/brand/banner.jpg') center/cover no-repeat;
   position:relative;
   overflow:hidden;
   display:flex;align-items:center;justify-content:center;
   color:#fff;
+}
+.news-card__cover-img{
+  position:absolute;inset:0;z-index:1;width:100%;height:100%;
+  object-fit:cover;object-position:center;display:block;
 }
 .news-card__cover::before{
   content:"";position:absolute;inset:0;
@@ -1180,6 +1186,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   background-size:28px 28px;
   -webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 75%);
   mask-image:radial-gradient(ellipse at center,#000 0%,transparent 75%);
+  z-index:2;pointer-events:none;
 }
 .news-card__cover svg{width:42px;height:42px;position:relative;z-index:1;opacity:.95}
 .news-card__date{
@@ -1193,7 +1200,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   font-family:'JetBrains Mono',monospace;
   font-size:9.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
   display:inline-flex;align-items:center;gap:5px;
-  z-index:1;
+  z-index:3;
 }
 .news-card__date::before{
   content:"";width:5px;height:5px;border-radius:50%;background:#34D399;
@@ -1207,7 +1214,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
   padding:4px 10px;
   font-family:'JetBrains Mono',monospace;
   font-size:9px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;
-  z-index:1;
+  z-index:3;
   backdrop-filter:blur(8px);
 }
 .news-card__body{
@@ -5176,15 +5183,12 @@ window.__cargarNoticiasHome = async function(force){
       _noticiasCargadas = true;
       return;
     }
-    grid.innerHTML = arts.map(n=>{
+    grid.innerHTML = arts.map((n,index)=>{
       const fecha = noticiaTiempoRel(n.createdAt || n.fechaPublicacion);
-      const cover = n.imagen
-        ? `<div class="news-card__cover" style="background-image:url('${n.imagen}');background-size:cover;background-position:center;">
-             <span class="news-card__date">${fecha}</span>
-             <span class="news-card__cat">${escHtml(n.categoriaNombre||n.categoria||'')}</span>
-           </div>`
-        : `<div class="news-card__cover">
-             <svg class="ic"><use href="#i-news"/></svg>
+      const imagen = typeof n.imagen === 'string' ? n.imagen.trim() : '';
+      const imagenValida = /^(https?:)?\/\//i.test(imagen);
+      const cover = `<div class="news-card__cover">
+             ${imagenValida ? `<img class="news-card__cover-img" src="${escHtml(imagen)}" alt="" ${index===0?'loading="eager" fetchpriority="high"':'loading="lazy"'} decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
              <span class="news-card__date">${fecha}</span>
              <span class="news-card__cat">${escHtml(n.categoriaNombre||n.categoria||'')}</span>
            </div>`;
@@ -7215,7 +7219,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="assets/synova-core-games.js?v=1"></script>
 <script src="assets/synova-materials.js?v=3"></script>
 <script src="assets/synova-referrals.js?v=2"></script>
-<script src="assets/onboarding-tour.js?v=4"></script>
+<script src="assets/onboarding-tour.js?v=5"></script>
 <script src="assets/synova-analytics.js?v=2"></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({
@@ -7235,6 +7239,7 @@ window.SynovaOnboarding = new window.MembershipTour({
   steps: [
     {
       desktopSelectors: '.sidebar .brand',
+      tabletSelectors: '.topbar__right .avatar',
       mobileSelectors: '.topbar__right .avatar',
       title: 'Bienvenido a SYNOVA',
       copy: 'Este es tu espacio de formación y actualización clínica. Te mostraremos los accesos principales para aprovechar cursos, recursos y herramientas en tu práctica profesional.'

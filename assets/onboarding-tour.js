@@ -126,6 +126,12 @@
     return window.matchMedia('(max-width:' + (this.config.mobileBreakpoint || 900) + 'px)').matches;
   };
 
+  MembershipTour.prototype.isTablet = function () {
+    var min = (this.config.mobileBreakpoint || 900) + 1;
+    var max = this.config.tabletBreakpoint || 1280;
+    return window.matchMedia('(min-width:' + min + 'px) and (max-width:' + max + 'px)').matches;
+  };
+
   MembershipTour.prototype.setDrawer = async function (open) {
     if (!this.isMobile()) open = false;
     var drawer = document.getElementById('mobile-drawer');
@@ -148,7 +154,11 @@
   };
 
   MembershipTour.prototype.findAnchor = function (step) {
-    var selectors = this.isMobile() ? (step.mobileSelectors || step.selectors) : (step.desktopSelectors || step.selectors);
+    var selectors = this.isMobile()
+      ? (step.mobileSelectors || step.selectors)
+      : (this.isTablet()
+        ? (step.tabletSelectors || step.desktopSelectors || step.selectors)
+        : (step.desktopSelectors || step.selectors));
     var self = this;
     var found = null;
     list(selectors).some(function (selector) {
@@ -258,6 +268,14 @@
     if (this.isMobile()) {
       dialogLeft = 12;
       dialogTop = source.top > vh / 2 ? 12 : Math.max(12, vh - dialogRect.height - 12);
+    } else if (this.isTablet()) {
+      var tabletInset = 18;
+      dialogLeft = clamp((vw - dialogRect.width) / 2, tabletInset, vw - dialogRect.width - tabletInset);
+      var roomBelow = vh - bottom - gap - tabletInset;
+      var roomAbove = top - gap - tabletInset;
+      if (roomBelow >= dialogRect.height) dialogTop = bottom + gap;
+      else if (roomAbove >= dialogRect.height) dialogTop = top - gap - dialogRect.height;
+      else dialogTop = Math.max(tabletInset, vh - dialogRect.height - tabletInset);
     } else if (right + gap + dialogRect.width <= vw - 12) {
       dialogLeft = right + gap;
       dialogTop = clamp(top, 12, Math.max(12, vh - dialogRect.height - 12));
