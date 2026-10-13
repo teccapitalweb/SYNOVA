@@ -1168,9 +1168,9 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .news-card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--cat-color,var(--primary)) 35%,transparent);box-shadow:0 14px 36px rgba(0,0,0,.14)}
 .news-card__cover{
   height:120px;
-  background:
-    linear-gradient(135deg,color-mix(in srgb,var(--cat-color,var(--primary)) 76%,transparent),color-mix(in srgb,var(--cat-color,var(--primary)) 72%,#000)),
-    url('assets/images/brand/banner.jpg') center/cover no-repeat;
+  /* Fondo de carga neutro: nunca mostrar flyers o imágenes de marca como
+     sustituto temporal de una fotografía editorial. */
+  background:linear-gradient(135deg,var(--surface-2),var(--surface-3));
   position:relative;
   overflow:hidden;
   display:flex;align-items:center;justify-content:center;
@@ -1182,10 +1182,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 }
 .news-card__cover::before{
   content:"";position:absolute;inset:0;
-  background-image:linear-gradient(to right,rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.07) 1px,transparent 1px);
-  background-size:28px 28px;
-  -webkit-mask-image:radial-gradient(ellipse at center,#000 0%,transparent 75%);
-  mask-image:radial-gradient(ellipse at center,#000 0%,transparent 75%);
+  background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.1));
   z-index:2;pointer-events:none;
 }
 .news-card__cover svg{width:42px;height:42px;position:relative;z-index:1;opacity:.95}
@@ -5168,6 +5165,22 @@ window.__actualizarAside = async function(){
 
 /* ═══════════ NOTICIAS reales en el Home (Firestore noticias_auto) · patrón IMDIIL ═══════════ */
 let _noticiasCargadas = false;
+function portadaEditorialNoticia(n){
+  const titulo = String(n && n.titulo || '');
+  /* Esta nota llegó desde el feed con un flyer promocional. Usamos una foto
+     editorial del Capitolio (dominio público, Wikimedia Commons) acorde al tema. */
+  if (/senate republicans.*haiti tps|haiti tps.*senate republicans/i.test(titulo)) {
+    return {
+      src: 'assets/images/news/senado-eeuu-haiti-tps.jpg',
+      alt: 'Edificio del Capitolio de los Estados Unidos, sede del Senado'
+    };
+  }
+  const src = typeof (n && n.imagen) === 'string' ? n.imagen.trim() : '';
+  return {
+    src: /^(https?:)?\/\//i.test(src) ? src : '',
+    alt: titulo ? 'Fotografía de la noticia: ' + titulo : 'Fotografía de la noticia'
+  };
+}
 window.__cargarNoticiasHome = async function(force){
   const grid = document.getElementById('home-news-grid');
   if (!grid) return;
@@ -5186,10 +5199,9 @@ window.__cargarNoticiasHome = async function(force){
     }
     grid.innerHTML = arts.map((n,index)=>{
       const fecha = noticiaTiempoRel(n.createdAt || n.fechaPublicacion);
-      const imagen = typeof n.imagen === 'string' ? n.imagen.trim() : '';
-      const imagenValida = /^(https?:)?\/\//i.test(imagen);
+      const portada = portadaEditorialNoticia(n);
       const cover = `<div class="news-card__cover">
-             ${imagenValida ? `<img class="news-card__cover-img" src="${escHtml(imagen)}" alt="" ${index===0?'loading="eager" fetchpriority="high"':'loading="lazy"'} decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
+             ${portada.src ? `<img class="news-card__cover-img" src="${escHtml(portada.src)}" alt="${escHtml(portada.alt)}" ${index===0?'loading="eager" fetchpriority="high"':'loading="lazy"'} decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}
              <span class="news-card__date">${fecha}</span>
              <span class="news-card__cat">${escHtml(n.categoriaNombre||n.categoria||'')}</span>
            </div>`;
