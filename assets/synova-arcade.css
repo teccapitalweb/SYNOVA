@@ -124,3 +124,4 @@
 @media (max-height:520px) and (orientation:landscape){.sa-hz{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}.sa-spot__map{max-width:calc(62vh * 1.3333)}}
 @media(prefers-reduced-motion:reduce){.sa-hz__ring,.sa-hz__miss,.sa-spot__hit.is-wrong,.sa-spot__hit.is-hint,.sa-art--photo i{animation:none}}
 @media (max-height:520px) and (orientation:landscape){.sa-spot{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);align-items:start}.sa-spot__map{max-width:calc(80vh * 1.3333)}}
+@media (max-height:520px) and (orientation:landscape){.sa-jigsaw{grid-template-columns:minmax(0,1fr) 200px;align-items:start}.sa-jigsaw__board{width:min(100%,72vh)}}

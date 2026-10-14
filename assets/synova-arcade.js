@@ -214,7 +214,14 @@ function runMemory(stage,cfg,ctx){
   return function(){stage.onclick=null;};
 }
 
-function buildWordsearch(words,size){var grid=Array.from({length:size},function(){return Array(size).fill('');}),placements=[],dirs=[[0,1],[1,0],[1,1],[-1,1],[0,-1],[1,-1]];words.forEach(function(raw){var word=norm(raw),placed=false;for(var t=0;t<250&&!placed;t++){var d=dirs[Math.floor(Math.random()*dirs.length)],r=Math.floor(Math.random()*size),c=Math.floor(Math.random()*size),er=r+d[0]*(word.length-1),ec=c+d[1]*(word.length-1);if(er<0||er>=size||ec<0||ec>=size)continue;var ok=true;for(var i=0;i<word.length;i++){var x=grid[r+d[0]*i][c+d[1]*i];if(x&&x!==word[i]){ok=false;break;}}if(!ok)continue;var cells=[];for(var j=0;j<word.length;j++){var rr=r+d[0]*j,cc=c+d[1]*j;grid[rr][cc]=word[j];cells.push(rr+','+cc);}placements.push({word:word,cells:cells});placed=true;}});for(var r=0;r<size;r++)for(var c=0;c<size;c++)if(!grid[r][c])grid[r][c]=LETTERS[Math.floor(Math.random()*LETTERS.length)];return{grid:grid,placements:placements};}
+function buildWordsearchOnce(words,size){var grid=Array.from({length:size},function(){return Array(size).fill('');}),placements=[],dirs=[[0,1],[1,0],[1,1],[-1,1],[0,-1],[1,-1]];words.forEach(function(raw){var word=norm(raw),placed=false;for(var t=0;t<250&&!placed;t++){var d=dirs[Math.floor(Math.random()*dirs.length)],r=Math.floor(Math.random()*size),c=Math.floor(Math.random()*size),er=r+d[0]*(word.length-1),ec=c+d[1]*(word.length-1);if(er<0||er>=size||ec<0||ec>=size)continue;var ok=true;for(var i=0;i<word.length;i++){var x=grid[r+d[0]*i][c+d[1]*i];if(x&&x!==word[i]){ok=false;break;}}if(!ok)continue;var cells=[];for(var j=0;j<word.length;j++){var rr=r+d[0]*j,cc=c+d[1]*j;grid[rr][cc]=word[j];cells.push(rr+','+cc);}placements.push({word:word,cells:cells});placed=true;}});return{grid:grid,placements:placements};}
+/* Reintenta hasta colocar todas las palabras (de la más larga a la más corta). */
+function buildWordsearch(words,size){
+  var sorted=words.slice().sort(function(a,b){return norm(b).length-norm(a).length;}),best=null;
+  for(var t=0;t<80;t++){var b=buildWordsearchOnce(sorted,size);if(!best||b.placements.length>best.placements.length)best=b;if(b.placements.length===words.length)break;}
+  var grid=best.grid;for(var r=0;r<size;r++)for(var c=0;c<size;c++)if(!grid[r][c])grid[r][c]=LETTERS[Math.floor(Math.random()*LETTERS.length)];
+  return best;
+}
 function runWordsearch(stage,cfg,ctx){
   var built=buildWordsearch(cfg.words,12),found=new Set(),start=null,tap=null,dragging=false,suppressClick=false;
   var cellsHtml=built.grid.map(function(row,r){
@@ -352,6 +359,22 @@ function runSpot(stage,cfg,ctx){
 
 var RUNNERS={crossword:runCrossword,memory:runMemory,wordsearch:runWordsearch,puzzle:runPuzzle,guess:runGuess,classify:runClassify,hazard:runHazard,spot:runSpot};
 
-function playLesson(options){return new Promise(function(resolve){var seed=hash(String(options.courseId)+':'+String(options.classNumber||1)),game=CATALOG[seed%CATALOG.length],board=game.boards[(seed+Number(options.classNumber||0))%game.boards.length];openEngine({game:game,board:board,mode:'lesson',lessonTitle:options.lessonTitle,credits:options.credits!=null?Number(options.credits)||0:10,resolve:resolve,onClose:function(){}});});}
-window.SynovaGameSuite={catalog:CATALOG,playLesson:playLesson,open:openEngine};
+function coursePack(title){
+  var t=String(title||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''),packs=window.SYNOVA_COURSE_GAMES||[];
+  for(var i=0;i<packs.length;i++){try{if(new RegExp(packs[i].match).test(t))return packs[i];}catch(_){}}
+  return null;
+}
+/* Juego de la clase tomado del paquete propio del curso (contenido del tema). */
+function courseGame(options){
+  var pack=coursePack(options.courseTitle);if(!pack||!pack.games||!pack.games.length)return null;
+  var idx=Math.max(0,(Number(options.classNumber)||1)-1)%pack.games.length,entry=pack.games[idx],game=CATALOG.find(function(g){return g.type===entry.type;});
+  if(!game)return null;
+  if(entry.board!=null){var base=game.boards[entry.board];return base?{game:game,board:base}:null;}
+  var config=Object.assign({},entry.config||{});
+  if(entry.type==='puzzle'){config.image=pack.image;config.side=3;}
+  if(entry.type==='crossword'&&!config.image)config.image=pack.image;
+  return{game:game,board:{topic:entry.topic||pack.name,config:config}};
+}
+function playLesson(options){return new Promise(function(resolve){var picked=courseGame(options);if(picked){openEngine({game:picked.game,board:picked.board,mode:'lesson',lessonTitle:options.lessonTitle,credits:options.credits!=null?Number(options.credits)||0:10,resolve:resolve,onClose:function(){}});return;}var seed=hash(String(options.courseId)+':'+String(options.classNumber||1)),game=CATALOG[seed%CATALOG.length],board=game.boards[(seed+Number(options.classNumber||0))%game.boards.length];openEngine({game:game,board:board,mode:'lesson',lessonTitle:options.lessonTitle,credits:options.credits!=null?Number(options.credits)||0:10,resolve:resolve,onClose:function(){}});});}
+window.SynovaGameSuite={catalog:CATALOG,playLesson:playLesson,open:openEngine,courseGame:courseGame};
 })();
