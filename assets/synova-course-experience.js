@@ -53,7 +53,7 @@
         stage.querySelectorAll('[data-answer]').forEach(function(btn){btn.onclick=function(){
           if(stage.dataset.answered==='1')return;
           var picked=Number(btn.dataset.answer),correct=picked===Number(q.a),feedback=stage.querySelector('.cg-feedback');
-          if(!correct){btn.classList.add('is-wrong');feedback.innerHTML='<strong>Revisa tu decisión.</strong> Piensa primero en la seguridad, la valoración y el protocolo aplicable.';setTimeout(function(){btn.classList.remove('is-wrong');},500);return;}
+          if(!correct){btn.classList.add('is-wrong');var right=stage.querySelector('[data-answer="'+q.a+'"]');if(right)right.classList.add('is-correct');feedback.innerHTML='<strong>Aún no.</strong> Marcamos en verde la respuesta correcta para que aprendas y puedas continuar.';setTimeout(function(){btn.classList.remove('is-wrong');},500);return;}
           stage.dataset.answered='1';btn.classList.add('is-correct');stage.querySelectorAll('.cg-option').forEach(function(b){b.disabled=true;});
           feedback.innerHTML='<strong>Correcto.</strong> '+esc(q.e)+'<button type="button" class="cg-next">'+(index===qs.length-1?'Completar clase':'Siguiente pregunta')+' →</button>';
           feedback.querySelector('.cg-next').onclick=function(){

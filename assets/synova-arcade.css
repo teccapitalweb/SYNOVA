@@ -43,3 +43,10 @@
 @media(max-width:700px){.sa-jigsaw{grid-template-columns:1fr}.sa-jigsaw aside{grid-template-columns:95px 1fr;align-items:center}.sa-jigsaw aside>span,.sa-jigsaw aside p{grid-column:1/-1}.sa-jigsaw__reference{width:95px}}
 @media(max-width:430px){.sa-overlay{padding:0}.sa-modal{height:100vh;max-height:none;border-radius:0}.sa-memo{grid-template-columns:repeat(2,1fr)}.sa-cw__grid{grid-template-columns:repeat(var(--cols),minmax(19px,26px));grid-auto-rows:minmax(19px,26px)}.sa-cw__cell small{display:none}.sa-intro h3{font-size:28px}.sa-stars span{font-size:37px}.sa-result h3{font-size:27px}}
 @media(prefers-reduced-motion:reduce){.sa-overlay,.sa-modal,.sa-card,.sa-memo__inner,.sa-progress i{transition:none}.sa-float,.sa-stars span.is-on,.sa-modal.is-hurt,.sa-sort__card.is-fly{animation:none}}
+
+/* Ayuda accesible: cada juego puede resolver un paso sin penalizar ni bloquear. */
+.sa-assist{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px;padding:10px 12px;border:1px solid color-mix(in srgb,var(--game) 22%,var(--border));border-radius:12px;background:color-mix(in srgb,var(--game) 5%,var(--surface));color:var(--text-2);font-size:10.5px}.sa-assist button{flex:0 0 auto;padding:9px 13px;border:1px solid color-mix(in srgb,var(--game) 35%,var(--border));border-radius:10px;background:var(--game);color:#fff;font-size:10px;font-weight:850;cursor:pointer}.sa-assist button:hover{filter:brightness(.95);transform:translateY(-1px)}.sa-assist button:disabled{opacity:.55;cursor:default;transform:none}
+.sa-cw__cell.is-letter-correct{border-color:#43a883;background:#e6f6f0;box-shadow:inset 0 0 0 1px #43a883}.sa-cw__cell.is-letter-correct input,.sa-cw__cell.is-revealed input{color:#16815e}.sa-cw__clues>button{cursor:pointer}
+.sa-sort__bins button.is-hint{border-style:solid;border-color:#44aa87;background:#eaf8f3;box-shadow:0 0 0 3px rgba(68,170,135,.17)}
+:root[data-theme="night"] .sa-cw__cell.is-letter-correct,:root[data-theme="night"] .sa-sort__bins button.is-hint{background:#153c37}
+@media(max-width:700px){.sa-assist{align-items:stretch;flex-direction:column}.sa-assist button{width:100%}}
