@@ -1856,6 +1856,18 @@ window.navigateTo = function(section){
   if (typeof window.__actualizarAside === 'function') window.__actualizarAside();
 };
 
+/* En teléfonos, una pestaña restaurada desde el historial no debe reabrir el
+   Directorio como pantalla de entrada. Conservamos las demás rutas directas
+   (curso, suscripción, etc.) para no alterar enlaces funcionales. */
+function esEntradaMovilEnDirectorioSynova(){
+  return window.matchMedia('(max-width:900px)').matches
+    && new URLSearchParams(location.search).get('seccion') === 'directorio';
+}
+
+window.addEventListener('pageshow', function(event){
+  if (event.persisted && esEntradaMovilEnDirectorioSynova()) navigateTo('inicio');
+});
+
 document.addEventListener('click', (e) => {
   const item = e.target.closest('[data-section]');
   if (item && !item.closest('#paywall-modal')) { e.preventDefault(); navigateTo(item.dataset.section); }
@@ -2126,7 +2138,10 @@ onAuthStateChanged(auth, async (user) => {
   window.dispatchEvent(new CustomEvent('synova:ready'));
 
   const params = new URLSearchParams(location.search);
-  const seccionInicial = params.get('seccion') || (params.get('checkout') === 'success' ? 'suscripcion' : 'inicio');
+  const seccionSolicitada = params.get('seccion');
+  const seccionInicial = params.get('checkout') === 'success'
+    ? 'suscripcion'
+    : (esEntradaMovilEnDirectorioSynova() ? 'inicio' : (seccionSolicitada || 'inicio'));
   navigateTo(seccionInicial);
   if (trialActivatedNow) setTimeout(() => Toast.success('¡Prueba VIP activada!', 'Tienes 72 horas de acceso completo. Tu progreso quedará guardado.'), 450);
   if (window.__trialActivationError) setTimeout(() => Toast.error('No pudimos activar la prueba', window.__trialActivationError), 450);
