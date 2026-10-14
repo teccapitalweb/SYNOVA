@@ -664,7 +664,17 @@ function safeNextPage(){
   } catch (_) { return 'vip-panel.html'; }
 }
 
-function destinationFor(isAdmin){ return isAdmin ? 'vip-admin.html' : safeNextPage(); }
+function memberHomeDestination(){
+  try {
+    const parsed = new URL(safeNextPage(), location.href);
+    parsed.searchParams.delete('seccion');
+    return `vip-panel.html${parsed.search}#inicio`;
+  } catch (_) {
+    return 'vip-panel.html#inicio';
+  }
+}
+
+function destinationFor(isAdmin){ return isAdmin ? 'vip-admin.html' : memberHomeDestination(); }
 
 async function ensureMiembroDoc(user, displayName, origen) {
   if (!user || !user.uid) return { ok: false, reason: 'no-user' };

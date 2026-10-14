@@ -878,6 +878,7 @@ body::after{
 .dir-cta .ic{width:17px;height:17px}
 .dir-cta--wa:hover{color:#25D366;border-color:#25D366}
 .dir-cta--li:hover{color:#0A66C2;border-color:#0A66C2}
+.dir-cta--ig:hover{color:#C13584;border-color:#C13584}
 .dir-cta--mail:hover{color:var(--primary);border-color:var(--primary)}
 .dir-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:18px;-webkit-overflow-scrolling:touch}
 .dir-chips::-webkit-scrollbar{height:0}
@@ -906,6 +907,7 @@ body::after{
 .dir-det__row-ic .ic{width:18px;height:18px}
 .dir-det__row--wa:hover .dir-det__row-ic{color:#25D366}
 .dir-det__row--li:hover .dir-det__row-ic{color:#0A66C2}
+.dir-det__row--ig:hover .dir-det__row-ic{color:#C13584}
 .dir-det__sincontacto{font-size:12.5px;color:var(--text-3);font-style:italic;margin-top:16px}
 .dir-form__opt{font-weight:500;color:var(--text-3);text-transform:none;letter-spacing:0}
 .dir-form__sep{margin:20px 0 6px;font-size:12.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--primary);border-top:1px solid var(--border);padding-top:16px}
@@ -1354,6 +1356,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></symbol>
 <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6l9 -6"/></symbol>
 <symbol id="i-linkedin" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0 -5M3 8.98h4v12H3zM9 8.98h3.8v1.64h.05c.53 -1 1.83 -2.05 3.76 -2.05c4.02 0 4.76 2.65 4.76 6.1v6.31h-4v-5.6c0 -1.33 -.02 -3.05 -1.86 -3.05c-1.86 0 -2.14 1.45 -2.14 2.95v5.7H9z"/></symbol>
+<symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".75" fill="currentColor" stroke="none"/></symbol>
 <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4l10.5 -10.5a2.83 2.83 0 0 0 -4 -4l-10.5 10.5z"/><path d="M13.5 6.5l4 4"/></symbol>
 <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35 -4.35"/></symbol>
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"/></symbol>
@@ -1526,8 +1529,8 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 <nav class="mobile-nav">
   <a class="mobile-nav__item is-active" data-section="inicio"><svg class="ic"><use href="#i-home"/></svg>Inicio</a>
   <a class="mobile-nav__item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Cursos</a>
-  <a class="mobile-nav__item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Vivo</a>
-  <a class="mobile-nav__item" data-section="suscripcion"><svg class="ic"><use href="#i-credit-card"/></svg>Plan</a>
+  <a class="mobile-nav__item" data-section="retos"><svg class="ic"><use href="#i-bolt"/></svg>Retos</a>
+  <a class="mobile-nav__item" data-section="directorio"><svg class="ic"><use href="#i-users"/></svg>Directorio</a>
   <a class="mobile-nav__item" id="mobile-nav-more" role="button"><svg class="ic"><use href="#i-menu"/></svg>Más</a>
 </nav>
 
@@ -2087,14 +2090,14 @@ onAuthStateChanged(auth, async (user) => {
         /* Migra contacto legado al almacén protegido y después lo elimina de
            la tarjeta pública. Si la API aún no responde, se conserva para no
            perder información. */
-        if (td.email || td.whatsapp || td.linkedin || td.web) {
+        if (td.email || td.whatsapp || td.linkedin || td.instagram || td.web) {
           try {
             const token = await user.getIdToken();
             const move = await fetch(WEBHOOK_URL + '/directory/contact', {
               method:'PUT', headers:{ Authorization:'Bearer ' + token, 'Content-Type':'application/json' },
-              body:JSON.stringify({ email:td.email||'', whatsapp:td.whatsapp||'', linkedin:td.linkedin||'', web:td.web||'' })
+              body:JSON.stringify({ email:td.email||'', whatsapp:td.whatsapp||'', linkedin:td.linkedin||'', instagram:td.instagram||'', web:td.web||'' })
             });
-            if (move.ok) Object.assign(upd, { email:'', whatsapp:'', linkedin:'', web:'' });
+            if (move.ok) Object.assign(upd, { email:'', whatsapp:'', linkedin:'', instagram:'', web:'' });
           } catch (_) {}
         }
         await setDoc(tarjetaRef, upd, { merge: true });
@@ -4357,6 +4360,17 @@ const DIR_LOCK_SVG = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="cu
 const DIR_WEB_SVG = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>';
 function dirFotoSeguraDir(v){ const f=String(v||'').trim(); if(/^data:image\/(jpeg|jpg|png|webp);base64,[A-Za-z0-9+/=]+$/i.test(f))return f; return /^https:\/\/[^\s"'<>]+$/i.test(f)?f:''; }
 function dirEnlaceSeguro(v){ const raw=String(v||'').trim(); if(!raw)return ''; const url=/^https?:\/\//i.test(raw)?raw:'https://'+raw; try{const u=new URL(url);return /^https?:$/.test(u.protocol)?u.href:'';}catch(e){return '';} }
+function dirInstagramPerfil(v){
+  const raw=String(v||'').trim(); if(!raw)return '';
+  let usuario=raw.replace(/^@/,'');
+  const pareceUrl=/^(?:https?:\/\/)?(?:www\.|m\.)?instagram\.com\//i.test(raw);
+  if(/^https?:\/\//i.test(raw)||pareceUrl){
+    try{const u=new URL(/^https?:\/\//i.test(raw)?raw:'https://'+raw);if(!['instagram.com','www.instagram.com','m.instagram.com'].includes(u.hostname.toLowerCase()))return '';const partes=u.pathname.split('/').filter(Boolean);if(partes.length!==1)return '';usuario=partes[0];}catch(e){return '';}
+  }
+  if(!/^[A-Za-z0-9._]{1,30}$/.test(usuario)||['accounts','direct','directory','explore','p','reel','reels','stories'].includes(usuario.toLowerCase()))return '';
+  return 'https://www.instagram.com/'+usuario+'/';
+}
+function dirInstagramUsuario(v){ const url=dirInstagramPerfil(v); return url?'@'+new URL(url).pathname.split('/').filter(Boolean)[0]:''; }
 function dirPortadaStyle(c){ const img=dirFotoSeguraDir(c&&c.portadaImg); if(img)return "background-image:url('"+img+"')"; return "background:"+((DIR_PORTADAS[c&&c.portadaColor]||DIR_PORTADAS.dorado).bg); }
 function dirEsVipCard(c){ return _dirMeta.vip.has(String(c.uid||c.id)); }
 function dirContactoVisible(c){
@@ -4365,8 +4379,8 @@ function dirContactoVisible(c){
   if(!_dirMeta.viewerVip) return null;
   return _dirMeta.contacts[id] || {};
 }
-function dirTieneContacto(c){ return !!(c && (c.email||c.whatsapp||c.linkedin||c.web)); }
-function dirPaywallContacto(){ if(window.__showPaywallModal) window.__showPaywallModal('Hazte VIP para ver el WhatsApp, correo, LinkedIn y sitio web de los miembros del Directorio VIP.'); }
+function dirTieneContacto(c){ return !!(c && (c.email||c.whatsapp||c.linkedin||c.instagram||c.web)); }
+function dirPaywallContacto(){ if(window.__showPaywallModal) window.__showPaywallModal('Hazte VIP para ver el WhatsApp, correo, LinkedIn, Instagram y sitio web de los miembros del Directorio VIP.'); }
 Sections.directorio = function(){
   const S = window.UserState;
   _dirFiltroSector = 'todos'; _dirBusqueda = ''; _dirSoloVip = false;
@@ -4471,6 +4485,7 @@ function dirCtasHtml(contacto){
   if (wa) out.push(`<a class="dir-cta dir-cta--wa" href="https://wa.me/${wa}" target="_blank" rel="noopener" title="WhatsApp" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-whatsapp"/></svg></a>`);
   if (contacto.email) out.push(`<a class="dir-cta" href="${escHtml(gmailComposeUrl(contacto.email))}" target="_blank" rel="noopener" title="Escribir en Gmail" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-mail"/></svg></a>`);
   const li = dirEnlaceSeguro(contacto.linkedin); if (li) out.push(`<a class="dir-cta dir-cta--li" href="${escHtml(li)}" target="_blank" rel="noopener" title="LinkedIn" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-linkedin"/></svg></a>`);
+  const ig = dirInstagramPerfil(contacto.instagram); if (ig) out.push(`<a class="dir-cta dir-cta--ig" href="${escHtml(ig)}" target="_blank" rel="noopener" title="Instagram" aria-label="Abrir perfil de Instagram" onclick="event.stopPropagation()"><svg class="ic"><use href="#i-instagram"/></svg></a>`);
   const web = dirEnlaceSeguro(contacto.web); if (web) out.push(`<a class="dir-cta" href="${escHtml(web)}" target="_blank" rel="noopener" title="Sitio web" onclick="event.stopPropagation()">${DIR_WEB_SVG}</a>`);
   return out.length ? `<div class="dir-card__ctas">${out.join('')}</div>` : '<div class="dir-card__sincontacto">Sin datos de contacto</div>';
 }
@@ -4549,13 +4564,15 @@ function abrirTarjetaDetalle(id){
     : `<div class="dir-det__foto dir-det__foto--ini" style="background:${color}">${escHtml(iniciales)}</div>`;
   const waNum = String((contacto && contacto.whatsapp) || '').replace(/\D/g, '');
   const li = dirEnlaceSeguro(contacto && contacto.linkedin);
+  const ig = dirInstagramPerfil(contacto && contacto.instagram);
   const web = dirEnlaceSeguro(contacto && contacto.web);
   const contactoHtml = contacto === null
-    ? `<div class="dir-det__lock">${DIR_LOCK_SVG}<div><strong>Contacto exclusivo para miembros VIP</strong><p>Hazte VIP para ver su WhatsApp, correo, LinkedIn y sitio web.</p></div><button type="button" class="btn btn--accent btn--sm" data-dirdet-vip>Hazte VIP</button></div>`
+    ? `<div class="dir-det__lock">${DIR_LOCK_SVG}<div><strong>Contacto exclusivo para miembros VIP</strong><p>Hazte VIP para ver su WhatsApp, correo, LinkedIn, Instagram y sitio web.</p></div><button type="button" class="btn btn--accent btn--sm" data-dirdet-vip>Hazte VIP</button></div>`
     : `<div class="dir-det__rows">
         ${contacto.whatsapp ? `<a class="dir-det__row dir-det__row--wa" href="${waNum ? 'https://wa.me/' + waNum : '#'}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-whatsapp"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">WhatsApp</span><span class="dir-det__row-val">${escHtml(contacto.whatsapp)}</span></div></a>` : ''}
         ${contacto.email ? `<a class="dir-det__row" href="${escHtml(gmailComposeUrl(contacto.email))}" target="_blank" rel="noopener" aria-label="Escribir en Gmail"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-mail"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">Correo · toca para escribir</span><span class="dir-det__row-val">${escHtml(contacto.email)}</span></div></a>` : ''}
         ${li ? `<a class="dir-det__row dir-det__row--li" href="${escHtml(li)}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-linkedin"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">LinkedIn</span><span class="dir-det__row-val">Ver perfil</span></div></a>` : ''}
+        ${ig ? `<a class="dir-det__row dir-det__row--ig" href="${escHtml(ig)}" target="_blank" rel="noopener"><div class="dir-det__row-ic"><svg class="ic"><use href="#i-instagram"/></svg></div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">Instagram</span><span class="dir-det__row-val">${escHtml(dirInstagramUsuario(contacto.instagram))}</span></div></a>` : ''}
         ${web ? `<a class="dir-det__row" href="${escHtml(web)}" target="_blank" rel="noopener"><div class="dir-det__row-ic">${DIR_WEB_SVG}</div><div class="dir-det__row-tx"><span class="dir-det__row-lbl">Sitio web</span><span class="dir-det__row-val">${escHtml(contacto.web)}</span></div></a>` : ''}
         ${!dirTieneContacto(contacto) ? '<div class="dir-det__sincontacto">Este miembro no agregó datos de contacto.</div>' : ''}
       </div>`;
@@ -4658,6 +4675,7 @@ function abrirEditorTarjeta(){
       <label class="dir-form__lbl">WhatsApp (10 dígitos)</label><input class="dir-form__in" id="df-whatsapp" value="${escHtml(contacto.whatsapp || '')}">
       <label class="dir-form__lbl">Correo de contacto</label><input class="dir-form__in" id="df-email" value="${escHtml(contacto.email || S.email || '')}">
       <label class="dir-form__lbl">LinkedIn (URL)</label><input class="dir-form__in" id="df-linkedin" value="${escHtml(contacto.linkedin || '')}">
+      <label class="dir-form__lbl">Instagram</label><input class="dir-form__in" id="df-instagram" maxlength="180" autocomplete="url" placeholder="@usuario o instagram.com/usuario" value="${escHtml(contacto.instagram || '')}">
       <label class="dir-form__lbl">Sitio web <span class="dir-form__opt">(opcional)</span></label><input class="dir-form__in" id="df-web" placeholder="tusitio.com" value="${escHtml(contacto.web || '')}">
       <label class="dir-form__check"><input type="checkbox" id="df-visible" ${mia.visible!==false?'checked':''}> Mostrar mi tarjeta en el directorio</label>
     </div>`;
@@ -4733,7 +4751,7 @@ window.guardarTarjeta = async function(){
       /* El contacto real se guarda aparte por API. Estos campos se limpian de
          la tarjeta pública para que un usuario no VIP no pueda leerlos desde
          Firestore aunque inspeccione las solicitudes de red. */
-      whatsapp: '', email: '', linkedin: '', web: '',
+      whatsapp: '', email: '', linkedin: '', instagram: '', web: '',
       visible: document.getElementById('df-visible').checked,
       vip: esVip,
       plan: (window.UserState && window.UserState.plan) || null,
@@ -4750,10 +4768,14 @@ window.guardarTarjeta = async function(){
     else if (mia.foto) data.foto = mia.foto;                       // conservar la existente
     else if (S.foto) data.foto = S.foto;                           // autollenado desde Google
     const token = await window.__auth.currentUser.getIdToken();
+    const instagramRaw = document.getElementById('df-instagram').value.trim();
+    const instagram = dirInstagramPerfil(instagramRaw);
+    if (instagramRaw && !instagram) { Toast.error('Instagram inválido', 'Escribe @usuario o la URL de un perfil de Instagram.'); return; }
     const contacto = {
       whatsapp:document.getElementById('df-whatsapp').value.trim(),
       email:document.getElementById('df-email').value.trim(),
       linkedin:document.getElementById('df-linkedin').value.trim(),
+      instagram,
       web:document.getElementById('df-web').value.trim()
     };
     const response = await fetch(window.__WEBHOOK_URL + '/directory/contact', {
