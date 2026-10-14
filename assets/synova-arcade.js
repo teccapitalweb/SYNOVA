@@ -260,8 +260,8 @@ function runWordsearch(stage,cfg,ctx){
   ctx.help('Encontrar una palabra',function(){var idx=built.placements.findIndex(function(_,i){return!found.has(i);});if(idx>=0)completePlacement(idx,true);});
   grid.onpointerdown=function(e){var cell=e.target.closest('[data-pos]');if(!cell)return;dragging=true;start=pos(cell);if(grid.setPointerCapture)grid.setPointerCapture(e.pointerId);show([cell.dataset.pos]);};
   grid.onpointermove=function(e){if(!dragging||!start)return;var el=document.elementFromPoint(e.clientX,e.clientY),cell=el&&el.closest&&el.closest('[data-pos]');if(cell&&grid.contains(cell))show(line(start,pos(cell)));};
-  grid.onpointerup=function(e){if(!dragging)return;dragging=false;var el=document.elementFromPoint(e.clientX,e.clientY),cell=el&&el.closest&&el.closest('[data-pos]');if(cell&&grid.contains(cell)){var cells=line(start,pos(cell));if(cells.length>1){suppressClick=true;evaluate(cells);setTimeout(function(){suppressClick=false;},0);}}start=null;};
-  grid.onclick=function(e){if(dragging||suppressClick)return;var cell=e.target.closest('[data-pos]');if(!cell)return;if(!tap){tap=pos(cell);clear();cell.classList.add('is-select');return;}var first=tap;tap=null;evaluate(line(first,pos(cell)));};
+  grid.onpointerup=function(e){if(!dragging)return;dragging=false;try{if(grid.releasePointerCapture)grid.releasePointerCapture(e.pointerId);}catch(_){}var el=document.elementFromPoint(e.clientX,e.clientY),cell=el&&el.closest&&el.closest('[data-pos]');if(cell&&grid.contains(cell)){var cells=line(start,pos(cell));if(cells.length>1){suppressClick=true;evaluate(cells);setTimeout(function(){suppressClick=false;},0);}}start=null;};
+  grid.onclick=function(e){if(dragging||suppressClick)return;var cell=e.target.closest&&e.target.closest('[data-pos]');if(!cell){var hit=document.elementFromPoint(e.clientX,e.clientY);cell=hit&&hit.closest&&hit.closest('[data-pos]');}if(!cell||!grid.contains(cell))return;if(!tap){tap=pos(cell);clear();cell.classList.add('is-select');return;}var first=tap;tap=null;evaluate(line(first,pos(cell)));};
   return function(){grid.onpointerdown=grid.onpointermove=grid.onpointerup=grid.onclick=null;};
 }
 
@@ -365,8 +365,9 @@ function coursePack(title){
   return null;
 }
 /* Juego de la clase tomado del paquete propio del curso (contenido del tema). */
+function packByCollection(id){var packs=window.SYNOVA_COURSE_GAMES||[];id=String(id||'');if(!id)return null;for(var i=0;i<packs.length;i++)if(packs[i].collection===id)return packs[i];return null;}
 function courseGame(options){
-  var pack=coursePack(options.courseTitle);if(!pack||!pack.games||!pack.games.length)return null;
+  var pack=packByCollection(options.collectionId)||coursePack(options.courseTitle);if(!pack||!pack.games||!pack.games.length)return null;
   var idx=Math.max(0,(Number(options.classNumber)||1)-1)%pack.games.length,entry=pack.games[idx],game=CATALOG.find(function(g){return g.type===entry.type;});
   if(!game)return null;
   if(entry.board!=null){var base=game.boards[entry.board];return base?{game:game,board:base}:null;}
