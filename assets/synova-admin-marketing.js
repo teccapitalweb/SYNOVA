@@ -23,7 +23,7 @@ const Pages = {
     if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
     return j;
   },
-  encuestas(p){
+  _encuestasLanding(p){
     p.innerHTML = `
       <div class="fade-up">
         <div class="sec-hero">
@@ -103,7 +103,7 @@ const Pages = {
         </div>
       </div>
     `;
-    Pages._cargarEncuestas();
+    if (!Pages._encSinCarga) Pages._cargarEncuestas();
   },
 
   // Al abrir el panel se restaura la última sección ANTES de que Firebase confirme la sesión de
@@ -1075,6 +1075,172 @@ const Pages = {
 
 };
 // En SYNOVA el admin ya está confirmado cuando se pinta una sección (adminready); se conserva la espera por si acaso.
+// ═══ Encuestas con dos pestañas: la encuesta del landing (igual que Alintec) y la ruta de la guía virtual ═══
+Pages._encTab = 'landing';
+Pages.encuestas = function(p){
+  // La cabecera es la misma en ambas pestañas; en "ruta" no se descargan las respuestas del landing
+  Pages._encSinCarga = Pages._encTab === 'ruta';
+  Pages._encuestasLanding(p);
+  Pages._encSinCarga = false;
+  const hero = p.querySelector('.sec-hero');
+  if (!hero) return;
+  if (!document.getElementById('enc-tabs-estilos')) {
+    const st = document.createElement('style');
+    st.id = 'enc-tabs-estilos';
+    st.textContent = `.enc-tabs{display:inline-flex;gap:4px;padding:4px;margin:-8px 0 22px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+.enc-tabs button{border:0;background:transparent;color:var(--text-2);padding:9px 16px;border-radius:10px;font:700 12.5px Inter,sans-serif;cursor:pointer;transition:.18s}
+.enc-tabs button:hover{color:var(--text)}.enc-tabs button.on{background:var(--primary);color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--primary) 30%,transparent)}
+.enc-card{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:16px}
+.enc-card h3{margin:0 0 12px;font-size:14px;color:var(--text)}
+.enc-card p.enc-sub{margin:-6px 0 12px;font-size:12px;color:var(--text-3);line-height:1.5}
+.enc-g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px;margin-top:16px}
+.enc-fila{display:grid;grid-template-columns:110px minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr);gap:4px 12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.enc-fila:last-child{border-bottom:0}.enc-fila small{color:var(--text-3);font-size:11px}
+.enc-chip{display:inline-block;padding:2px 9px;border-radius:999px;font:700 10.5px Inter,sans-serif}
+@media(max-width:700px){.enc-fila{grid-template-columns:1fr 1fr}}`;
+    document.head.appendChild(st);
+  }
+  const tabs = document.createElement('div');
+  tabs.className = 'enc-tabs';
+  tabs.setAttribute('role', 'tablist');
+  tabs.innerHTML = `<button type="button" role="tab" data-enc-tab="landing" class="${Pages._encTab === 'landing' ? 'on' : ''}">Encuesta del landing</button><button type="button" role="tab" data-enc-tab="ruta" class="${Pages._encTab === 'ruta' ? 'on' : ''}">Ruta de la guía virtual</button>`;
+  hero.after(tabs);
+  tabs.addEventListener('click', e => {
+    const b = e.target.closest('[data-enc-tab]');
+    if (!b || b.dataset.encTab === Pages._encTab) return;
+    Pages._encTab = b.dataset.encTab;
+    Pages.encuestas(p);
+  });
+  if (Pages._encTab === 'ruta') Pages._rutasGuia(p, tabs);
+};
+
+// ─── Ruta de la guía virtual ("Preparar mi ruta", 7 preguntas) ───
+Pages._rutasGuia = async function(p, tabs){
+  const sub = p.querySelector('.sec-hero__sub');
+  if (sub) sub.textContent = 'Resultados de la ruta de la guía virtual del landing · quién la abre, quién la termina, qué responde y qué curso elige al final.';
+  // Se reemplaza todo lo que va después de las pestañas
+  let n = tabs.nextSibling;
+  while (n) { const sig = n.nextSibling; n.remove(); n = sig; }
+  const vista = document.createElement('div');
+  vista.id = 'ruta-vista';
+  vista.innerHTML = `
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--c1:#1C6FB0;--c2:#5FB6E0;"><div class="kpi-card__label">Abrieron la ruta</div><div class="kpi-card__value" id="rt-kpi-total">—</div><div class="kpi-card__sub" id="rt-kpi-total-sub">Cada intento cuenta una vez</div></div>
+      <div class="kpi-card" style="--c1:#14B8A6;--c2:#5EEAD4;"><div class="kpi-card__label">Completaron las 7 preguntas</div><div class="kpi-card__value" id="rt-kpi-comp">—</div><div class="kpi-card__sub" id="rt-kpi-comp-sub">—</div></div>
+      <div class="kpi-card" style="--c1:#F7941D;--c2:#FBBF24;"><div class="kpi-card__label">Se fueron a la mitad</div><div class="kpi-card__value" id="rt-kpi-parcial">—</div><div class="kpi-card__sub">Empezaron y no terminaron</div></div>
+      <div class="kpi-card" style="--c1:#94A3B8;--c2:#CBD5E1;"><div class="kpi-card__label">Dijeron "Ahora no"</div><div class="kpi-card__value" id="rt-kpi-desc">—</div><div class="kpi-card__sub">Cerraron la invitación sin empezar</div></div>
+      <div class="kpi-card" style="--c1:#A855F7;--c2:#C084FC;"><div class="kpi-card__label">Abrieron un curso</div><div class="kpi-card__value" id="rt-kpi-clic">—</div><div class="kpi-card__sub" id="rt-kpi-clic-sub">—</div></div>
+    </div>
+    <div class="enc-g2">
+      <div class="enc-card"><h3>Perfil de quién responde</h3><canvas id="rt-chart-perfil" height="220"></canvas></div>
+      <div class="enc-card"><h3>Área que quieren fortalecer</h3><canvas id="rt-chart-area" height="220"></canvas></div>
+    </div>
+    <div class="enc-g2">
+      <div class="enc-card"><h3>Situación que quieren resolver</h3><canvas id="rt-chart-reto" height="220"></canvas></div>
+      <div class="enc-card"><h3>Nivel de profundidad</h3><canvas id="rt-chart-nivel" height="220"></canvas></div>
+    </div>
+    <div class="enc-g2">
+      <div class="enc-card"><h3>Resultado más valioso para ellos</h3><canvas id="rt-chart-objetivo" height="200"></canvas></div>
+      <div class="enc-card"><h3>Cómo prefieren avanzar</h3><canvas id="rt-chart-ritmo" height="200"></canvas></div>
+    </div>
+    <div class="enc-card" style="margin-top:16px"><h3>Tema con el que quieren empezar · para saber qué más ofrecer</h3><canvas id="rt-chart-tema" height="170"></canvas></div>
+    <div class="enc-card" style="margin-top:16px"><h3>Dónde se quedan los que no terminan</h3><p class="enc-sub">Última pregunta que alcanzaron a contestar antes de irse. "Sin contestar" son quienes pulsaron "Preparar mi ruta" y se fueron sin elegir nada.</p><canvas id="rt-chart-abandono" height="170"></canvas></div>
+    <div class="enc-g2">
+      <div class="enc-card"><h3>Cursos que más recomienda la ruta</h3><canvas id="rt-chart-recom" height="240"></canvas></div>
+      <div class="enc-card"><h3>Cursos que abrieron desde la ruta</h3><p class="enc-sub">Al tocar un curso del resultado se les lleva a crear su cuenta gratis.</p><canvas id="rt-chart-elegidos" height="220"></canvas></div>
+    </div>
+    <div class="enc-card" style="margin-top:16px"><h3>Últimas rutas</h3><div id="rt-lista" style="color:var(--text-2);font-size:13px;">Cargando…</div></div>`;
+  p.querySelector('.fade-up').appendChild(vista);
+
+  let items = [];
+  try {
+    await Pages._esperarAdmin();
+    const datos = await Pages._api('/api/admin/rutas');
+    items = datos.items || [];
+  } catch (e) {
+    const lista = document.getElementById('rt-lista');
+    if (lista) {
+      lista.innerHTML = 'No se pudieron cargar los datos (' + AdminEsc(e.message || 'error') + '). <a href="#" id="rt-reintentar" style="color:var(--primary);font-weight:700;">Reintentar</a>';
+      document.getElementById('rt-reintentar')?.addEventListener('click', ev => { ev.preventDefault(); Pages.encuestas(p); });
+    }
+    return;
+  }
+  if (!document.body.contains(vista)) return;
+
+  const total = items.length;
+  const comp = items.filter(x => x.estado === 'completada');
+  const parcial = items.filter(x => x.estado === 'parcial');
+  const desc = items.filter(x => x.estado === 'descartada');
+  const empezaron = comp.length + parcial.length;
+  const clic = comp.filter(x => x.cursoElegido);
+  const pct = (a, b) => b > 0 ? Math.round(a / b * 100) + '%' : '—';
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('rt-kpi-total', total);
+  set('rt-kpi-total-sub', total ? empezaron + ' empezaron a contestar' : 'Aún no hay intentos');
+  set('rt-kpi-comp', comp.length);
+  set('rt-kpi-comp-sub', empezaron ? pct(comp.length, empezaron) + ' de quienes empezaron' : 'Sin respuestas aún');
+  set('rt-kpi-parcial', parcial.length);
+  set('rt-kpi-desc', desc.length);
+  set('rt-kpi-clic', clic.length);
+  set('rt-kpi-clic-sub', comp.length ? pct(clic.length, comp.length) + ' de quienes completaron' : 'Sin rutas completadas');
+
+  const contar = campo => { const o = {}; comp.forEach(x => { const v = x.respuestas && x.respuestas[campo]; if (v) o[v] = (o[v] || 0) + 1; }); return o; };
+  const ORDEN = [['perfil', 'Sobre ti'], ['area', 'Tu área'], ['reto', 'Tu reto'], ['nivel', 'Tu experiencia'], ['objetivo', 'Tu objetivo'], ['ritmo', 'Tu ritmo'], ['tema', 'Primer paso']];
+  const abandono = { 'Sin contestar': 0 };
+  ORDEN.forEach(([, n]) => { abandono[n] = 0; });
+  parcial.forEach(x => {
+    const ultima = [...ORDEN].reverse().find(([k]) => x.respuestas && x.respuestas[k]);
+    abandono[ultima ? ultima[1] : 'Sin contestar']++;
+  });
+  Object.keys(abandono).forEach(k => { if (!abandono[k]) delete abandono[k]; });
+  const recom = {}, elegidos = {};
+  comp.forEach(x => { (x.recomendados || []).forEach(t => { recom[t] = (recom[t] || 0) + 1; }); if (x.cursoElegido) elegidos[x.cursoElegido] = (elegidos[x.cursoElegido] || 0) + 1; });
+  const top = (o, n) => Object.fromEntries(Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, n).map(([k, v]) => [k.length > 34 ? k.slice(0, 34) + '…' : k, v]));
+
+  const sinDatos = (cv, datos) => {
+    if (Object.keys(datos).length) return false;
+    cv.insertAdjacentHTML('afterend', '<p style="margin:24px 0;text-align:center;font-size:13px;color:var(--text-3);">Aún no hay respuestas para esta pregunta.</p>');
+    cv.style.display = 'none';
+    return true;
+  };
+  if (!window.Chart) {
+    vista.querySelectorAll('canvas').forEach(cv => { cv.insertAdjacentHTML('afterend', '<p style="margin:24px 0;text-align:center;font-size:13px;color:var(--text-3);">No se pudo cargar la librería de gráficas. Recarga la página.</p>'); cv.style.display = 'none'; });
+  } else {
+    Chart.defaults.color = getComputedStyle(document.body).getPropertyValue('--text-2').trim() || '#666';
+    const colores = ['#1C6FB0', '#14B8A6', '#F7941D', '#D4537E', '#A855F7', '#9CA3AF'];
+    const pie = (id, datos) => { const cv = document.getElementById(id); if (!cv || sinDatos(cv, datos)) return;
+      new Chart(cv, { type: 'pie', data: { labels: Object.keys(datos), datasets: [{ data: Object.values(datos), backgroundColor: colores }] }, options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } } } }); };
+    const barra = (id, datos, color, horizontal) => { const cv = document.getElementById(id); if (!cv || sinDatos(cv, datos)) return;
+      new Chart(cv, { type: 'bar', data: { labels: Object.keys(datos), datasets: [{ data: Object.values(datos), backgroundColor: color }] },
+        options: { indexAxis: horizontal ? 'y' : 'x', plugins: { legend: { display: false } }, scales: horizontal ? { x: { beginAtZero: true, ticks: { precision: 0 } } } : { y: { beginAtZero: true, ticks: { precision: 0 } } } } }); };
+    pie('rt-chart-perfil', contar('perfil'));
+    pie('rt-chart-area', contar('area'));
+    barra('rt-chart-reto', contar('reto'), '#14B8A6', true);
+    barra('rt-chart-nivel', contar('nivel'), '#1C6FB0', false);
+    barra('rt-chart-objetivo', contar('objetivo'), '#F7941D', true);
+    barra('rt-chart-ritmo', contar('ritmo'), '#A855F7', false);
+    barra('rt-chart-tema', contar('tema'), '#14B8A6', true);
+    barra('rt-chart-abandono', abandono, '#D4537E', true);
+    barra('rt-chart-recom', top(recom, 10), '#1C6FB0', true);
+    barra('rt-chart-elegidos', top(elegidos, 10), '#A855F7', true);
+  }
+
+  const lista = document.getElementById('rt-lista');
+  if (lista) {
+    const msDe = x => Date.parse(x.actualizado || x.creado || '') || 0;
+    const recientes = items.filter(x => x.estado !== 'descartada').sort((a, b) => msDe(b) - msDe(a)).slice(0, 25);
+    const zona = 'America/Mexico_City';
+    const fecha = x => { const ms = msDe(x); return ms ? new Date(ms).toLocaleDateString('es-MX', { day: 'numeric', month: 'short', timeZone: zona }) + ' · ' + new Date(ms).toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: zona }) : '—'; };
+    const chip = x => x.estado === 'completada'
+      ? '<span class="enc-chip" style="background:rgba(20,184,166,.16);color:#0F9F8F">Completó</span>'
+      : '<span class="enc-chip" style="background:rgba(247,148,29,.18);color:#C9740A">Se quedó en ' + (x.pasos || 0) + ' de 7</span>';
+    lista.innerHTML = recientes.length ? recientes.map(x => {
+      const r = x.respuestas || {};
+      return `<div class="enc-fila"><small>${AdminEsc(fecha(x))}</small><span><strong style="color:var(--text)">${AdminEsc(r.perfil || '—')}</strong><br><small>${AdminEsc(r.area || '')}</small></span><span>${chip(x)}<br><small>${AdminEsc(r.tema ? 'Empezaría con: ' + r.tema : '')}</small></span><span>${x.cursoElegido ? '<small>Abrió</small><br><strong style="color:var(--text)">' + AdminEsc(x.cursoElegido) + '</strong>' : '<small>' + (x.estado === 'completada' ? 'No abrió ningún curso' : '—') + '</small>'}</span></div>`;
+    }).join('') : 'Todavía nadie ha hecho la ruta de la guía.';
+  }
+};
+
 Pages._esperarAdmin = function(){
   if (window.AdminUser) return Promise.resolve();
   return new Promise(resolver => { window.addEventListener('adminready', () => resolver(), { once: true }); setTimeout(resolver, 10000); });
