@@ -50,6 +50,7 @@
     '979b31a8-c853-427f-943c-8ac8f860aec8':'https://images.unsplash.com/photo-1544126592-807ade215a0b?w=900&auto=format&fit=crop&q=82',
     'ab74f978-c7d1-4e9e-9570-3ccaa2a05368':'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=900&auto=format&fit=crop&q=82'
   });
+  window.SYNOVA_COURSE_IMAGES = courseImages; // también lo usa la encuesta del landing
 
   function escapeHtml(value) {
     return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[char]));
@@ -838,7 +839,8 @@
   window.setTimeout(() => {
     let seen = false;
     try { seen = Boolean(localStorage.getItem(welcomeKey)); } catch (_) {}
-    if (!seen && panel.hidden) openRoute('welcome');
+    // Si la encuesta del landing está en la página, no se abre otra encuesta encima (la ruta sigue disponible desde la guía)
+    if (!seen && panel.hidden && !document.getElementById('encuentra')) openRoute('welcome');
   }, 850);
 
   window.SynovaGuide = Object.freeze({ open:openAssistant, openRoute, search:searchCourses, ask:handleInput });

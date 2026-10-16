@@ -474,6 +474,7 @@ body.auth-ready .auth-gate{display:none !important}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .fade-up{animation:fadeUp .4s ease forwards}
 
+.nav-item[data-section="encuestas"] .ic,.nav-item[data-section="metricas"] .ic{color:var(--primary)}
 .mobile-nav{display:none}
 
 @media (max-width:880px){
@@ -598,6 +599,8 @@ window.__tokenAdmin = tokenAdmin;
 <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
 <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8s11 8 11 8s-4 8-11 8s-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
 <symbol id="i-heart-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8l8-8c2.67-2.72 2.54-6.3.42-8.42z"/><path d="M3.5 12h4l1.5-3l3 6l1.5-3h7"/></symbol>
+<symbol id="i-chart-bar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/><line x1="3" y1="20" x2="21" y2="20"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
 <symbol id="i-clipboard-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2l4-4"/></symbol>
 </defs>
 </svg>
@@ -615,7 +618,6 @@ window.__tokenAdmin = tokenAdmin;
     <div class="nav-section">
       <div class="nav-label">Resumen</div>
       <a class="nav-item is-active" data-section="dashboard"><svg class="ic"><use href="#i-home"/></svg>Dashboard</a>
-      <a class="nav-item" data-section="metricas"><svg class="ic"><use href="#i-heart-pulse"/></svg>Métricas<span class="nav-item__badge">NUEVO</span></a>
     </div>
 
     <div class="nav-section">
@@ -630,6 +632,13 @@ window.__tokenAdmin = tokenAdmin;
       <div class="nav-label">Comunicación</div>
       <a class="nav-item" data-section="notificaciones"><svg class="ic"><use href="#i-bell"/></svg>Notificaciones<span class="nav-item__badge" id="badge-notif">0</span></a>
       <a class="nav-item" data-section="noticias"><svg class="ic"><use href="#i-news"/></svg>Noticias<span class="nav-item__badge" id="badge-noticias">0</span></a>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Marketing</div>
+      <a class="nav-item" data-section="encuestas"><svg class="ic"><use href="#i-chart-bar"/></svg>Encuestas</a>
+      <a class="nav-item" data-section="metricas"><svg class="ic"><use href="#i-trend"/></svg>Métricas</a>
+      <a class="nav-item" data-section="pruebas"><svg class="ic"><use href="#i-trend"/></svg>Pruebas gratuitas</a>
     </div>
 
     <div class="nav-section">
@@ -2874,7 +2883,8 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 </script>
 
-<script src="assets/synova-admin-metrics.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="assets/synova-admin-marketing.js?v=1"></script>
 <script src="assets/synova-referrals-admin.js"></script>
 </body>
 </html>
