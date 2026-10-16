@@ -1894,6 +1894,7 @@ const firebaseConfig = {
 
 /* Backend Railway (webhook) ya desplegado */
 const TRIAL_OFERTA_ACTIVA = false; // Prueba VIP de 3 días retirada por dirección (oct 2026)
+window.TRIAL_OFERTA_ACTIVA = TRIAL_OFERTA_ACTIVA;
 const WEBHOOK_URL = "https://synova-webhook-production.up.railway.app";
 /* Publishable key de Stripe de SYNOVA (live) */
 const STRIPE_PUBLISHABLE_KEY = "pk_live_51ThG5SDCxZfVu338m6ncLX0wUzQ4VvaJshknjfwnBTsuTFu65UiNiyx5NC1diPWQXwKqsubMOkXLMb9OGS4vEkZh00eHnjbWV4";
@@ -4971,7 +4972,7 @@ function renderSuscripcionAdmin(){
 async function renderSuscripcionActivar(){
   const precios = await leerPrecios();
   const S = window.UserState || {};
-  const trialOffer = (TRIAL_OFERTA_ACTIVA && S.trial?.canActivate) ? `<section class="trial-offer"><div class="trial-offer__inner">
+  const trialOffer = (window.TRIAL_OFERTA_ACTIVA === true && S.trial?.canActivate) ? `<section class="trial-offer"><div class="trial-offer__inner">
     <div class="trial-offer__icon"><svg class="ic"><use href="#i-crown"/></svg></div>
     <div><div class="trial-offer__eyebrow">Tu regalo está disponible</div><div class="trial-offer__title">Prueba SYNOVA VIP durante 3 días</div><div class="trial-offer__copy">Acceso completo durante 72 horas. Sin tarjeta y sin cobro automático; el reloj comienza cuando lo activas.</div></div>
     <button class="btn btn--accent" id="btn-activate-vip-trial" type="button">Activar gratis</button>
