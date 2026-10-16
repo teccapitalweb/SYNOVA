@@ -13,6 +13,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SYNOVA VIP">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://identitytoolkit.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://securetoken.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://synova-webhook-production.up.railway.app" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
@@ -1940,6 +1948,9 @@ window.__avatarHtml = avatarHtml;
 
 async function resolverMembresia(uid){
   let membership = null;
+  /* Arranca la lectura de Firestore en paralelo con la consulta a Railway. */
+  const miembroSnapPromise = getDoc(doc(db, 'miembros', uid));
+  miembroSnapPromise.catch(() => {});
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 6000);
@@ -1953,7 +1964,7 @@ async function resolverMembresia(uid){
     if (r.ok) membership = await r.json();
   } catch (e) { console.warn('[SYNOVA] webhook /membership/me no respondió, usando fallback Firestore:', e.message); }
 
-  const snap = await getDoc(doc(db, 'miembros', uid));
+  const snap = await miembroSnapPromise;
   const d = snap.exists() ? snap.data() : {};
 
   if (!membership) {
@@ -2072,8 +2083,9 @@ onAuthStateChanged(auth, async (user) => {
   };
 
   /* Conserva la identidad de Google en Firestore para poder reutilizarla
-     en perfiles y contenido nuevo, igual que en Élite Pecuario. */
-  try {
+     en perfiles y contenido nuevo, igual que en Élite Pecuario.
+     Corre en segundo plano: no hace falta para pintar el panel. */
+  void (async () => { try {
     const perfilCuenta = {
       uid: user.uid,
       email,
@@ -2129,11 +2141,16 @@ onAuthStateChanged(auth, async (user) => {
         if (r.ok) { window.__dirFotos = null; window.__dirFotosPromise = null; }
       }).catch(() => {});
     }
-  } catch (e) {}
+  } catch (e) {} })();
 
   // Restaura el avance de la cuenta antes de pintar la primera pantalla. La
   // copia local se conserva como respaldo si el dispositivo está sin conexión.
-  try { if (window.__prepareLearningProgress) await window.__prepareLearningProgress(); }
+  try {
+    if (window.__prepareLearningProgress) {
+      const avance = Promise.resolve(window.__prepareLearningProgress()).catch(() => null);
+      await Promise.race([avance, new Promise(res => setTimeout(res, 1500))]);
+    }
+  }
   catch (e) { console.warn('[SYNOVA] avance inicial:', e.message); }
 
   hidratarUI(window.UserState);
@@ -3157,7 +3174,8 @@ function aplicarAvanceSynova(remote, catalogo){
   window.dispatchEvent(new CustomEvent('synova:learning-progress-synced', { detail:{ changed:cambio } }));
   if (cambio && getComputedStyle(document.body).visibility !== 'hidden') {
     const section = new URLSearchParams(location.search).get('seccion') || 'inicio';
-    if (section === 'cursos') window.Sections?.cursos?.();
+    if (section === 'inicio' && !document.querySelector('.membership-tour[aria-hidden="false"]')) window.Sections?.inicio?.();
+    else if (section === 'cursos') window.Sections?.cursos?.();
     else if (section === 'logros') window.Sections?.logros?.();
     else if (section === 'retos' && document.querySelector('.syn-league')) window.pintarHubRetos?.();
     else if (section === 'curso' && document.getElementById('curso-detalle-body')) window.Sections?.curso?.();
