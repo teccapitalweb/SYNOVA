@@ -123,10 +123,13 @@
     var self = this;
     var swipeStartX = 0, swipeStartY = 0, swipePointerId = null;
     this.dialog.addEventListener('pointerdown', function (event) {
+      /* No rastrear el gesto sobre botones/enlaces: capturar el puntero ahí
+         redirige el click al diálogo y Siguiente/Omitir dejan de responder. */
+      if (event.target.closest('button,a,input,select,textarea,[data-tour-next],[data-tour-back],[data-tour-skip]')) { swipePointerId = null; return; }
       swipePointerId = event.pointerId;
       swipeStartX = event.clientX;
       swipeStartY = event.clientY;
-      try { self.dialog.setPointerCapture(event.pointerId); } catch (_) {}
+      if (event.pointerType !== 'mouse') { try { self.dialog.setPointerCapture(event.pointerId); } catch (_) {} }
     });
     this.dialog.addEventListener('pointerup', function (event) {
       if (swipePointerId !== event.pointerId) return;
