@@ -608,7 +608,7 @@ const Pages = {
         const cab = `
           <div class="mx2-hero">
             <div><span class="mx2-eyebrow">Marketing</span><h1>Métricas de visitas</h1>
-            <p>Cuánta gente visita SYNOVA, desde dónde llega y de qué red social salen tus miembros. Conteo anónimo y sin cookies; todo se guarda día a día para que consultes el historial.</p></div>
+            <p>Cuánta gente visita SYNOVA, desde dónde llega y de qué red social salen tus miembros. Conteo anónimo y sin cookies; todo se guarda día a día para que consultes el historial.</p>${datos.importacion ? `<p style="margin-top:6px;font-size:12px;color:var(--text-3)">Del ${esc(corta(datos.importacion.desde))} al ${esc(corta(datos.importacion.hasta))} los datos vienen del contador anterior de SYNOVA: visitas, personas, horas, páginas y miembros. Origen, país y dispositivo se registran a partir del contador nuevo.</p>` : ''}</div>
             ${estadoHtml}
           </div>`;
 

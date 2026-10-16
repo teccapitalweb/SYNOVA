@@ -984,6 +984,54 @@ function renderMiniNotif(){
    - Cancelar suscripción   → POST /admin/cancelar-suscripcion { uid, atPeriodEnd }
    - Eliminar miembro       → POST /admin/eliminar-miembro { uid }
    ═══════════════════════════════════════════════════ */
+/* Vista de miembros portada de Alintec Food: registrados y activos, cada uno con su
+   fecha de registro (con hora) y/o de activación, filtros por plan y por estado.
+   La fecha de registro sale de Firestore y, si falta (cuentas creadas con Google
+   desde el panel), de Firebase Auth vía GET /api/admin/miembros-fechas. */
+const MB = { state: { search:'', plan:'todos', estado:'todos' }, fechasAuth: null, cargandoFechas: false, precios: null };
+MB.toDate = function(val){
+  if (!val) return null;
+  if (val && val.toDate) return val.toDate();
+  if (val && val.seconds) return new Date(val.seconds * 1000);
+  if (val instanceof Date) return val;
+  if (typeof val === 'string' || typeof val === 'number') { const d = new Date(val); return isNaN(d.getTime()) ? null : d; }
+  return null;
+};
+MB.expira = m => MB.toDate(m.expiraEn || m.fechaFinAcceso || m.expiresAt);
+MB.activo = m => {
+  if (m.activa !== true && m.activo !== true) return false;
+  const e = MB.expira(m);
+  return !e || e.getTime() > Date.now();
+};
+MB.expirado = m => { const e = MB.expira(m); return !!e && e.getTime() <= Date.now(); };
+MB.registro = m => {
+  const crudo = m.fechaRegistro || m.createdAt;
+  if (crudo) return { fecha: MB.toDate(crudo), crudo };
+  const a = MB.fechasAuth && MB.fechasAuth[m.id];
+  return { fecha: a && a.creado ? new Date(a.creado) : null, crudo: a && a.creado };
+};
+MB.activacion = m => MB.toDate(m.fechaVipDesde || m.fechaAlta || m.fechaActivacionManual || m.activadoEn || m.startedAt);
+MB.cargarExtras = async function(){
+  if (!MB.precios) {
+    MB.precios = { mes: 199, ano: 1899 };
+    try {
+      const { doc, getDoc, db } = window.__fs;
+      const c = await getDoc(doc(db, 'config', 'club'));
+      if (c.exists()) { const d = c.data() || {}; MB.precios = { mes: Number(d.precioMes) || 199, ano: Number(d.precioAno) || 1899 }; }
+    } catch (e) {}
+  }
+  if (MB.fechasAuth || MB.cargandoFechas) return;
+  MB.cargandoFechas = true;
+  try {
+    const token = await window.__tokenAdmin();
+    const r = await fetch(window.__WEBHOOK_URL + '/api/admin/miembros-fechas', { headers: { Authorization: 'Bearer ' + token }, cache: 'no-store' });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok) MB.fechasAuth = j.fechas || {};
+  } catch (e) { console.warn('[miembros] fechas de registro:', e.message); }
+  MB.cargandoFechas = false;
+  PAGES._refrescar_miembros();
+};
+
 PAGES.miembros = function(){
   const page = document.getElementById('page');
   page.innerHTML = `
@@ -991,65 +1039,167 @@ PAGES.miembros = function(){
       <div class="sec-hero">
         <span class="sec-hero__eyebrow">Comunidad</span>
         <h1 class="sec-hero__title">Miembros VIP</h1>
-        <p class="sec-hero__sub">Gestiona membresías, activaciones manuales y cancelaciones del Club SYNOVA.</p>
+        <p class="sec-hero__sub">Aquí ves <strong style="color:var(--text-2);">todos los registrados</strong> (los que crearon cuenta) y <strong style="color:var(--text-2);">todos los miembros activos</strong> (los que ya pagaron). Cada uno con su fecha de registro y/o fecha de activación.</p>
       </div>
       <div class="kpi-grid" id="mb-kpis"></div>
-      <div class="toolbar">
-        <div class="searchbar"><svg class="ic"><use href="#i-search"/></svg><input type="text" id="mb-buscar" placeholder="Buscar por nombre o email…"></div>
-        <select class="select" id="mb-filtro" style="max-width:200px">
-          <option value="">Todos los planes</option>
-          <option value="mensual">Mensual</option>
-          <option value="anual">Anual</option>
-          <option value="regalo">Regalo / cortesía</option>
-          <option value="sin-pagar">Sin pagar</option>
-        </select>
+      <div class="curso-toolbar">
+        <div class="curso-search-wrap">
+          <svg class="curso-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" id="mb-search-input" placeholder="Buscar por nombre, email o UID…" class="curso-search__input">
+          <button id="mb-search-clear" class="curso-search__clear" style="display:none;" aria-label="Limpiar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
       </div>
-      <div class="adm-list" id="mb-list"></div>
+      <div class="curso-pills">
+        <button class="curso-pill" data-mb-plan="todos" data-active="1">Todos los planes</button>
+        <button class="curso-pill" data-mb-plan="mensual">Mensual</button>
+        <button class="curso-pill" data-mb-plan="anual">Anual</button>
+        <button class="curso-pill" data-mb-plan="regalo">Regalo</button>
+        <button class="curso-pill" data-mb-plan="sin-pagar">Sin pagar</button>
+      </div>
+      <div class="curso-pills">
+        <button class="curso-pill" data-mb-estado="todos" data-active="1">Todos los estados</button>
+        <button class="curso-pill" data-mb-estado="activos">Activos</button>
+        <button class="curso-pill" data-mb-estado="inactivos">Inactivos</button>
+        <button class="curso-pill" data-mb-estado="expirados">Expirados</button>
+      </div>
+      <div id="mb-container"></div>
     </div>`;
-  document.getElementById('mb-buscar').addEventListener('input', PAGES._refrescar_miembros);
-  document.getElementById('mb-filtro').addEventListener('change', PAGES._refrescar_miembros);
-  PAGES._refrescar_miembros();
-};
-PAGES._refrescar_miembros = function(){
-  const kpiEl = document.getElementById('mb-kpis'); if (!kpiEl) return;
-  const s = Store.stats;
-  kpiEl.innerHTML = `
-    <div class="kpi-card" style="--c1:var(--success)"><div class="kpi-card__label">Activos</div><div class="kpi-card__value">${s.miembrosActivos}</div><div class="kpi-card__sub">de ${s.miembrosTotal} registrados</div></div>
-    <div class="kpi-card" style="--c1:var(--info)"><div class="kpi-card__label">Plan mensual</div><div class="kpi-card__value">${s.mensual}</div></div>
-    <div class="kpi-card" style="--c1:var(--primary)"><div class="kpi-card__label">Plan anual</div><div class="kpi-card__value">${s.anual}</div></div>
-    <div class="kpi-card" style="--c1:var(--accent)"><div class="kpi-card__label">Regalo / cortesía</div><div class="kpi-card__value">${s.regalo}</div></div>`;
-
-  const q = (document.getElementById('mb-buscar')?.value || '').toLowerCase();
-  const filtro = document.getElementById('mb-filtro')?.value || '';
-  let lista = Store.miembros.filter(m => {
-    const texto = (m.nombre || m.displayName || '') + ' ' + (m.email || '');
-    if (q && !texto.toLowerCase().includes(q)) return false;
-    const activo = Store.estaActivo(m);
-    if (filtro === 'sin-pagar') return !activo;
-    if (filtro === 'regalo') return activo && (m.esRegalo === true || m.plan === 'regalo');
-    if (filtro && filtro !== 'sin-pagar') return activo && m.plan === filtro;
-    return true;
+  MB.state = { search:'', plan:'todos', estado:'todos' };
+  const input = page.querySelector('#mb-search-input');
+  const limpiar = page.querySelector('#mb-search-clear');
+  input.addEventListener('input', e => { MB.state.search = e.target.value.toLowerCase().trim(); limpiar.style.display = e.target.value ? '' : 'none'; PAGES._refrescar_miembros(); });
+  limpiar.addEventListener('click', () => { input.value = ''; MB.state.search = ''; limpiar.style.display = 'none'; PAGES._refrescar_miembros(); });
+  page.querySelectorAll('[data-mb-plan]').forEach(b => b.addEventListener('click', () => {
+    page.querySelectorAll('[data-mb-plan]').forEach(x => x.removeAttribute('data-active')); b.setAttribute('data-active','1');
+    MB.state.plan = b.dataset.mbPlan; PAGES._refrescar_miembros();
+  }));
+  page.querySelectorAll('[data-mb-estado]').forEach(b => b.addEventListener('click', () => {
+    page.querySelectorAll('[data-mb-estado]').forEach(x => x.removeAttribute('data-active')); b.setAttribute('data-active','1');
+    MB.state.estado = b.dataset.mbEstado; PAGES._refrescar_miembros();
+  }));
+  page.addEventListener('click', e => {
+    const btn = e.target.closest('[data-mb-action]');
+    if (btn) { e.stopPropagation(); abrirAccionesMiembro(btn.dataset.mbAction); }
   });
-  const list = document.getElementById('mb-list');
-  if (!list) return;
-  if (!Store.ready) { list.innerHTML = `<div class="empty">${loadingRow()}</div>`; return; }
-  if (!lista.length) { list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><use href="#i-users"/></svg><h3>Sin resultados</h3><p>No hay miembros que coincidan con el filtro actual.</p></div>`; return; }
-  list.innerHTML = lista.map(m => {
-    const activo = Store.estaActivo(m);
-    const esRegalo = m.esRegalo === true || m.plan === 'regalo';
-    const pillClass = !activo ? 'off' : (esRegalo ? 'gift' : 'ok');
-    const pillTxt = !activo ? 'SIN PAGAR' : (esRegalo ? 'REGALO' : (m.plan === 'anual' ? 'ANUAL' : 'MENSUAL'));
-    const c1 = !activo ? 'var(--text-3)' : (m.plan === 'anual' ? 'var(--primary)' : 'var(--info)');
-    return `<div class="adm-row" style="--c1:${c1}">
-      <div class="adm-row__thumb">${initials(m.nombre || m.email)}</div>
-      <div class="adm-row__body">
-        <div class="adm-row__title">${escHtml(m.nombre || m.displayName || m.email || m.id)}</div>
-        <div class="adm-row__meta"><span><svg class="ic"><use href="#i-mail"/></svg>${escHtml(m.email || '—')}</span>${m.expiraEn||m.fechaFinAcceso ? `<span><svg class="ic"><use href="#i-clock"/></svg>Expira ${fmtDate(m.expiraEn||m.fechaFinAcceso)}</span>` : ''}</div>
+  PAGES._refrescar_miembros();
+  MB.cargarExtras();
+};
+
+PAGES._refrescar_miembros = function(){
+  const kpiEl = document.getElementById('mb-kpis');
+  const wrap = document.getElementById('mb-container');
+  if (!kpiEl || !wrap) return;
+  const ready = Store.ready;
+  const todos = ready ? Store.miembros : [];
+
+  // ── KPIs ──
+  const activos = todos.filter(MB.activo).length;
+  const sinPagar = todos.filter(m => (m.activa !== true && m.activo !== true) && !m.plan).length;
+  const mensuales = todos.filter(m => m.plan === 'mensual' && MB.activo(m)).length;
+  const anuales = todos.filter(m => m.plan === 'anual' && MB.activo(m)).length;
+  const regalos = todos.filter(m => (m.esRegalo === true || m.plan === 'regalo') && MB.activo(m)).length;
+  const pm = (MB.precios && MB.precios.mes) || 199, pa = (MB.precios && MB.precios.ano) || 1899;
+  const mrr = mensuales * pm + Math.round((anuales * pa) / 12);
+  const conversion = todos.length ? Math.round(activos / todos.length * 100) : 0;
+  kpiEl.innerHTML = `
+    <div class="kpi-card" style="--c1:#34D399;--c2:#22C55E;"><div class="kpi-card__label">Miembros activos</div><div class="kpi-card__value">${activos}</div><div class="kpi-card__sub">${ready ? `de ${todos.length} con cuenta · ${conversion}% conversión` : 'Cargando…'}</div></div>
+    <div class="kpi-card" style="--c1:#94A3B8;--c2:#CBD5E1;"><div class="kpi-card__label">Registrados sin pagar</div><div class="kpi-card__value">${sinPagar}</div><div class="kpi-card__sub">${sinPagar > 0 ? 'Oportunidad de venta' : 'Aún no hay'}</div></div>
+    <div class="kpi-card" style="--c1:var(--info);--c2:#60A5FA;"><div class="kpi-card__label">Plan Mensual</div><div class="kpi-card__value">${mensuales}</div><div class="kpi-card__sub">$${(mensuales * pm).toLocaleString('es-MX')} MXN/mes</div></div>
+    <div class="kpi-card" style="--c1:var(--primary);--c2:var(--primary-soft);"><div class="kpi-card__label">Plan Anual</div><div class="kpi-card__value">${anuales}</div><div class="kpi-card__sub">${anuales > 0 ? '$' + (anuales * pa).toLocaleString('es-MX') + ' MXN al año' : 'Sin anuales'}</div></div>
+    <div class="kpi-card" style="--c1:#A855F7;--c2:#C084FC;"><div class="kpi-card__label">MRR estimado</div><div class="kpi-card__value">$${mrr.toLocaleString('es-MX')}</div><div class="kpi-card__sub">${regalos} con acceso de regalo</div></div>`;
+
+  if (!ready) {
+    wrap.innerHTML = `<div class="curso-list">${[1,2,3,4].map(() => `<div class="curso-row" style="--area-color:#34D399;"><div class="curso-row__thumb skeleton-shimmer" style="background-image:none;border-radius:50%;"></div><div class="curso-row__body"><div class="skeleton-line skeleton-shimmer" style="width:50%;height:13px;"></div><div class="skeleton-line skeleton-shimmer" style="width:65%;height:11px;margin-top:8px;"></div></div></div>`).join('')}</div>`;
+    return;
+  }
+
+  // ── Filtros ──
+  const S = MB.state;
+  let lista = [...todos];
+  if (S.plan === 'regalo') lista = lista.filter(m => m.esRegalo === true || m.plan === 'regalo');
+  else if (S.plan === 'sin-pagar') lista = lista.filter(m => !m.plan || (m.activa !== true && m.activo !== true));
+  else if (S.plan !== 'todos') lista = lista.filter(m => m.plan === S.plan);
+  if (S.estado === 'activos') lista = lista.filter(MB.activo);
+  else if (S.estado === 'inactivos') lista = lista.filter(m => !MB.activo(m) && !MB.expirado(m));
+  else if (S.estado === 'expirados') lista = lista.filter(MB.expirado);
+  if (S.search) lista = lista.filter(m => ((m.nombre || m.displayName || '') + ' ' + (m.email || '') + ' ' + (m.uid || m.id || '')).toLowerCase().includes(S.search));
+
+  // Activos primero; después, los más recientes (por registro o activación)
+  const reciente = m => (MB.activacion(m) || MB.registro(m).fecha || MB.toDate(m.lastUpdatedAt) || new Date(0)).getTime();
+  lista.sort((a, b) => (MB.activo(b) - MB.activo(a)) || (reciente(b) - reciente(a)));
+
+  if (!lista.length) {
+    const filtrando = S.search || S.plan !== 'todos' || S.estado !== 'todos';
+    wrap.innerHTML = `<div class="curso-empty"><div class="curso-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div class="curso-empty__title">${filtrando ? 'Sin resultados' : 'Aún no hay registros'}</div>
+      <div class="curso-empty__sub">${filtrando ? 'Prueba con otros filtros' : 'Cuando alguien cree cuenta en synovamexico.com aparecerá aquí como "Sin pagar". Cuando pague, cambiará a Mensual/Anual.'}</div></div>`;
+    return;
+  }
+  wrap.innerHTML = `<div class="curso-list">${lista.map(PAGES._cardMiembro).join('')}</div>`;
+};
+
+PAGES._cardMiembro = function(m){
+  const activo = MB.activo(m), expirado = MB.expirado(m);
+  const esRegalo = m.esRegalo === true || m.plan === 'regalo';
+  const esSoloRegistrado = (m.activa !== true && m.activo !== true) && !m.plan;
+  const planes = { mensual:{label:'MENSUAL',color:'#3B82F6'}, anual:{label:'ANUAL',color:'#1C6FB0'}, regalo:{label:'REGALO',color:'#A855F7'}, admin:{label:'ADMIN',color:'#FBBF24'} };
+  let pInfo = planes[m.plan] || { label:'REGISTRADO', color:'#94A3B8' };
+  if (esRegalo) pInfo = planes.regalo;
+  const nombre = m.nombre || m.displayName || (m.email ? m.email.split('@')[0] : '') || 'Sin nombre';
+  const iniciales = nombre.split(' ').filter(Boolean).slice(0,2).map(x => x[0]).join('').toUpperCase() || '??';
+  const email = m.email || '—';
+  const uid = m.uid || m.id || '';
+  const reg = MB.registro(m);
+  const fechaRegistro = reg.fecha, fechaActivacion = MB.activacion(m), expira = MB.expira(m);
+  const zona = 'America/Mexico_City';
+  const fmtFecha = d => d ? d.toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric', timeZone: zona }) : '—';
+  // Registro con fecha y HORA (hora de México); los registros guardados solo con el día no tienen hora
+  const sinHora = typeof reg.crudo === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(reg.crudo.trim());
+  const fmtFechaHora = d => {
+    if (!d) return '—';
+    if (sinHora) return d.toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric', timeZone:'UTC' });
+    return fmtFecha(d) + ' · ' + d.toLocaleTimeString('es-MX', { hour:'numeric', minute:'2-digit', hour12:true, timeZone: zona });
+  };
+  const icoCheck = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="display:inline;vertical-align:-2px;margin-right:3px;color:#34D399;"><polyline points="20 6 9 17 4 12"/></svg>';
+  const icoReloj = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="display:inline;vertical-align:-2px;margin-right:3px;color:#94A3B8;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+  let estadoTxt, estadoColor, fechaContextual = '';
+  if (activo && fechaActivacion) {
+    estadoColor = '#34D399';
+    if (expira) { const dias = Math.ceil((expira.getTime() - Date.now()) / 86400000); estadoTxt = dias <= 7 ? `Expira en ${dias}d` : `Hasta ${fmtFecha(expira)}`; }
+    else estadoTxt = 'Activo';
+    fechaContextual = `${icoCheck}Miembro desde ${fmtFecha(fechaActivacion)}${fechaRegistro ? ' · registrado ' + fmtFecha(fechaRegistro) : ''}`;
+  } else if (activo) {
+    estadoColor = '#34D399'; estadoTxt = expira ? `Hasta ${fmtFecha(expira)}` : 'Activo';
+    fechaContextual = fechaRegistro ? `${icoReloj}Registrado ${fmtFechaHora(fechaRegistro)}` : '';
+  } else if (expirado) {
+    estadoColor = '#EF4444'; estadoTxt = `Expiró ${fmtFecha(expira)}`;
+    fechaContextual = fechaActivacion ? `Era miembro desde ${fmtFecha(fechaActivacion)}` : (fechaRegistro ? `Registrado ${fmtFechaHora(fechaRegistro)}` : '');
+  } else if (esSoloRegistrado) {
+    estadoColor = '#94A3B8'; estadoTxt = 'Sin pagar';
+    fechaContextual = fechaRegistro ? `${icoReloj}Se registró ${fmtFechaHora(fechaRegistro)}` : (MB.cargandoFechas || !MB.fechasAuth ? 'Cargando fecha de registro…' : 'Sin fecha de registro');
+  } else {
+    estadoColor = '#9CA3AF'; estadoTxt = 'Inactivo';
+    fechaContextual = fechaRegistro ? `Registrado ${fmtFechaHora(fechaRegistro)}` : '';
+  }
+  const uidCorto = uid.slice(0, 8);
+  return `
+    <div class="curso-row" data-mb-uid="${escHtml(uid)}" style="--area-color:${pInfo.color};">
+      <div class="curso-row__thumb" style="background:linear-gradient(135deg, ${pInfo.color}, color-mix(in srgb, ${pInfo.color} 60%, #fff));color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:14px;letter-spacing:.3px;">${escHtml(iniciales)}</div>
+      <div class="curso-row__body">
+        <div class="curso-row__title">${escHtml(nombre)}</div>
+        <div class="curso-row__meta" style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">
+          <span class="curso-row__instructor" title="${escHtml(email)}" style="font-size:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="display:inline;vertical-align:-2px;margin-right:3px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${escHtml(email.length > 36 ? email.slice(0,36) + '…' : email)}${uidCorto ? ` <span style="color:var(--text-3);font-size:10.5px;" title="${escHtml(uid)}">· ${escHtml(uidCorto)}…</span>` : ''}</span>
+          <span style="font-size:11px;color:var(--text-3);">${fechaContextual}</span>
+        </div>
       </div>
-      <span class="pill ${pillClass}">${pillTxt}</span>
-      <button class="btn btn-outline btn-sm" onclick="abrirAccionesMiembro('${m.id}')"><svg class="ic"><use href="#i-settings"/></svg>Acciones</button>
+      <div class="curso-row__stats" style="gap:8px;">
+        <span class="curso-row__area" style="color:${pInfo.color};border-color:color-mix(in srgb, ${pInfo.color} 35%, transparent);background:color-mix(in srgb, ${pInfo.color} 10%, transparent);">${pInfo.label}</span>
+        <span class="curso-row__area" style="color:${estadoColor};border-color:color-mix(in srgb, ${estadoColor} 35%, transparent);background:color-mix(in srgb, ${estadoColor} 10%, transparent);font-size:9px;">${escHtml(estadoTxt)}</span>
+      </div>
+      <div class="curso-row__actions">
+        <button class="curso-card__action" data-mb-action="${escHtml(m.id)}" title="Acciones"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+      </div>
     </div>`;
-  }).join('');
 };
 
 /* ── Menú de acciones contextual ── */
@@ -2884,7 +3034,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script src="assets/synova-admin-marketing.js?v=1"></script>
+<script src="assets/synova-admin-marketing.js?v=2"></script>
 <script src="assets/synova-referrals-admin.js"></script>
 </body>
 </html>
