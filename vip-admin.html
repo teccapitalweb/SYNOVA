@@ -988,7 +988,44 @@ function renderMiniNotif(){
    fecha de registro (con hora) y/o de activación, filtros por plan y por estado.
    La fecha de registro sale de Firestore y, si falta (cuentas creadas con Google
    desde el panel), de Firebase Auth vía GET /api/admin/miembros-fechas. */
-const MB = { state: { search:'', plan:'todos', estado:'todos' }, fechasAuth: null, cargandoFechas: false, precios: null };
+const MB = { state: { search:'', plan:'todos', estado:'todos', registro:'todos' }, fechasAuth: null, cargandoFechas: false, precios: null };
+MB.ZONA = 'America/Mexico_City';
+MB.NOMBRE_ORIGEN = { directo:'Directo', interno:'Dentro del sitio', google:'Google', bing:'Bing', duckduckgo:'DuckDuckGo', yahoo:'Yahoo', facebook:'Facebook', instagram:'Instagram', meta:'Meta (Facebook o Instagram)', whatsapp:'WhatsApp', linkedin:'LinkedIn', x:'X (Twitter)', youtube:'YouTube', tiktok:'TikTok', correo:'Correo electrónico', otros:'Otros sitios' };
+MB.extra = m => (MB.fechasAuth && MB.fechasAuth[m.id]) || {};
+MB.fechaHora = (d, soloDia) => {
+  if (!d) return '—';
+  const dia = d.toLocaleDateString('es-MX', { day:'numeric', month:'short', year:'numeric', timeZone: soloDia ? 'UTC' : MB.ZONA });
+  return soloDia ? dia : dia + ' · ' + d.toLocaleTimeString('es-MX', { hour:'numeric', minute:'2-digit', hour12:true, timeZone: MB.ZONA });
+};
+MB.hace = d => {
+  if (!d) return '';
+  const min = Math.round((Date.now() - d.getTime()) / 60000);
+  if (min < 2) return 'hace un momento';
+  if (min < 60) return 'hace ' + min + ' min';
+  const h = Math.round(min / 60); if (h < 24) return 'hace ' + h + ' h';
+  const dd = Math.round(h / 24); if (dd < 31) return 'hace ' + dd + (dd === 1 ? ' día' : ' días');
+  const mm = Math.round(dd / 30); return 'hace ' + mm + (mm === 1 ? ' mes' : ' meses');
+};
+// Exporta la lista filtrada con todos los datos de cada miembro
+MB.descargarCSV = function(){
+  const lista = MB.ultimaLista || [];
+  const iso = d => d ? d.toLocaleString('sv-SE', { timeZone: MB.ZONA }).replace('T', ' ').slice(0, 16) : '';
+  const filas = [['nombre','email','uid','plan','estado','registro','miembro_desde','vence','ultimo_acceso','registro_con','llego_por','curso_bienvenida','curso_bienvenida_elegido']];
+  lista.forEach(m => {
+    const x = MB.extra(m);
+    const estado = MB.activo(m) ? 'activo' : (MB.expirado(m) ? 'expirado' : ((m.activa !== true && m.activo !== true) && !m.plan ? 'sin pagar' : 'inactivo'));
+    filas.push([m.nombre || m.displayName || '', m.email || '', m.uid || m.id || '', (m.esRegalo === true ? 'regalo' : (m.plan || '')), estado,
+      iso(MB.registro(m).fecha), iso(MB.activacion(m)), iso(MB.expira(m)), iso(x.ultimoAcceso ? new Date(x.ultimoAcceso) : null),
+      x.proveedor === 'google.com' ? 'Google' : (x.proveedor === 'password' ? 'Correo' : (x.proveedor || '')),
+      x.origen ? (MB.NOMBRE_ORIGEN[x.origen] || x.origen) : '', (x.cursoGratis && x.cursoGratis.titulo) || '', iso(x.cursoGratis && x.cursoGratis.elegidoEn ? new Date(x.cursoGratis.elegidoEn) : null)]);
+  });
+  const csv = '\ufeff' + filas.map(f => f.map(v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
+  a.download = 'miembros-synova-' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
 MB.toDate = function(val){
   if (!val) return null;
   if (val && val.toDate) return val.toDate();
@@ -1040,6 +1077,7 @@ PAGES.miembros = function(){
         <span class="sec-hero__eyebrow">Comunidad</span>
         <h1 class="sec-hero__title">Miembros VIP</h1>
         <p class="sec-hero__sub">Aquí ves <strong style="color:var(--text-2);">todos los registrados</strong> (los que crearon cuenta) y <strong style="color:var(--text-2);">todos los miembros activos</strong> (los que ya pagaron). Cada uno con su fecha de registro y/o fecha de activación.</p>
+        <div class="sec-hero__actions"><button class="btn btn-outline btn-sm" id="mb-csv" type="button"><svg class="ic"><use href="#i-download"/></svg>Descargar lista (CSV)</button></div>
       </div>
       <div class="kpi-grid" id="mb-kpis"></div>
       <div class="curso-toolbar">
@@ -1062,9 +1100,20 @@ PAGES.miembros = function(){
         <button class="curso-pill" data-mb-estado="inactivos">Inactivos</button>
         <button class="curso-pill" data-mb-estado="expirados">Expirados</button>
       </div>
+      <div class="curso-pills">
+        <button class="curso-pill" data-mb-registro="todos" data-active="1">Registrados: siempre</button>
+        <button class="curso-pill" data-mb-registro="1">Hoy</button>
+        <button class="curso-pill" data-mb-registro="7">Últimos 7 días</button>
+        <button class="curso-pill" data-mb-registro="30">Últimos 30 días</button>
+      </div>
       <div id="mb-container"></div>
     </div>`;
-  MB.state = { search:'', plan:'todos', estado:'todos' };
+  MB.state = { search:'', plan:'todos', estado:'todos', registro:'todos' };
+  page.querySelector('#mb-csv').addEventListener('click', MB.descargarCSV);
+  page.querySelectorAll('[data-mb-registro]').forEach(b => b.addEventListener('click', () => {
+    page.querySelectorAll('[data-mb-registro]').forEach(x => x.removeAttribute('data-active')); b.setAttribute('data-active','1');
+    MB.state.registro = b.dataset.mbRegistro; PAGES._refrescar_miembros();
+  }));
   const input = page.querySelector('#mb-search-input');
   const limpiar = page.querySelector('#mb-search-clear');
   input.addEventListener('input', e => { MB.state.search = e.target.value.toLowerCase().trim(); limpiar.style.display = e.target.value ? '' : 'none'; PAGES._refrescar_miembros(); });
@@ -1122,20 +1171,44 @@ PAGES._refrescar_miembros = function(){
   if (S.estado === 'activos') lista = lista.filter(MB.activo);
   else if (S.estado === 'inactivos') lista = lista.filter(m => !MB.activo(m) && !MB.expirado(m));
   else if (S.estado === 'expirados') lista = lista.filter(MB.expirado);
+  if (S.registro !== 'todos') {
+    // "Hoy" es el día de México; 7 y 30 días cuentan desde ahora
+    const hoyMx = new Date().toLocaleDateString('en-CA', { timeZone: MB.ZONA });
+    const desde = Date.now() - Number(S.registro) * 86400000;
+    lista = lista.filter(m => {
+      const f = MB.registro(m).fecha;
+      if (!f) return false;
+      return S.registro === '1' ? f.toLocaleDateString('en-CA', { timeZone: MB.ZONA }) === hoyMx : f.getTime() >= desde;
+    });
+  }
   if (S.search) lista = lista.filter(m => ((m.nombre || m.displayName || '') + ' ' + (m.email || '') + ' ' + (m.uid || m.id || '')).toLowerCase().includes(S.search));
 
   // Activos primero; después, los más recientes (por registro o activación)
   const reciente = m => (MB.activacion(m) || MB.registro(m).fecha || MB.toDate(m.lastUpdatedAt) || new Date(0)).getTime();
   lista.sort((a, b) => (MB.activo(b) - MB.activo(a)) || (reciente(b) - reciente(a)));
 
+  MB.ultimaLista = lista;
   if (!lista.length) {
-    const filtrando = S.search || S.plan !== 'todos' || S.estado !== 'todos';
+    const filtrando = S.search || S.plan !== 'todos' || S.estado !== 'todos' || S.registro !== 'todos';
     wrap.innerHTML = `<div class="curso-empty"><div class="curso-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="36" height="36"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
       <div class="curso-empty__title">${filtrando ? 'Sin resultados' : 'Aún no hay registros'}</div>
       <div class="curso-empty__sub">${filtrando ? 'Prueba con otros filtros' : 'Cuando alguien cree cuenta en synovamexico.com aparecerá aquí como "Sin pagar". Cuando pague, cambiará a Mensual/Anual.'}</div></div>`;
     return;
   }
-  wrap.innerHTML = `<div class="curso-list">${lista.map(PAGES._cardMiembro).join('')}</div>`;
+  MB.ultimaLista = lista;
+  wrap.innerHTML = `<div style="margin:2px 0 10px;font-size:12px;color:var(--text-3)">${lista.length} ${lista.length === 1 ? 'cuenta' : 'cuentas'} en esta vista</div><div class="curso-list">${lista.map(PAGES._cardMiembro).join('')}</div>`;
+};
+
+// Datos para conocer mejor a cada miembro: último acceso, cómo se registró, por dónde llegó y su curso de bienvenida
+PAGES._detallesMiembro = function(m){
+  const x = MB.extra(m);
+  const chip = (txt, color, titulo) => `<span title="${escHtml(titulo || '')}" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:600;color:${color};background:color-mix(in srgb, ${color} 11%, transparent);border:1px solid color-mix(in srgb, ${color} 25%, transparent);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis">${txt}</span>`;
+  const chips = [];
+  if (x.ultimoAcceso) { const d = new Date(x.ultimoAcceso); chips.push(chip('Último acceso ' + escHtml(MB.hace(d)), '#64748B', MB.fechaHora(d))); }
+  if (x.proveedor) chips.push(chip(x.proveedor === 'google.com' ? 'Registro con Google' : (x.proveedor === 'password' ? 'Registro con correo' : 'Registro con ' + escHtml(x.proveedor)), '#0EA5E9'));
+  if (x.origen) chips.push(chip('Llegó por ' + escHtml(MB.NOMBRE_ORIGEN[x.origen] || x.origen), '#E1306C', 'Primer enlace por el que llegó, según el contador de visitas'));
+  if (x.cursoGratis && x.cursoGratis.titulo) { const t = x.cursoGratis.titulo; chips.push(chip('Curso de bienvenida: ' + escHtml(t.length > 42 ? t.slice(0, 42) + '…' : t), '#14B8A6', t + (x.cursoGratis.elegidoEn ? ' · elegido ' + MB.fechaHora(new Date(x.cursoGratis.elegidoEn)) : ''))); }
+  return chips.length ? `<span style="display:flex;flex-wrap:wrap;gap:5px;margin-top:3px">${chips.join('')}</span>` : '';
 };
 
 PAGES._cardMiembro = function(m){
@@ -1167,13 +1240,13 @@ PAGES._cardMiembro = function(m){
     estadoColor = '#34D399';
     if (expira) { const dias = Math.ceil((expira.getTime() - Date.now()) / 86400000); estadoTxt = dias <= 7 ? `Expira en ${dias}d` : `Hasta ${fmtFecha(expira)}`; }
     else estadoTxt = 'Activo';
-    fechaContextual = `${icoCheck}Miembro desde ${fmtFecha(fechaActivacion)}${fechaRegistro ? ' · registrado ' + fmtFecha(fechaRegistro) : ''}`;
+    fechaContextual = `${icoCheck}Miembro desde ${MB.fechaHora(fechaActivacion)}${fechaRegistro ? `<br>${icoReloj}Se registró ${fmtFechaHora(fechaRegistro)}` : ''}`;
   } else if (activo) {
     estadoColor = '#34D399'; estadoTxt = expira ? `Hasta ${fmtFecha(expira)}` : 'Activo';
-    fechaContextual = fechaRegistro ? `${icoReloj}Registrado ${fmtFechaHora(fechaRegistro)}` : '';
+    fechaContextual = fechaRegistro ? `${icoReloj}Se registró ${fmtFechaHora(fechaRegistro)}` : '';
   } else if (expirado) {
     estadoColor = '#EF4444'; estadoTxt = `Expiró ${fmtFecha(expira)}`;
-    fechaContextual = fechaActivacion ? `Era miembro desde ${fmtFecha(fechaActivacion)}` : (fechaRegistro ? `Registrado ${fmtFechaHora(fechaRegistro)}` : '');
+    fechaContextual = (fechaActivacion ? `Era miembro desde ${MB.fechaHora(fechaActivacion)}` : '') + (fechaRegistro ? `${fechaActivacion ? '<br>' : ''}${icoReloj}Se registró ${fmtFechaHora(fechaRegistro)}` : '');
   } else if (esSoloRegistrado) {
     estadoColor = '#94A3B8'; estadoTxt = 'Sin pagar';
     fechaContextual = fechaRegistro ? `${icoReloj}Se registró ${fmtFechaHora(fechaRegistro)}` : (MB.cargandoFechas || !MB.fechasAuth ? 'Cargando fecha de registro…' : 'Sin fecha de registro');
@@ -1189,7 +1262,8 @@ PAGES._cardMiembro = function(m){
         <div class="curso-row__title">${escHtml(nombre)}</div>
         <div class="curso-row__meta" style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">
           <span class="curso-row__instructor" title="${escHtml(email)}" style="font-size:12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11" style="display:inline;vertical-align:-2px;margin-right:3px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>${escHtml(email.length > 36 ? email.slice(0,36) + '…' : email)}${uidCorto ? ` <span style="color:var(--text-3);font-size:10.5px;" title="${escHtml(uid)}">· ${escHtml(uidCorto)}…</span>` : ''}</span>
-          <span style="font-size:11px;color:var(--text-3);">${fechaContextual}</span>
+          <span style="font-size:11px;color:var(--text-3);line-height:1.6;">${fechaContextual}</span>
+          ${PAGES._detallesMiembro(m)}
         </div>
       </div>
       <div class="curso-row__stats" style="gap:8px;">
