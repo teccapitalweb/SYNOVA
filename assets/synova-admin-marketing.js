@@ -16,9 +16,11 @@ const Pages = {
     for (let i = 0; i < 60 && !(window.__auth && window.__auth.currentUser); i++) await new Promise(r => setTimeout(r, 250));
     return window.__tokenAdmin ? window.__tokenAdmin() : null;
   },
-  async _api(ruta){
+  async _api(ruta, init = {}){
     const token = await Pages._getAuthToken();
-    const r = await fetch(Pages._webhookUrl + ruta, { headers: { 'Authorization': 'Bearer ' + token }, cache: 'no-store' });
+    const headers = { 'Authorization': 'Bearer ' + token, ...(init.headers || {}) };
+    if (init.body && !headers['Content-Type']) headers['Content-Type'] = 'application/json';
+    const r = await fetch(Pages._webhookUrl + ruta, { ...init, headers, cache: 'no-store' });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(j.error || ('HTTP ' + r.status));
     return j;
@@ -1241,6 +1243,102 @@ Pages._rutasGuia = async function(p, tabs){
   }
 };
 
+Pages.correos = function(p){
+  const miembros = ((window.Store && window.Store.miembros) || [])
+    .filter(m => m && m.email && !/^(teccapitalweb|synovamexico)@/i.test(String(m.email)))
+    .sort((a, b) => String(a.nombre || a.displayName || a.email).localeCompare(String(b.nombre || b.displayName || b.email), 'es'));
+  if (!miembros.length && window.Store && typeof window.Store.subscribe === 'function') {
+    const stop = window.Store.subscribe(what => {
+      if (what !== 'miembros' || !window.Store.miembros.length) return;
+      stop();
+      if (p.dataset.live === 'correos') Pages.correos(p);
+    });
+  }
+  const opciones = miembros.map(m => {
+    const nombre = m.nombre || m.displayName || String(m.email).split('@')[0] || 'Cuenta';
+    return `<option value="${AdminEsc(m.uid || m.id)}">${AdminEsc(nombre)} · ${AdminEsc(m.email)}</option>`;
+  }).join('');
+  p.innerHTML = `<div class="fade-up ce-page">
+    <style>
+      .ce-page{--ce-cyan:#2fd1c6;--ce-blue:#1c6fb0}.ce-hero{background:linear-gradient(135deg,#0b2940,#173f61 62%,#1c6fb0);border-radius:22px;padding:30px 32px;color:#fff;box-shadow:0 18px 45px rgba(13,46,73,.18);position:relative;overflow:hidden}.ce-hero:after{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-95px;top:-150px}.ce-hero small{display:inline-flex;align-items:center;gap:7px;font:700 10px 'JetBrains Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:#8ff1ea}.ce-hero h1{margin:12px 0 7px;font:800 clamp(31px,5vw,45px)/1 'Plus Jakarta Sans',sans-serif;letter-spacing:-1.5px}.ce-hero p{max-width:690px;margin:0;color:#d6e7f4;font-size:14px;line-height:1.6}.ce-status,.ce-panel{margin-top:18px;background:var(--surface);border:1px solid var(--border-2);border-radius:18px;padding:20px}.ce-status{display:flex;align-items:center;justify-content:space-between;gap:18px;border-left:4px solid var(--text-3)}.ce-status.on{border-left-color:var(--success)}.ce-status__copy small{display:block;font:700 9px 'JetBrains Mono',monospace;letter-spacing:1.3px;color:var(--text-3);text-transform:uppercase}.ce-status__copy strong{display:block;margin-top:5px;font:800 21px 'Plus Jakarta Sans',sans-serif}.ce-status__copy span{display:block;margin-top:4px;font-size:12px;color:var(--text-2)}.ce-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.ce-kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px}.ce-kpi span{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text-3)}.ce-kpi strong{display:block;margin-top:7px;font:800 27px 'Plus Jakarta Sans',sans-serif}.ce-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.ce-mail{padding:19px;border-radius:17px;background:linear-gradient(145deg,color-mix(in srgb,var(--ce-blue) 7%,var(--surface)),var(--surface));border:1px solid var(--border)}.ce-mail__num{width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,var(--ce-cyan) 17%,transparent);color:var(--primary);display:grid;place-items:center;font:800 11px 'JetBrains Mono',monospace}.ce-mail h3{margin:13px 0 7px;font-size:15px}.ce-mail p{margin:0;color:var(--text-2);font-size:12px;line-height:1.55}.ce-mail b{display:inline-block;margin-top:12px;font-size:11px;color:var(--primary)}.ce-demo-grid{display:grid;grid-template-columns:minmax(230px,1.2fr) minmax(280px,2fr);gap:16px;align-items:end}.ce-field label{display:block;margin:0 0 7px;font-size:11px;font-weight:800;color:var(--text-2)}.ce-select{width:100%;min-height:43px;border:1px solid var(--border-2);border-radius:10px;background:var(--surface-2);color:var(--text);padding:0 12px;font:inherit}.ce-send{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ce-send button{min-height:43px}.ce-lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.ce-list{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px}.ce-list h3{margin:0 0 10px;font-size:14px}.ce-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-top:1px solid var(--border);font-size:12px}.ce-row:first-of-type{border-top:0}.ce-row strong,.ce-row small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ce-row small{color:var(--text-3);margin-top:3px}.ce-empty{font-size:12px;color:var(--text-3);padding:9px 0}.ce-result{min-height:20px;margin-top:10px;color:var(--text-2);font-size:12px}.ce-result.ok{color:var(--success)}.ce-result.err{color:var(--danger)}
+      @media(max-width:900px){.ce-kpis{grid-template-columns:repeat(2,1fr)}.ce-flow,.ce-demo-grid,.ce-lists{grid-template-columns:1fr}}@media(max-width:520px){.ce-hero{padding:24px 20px}.ce-status{align-items:flex-start;flex-direction:column}.ce-send{grid-template-columns:1fr}.ce-page .btn{width:100%;justify-content:center}}
+    </style>
+    <section class="ce-hero"><small>✉ Marketing · Conversión</small><h1>Correos</h1><p>Tres mensajes breves y atractivos para cuentas que aún no son VIP: beneficios a las 12 h, $50 MXN menos 12 h después y un último beneficio de $100 MXN 24 h más tarde.</p></section>
+    <section class="ce-status" id="ce-status"><div class="ce-status__copy"><small>Estado de la automatización</small><strong id="ce-status-title">Consultando…</strong><span id="ce-status-sub">La campaña se mantiene apagada hasta que la actives aquí.</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="ce-run" type="button">Ejecutar ahora</button><button class="btn btn-primary btn-sm" id="ce-mode" type="button" disabled>Activar campaña</button></div></section>
+    <div class="ce-kpis"><div class="ce-kpi"><span>En seguimiento</span><strong id="ce-kpi-receiving">—</strong></div><div class="ce-kpi"><span>Contactadas</span><strong id="ce-kpi-sent">—</strong></div><div class="ce-kpi"><span>Se volvieron VIP</span><strong id="ce-kpi-converted">—</strong></div><div class="ce-kpi"><span>Bajas</span><strong id="ce-kpi-unsubscribed">—</strong></div></div>
+    <div class="ce-flow"><article class="ce-mail"><span class="ce-mail__num">01</span><h3>🩺 Tu lugar te espera</h3><p>Beneficios VIP claros: cursos clínicos, herramientas, clases y certificados.</p><b>12 horas después del registro</b></article><article class="ce-mail"><span class="ce-mail__num">02</span><h3>🎁 $50 MXN menos</h3><p>Código personal de un uso para el primer plan mensual o anual.</p><b>12 horas después · vence en 24 h</b></article><article class="ce-mail"><span class="ce-mail__num">03</span><h3>⏳ $100 MXN menos</h3><p>Último llamado breve, urgente y sin mensajes posteriores.</p><b>24 horas después · vence en 24 h</b></article></div>
+    <section class="ce-panel"><div style="margin-bottom:14px"><span style="font:700 9px 'JetBrains Mono',monospace;letter-spacing:1.3px;color:var(--primary)">DEMOSTRACIÓN REAL</span><h2 style="margin:5px 0 4px;font-size:20px">Enviar un mensaje ahora</h2><p style="margin:0;color:var(--text-2);font-size:12px">Se envía como correo real, sin la palabra “prueba”, y no altera el horario automático de la cuenta.</p></div><div class="ce-demo-grid"><div class="ce-field"><label for="ce-member">Cuenta destinataria</label><select class="ce-select" id="ce-member"><option value="">Selecciona una cuenta…</option>${opciones}</select></div><div class="ce-send"><button class="btn btn-outline btn-sm" data-ce-step="1">Enviar beneficios</button><button class="btn btn-outline btn-sm" data-ce-step="2">Enviar $50</button><button class="btn btn-primary btn-sm" data-ce-step="3">Enviar $100</button></div></div><div class="ce-result" id="ce-result" role="status"></div></section>
+    <div class="ce-lists"><section class="ce-list"><h3>Próximos envíos</h3><div id="ce-upcoming"><div class="ce-empty">Cargando…</div></div></section><section class="ce-list"><h3>Actividad reciente</h3><div id="ce-latest"><div class="ce-empty">Cargando…</div></div></section></div>
+  </div>`;
+
+  const result = p.querySelector('#ce-result');
+  const setResult = (text, type) => { if (!result) return; result.textContent = text || ''; result.className = 'ce-result ' + (type || ''); };
+  p.querySelectorAll('[data-ce-step]').forEach(button => button.addEventListener('click', async () => {
+    const uid = p.querySelector('#ce-member').value;
+    if (!uid) { setResult('Selecciona primero una cuenta.', 'err'); return; }
+    const member = miembros.find(m => String(m.uid || m.id) === uid);
+    const step = Number(button.dataset.ceStep);
+    const labels = { 1:'beneficios', 2:'$50 MXN', 3:'$100 MXN' };
+    if (!confirm(`Se enviará el correo de ${labels[step]} a ${member && member.email ? member.email : 'esta cuenta'}. ¿Continuar?`)) return;
+    const original = button.textContent;
+    button.disabled = true; button.textContent = 'Enviando…'; setResult('Enviando correo real…');
+    try {
+      const data = await Pages._api('/admin/conversion-emails/send', { method:'POST', body:JSON.stringify({ uid, step }) });
+      setResult(`Enviado a ${data.to}. ${data.code ? 'Código: ' + data.code : 'Mensaje de beneficios sin cupón.'}`, 'ok');
+      if (window.Toast) Toast.success('Correo enviado', data.subject || data.to);
+      await Pages._cargarCorreos(p);
+    } catch (error) {
+      setResult(error.message || 'No se pudo enviar.', 'err');
+      if (window.Toast) Toast.error('No se pudo enviar', error.message || 'Revisa el backend');
+    } finally { button.disabled = false; button.textContent = original; }
+  }));
+  p.querySelector('#ce-mode').addEventListener('click', async buttonEvent => {
+    const button = buttonEvent.currentTarget;
+    const next = button.dataset.mode === 'active' ? 'off' : 'active';
+    if (!confirm(next === 'active' ? '¿Activar los envíos automáticos?' : '¿Pausar la campaña?')) return;
+    button.disabled = true;
+    try {
+      await Pages._api('/admin/conversion-emails/mode', { method:'PATCH', body:JSON.stringify({ mode:next }) });
+      if (window.Toast) Toast.success(next === 'active' ? 'Campaña activada' : 'Campaña pausada');
+      await Pages._cargarCorreos(p);
+    } catch (error) { if (window.Toast) Toast.error('No se pudo actualizar', error.message); }
+  });
+  p.querySelector('#ce-run').addEventListener('click', async buttonEvent => {
+    const button = buttonEvent.currentTarget; button.disabled = true; button.textContent = 'Revisando…';
+    try {
+      const data = await Pages._api('/admin/conversion-emails/run', { method:'POST', body:'{}' });
+      const detail = data.skipped === 'off' ? 'La campaña está apagada; no se envió nada.' : `${data.sent || 0} enviado(s), ${data.failed || 0} fallo(s).`;
+      if (window.Toast) Toast.info('Ejecución terminada', detail);
+      await Pages._cargarCorreos(p);
+    } catch (error) { if (window.Toast) Toast.error('No se pudo ejecutar', error.message); }
+    finally { button.disabled = false; button.textContent = 'Ejecutar ahora'; }
+  });
+  Pages._cargarCorreos(p);
+};
+
+Pages._cargarCorreos = async function(p){
+  try {
+    await Pages._esperarAdmin();
+    const data = await Pages._api('/admin/conversion-emails');
+    if (!document.body.contains(p) || (p.dataset.live && p.dataset.live !== 'correos')) return;
+    const mode = data.mode === 'active' ? 'active' : 'off';
+    const status = p.querySelector('#ce-status'); if (status) status.classList.toggle('on', mode === 'active');
+    const title = p.querySelector('#ce-status-title'); if (title) title.textContent = mode === 'active' ? 'Campaña activa' : 'Campaña apagada';
+    const sub = p.querySelector('#ce-status-sub'); if (sub) sub.textContent = mode === 'active' ? 'El servidor revisa nuevos envíos cada 15 minutos.' : 'Puedes enviar demostraciones; no se enviará nada automáticamente.';
+    const modeButton = p.querySelector('#ce-mode'); if (modeButton) { modeButton.disabled = false; modeButton.dataset.mode = mode; modeButton.textContent = mode === 'active' ? 'Pausar campaña' : 'Activar campaña'; }
+    const counts = data.counts || {};
+    ['receiving','sent','converted','unsubscribed'].forEach(key => { const el = p.querySelector('#ce-kpi-' + key); if (el) el.textContent = Number(counts[key] || 0).toLocaleString('es-MX'); });
+    const when = ms => Number(ms) ? new Date(Number(ms)).toLocaleString('es-MX', { dateStyle:'medium', timeStyle:'short', timeZone:'America/Mexico_City' }) : '—';
+    const row = (item, date, label) => `<div class="ce-row"><span><strong>${AdminEsc(item.name || item.email || 'Cuenta')}</strong><small>${AdminEsc(item.email || '')}</small></span><span style="text-align:right"><strong>${AdminEsc(label)}</strong><small>${AdminEsc(date)}</small></span></div>`;
+    const upcoming = p.querySelector('#ce-upcoming'); if (upcoming) upcoming.innerHTML = (data.upcoming || []).length ? data.upcoming.map(item => row(item, when(item.dueMs), `Mensaje ${item.step}`)).join('') : '<div class="ce-empty">No hay envíos pendientes.</div>';
+    const latest = p.querySelector('#ce-latest'); if (latest) latest.innerHTML = (data.latest || []).length ? data.latest.map(item => row(item, when(item.sentMs), `Mensaje ${item.step}`)).join('') : '<div class="ce-empty">Todavía no hay envíos automáticos.</div>';
+  } catch (error) {
+    const title = p.querySelector('#ce-status-title'); if (title) title.textContent = 'No se pudo cargar';
+    const sub = p.querySelector('#ce-status-sub'); if (sub) sub.textContent = error.message || 'Revisa que el backend más reciente esté desplegado.';
+    const modeButton = p.querySelector('#ce-mode'); if (modeButton) modeButton.disabled = true;
+  }
+};
+
 Pages._esperarAdmin = function(){
   if (window.AdminUser) return Promise.resolve();
   return new Promise(resolver => { window.addEventListener('adminready', () => resolver(), { once: true }); setTimeout(resolver, 10000); });
@@ -1256,10 +1354,11 @@ function registrar(){
   PAGES.encuestas = montar('encuestas');
   PAGES.metricas = montar('metricas');
   PAGES.pruebas = montar('pruebas');
+  PAGES.correos = montar('correos');
   // Si el router ya intentó abrir una de estas secciones antes de que cargara este archivo, se vuelve a abrir
   const page = document.getElementById('page');
   const viva = page && page.dataset.live;
-  if (['encuestas', 'metricas', 'pruebas'].includes(viva) && window.AdminUser && window.navigateTo) window.navigateTo(viva);
+  if (['encuestas', 'metricas', 'pruebas', 'correos'].includes(viva) && window.AdminUser && window.navigateTo) window.navigateTo(viva);
 }
 registrar();
 window.SynovaMarketingAdmin = Pages;

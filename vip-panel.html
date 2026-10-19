@@ -1019,6 +1019,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .plan-picker__sub{font-size:11px;color:var(--text-3);margin-top:3px}
 .plan-picker__price{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--primary);font-feature-settings:"tnum" 1;letter-spacing:-.5px;line-height:1}
 .plan-picker__price-sub{font-size:10.5px;color:var(--text-3);margin-top:3px;letter-spacing:.4px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;font-weight:600}
+.conversion-offer{max-width:760px;margin:0 auto 18px;padding:20px 22px;border:1px solid color-mix(in srgb,var(--highlight) 38%,var(--border));border-radius:17px;background:linear-gradient(135deg,color-mix(in srgb,var(--highlight) 13%,var(--surface)),color-mix(in srgb,var(--primary) 7%,var(--surface)));display:flex;gap:16px;align-items:center}.conversion-offer__icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--highlight),var(--primary));color:#071018;display:grid;place-items:center;font-size:22px;flex-shrink:0}.conversion-offer__body{min-width:0;flex:1}.conversion-offer__eyebrow{font:800 9px 'JetBrains Mono',monospace;letter-spacing:1.25px;color:var(--highlight);text-transform:uppercase}.conversion-offer__title{font:800 17px 'Plus Jakarta Sans',sans-serif;margin-top:4px}.conversion-offer__copy{font-size:12px;color:var(--text-2);line-height:1.5;margin-top:4px}.conversion-offer__code{font:800 12px 'JetBrains Mono',monospace;color:var(--text);padding:8px 11px;border-radius:10px;border:1px dashed color-mix(in srgb,var(--highlight) 55%,var(--border));background:var(--surface);white-space:nowrap}
 #sub-checkout-mount{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:8px;margin-top:18px;min-height:420px}
 .sub-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:14px;color:var(--text-3);font-size:13px}
 .sub-loading__spin{width:32px;height:32px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--primary);animation:spin .8s linear infinite}
@@ -1041,6 +1042,7 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 .trial-countdown__label{font-size:9px;letter-spacing:1.25px;text-transform:uppercase;margin-top:5px;color:rgba(255,255,255,.7)}
 .trial-active-card__note{position:relative;z-index:1;margin-top:20px;padding-top:15px;border-top:1px solid rgba(255,255,255,.16);font-size:11.5px;color:rgba(255,255,255,.78)}
 @media(max-width:720px){.trial-offer__inner{grid-template-columns:auto 1fr}.trial-offer__inner .btn{grid-column:1/-1;width:100%}.trial-active-card{padding:22px}.trial-countdown{width:100%}.trial-active-card h2{font-size:23px}}
+@media(max-width:600px){.conversion-offer{align-items:flex-start;flex-wrap:wrap}.conversion-offer__body{flex-basis:calc(100% - 64px)}.conversion-offer__code{margin-left:64px}}
 @media(max-width:420px){.trial-offer__inner{grid-template-columns:1fr;text-align:center}.trial-offer__icon{margin:auto}.trial-offer__inner .btn{grid-column:auto}.trial-active-card{padding:20px 17px}.trial-countdown__value{font-size:22px}}
 .plan-card{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-deep) 100%);color:#fff;border-radius:20px;padding:26px 28px;position:relative;overflow:hidden;margin-bottom:14px;box-shadow:0 14px 40px var(--primary-glow)}
 .plan-card::before{content:"";position:absolute;inset:0;background-image:linear-gradient(to right,rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(to bottom,rgba(255,255,255,.08) 1px,transparent 1px);background-size:36px 36px;-webkit-mask-image:radial-gradient(ellipse at top right,#000 0%,transparent 75%);mask-image:radial-gradient(ellipse at top right,#000 0%,transparent 75%);pointer-events:none}
@@ -2159,7 +2161,7 @@ onAuthStateChanged(auth, async (user) => {
 
   const params = new URLSearchParams(location.search);
   const seccionSolicitada = params.get('seccion');
-  const seccionInicial = params.get('checkout') === 'success'
+  const seccionInicial = params.get('checkout') === 'success' || params.get('offer')
     ? 'suscripcion'
     : (esEntradaMovilEnDirectorioSynova() ? 'inicio' : (seccionSolicitada || 'inicio'));
   navigateTo(seccionInicial);
@@ -4990,6 +4992,10 @@ function renderSuscripcionAdmin(){
 async function renderSuscripcionActivar(){
   const precios = await leerPrecios();
   const S = window.UserState || {};
+  const offerCode = String(new URLSearchParams(location.search).get('offer') || '').trim().toUpperCase();
+  const validOfferCode = /^(CUIDATEMAS|HOYSYNOVA)-[A-Z2-9]{4,12}$/.test(offerCode) ? offerCode : '';
+  const offerAmount = validOfferCode.startsWith('HOYSYNOVA-') ? 100 : (validOfferCode ? 50 : 0);
+  const conversionOffer = validOfferCode ? `<section class="conversion-offer" aria-label="Beneficio de bienvenida"><div class="conversion-offer__icon">🎁</div><div class="conversion-offer__body"><div class="conversion-offer__eyebrow">Beneficio personal preparado</div><div class="conversion-offer__title">Ahorra $${offerAmount} MXN en tu primera membresía</div><div class="conversion-offer__copy">Elige mensual o anual. SYNOVA validará el código y aplicará el beneficio en el pago.</div></div><div class="conversion-offer__code">${escHtml(validOfferCode)}</div></section>` : '';
   const trialOffer = (window.TRIAL_OFERTA_ACTIVA === true && S.trial?.canActivate) ? `<section class="trial-offer"><div class="trial-offer__inner">
     <div class="trial-offer__icon"><svg class="ic"><use href="#i-crown"/></svg></div>
     <div><div class="trial-offer__eyebrow">Tu regalo está disponible</div><div class="trial-offer__title">Prueba SYNOVA VIP durante 3 días</div><div class="trial-offer__copy">Acceso completo durante 72 horas. Sin tarjeta y sin cobro automático; el reloj comienza cuando lo activas.</div></div>
@@ -4997,7 +5003,7 @@ async function renderSuscripcionActivar(){
   </div></section>` : '';
   document.getElementById('content').innerHTML =
     secHero('', 'Suscripción', 'Estás a un paso de acceder a todo el contenido de SYNOVA VIP. Elige tu plan y completa tu suscripción de forma segura con Stripe.') +
-    trialOffer + `<div class="plan-picker" id="plan-picker">
+    trialOffer + conversionOffer + `<div class="plan-picker" id="plan-picker">
       <button class="plan-picker__card is-active" data-plan="mensual" type="button">
         <div><div class="plan-picker__name">VIP Mensual</div><div class="plan-picker__sub">Cancela cuando quieras</div></div>
         <div style="text-align:right"><div class="plan-picker__price">${fmtMoney(precios.mes)}</div><div class="plan-picker__price-sub">MXN/mes</div></div>
@@ -5034,9 +5040,10 @@ async function montarStripeCheckout(plan){
   try {
     const idToken = window.__auth.currentUser ? await window.__auth.currentUser.getIdToken() : '';
     const referralCode = localStorage.getItem('synova_referral_code') || '';
+    const promotionCode = String(new URLSearchParams(location.search).get('offer') || '').trim().toUpperCase();
     const r = await fetch(window.__WEBHOOK_URL + '/stripe/checkout', {
       method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + idToken },
-      body: JSON.stringify({ plan, uid: S.uid, email: S.email, referralCode })
+      body: JSON.stringify({ plan, uid: S.uid, email: S.email, referralCode, promotionCode })
     });
     const data = await r.json();
     if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
