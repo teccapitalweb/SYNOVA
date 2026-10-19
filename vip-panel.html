@@ -4916,6 +4916,12 @@ Sections.perfil = function(){
         <div class="perfil-field"><span class="perfil-field__lbl">Estado</span><span class="perfil-field__val" style="color:${toolEsVIP() ? 'var(--success)' : 'var(--warn)'}">${toolEsVIP() ? 'Activa' : 'Pendiente de activar'}</span></div>
         <div class="perfil-field" style="border-bottom:none;padding-top:10px"><button class="btn btn--accent btn--sm" data-section="suscripcion" style="width:100%">Gestionar suscripción</button></div>
       </div>
+      <div class="perfil-card" style="grid-column:1/-1">
+        <div class="perfil-card__title">Notificaciones</div>
+        <div data-synova-push-settings>
+          <div class="perfil-field"><span class="perfil-field__lbl">Cargando preferencias…</span></div>
+        </div>
+      </div>
     </div>`;
   document.getElementById('perfil-editar')?.addEventListener('click', abrirEditorPerfil);
   document.getElementById('perfil-editar-nombre')?.addEventListener('click', abrirEditorPerfil);
@@ -4924,6 +4930,7 @@ Sections.perfil = function(){
     try { await window.__conectarFotoGoogle(); Toast.success('Foto conectada','Usaremos la foto de tu cuenta de Google.'); Sections.perfil(); }
     catch(e){ Toast.error('No se pudo conectar la foto', e.code === 'auth/credential-already-in-use' ? 'Esa cuenta de Google ya está vinculada a otro acceso.' : e.message); btn.disabled=false; btn.innerHTML='<svg class="ic"><use href="#i-image"/></svg>Usar foto de Google'; }
   });
+  setTimeout(() => { try { window.SynovaPush && window.SynovaPush.mountSettings(document.getElementById('content')); } catch (_) {} }, 0);
 };
 
 function abrirEditorPerfil(){
@@ -7355,6 +7362,7 @@ body{-webkit-tap-highlight-color:transparent}.nav-item,.mobile-nav__item,.mobile
 <script src="assets/onboarding-tour.js?v=8"></script>
 <script src="assets/synova-analytics.js?v=2"></script>
 <script src="assets/synova-visitas.js?v=1" data-pagina="panel" defer></script>
+<script src="assets/synova-push.js?v=1" defer></script>
 <script>
 window.SynovaOnboarding = new window.MembershipTour({
   namespace: 'synova',
