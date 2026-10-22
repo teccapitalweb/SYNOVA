@@ -647,6 +647,7 @@ window.__tokenAdmin = tokenAdmin;
       <div class="nav-label">Comunidad</div>
       <a class="nav-item" data-section="miembros"><svg class="ic"><use href="#i-users"/></svg>Miembros VIP<span class="nav-item__badge" id="badge-miembros">0</span></a>
       <a class="nav-item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Referidos</a>
+      <a class="nav-item" data-section="creditos"><svg class="ic"><use href="#i-trend"/></svg>Historial de créditos<span class="nav-item__badge">NUEVO</span></a>
       <a class="nav-item" data-section="foro"><svg class="ic"><use href="#i-users"/></svg>Foro<span class="nav-item__badge" id="badge-foro">0</span></a>
       <a class="nav-item" data-section="directorio"><svg class="ic"><use href="#i-user"/></svg>Directorio<span class="nav-item__badge" id="badge-dir">0</span></a>
     </div>
@@ -1400,7 +1401,8 @@ async function modalCreditos(m){
     </div>
     <label style="display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:4px">Nota (opcional)</label>
     <input id="cr-nota" type="text" maxlength="200" placeholder="Ej. Cortesía por webinar" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-family:inherit;font-size:13px;margin-bottom:12px">
-    <div class="info-strip">Los créditos se suman al saldo del miembro y quedan en el libro mayor. Sirven para canjear herramientas y libros con o sin membresía.</div>`;
+    <div class="info-strip">Los créditos se suman al saldo del miembro y quedan en el libro mayor. Sirven para canjear herramientas y libros con o sin membresía.</div>
+    <div id="cr-historial"></div>`;
   const footer = document.createElement('div');
   footer.innerHTML = `<button class="btn btn-outline btn-sm" id="cr-cancel">Cancelar</button><button class="btn btn-primary btn-sm" id="cr-confirm">Regalar créditos</button>`;
   Modal.open({ title: 'Créditos SYNOVA', subtitle: 'Regalar o vender', icon: 'i-users', body, footer });
@@ -1408,6 +1410,7 @@ async function modalCreditos(m){
 
   let tipo = 'regalo';
   const saldoEl = body.querySelector('#cr-saldo'), montoEl = body.querySelector('#cr-monto'), precioEl = body.querySelector('#cr-precio'), notaEl = body.querySelector('#cr-nota'), confirmBtn = footer.querySelector('#cr-confirm');
+  if (window.SynovaCreditHistory) window.SynovaCreditHistory.renderMemberInto(body.querySelector('#cr-historial'), uid);
   const saldo = await llamarCreditosAdmin('GET', { uid });
   saldoEl.textContent = saldo.ok ? Number(saldo.data.balance || 0).toLocaleString('es-MX') + ' cr' : '—';
 
@@ -1427,6 +1430,7 @@ async function modalCreditos(m){
     confirmBtn.disabled = true; confirmBtn.textContent = 'Procesando…';
     const r = await llamarCreditosAdmin('POST', { uid, amount, tipo, precio, nota: notaEl.value });
     if (r.ok) {
+      if (window.SynovaCreditHistory) { window.SynovaCreditHistory.invalidate(); if (document.getElementById('page')?.dataset.live === 'miembros') window.SynovaCreditHistory.load(true).then(() => PAGES._refrescar_miembros()).catch(() => {}); }
       Toast.success(tipo === 'venta' ? 'Venta registrada' : 'Créditos regalados', `${nombre} ahora tiene ${Number(r.data.balance || 0).toLocaleString('es-MX')} créditos`);
       Modal.close();
     } else {
@@ -3112,5 +3116,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="assets/synova-admin-marketing.js?v=5"></script>
 <script src="assets/synova-referrals-admin.js"></script>
+<script src="assets/synova-credits-history-admin.js?v=1"></script>
 </body>
 </html>
