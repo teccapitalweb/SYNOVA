@@ -23,6 +23,45 @@
   function localSet(key, value) { try { localStorage.setItem(key, value); } catch (_) {} }
   function answerKey() { return 'synova:push:consent:v1:' + uid(); }
   function syncKey() { return 'synova:push:sync:' + uid(); }
+  function browserName() {
+    var ua = navigator.userAgent || '';
+    if (/Edg\//.test(ua)) return 'Edge';
+    if (/OPR\//.test(ua)) return 'Opera';
+    if (/CriOS\//.test(ua)) return 'Chrome iOS';
+    if (/FxiOS\//.test(ua)) return 'Firefox iOS';
+    if (/Chrome\//.test(ua)) return 'Chrome';
+    if (/Firefox\//.test(ua)) return 'Firefox';
+    if (/Safari\//.test(ua)) return 'Safari';
+    return 'Otro';
+  }
+
+  function deviceType() {
+    var ua = navigator.userAgent || '';
+    if (/iPad|Tablet|PlayBook/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'tablet';
+    if (/Mobi|Android|iPhone|iPod/i.test(ua)) return 'mobile';
+    return 'desktop';
+  }
+
+  async function reportPresence(source) {
+    if (!uid()) return;
+    var installedEvent = source === 'installed_event';
+    try {
+      await api('/api/app-presence', {
+        method: 'POST',
+        body: {
+          source: source || (standalone ? 'standalone_launch' : 'browser_visit'),
+          displayMode: standalone ? 'standalone' : 'browser',
+          installConfirmed: installedEvent || standalone,
+          notificationPermission: supported ? Notification.permission : 'unsupported',
+          platform: navigator.userAgentData && navigator.userAgentData.platform || navigator.platform || '',
+          deviceType: deviceType(),
+          browser: browserName(),
+          locale: navigator.language || 'es-MX',
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'America/Mexico_City'
+        }
+      });
+    } catch (_) { /* La telemetría nunca interrumpe la experiencia del miembro. */ }
+  }
 
   function toast(kind, title, detail) {
     if (window.Toast && typeof window.Toast[kind] === 'function') window.Toast[kind](title, detail || '');
@@ -89,6 +128,7 @@
     });
     localSet(answerKey(), 'yes');
     localSet(syncKey(), String(Date.now()));
+    reportPresence(standalone ? 'standalone_launch' : 'browser_visit');
     return result;
   }
 
@@ -107,6 +147,7 @@
     if (!subscription) return;
     await api('/api/push/subscribe', { method: 'DELETE', body: { endpoint: subscription.endpoint } }).catch(function () {});
     await subscription.unsubscribe().catch(function () {});
+    reportPresence(standalone ? 'standalone_launch' : 'browser_visit');
   }
 
   async function active() {
@@ -244,7 +285,13 @@
     });
   }
 
-  window.addEventListener('synova:ready', function () { setTimeout(reviewConsent, 3500); });
+  window.addEventListener('appinstalled', function () {
+    reportPresence('installed_event');
+  });
+  window.addEventListener('synova:ready', function () {
+    setTimeout(reviewConsent, 3500);
+    setTimeout(function () { reportPresence(standalone ? 'standalone_launch' : 'browser_visit'); }, 900);
+  });
   if (uid()) setTimeout(reviewConsent, 3500);
   window.SynovaPush = { enable: enable, disable: disable, active: active, status: status, mountSettings: mountSettings, supported: supported };
 })();
