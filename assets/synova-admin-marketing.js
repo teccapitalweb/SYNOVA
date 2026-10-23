@@ -1434,6 +1434,80 @@ Pages._cargarCupones = async function(p, code){
   }
 };
 
+// ─────────── APP Y DISPOSITIVOS · instalaciones PWA + salud push ───────────
+Pages.app = function(p){
+  const num = value => Number(value || 0).toLocaleString('es-MX');
+  const when = value => {
+    const date = new Date(Number(value) || 0);
+    return !value || Number.isNaN(date.getTime()) ? 'Sin registro' : date.toLocaleString('es-MX', { dateStyle:'medium', timeStyle:'short', timeZone:'America/Mexico_City' });
+  };
+  const since = value => {
+    if (!value) return 'Nunca observada';
+    const days = Math.max(0, Math.floor((Date.now() - Number(value)) / 86400000));
+    if (!days) return 'Hoy'; if (days === 1) return 'Ayer'; if (days < 30) return `Hace ${days} días`;
+    return when(value);
+  };
+  const alertLabels = {
+    installed_no_push:'Instaló sin avisos', permission_blocked:'Permiso bloqueado',
+    inactive_30d:'Inactiva +30 días', multiple_devices:'Varios dispositivos', no_evidence:'Sin evidencia todavía'
+  };
+  const sourceLabels = { installed_event:'Instalación confirmada', standalone_launch:'Abrió como app', browser_visit:'Uso en navegador' };
+  const permissionLabels = { granted:'Permitido', denied:'Bloqueado', default:'Sin decidir', unsupported:'No compatible', unknown:'Sin registro' };
+  const categoryLabels = { service:'Servicio', promotions:'Beneficios', learning:'Aprendizaje', activity:'Créditos', admin:'Avisos' };
+  if (!document.getElementById('app-admin-styles')) {
+    const style = document.createElement('style');
+    style.id = 'app-admin-styles';
+    style.textContent = `
+.ai{max-width:1280px}.ai *{box-sizing:border-box}.ai-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.ai-card,.ai-panel,.ai-note{border:1px solid var(--border);background:var(--surface);border-radius:18px}.ai-card{padding:18px;position:relative;overflow:hidden}.ai-card:after{content:'';position:absolute;inset:auto -18px -32px auto;width:82px;height:82px;border-radius:50%;background:color-mix(in srgb,var(--ai-color,#2FD1C6) 12%,transparent)}.ai-card small{display:block;font:700 9px 'JetBrains Mono',monospace;letter-spacing:1.1px;text-transform:uppercase;color:var(--text-3)}.ai-card strong{display:block;margin:9px 0 5px;font:800 29px/1 'Plus Jakarta Sans',sans-serif;color:var(--text)}.ai-card span{font-size:10.5px;color:var(--text-3)}.ai-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.5fr);gap:15px;margin:16px 0}.ai-note{padding:18px}.ai-note h3{margin:5px 0 9px;font:800 16px 'Plus Jakarta Sans',sans-serif;color:var(--text)}.ai-note p{margin:0;color:var(--text-3);font-size:11.5px;line-height:1.6}.ai-insights{display:grid;gap:8px}.ai-insight{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:11px;background:var(--surface-2);font-size:11px;color:var(--text-2)}.ai-insight b{color:var(--text);font:800 13px 'Plus Jakarta Sans',sans-serif}.ai-panel{overflow:hidden}.ai-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border-bottom:1px solid var(--border)}.ai-search{position:relative;min-width:250px;flex:1;max-width:430px}.ai-search input{width:100%;height:40px;padding:0 13px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);color:var(--text);font:500 12px Inter,sans-serif}.ai-tabs{display:flex;gap:6px;flex-wrap:wrap}.ai-tab{padding:8px 11px;border:1px solid var(--border);border-radius:99px;background:var(--surface-2);color:var(--text-3);font-size:10px;font-weight:700;cursor:pointer}.ai-tab.is-active{background:var(--text);border-color:var(--text);color:var(--surface)}.ai-table-wrap{overflow:auto}.ai-table{width:100%;border-collapse:collapse;min-width:980px}.ai-table th{padding:11px 13px;background:var(--surface-2);border-bottom:1px solid var(--border);color:var(--text-3);font:700 8px 'JetBrains Mono',monospace;letter-spacing:1px;text-align:left;text-transform:uppercase}.ai-table td{padding:13px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text-2);font-size:11px}.ai-table tr:last-child td{border:0}.ai-person strong{display:block;color:var(--text);font-size:12px}.ai-person small,.ai-cell small{display:block;margin-top:4px;color:var(--text-3);font-size:9.5px}.ai-status{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:99px;background:color-mix(in srgb,#22c55e 10%,var(--surface-2));color:#16804a;font-size:9px;font-weight:800}.ai-status.is-off{background:var(--surface-2);color:var(--text-3)}.ai-status.is-warn{background:color-mix(in srgb,#f59e0b 11%,var(--surface-2));color:#9a6410}.ai-tags{display:flex;flex-wrap:wrap;gap:4px;max-width:220px}.ai-tag{padding:4px 7px;border-radius:7px;background:var(--surface-2);color:var(--text-3);font-size:8.5px;font-weight:700}.ai-tag.is-alert{background:color-mix(in srgb,#ef4444 9%,var(--surface-2));color:#ba3b3b}.ai-empty{padding:42px;text-align:center;color:var(--text-3);font-size:12px}.ai-foot{padding:11px 16px;border-top:1px solid var(--border);color:var(--text-3);font-size:10px}.ai-loading{padding:50px;text-align:center;color:var(--text-3);font-size:12px}.ai-loading:before{content:'';display:block;width:23px;height:23px;margin:0 auto 11px;border:2px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:ai-spin .75s linear infinite}@keyframes ai-spin{to{transform:rotate(360deg)}}
+@media(max-width:1050px){.ai-kpis{grid-template-columns:repeat(3,1fr)}.ai-grid{grid-template-columns:1fr}}@media(max-width:760px){.ai-kpis{grid-template-columns:repeat(2,1fr)}.ai-tools{align-items:stretch;flex-direction:column}.ai-search{max-width:none;min-width:0}}@media(max-width:480px){.ai-kpis{gap:8px}.ai-card{padding:14px}.ai-card strong{font-size:24px}.ai-tabs{display:grid;grid-template-columns:1fr 1fr}.ai-tab{text-align:center}}
+`;
+    document.head.appendChild(style);
+  }
+  p.innerHTML = `<div class="ai fade-up"><div class="sec-hero"><span class="sec-hero__eyebrow">Auditoría · experiencia móvil</span><h1 class="sec-hero__title">App y dispositivos</h1><p class="sec-hero__sub">Instalaciones confirmadas, actividad reciente y estado real de las notificaciones de cada miembro. Sin guardar IP, modelo exacto ni historial de navegación.</p></div><div id="ai-body" class="ai-loading">Revisando instalaciones y dispositivos…</div></div>`;
+  const body = p.querySelector('#ai-body');
+  let data = null, filter = 'all', search = '';
+  const rowsFiltered = () => (data?.rows || []).filter(row => {
+    const matches = !search || `${row.name} ${row.email} ${row.platform} ${row.browser}`.toLowerCase().includes(search);
+    const state = filter === 'all' || (filter === 'installed' && row.installed) || (filter === 'push' && row.pushActive) || (filter === 'attention' && row.alerts.some(alert => alert !== 'no_evidence'));
+    return matches && state;
+  });
+  const csv = value => `"${String(value == null ? '' : value).replace(/"/g,'""')}"`;
+  const exportCsv = () => {
+    const header = ['Nombre','Correo','Plan','App instalada','Fuente','Último uso','Push activo','Dispositivos','Permiso','Plataforma','Navegador','Alertas'];
+    const lines = rowsFiltered().map(row => [row.name,row.email,row.plan,row.installed?'Sí':'Sin evidencia',sourceLabels[row.installSource]||row.installSource,when(row.lastSeenAtMs),row.pushActive?'Sí':'No',row.pushDevices,permissionLabels[row.notificationPermission]||row.notificationPermission,row.platform,row.browser,row.alerts.map(alert => alertLabels[alert]||alert).join('; ')].map(csv).join(','));
+    const blob = new Blob(['\ufeff' + [header.map(csv).join(','), ...lines].join('\r\n')], { type:'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob), anchor = document.createElement('a');
+    anchor.href = url; anchor.download = `synova-app-dispositivos-${new Date().toISOString().slice(0,10)}.csv`; anchor.click(); URL.revokeObjectURL(url);
+  };
+  const renderTable = () => {
+    const host = body.querySelector('[data-ai-rows]'); if (!host) return;
+    const rows = rowsFiltered();
+    body.querySelector('[data-ai-count]').textContent = `${num(rows.length)} de ${num(data.rows.length)} personas`;
+    if (!rows.length) { host.innerHTML = '<div class="ai-empty"><strong>No hay personas en esta vista.</strong><br>Prueba otro filtro o búsqueda.</div>'; return; }
+    host.innerHTML = `<div class="ai-table-wrap"><table class="ai-table"><thead><tr><th>Persona</th><th>App</th><th>Notificaciones</th><th>Equipo</th><th>Actividad</th><th>Diagnóstico</th></tr></thead><tbody>${rows.map(row => {
+      const prefs = Object.keys(categoryLabels).filter(key => row.preferences?.[key] !== false).map(key => categoryLabels[key]);
+      return `<tr><td class="ai-person"><strong>${AdminEsc(row.name)}</strong><small>${AdminEsc(row.email || 'Sin correo')} · ${AdminEsc(row.plan || 'sin plan')}${row.active ? ' · activa' : ''}</small></td><td class="ai-cell"><span class="ai-status ${row.installed?'':'is-off'}">${row.installed?'✓ Instalada':'Sin evidencia'}</span><small>${AdminEsc(sourceLabels[row.installSource] || (row.lastSeenAtMs ? 'Abrió en navegador' : 'Se detectará al volver'))}</small></td><td class="ai-cell"><span class="ai-status ${row.pushActive?'':'is-off'}">${row.pushActive?'✓ Push activo':'Push inactivo'}</span><small>${num(row.pushDevices)} dispositivo(s) · ${AdminEsc(permissionLabels[row.notificationPermission] || row.notificationPermission)}</small>${prefs.length && row.pushActive ? `<small>${AdminEsc(prefs.join(' · '))}</small>` : ''}</td><td class="ai-cell"><strong>${AdminEsc(row.deviceType || '—')} · ${AdminEsc(row.platform || '—')}</strong><small>${AdminEsc(row.browser || 'Sin navegador registrado')}</small></td><td class="ai-cell"><strong>${AdminEsc(since(row.lastSeenAtMs))}</strong><small>${AdminEsc(when(row.lastSeenAtMs))}${row.installedAtMs ? `<br>Instaló: ${AdminEsc(when(row.installedAtMs))}` : ''}${row.lastPushSuccessAtMs ? `<br>Último push: ${AdminEsc(when(row.lastPushSuccessAtMs))}` : ''}</small></td><td><div class="ai-tags">${row.alerts.length ? row.alerts.map(alert => `<span class="ai-tag ${alert==='no_evidence'?'':'is-alert'}">${AdminEsc(alertLabels[alert] || alert)}</span>`).join('') : '<span class="ai-tag">Todo en orden</span>'}</div></td></tr>`;
+    }).join('')}</tbody></table></div>`;
+  };
+  const render = result => {
+    data = result; const c = data.counts || {};
+    body.className = '';
+    body.innerHTML = `<div class="ai-kpis"><article class="ai-card" style="--ai-color:#2FD1C6"><small>App confirmada</small><strong>${num(c.installed)}</strong><span>evento o apertura como app</span></article><article class="ai-card" style="--ai-color:#22c55e"><small>Push activo</small><strong>${num(c.pushUsers)}</strong><span>${num(c.devices)} dispositivos vigentes</span></article><article class="ai-card" style="--ai-color:#3b82f6"><small>Completos</small><strong>${num(c.both)}</strong><span>app instalada + avisos</span></article><article class="ai-card" style="--ai-color:#f59e0b"><small>Activas 7 días</small><strong>${num(c.active7d)}</strong><span>abrieron recientemente</span></article><article class="ai-card" style="--ai-color:#ef4444"><small>Requieren atención</small><strong>${num(c.installedNoPush + c.permissionDenied + c.inactive30d)}</strong><span>señales para revisar</span></article></div>
+      <div class="ai-grid"><section class="ai-note"><span class="pa-kicker">Lectura rápida</span><h3>Qué conviene atender</h3><div class="ai-insights"><div class="ai-insight"><span>Instalaron, pero no reciben avisos</span><b>${num(c.installedNoPush)}</b></div><div class="ai-insight"><span>Bloquearon el permiso del navegador</span><b>${num(c.permissionDenied)}</b></div><div class="ai-insight"><span>Instaladas sin uso en 30 días</span><b>${num(c.inactive30d)}</b></div><div class="ai-insight"><span>Ya fueron observadas por el nuevo registro</span><b>${num(c.observed)} / ${num(c.members)}</b></div></div></section><aside class="ai-note"><span class="pa-kicker">Cómo se mide</span><h3>Datos verificables, no suposiciones</h3><p>“Instalada” exige el evento del sistema o una apertura en modo app. “Push activo” exige una suscripción vigente en el servidor. Las instalaciones anteriores aparecerán cuando la persona vuelva a abrir SYNOVA desde su ícono.</p></aside></div>
+      <section class="ai-panel"><div class="ai-tools"><div class="ai-search"><input type="search" data-ai-search placeholder="Buscar nombre, correo o dispositivo…" aria-label="Buscar personas"></div><div class="ai-tabs"><button class="ai-tab is-active" data-ai-filter="all">Todos</button><button class="ai-tab" data-ai-filter="installed">Con app</button><button class="ai-tab" data-ai-filter="push">Push activo</button><button class="ai-tab" data-ai-filter="attention">Atención</button></div><button type="button" class="btn btn-outline btn-sm" data-ai-export>Exportar CSV</button></div><div data-ai-rows></div><div class="ai-foot" data-ai-count></div></section>`;
+    body.querySelector('[data-ai-search]').addEventListener('input', event => { search = event.target.value.toLowerCase().trim(); renderTable(); });
+    body.querySelectorAll('[data-ai-filter]').forEach(button => button.addEventListener('click', () => { filter = button.dataset.aiFilter; body.querySelectorAll('[data-ai-filter]').forEach(item => item.classList.toggle('is-active', item === button)); renderTable(); }));
+    body.querySelector('[data-ai-export]').addEventListener('click', exportCsv);
+    renderTable();
+  };
+  const load = async () => {
+    body.className = 'ai-loading'; body.textContent = 'Revisando instalaciones y dispositivos…';
+    try { render(await Pages._api('/admin/app-presence')); }
+    catch(error) { body.className='ai-empty'; body.innerHTML=`<strong>No pudimos cargar App y dispositivos</strong><br>${AdminEsc(error.message)}<br><button type="button" class="btn btn-primary btn-sm" data-ai-retry style="margin-top:12px">Reintentar</button>`; body.querySelector('[data-ai-retry]')?.addEventListener('click', load); }
+  };
+  load();
+};
+
 // ─────────── NOTIFICACIONES PUSH · 9 eventos + campañas manuales ───────────
 Pages.push = function(p){
   const members = () => (window.Store?.miembros || []).slice().sort((a,b) => String(a.email || '').localeCompare(String(b.email || '')));
@@ -1543,11 +1617,12 @@ function registrar(){
   PAGES.pruebas = montar('pruebas');
   PAGES.correos = montar('correos');
   PAGES.cupones = montar('cupones');
+  PAGES.app = montar('app');
   PAGES.push = montar('push');
   // Si el router ya intentó abrir una de estas secciones antes de que cargara este archivo, se vuelve a abrir
   const page = document.getElementById('page');
   const viva = page && page.dataset.live;
-  if (['encuestas', 'metricas', 'pruebas', 'correos', 'cupones', 'push'].includes(viva) && window.AdminUser && window.navigateTo) window.navigateTo(viva);
+  if (['encuestas', 'metricas', 'pruebas', 'correos', 'cupones', 'app', 'push'].includes(viva) && window.AdminUser && window.navigateTo) window.navigateTo(viva);
 }
 registrar();
 window.SynovaMarketingAdmin = Pages;
