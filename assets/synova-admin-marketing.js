@@ -1254,44 +1254,73 @@ Pages.correos = function(p){
       if (p.dataset.live === 'correos') Pages.correos(p);
     });
   }
-  const opciones = miembros.map(m => {
+  const destinatarios = miembros.map(m => {
     const nombre = m.nombre || m.displayName || String(m.email).split('@')[0] || 'Cuenta';
-    return `<option value="${AdminEsc(m.uid || m.id)}">${AdminEsc(nombre)} · ${AdminEsc(m.email)}</option>`;
+    const uid = String(m.uid || m.id || '');
+    return `<label class="ce-recipient" data-ce-search="${AdminEsc((nombre + ' ' + m.email).toLowerCase())}"><input type="checkbox" value="${AdminEsc(uid)}"><span><strong>${AdminEsc(nombre)}</strong><small>${AdminEsc(m.email)}</small></span></label>`;
   }).join('');
   p.innerHTML = `<div class="fade-up ce-page">
     <style>
-      .ce-page{--ce-cyan:#2fd1c6;--ce-blue:#1c6fb0}.ce-hero{background:linear-gradient(135deg,#0b2940,#173f61 62%,#1c6fb0);border-radius:22px;padding:30px 32px;color:#fff;box-shadow:0 18px 45px rgba(13,46,73,.18);position:relative;overflow:hidden}.ce-hero:after{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-95px;top:-150px}.ce-hero small{display:inline-flex;align-items:center;gap:7px;font:700 10px 'JetBrains Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:#8ff1ea}.ce-hero h1{margin:12px 0 7px;font:800 clamp(31px,5vw,45px)/1 'Plus Jakarta Sans',sans-serif;letter-spacing:-1.5px}.ce-hero p{max-width:690px;margin:0;color:#d6e7f4;font-size:14px;line-height:1.6}.ce-status,.ce-panel{margin-top:18px;background:var(--surface);border:1px solid var(--border-2);border-radius:18px;padding:20px}.ce-status{display:flex;align-items:center;justify-content:space-between;gap:18px;border-left:4px solid var(--text-3)}.ce-status.on{border-left-color:var(--success)}.ce-status__copy small{display:block;font:700 9px 'JetBrains Mono',monospace;letter-spacing:1.3px;color:var(--text-3);text-transform:uppercase}.ce-status__copy strong{display:block;margin-top:5px;font:800 21px 'Plus Jakarta Sans',sans-serif}.ce-status__copy span{display:block;margin-top:4px;font-size:12px;color:var(--text-2)}.ce-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.ce-kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px}.ce-kpi span{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text-3)}.ce-kpi strong{display:block;margin-top:7px;font:800 27px 'Plus Jakarta Sans',sans-serif}.ce-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.ce-mail{padding:19px;border-radius:17px;background:linear-gradient(145deg,color-mix(in srgb,var(--ce-blue) 7%,var(--surface)),var(--surface));border:1px solid var(--border)}.ce-mail__num{width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,var(--ce-cyan) 17%,transparent);color:var(--primary);display:grid;place-items:center;font:800 11px 'JetBrains Mono',monospace}.ce-mail h3{margin:13px 0 7px;font-size:15px}.ce-mail p{margin:0;color:var(--text-2);font-size:12px;line-height:1.55}.ce-mail b{display:inline-block;margin-top:12px;font-size:11px;color:var(--primary)}.ce-demo-grid{display:grid;grid-template-columns:minmax(230px,1.2fr) minmax(280px,2fr);gap:16px;align-items:end}.ce-field label{display:block;margin:0 0 7px;font-size:11px;font-weight:800;color:var(--text-2)}.ce-select{width:100%;min-height:43px;border:1px solid var(--border-2);border-radius:10px;background:var(--surface-2);color:var(--text);padding:0 12px;font:inherit}.ce-send{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ce-send button{min-height:43px}.ce-lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.ce-list{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px}.ce-list h3{margin:0 0 10px;font-size:14px}.ce-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-top:1px solid var(--border);font-size:12px}.ce-row:first-of-type{border-top:0}.ce-row strong,.ce-row small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ce-row small{color:var(--text-3);margin-top:3px}.ce-empty{font-size:12px;color:var(--text-3);padding:9px 0}.ce-result{min-height:20px;margin-top:10px;color:var(--text-2);font-size:12px}.ce-result.ok{color:var(--success)}.ce-result.err{color:var(--danger)}
-      @media(max-width:900px){.ce-kpis{grid-template-columns:repeat(2,1fr)}.ce-flow,.ce-demo-grid,.ce-lists{grid-template-columns:1fr}}@media(max-width:520px){.ce-hero{padding:24px 20px}.ce-status{align-items:flex-start;flex-direction:column}.ce-send{grid-template-columns:1fr}.ce-page .btn{width:100%;justify-content:center}}
+      .ce-page{--ce-cyan:#2fd1c6;--ce-blue:#1c6fb0}.ce-hero{background:linear-gradient(135deg,#0b2940,#173f61 62%,#1c6fb0);border-radius:22px;padding:30px 32px;color:#fff;box-shadow:0 18px 45px rgba(13,46,73,.18);position:relative;overflow:hidden}.ce-hero:after{content:"";position:absolute;width:260px;height:260px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-95px;top:-150px}.ce-hero small{display:inline-flex;align-items:center;gap:7px;font:700 10px 'JetBrains Mono',monospace;letter-spacing:1.5px;text-transform:uppercase;color:#8ff1ea}.ce-hero h1{margin:12px 0 7px;font:800 clamp(31px,5vw,45px)/1 'Plus Jakarta Sans',sans-serif;letter-spacing:-1.5px}.ce-hero p{max-width:690px;margin:0;color:#d6e7f4;font-size:14px;line-height:1.6}.ce-status,.ce-panel{margin-top:18px;background:var(--surface);border:1px solid var(--border-2);border-radius:18px;padding:20px}.ce-status{display:flex;align-items:center;justify-content:space-between;gap:18px;border-left:4px solid var(--text-3)}.ce-status.on{border-left-color:var(--success)}.ce-status__copy small{display:block;font:700 9px 'JetBrains Mono',monospace;letter-spacing:1.3px;color:var(--text-3);text-transform:uppercase}.ce-status__copy strong{display:block;margin-top:5px;font:800 21px 'Plus Jakarta Sans',sans-serif}.ce-status__copy span{display:block;margin-top:4px;font-size:12px;color:var(--text-2)}.ce-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.ce-kpis.delivery{grid-template-columns:repeat(5,minmax(0,1fr))}.ce-kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px}.ce-kpi span{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--text-3)}.ce-kpi strong{display:block;margin-top:7px;font:800 27px 'Plus Jakarta Sans',sans-serif}.ce-flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}.ce-mail{padding:19px;border-radius:17px;background:linear-gradient(145deg,color-mix(in srgb,var(--ce-blue) 7%,var(--surface)),var(--surface));border:1px solid var(--border)}.ce-mail__num{width:32px;height:32px;border-radius:10px;background:color-mix(in srgb,var(--ce-cyan) 17%,transparent);color:var(--primary);display:grid;place-items:center;font:800 11px 'JetBrains Mono',monospace}.ce-mail h3{margin:13px 0 7px;font-size:15px}.ce-mail p{margin:0;color:var(--text-2);font-size:12px;line-height:1.55}.ce-mail b{display:inline-block;margin-top:12px;font-size:11px;color:var(--primary)}.ce-bulk{display:grid;grid-template-columns:minmax(260px,1fr) minmax(300px,1.4fr);gap:16px}.ce-recipient-tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.ce-recipient-search{flex:1;min-width:190px;height:42px;padding:0 12px;border:1px solid var(--border-2);border-radius:10px;background:var(--surface-2);color:var(--text)}.ce-recipient-list{max-height:300px;overflow:auto;margin-top:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2)}.ce-recipient{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--border);cursor:pointer}.ce-recipient:first-child{border-top:0}.ce-recipient:hover{background:color-mix(in srgb,var(--ce-blue) 6%,var(--surface))}.ce-recipient input{width:17px;height:17px;accent-color:var(--primary)}.ce-recipient span{min-width:0}.ce-recipient strong,.ce-recipient small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ce-recipient small{margin-top:2px;color:var(--text-3);font-size:10px}.ce-selected{margin-top:9px;color:var(--text-2);font-size:11px}.ce-send{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ce-send button{min-height:43px}.ce-lists{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.ce-list{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:17px}.ce-list h3{margin:0 0 10px;font-size:14px}.ce-list>p{margin:-5px 0 10px;color:var(--text-3);font-size:10.5px}.ce-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-top:1px solid var(--border);font-size:12px}.ce-row:first-of-type{border-top:0}.ce-row strong,.ce-row small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ce-row small{color:var(--text-3);margin-top:3px}.ce-chip{display:inline-block;padding:3px 7px;border-radius:999px;background:color-mix(in srgb,var(--text-3) 13%,transparent);font-size:9px;font-weight:800;text-transform:uppercase}.ce-chip.delivered{background:rgba(34,197,94,.13);color:#15803d}.ce-chip.failed{background:rgba(239,68,68,.13);color:#dc2626}.ce-chip.sent{background:rgba(28,111,176,.13);color:#1c6fb0}.ce-chip.delayed,.ce-chip.scheduled,.ce-chip.sending{background:rgba(247,148,29,.15);color:#c66c00}.ce-empty{font-size:12px;color:var(--text-3);padding:9px 0}.ce-result{min-height:20px;margin-top:10px;color:var(--text-2);font-size:12px}.ce-result.ok{color:var(--success)}.ce-result.err{color:var(--danger)}
+      @media(max-width:1050px){.ce-kpis.delivery{grid-template-columns:repeat(3,1fr)}}@media(max-width:900px){.ce-kpis{grid-template-columns:repeat(2,1fr)}.ce-flow,.ce-bulk,.ce-lists{grid-template-columns:1fr}}@media(max-width:520px){.ce-hero{padding:24px 20px}.ce-status{align-items:flex-start;flex-direction:column}.ce-send{grid-template-columns:1fr}.ce-kpis.delivery{grid-template-columns:repeat(2,1fr)}.ce-page .btn{width:100%;justify-content:center}}
     </style>
     <section class="ce-hero"><small>✉ Marketing · Conversión</small><h1>Correos</h1><p>Tres mensajes breves y atractivos para cuentas que aún no son VIP: beneficios a las 12 h, $50 MXN menos 12 h después y un último beneficio de $100 MXN 24 h más tarde.</p></section>
     <section class="ce-status" id="ce-status"><div class="ce-status__copy"><small>Estado de la automatización</small><strong id="ce-status-title">Consultando…</strong><span id="ce-status-sub">La campaña se mantiene apagada hasta que la actives aquí.</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" id="ce-run" type="button">Ejecutar ahora</button><button class="btn btn-primary btn-sm" id="ce-mode" type="button" disabled>Activar campaña</button></div></section>
     <div class="ce-kpis"><div class="ce-kpi"><span>En seguimiento</span><strong id="ce-kpi-receiving">—</strong></div><div class="ce-kpi"><span>Contactadas</span><strong id="ce-kpi-sent">—</strong></div><div class="ce-kpi"><span>Se volvieron VIP</span><strong id="ce-kpi-converted">—</strong></div><div class="ce-kpi"><span>Bajas</span><strong id="ce-kpi-unsubscribed">—</strong></div></div>
+    <div class="ce-kpis delivery"><div class="ce-kpi"><span>Historial</span><strong id="ce-mail-total">—</strong></div><div class="ce-kpi"><span>Pendientes</span><strong id="ce-mail-pending">—</strong></div><div class="ce-kpi"><span>Aceptados</span><strong id="ce-mail-sent">—</strong></div><div class="ce-kpi"><span>Entregados</span><strong id="ce-mail-delivered">—</strong></div><div class="ce-kpi"><span>Fallidos</span><strong id="ce-mail-failed">—</strong></div></div>
     <div class="ce-flow"><article class="ce-mail"><span class="ce-mail__num">01</span><h3>🩺 Tu lugar te espera</h3><p>Beneficios VIP claros: cursos clínicos, herramientas, clases y certificados.</p><b>12 horas después del registro</b></article><article class="ce-mail"><span class="ce-mail__num">02</span><h3>🎁 $50 MXN menos</h3><p>Código personal de un uso para el primer plan mensual o anual.</p><b>12 horas después · vence en 24 h</b></article><article class="ce-mail"><span class="ce-mail__num">03</span><h3>⏳ $100 MXN menos</h3><p>Último llamado breve, urgente y sin mensajes posteriores.</p><b>24 horas después · vence en 24 h</b></article></div>
-    <section class="ce-panel"><div style="margin-bottom:14px"><span style="font:700 9px 'JetBrains Mono',monospace;letter-spacing:1.3px;color:var(--primary)">DEMOSTRACIÓN REAL</span><h2 style="margin:5px 0 4px;font-size:20px">Enviar un mensaje ahora</h2><p style="margin:0;color:var(--text-2);font-size:12px">Se envía como correo real, sin la palabra “prueba”, y no altera el horario automático de la cuenta.</p></div><div class="ce-demo-grid"><div class="ce-field"><label for="ce-member">Cuenta destinataria</label><select class="ce-select" id="ce-member"><option value="">Selecciona una cuenta…</option>${opciones}</select></div><div class="ce-send"><button class="btn btn-outline btn-sm" data-ce-step="1">Enviar beneficios</button><button class="btn btn-outline btn-sm" data-ce-step="2">Enviar $50</button><button class="btn btn-primary btn-sm" data-ce-step="3">Enviar $100</button></div></div><div class="ce-result" id="ce-result" role="status"></div></section>
-    <div class="ce-lists"><section class="ce-list"><h3>Próximos envíos</h3><div id="ce-upcoming"><div class="ce-empty">Cargando…</div></div></section><section class="ce-list"><h3>Actividad reciente</h3><div id="ce-latest"><div class="ce-empty">Cargando…</div></div></section></div>
+    <section class="ce-panel"><div style="margin-bottom:14px"><span style="font:700 9px 'JetBrains Mono',monospace;letter-spacing:1.3px;color:var(--primary)">ENVÍO REAL</span><h2 style="margin:5px 0 4px;font-size:20px">Enviar a varias cuentas</h2><p style="margin:0;color:var(--text-2);font-size:12px">Selecciona hasta 50 personas por lote. El correo conserva el mensaje profesional y no altera su horario automático.</p></div><div class="ce-bulk"><div><div class="ce-recipient-tools"><input class="ce-recipient-search" id="ce-search" type="search" placeholder="Buscar nombre o correo"><button class="btn btn-outline btn-sm" id="ce-select-visible" type="button">Seleccionar visibles</button><button class="btn btn-outline btn-sm" id="ce-clear" type="button">Limpiar</button></div><div class="ce-recipient-list" id="ce-recipients">${destinatarios || '<div class="ce-empty" style="padding:14px">No hay cuentas con correo.</div>'}</div><div class="ce-selected" id="ce-selected">0 seleccionadas · máximo 50 por envío</div></div><div><div class="ce-send"><button class="btn btn-outline btn-sm" data-ce-step="1">Enviar beneficios</button><button class="btn btn-outline btn-sm" data-ce-step="2">Enviar $50</button><button class="btn btn-primary btn-sm" data-ce-step="3">Enviar $100</button></div><div class="ce-result" id="ce-result" role="status"></div></div></div></section>
+    <div class="ce-lists"><section class="ce-list"><h3>Próximos envíos</h3><p>Quién falta, qué mensaje recibirá y cuándo.</p><div id="ce-upcoming"><div class="ce-empty">Cargando…</div></div></section><section class="ce-list"><h3>Historial de entrega</h3><p>Resend confirma si fue aceptado, entregado o falló.</p><div id="ce-latest"><div class="ce-empty">Cargando…</div></div></section></div>
   </div>`;
 
   const result = p.querySelector('#ce-result');
   const setResult = (text, type) => { if (!result) return; result.textContent = text || ''; result.className = 'ce-result ' + (type || ''); };
+  const selectedUids = () => [...p.querySelectorAll('#ce-recipients input[type="checkbox"]:checked')].map(input => input.value);
+  const updateSelected = () => {
+    const count = selectedUids().length;
+    const label = p.querySelector('#ce-selected');
+    if (label) label.textContent = `${count.toLocaleString('es-MX')} seleccionada${count === 1 ? '' : 's'} · máximo 50 por envío`;
+    p.querySelectorAll('[data-ce-step]').forEach(button => { button.disabled = count === 0 || count > 50; });
+  };
+  p.querySelector('#ce-recipients')?.addEventListener('change', event => {
+    if (event.target.matches('input[type="checkbox"]')) updateSelected();
+  });
+  p.querySelector('#ce-search')?.addEventListener('input', event => {
+    const query = String(event.target.value || '').trim().toLowerCase();
+    p.querySelectorAll('.ce-recipient').forEach(row => { row.hidden = Boolean(query) && !String(row.dataset.ceSearch || '').includes(query); });
+  });
+  p.querySelector('#ce-select-visible')?.addEventListener('click', () => {
+    const visible = [...p.querySelectorAll('.ce-recipient:not([hidden]) input[type="checkbox"]')];
+    const already = selectedUids().length;
+    visible.slice(0, Math.max(0, 50 - already)).forEach(input => { input.checked = true; });
+    updateSelected();
+  });
+  p.querySelector('#ce-clear')?.addEventListener('click', () => {
+    p.querySelectorAll('#ce-recipients input[type="checkbox"]:checked').forEach(input => { input.checked = false; });
+    updateSelected();
+  });
   p.querySelectorAll('[data-ce-step]').forEach(button => button.addEventListener('click', async () => {
-    const uid = p.querySelector('#ce-member').value;
-    if (!uid) { setResult('Selecciona primero una cuenta.', 'err'); return; }
-    const member = miembros.find(m => String(m.uid || m.id) === uid);
+    const uids = selectedUids();
+    if (!uids.length) { setResult('Selecciona al menos una cuenta.', 'err'); return; }
+    if (uids.length > 50) { setResult('El máximo es de 50 cuentas por lote.', 'err'); return; }
     const step = Number(button.dataset.ceStep);
     const labels = { 1:'beneficios', 2:'$50 MXN', 3:'$100 MXN' };
-    if (!confirm(`Se enviará el correo de ${labels[step]} a ${member && member.email ? member.email : 'esta cuenta'}. ¿Continuar?`)) return;
+    if (!confirm(`Se enviará el correo de ${labels[step]} a ${uids.length} cuenta${uids.length === 1 ? '' : 's'} seleccionada${uids.length === 1 ? '' : 's'}. ¿Continuar?`)) return;
     const original = button.textContent;
-    button.disabled = true; button.textContent = 'Enviando…'; setResult('Enviando correo real…');
+    p.querySelectorAll('[data-ce-step]').forEach(item => { item.disabled = true; });
+    button.textContent = 'Enviando…'; setResult(`Enviando ${uids.length} correo${uids.length === 1 ? '' : 's'} real${uids.length === 1 ? '' : 'es'}…`);
     try {
-      const data = await Pages._api('/admin/conversion-emails/send', { method:'POST', body:JSON.stringify({ uid, step }) });
-      setResult(`Enviado a ${data.to}. ${data.code ? 'Código: ' + data.code : 'Mensaje de beneficios sin cupón.'}`, 'ok');
-      if (window.Toast) Toast.success('Correo enviado', data.subject || data.to);
+      const data = await Pages._api('/admin/conversion-emails/send-bulk', { method:'POST', body:JSON.stringify({ uids, step }) });
+      const detail = `${data.sent || 0} enviado${data.sent === 1 ? '' : 's'}${data.failed ? ` · ${data.failed} fallido${data.failed === 1 ? '' : 's'}` : ''}.`;
+      setResult(detail, data.failed ? 'err' : 'ok');
+      if (window.Toast) (data.failed ? Toast.info : Toast.success)('Envío terminado', detail);
       await Pages._cargarCorreos(p);
     } catch (error) {
       setResult(error.message || 'No se pudo enviar.', 'err');
       if (window.Toast) Toast.error('No se pudo enviar', error.message || 'Revisa el backend');
-    } finally { button.disabled = false; button.textContent = original; }
+    } finally { button.textContent = original; updateSelected(); }
   }));
+  updateSelected();
   p.querySelector('#ce-mode').addEventListener('click', async buttonEvent => {
     const button = buttonEvent.currentTarget;
     const next = button.dataset.mode === 'active' ? 'off' : 'active';
@@ -1328,14 +1357,79 @@ Pages._cargarCorreos = async function(p){
     const modeButton = p.querySelector('#ce-mode'); if (modeButton) { modeButton.disabled = false; modeButton.dataset.mode = mode; modeButton.textContent = mode === 'active' ? 'Pausar campaña' : 'Activar campaña'; }
     const counts = data.counts || {};
     ['receiving','sent','converted','unsubscribed'].forEach(key => { const el = p.querySelector('#ce-kpi-' + key); if (el) el.textContent = Number(counts[key] || 0).toLocaleString('es-MX'); });
+    const emailCounts = data.emailCounts || {};
+    ['total','pending','sent','delivered','failed'].forEach(key => { const el = p.querySelector('#ce-mail-' + key); if (el) el.textContent = Number(emailCounts[key] || 0).toLocaleString('es-MX'); });
     const when = ms => Number(ms) ? new Date(Number(ms)).toLocaleString('es-MX', { dateStyle:'medium', timeStyle:'short', timeZone:'America/Mexico_City' }) : '—';
     const row = (item, date, label) => `<div class="ce-row"><span><strong>${AdminEsc(item.name || item.email || 'Cuenta')}</strong><small>${AdminEsc(item.email || '')}</small></span><span style="text-align:right"><strong>${AdminEsc(label)}</strong><small>${AdminEsc(date)}</small></span></div>`;
     const upcoming = p.querySelector('#ce-upcoming'); if (upcoming) upcoming.innerHTML = (data.upcoming || []).length ? data.upcoming.map(item => row(item, when(item.dueMs), `Mensaje ${item.step}`)).join('') : '<div class="ce-empty">No hay envíos pendientes.</div>';
-    const latest = p.querySelector('#ce-latest'); if (latest) latest.innerHTML = (data.latest || []).length ? data.latest.map(item => row(item, when(item.sentMs), `Mensaje ${item.step}`)).join('') : '<div class="ce-empty">Todavía no hay envíos automáticos.</div>';
+    const deliveryLabels = { delivered:'Entregado', failed:'Falló', sent:'Aceptado', delayed:'Demorado', scheduled:'Programado', sending:'Preparando' };
+    const deliveries = (data.emailHistory || []).length ? data.emailHistory : (data.latest || []).map(item => ({
+      ...item, status:'sent', acceptedAtMs:item.sentMs, legacy:true
+    }));
+    const latest = p.querySelector('#ce-latest'); if (latest) latest.innerHTML = deliveries.length ? deliveries.map(item => {
+      const status = item.status || 'sent';
+      const atMs = item.deliveredAtMs || item.failedAtMs || item.acceptedAtMs || item.createdAtMs;
+      return `<div class="ce-row"><span><strong>${AdminEsc(item.name || item.email || 'Cuenta')}</strong><small>${AdminEsc(item.email || '')} · Mensaje ${Number(item.step || 0)}${item.manual ? ' · manual' : ''}${item.legacy ? ' · registro anterior' : ''}</small></span><span style="text-align:right"><span class="ce-chip ${AdminEsc(status)}">${AdminEsc(deliveryLabels[status] || status)}</span><small>${AdminEsc(when(atMs))}</small></span></div>`;
+    }).join('') : '<div class="ce-empty">Todavía no hay correos en el historial.</div>';
   } catch (error) {
     const title = p.querySelector('#ce-status-title'); if (title) title.textContent = 'No se pudo cargar';
     const sub = p.querySelector('#ce-status-sub'); if (sub) sub.textContent = error.message || 'Revisa que el backend más reciente esté desplegado.';
     const modeButton = p.querySelector('#ce-mode'); if (modeButton) modeButton.disabled = true;
+  }
+};
+
+// ─────────── CANJES DE CUPONES · Stripe + historial propio ───────────
+Pages.cupones = function(p){
+  p.innerHTML = `<div class="fade-up cr-page">
+    <style>
+      .cr-page{--cr-blue:#1c6fb0;--cr-cyan:#2fd1c6}.cr-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:28px 30px;border-radius:22px;background:linear-gradient(135deg,#071827,#0d3150 58%,#1c6fb0);color:#fff;box-shadow:0 18px 45px rgba(13,46,73,.2)}.cr-hero small{font:700 10px 'JetBrains Mono',monospace;letter-spacing:1.4px;text-transform:uppercase;color:#83ebe4}.cr-hero h1{margin:9px 0 6px;font:800 clamp(29px,5vw,43px)/1 'Plus Jakarta Sans',sans-serif}.cr-hero p{max-width:680px;margin:0;color:#cee2f0;font-size:13px;line-height:1.6}.cr-search{display:flex;gap:8px;min-width:310px}.cr-search input{min-width:185px;height:42px;padding:0 12px;border:1px solid rgba(255,255,255,.22);border-radius:11px;background:rgba(255,255,255,.09);color:#fff;text-transform:uppercase;font:700 12px 'JetBrains Mono',monospace}.cr-search input::placeholder{color:#aac0d0}.cr-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:15px}.cr-kpi,.cr-panel{background:var(--surface);border:1px solid var(--border);border-radius:17px}.cr-kpi{padding:17px;position:relative;overflow:hidden}.cr-kpi:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cc,var(--cr-cyan))}.cr-kpi span{display:block;color:var(--text-3);font-size:9.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase}.cr-kpi strong{display:block;margin:8px 0 3px;color:var(--text);font:800 27px/1 'Plus Jakarta Sans',sans-serif}.cr-kpi small{color:var(--text-3);font-size:10.5px}.cr-note{margin-top:14px;padding:13px 16px;border:1px solid color-mix(in srgb,var(--cr-blue) 25%,var(--border));border-radius:13px;background:color-mix(in srgb,var(--cr-blue) 6%,var(--surface));color:var(--text-2);font-size:11.5px;line-height:1.55}.cr-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:14px;margin-top:14px}.cr-panel{min-width:0;padding:18px}.cr-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.cr-head h2{margin:0;font-size:16px}.cr-head small{display:block;margin-top:4px;color:var(--text-3)}.cr-table-wrap{overflow:auto}.cr-table{width:100%;border-collapse:collapse;font-size:11.5px}.cr-table th{padding:9px 10px;text-align:left;color:var(--text-3);font-size:9px;letter-spacing:.7px;text-transform:uppercase;border-bottom:1px solid var(--border)}.cr-table td{padding:11px 10px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:middle}.cr-table tr:last-child td{border-bottom:0}.cr-table strong{display:block;color:var(--text);font-size:11.5px}.cr-table small{display:block;margin-top:3px;color:var(--text-3)}.cr-code{display:inline-block;padding:4px 7px;border-radius:7px;background:color-mix(in srgb,var(--cr-cyan) 13%,var(--surface-2));color:var(--primary);font:700 10px 'JetBrains Mono',monospace}.cr-status{display:inline-block;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:800;text-transform:uppercase}.cr-status.redeemed{background:rgba(34,197,94,.13);color:#16803c}.cr-status.pending{background:rgba(247,148,29,.15);color:#bd6900}.cr-status.payment_failed{background:rgba(239,68,68,.13);color:#dc2626}.cr-empty,.cr-loading{padding:34px;text-align:center;color:var(--text-3);font-size:12px}.cr-loading:before{content:'';display:block;width:22px;height:22px;margin:0 auto 10px;border:2px solid var(--border);border-top-color:var(--cr-cyan);border-radius:50%;animation:cr-spin .8s linear infinite}@keyframes cr-spin{to{transform:rotate(360deg)}}
+      @media(max-width:1100px){.cr-kpis{grid-template-columns:repeat(3,1fr)}.cr-layout{grid-template-columns:1fr}}@media(max-width:720px){.cr-hero{align-items:stretch;flex-direction:column}.cr-search{min-width:0}.cr-search input{min-width:0;flex:1}.cr-kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:480px){.cr-hero{padding:23px 19px}.cr-search{display:grid}.cr-kpis{grid-template-columns:1fr 1fr}.cr-kpi{padding:14px}.cr-kpi strong{font-size:23px}}
+    </style>
+    <section class="cr-hero"><div><small>Stripe · auditoría de promociones</small><h1>Canjes de cupones</h1><p>Controla los usos oficiales del código y revisa quién obtuvo el descuento, cuánto pagó y si una misma persona hizo más de una compra.</p></div><form class="cr-search" id="cr-form"><input id="cr-code" maxlength="80" autocomplete="off" placeholder="Código configurado"><button class="btn btn-primary btn-sm" type="submit">Consultar</button></form></section>
+    <div id="cr-body" class="cr-loading">Consultando Stripe y el historial…</div>
+  </div>`;
+  const form = p.querySelector('#cr-form');
+  form.addEventListener('submit', event => { event.preventDefault(); Pages._cargarCupones(p, p.querySelector('#cr-code').value); });
+  Pages._cargarCupones(p, '');
+};
+
+Pages._cargarCupones = async function(p, code){
+  const body = p.querySelector('#cr-body');
+  if (!body) return;
+  body.className = 'cr-loading'; body.textContent = 'Consultando Stripe y el historial…';
+  const money = (cents, currency = 'mxn') => new Intl.NumberFormat('es-MX', { style:'currency', currency:String(currency || 'mxn').toUpperCase() }).format((Number(cents) || 0) / 100);
+  const when = ms => Number(ms) ? new Date(Number(ms)).toLocaleString('es-MX', { dateStyle:'medium', timeStyle:'short', timeZone:'America/Mexico_City' }) : '—';
+  const csvCell = value => `"${String(value == null ? '' : value).replace(/"/g, '""')}"`;
+  try {
+    await Pages._esperarAdmin();
+    const query = code ? `?code=${encodeURIComponent(String(code).trim().toUpperCase())}` : '';
+    const data = await Pages._api('/admin/coupon-redemptions' + query);
+    if (!document.body.contains(p) || (p.dataset.live && p.dataset.live !== 'cupones')) return;
+    const input = p.querySelector('#cr-code'); if (input) input.value = data.trackedCode || code || '';
+    const counts = data.counts || {}, promotion = data.promotion || {}, history = data.history || [], people = data.people || [];
+    const currency = promotion.currency || history[0]?.currency || 'mxn';
+    const official = promotion.found ? Number(promotion.timesRedeemed || 0) : Number(counts.recorded || 0);
+    const limit = promotion.found && promotion.maxRedemptions != null ? Number(promotion.maxRedemptions) : null;
+    const discrepancy = promotion.found && official !== Number(counts.recorded || 0)
+      ? `Stripe reporta ${official} uso(s), pero el historial detallado contiene ${Number(counts.recorded || 0)}. Los usos anteriores al despliegue no pueden reconstruirse con el webhook.` : '';
+    const statusText = { redeemed:'Canjeado', pending:'Pendiente', payment_failed:'Pago fallido' };
+    const peopleRows = people.length ? people.map(person => `<tr><td><strong>${AdminEsc(person.name || person.email || 'Cuenta')}</strong><small>${AdminEsc(person.email || '')}</small></td><td><strong>${Number(person.uses || 0).toLocaleString('es-MX')}</strong><small>compra(s)</small></td><td>${AdminEsc(money(person.discountCents, currency))}</td><td>${AdminEsc(money(person.revenueCents, currency))}</td><td>${AdminEsc(when(person.lastRedeemedAtMs))}</td></tr>`).join('') : '<tr><td colspan="5" class="cr-empty">Aún no hay personas registradas con este código.</td></tr>';
+    const historyRows = history.length ? history.map(item => `<tr><td>${AdminEsc(when(item.redeemedAtMs))}</td><td><strong>${AdminEsc(item.name || item.email || 'Cuenta')}</strong><small>${AdminEsc(item.email || '')}</small></td><td><span class="cr-code">${AdminEsc(item.code || data.trackedCode || '—')}</span><small>${AdminEsc(item.plan || 'plan no indicado')}</small></td><td>${AdminEsc(money(item.amountSubtotal, item.currency || currency))}</td><td>${AdminEsc(money(item.amountDiscount, item.currency || currency))}</td><td>${AdminEsc(money(item.amountTotal, item.currency || currency))}</td><td><span class="cr-status ${AdminEsc(item.status)}">${AdminEsc(statusText[item.status] || item.status)}</span></td></tr>`).join('') : '<tr><td colspan="7" class="cr-empty">Aún no hay canjes detallados para este código.</td></tr>';
+    body.className = '';
+    body.innerHTML = `<div class="cr-kpis"><article class="cr-kpi" style="--cc:#1c6fb0"><span>Usos en Stripe</span><strong>${official.toLocaleString('es-MX')}${limit == null ? '' : ' / ' + limit.toLocaleString('es-MX')}</strong><small>contador oficial del código</small></article><article class="cr-kpi" style="--cc:#2fd1c6"><span>Personas distintas</span><strong>${Number(counts.people || 0).toLocaleString('es-MX')}</strong><small>identificadas en el historial</small></article><article class="cr-kpi" style="--cc:#8b5cf6"><span>Usos restantes</span><strong>${counts.remaining == null ? 'Sin límite' : Number(counts.remaining).toLocaleString('es-MX')}</strong><small>${promotion.active === false ? 'promoción inactiva' : 'disponibles en Stripe'}</small></article><article class="cr-kpi" style="--cc:#f7941d"><span>Descuento otorgado</span><strong>${AdminEsc(money(counts.discountCents, currency))}</strong><small>en canjes registrados</small></article><article class="cr-kpi" style="--cc:#22c55e"><span>Ventas generadas</span><strong>${AdminEsc(money(counts.revenueCents, currency))}</strong><small>total cobrado tras descuento</small></article></div>
+      <div class="cr-note"><strong>Código: ${AdminEsc(data.trackedCode || '—')}</strong>${promotion.found ? ` · ${promotion.active ? 'Activo' : 'Inactivo'}${promotion.expiresAtMs ? ' · vence ' + AdminEsc(when(promotion.expiresAtMs)) : ''}` : ' · Stripe no encontró este código o no pudo consultarlo.'}${discrepancy ? `<br>${AdminEsc(discrepancy)}` : ''}</div>
+      <div class="cr-layout"><section class="cr-panel"><div class="cr-head"><div><h2>Personas y número de compras</h2><small>Una misma persona puede aparecer con varios usos.</small></div></div><div class="cr-table-wrap"><table class="cr-table"><thead><tr><th>Persona</th><th>Usos</th><th>Descuento</th><th>Pagó</th><th>Último canje</th></tr></thead><tbody>${peopleRows}</tbody></table></div></section><section class="cr-panel"><div class="cr-head"><div><h2>Historial de canjes</h2><small>Un renglón por sesión de Checkout.</small></div><button class="btn btn-outline btn-sm" type="button" id="cr-csv" ${history.length ? '' : 'disabled'}>Descargar CSV</button></div><div class="cr-table-wrap"><table class="cr-table"><thead><tr><th>Fecha</th><th>Persona</th><th>Código / plan</th><th>Subtotal</th><th>Descuento</th><th>Pagó</th><th>Estado</th></tr></thead><tbody>${historyRows}</tbody></table></div></section></div>`;
+    p.querySelector('#cr-csv')?.addEventListener('click', () => {
+      const headers = ['fecha','nombre','correo','codigo','plan','subtotal','descuento','pagado','moneda','estado'];
+      const lines = history.map(item => [when(item.redeemedAtMs),item.name,item.email,item.code,item.plan,(Number(item.amountSubtotal)||0)/100,(Number(item.amountDiscount)||0)/100,(Number(item.amountTotal)||0)/100,item.currency,item.status].map(csvCell).join(','));
+      const blob = new Blob(['\ufeff' + [headers.join(','), ...lines].join('\r\n')], { type:'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob), anchor = document.createElement('a');
+      anchor.href = url; anchor.download = `canjes-${String(data.trackedCode || 'cupon').toLowerCase()}-${new Date().toISOString().slice(0,10)}.csv`; anchor.click(); URL.revokeObjectURL(url);
+    });
+  } catch(error) {
+    body.className = 'cr-empty';
+    body.innerHTML = `<strong>No pudimos cargar los canjes</strong><br>${AdminEsc(error.message || 'Revisa el backend.')}<br><button class="btn btn-primary btn-sm" type="button" id="cr-retry" style="margin-top:12px">Reintentar</button>`;
+    p.querySelector('#cr-retry')?.addEventListener('click', () => Pages._cargarCupones(p, code));
   }
 };
 
@@ -1447,11 +1541,12 @@ function registrar(){
   PAGES.metricas = montar('metricas');
   PAGES.pruebas = montar('pruebas');
   PAGES.correos = montar('correos');
+  PAGES.cupones = montar('cupones');
   PAGES.push = montar('push');
   // Si el router ya intentó abrir una de estas secciones antes de que cargara este archivo, se vuelve a abrir
   const page = document.getElementById('page');
   const viva = page && page.dataset.live;
-  if (['encuestas', 'metricas', 'pruebas', 'correos', 'push'].includes(viva) && window.AdminUser && window.navigateTo) window.navigateTo(viva);
+  if (['encuestas', 'metricas', 'pruebas', 'correos', 'cupones', 'push'].includes(viva) && window.AdminUser && window.navigateTo) window.navigateTo(viva);
 }
 registrar();
 window.SynovaMarketingAdmin = Pages;
