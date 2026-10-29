@@ -648,6 +648,7 @@ window.__tokenAdmin = tokenAdmin;
     <div class="nav-section">
       <div class="nav-label">Comunidad</div>
       <a class="nav-item" data-section="miembros"><svg class="ic"><use href="#i-users"/></svg>Miembros VIP<span class="nav-item__badge" id="badge-miembros">0</span></a>
+      <a class="nav-item" data-section="estado-pagos" data-control-hub="1"><svg class="ic"><use href="#i-clipboard-check"/></svg>Control de cuentas<span class="nav-item__badge">NUEVO</span></a>
       <a class="nav-item" data-section="referidos"><svg class="ic"><use href="#i-users"/></svg>Referidos</a>
       <a class="nav-item" data-section="creditos"><svg class="ic"><use href="#i-trend"/></svg>Historial de créditos<span class="nav-item__badge">NUEVO</span></a>
       <a class="nav-item" data-section="foro"><svg class="ic"><use href="#i-users"/></svg>Foro<span class="nav-item__badge" id="badge-foro">0</span></a>
@@ -683,6 +684,7 @@ window.__tokenAdmin = tokenAdmin;
     <a class="mobile-nav__item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Cursos</a>
     <a class="mobile-nav__item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Vivo</a>
     <a class="mobile-nav__item" data-section="miembros"><svg class="ic"><use href="#i-users"/></svg>Miembros</a>
+    <a class="mobile-nav__item" data-section="estado-pagos" data-control-hub="1"><svg class="ic"><use href="#i-clipboard-check"/></svg>Cuentas</a>
     <a class="mobile-nav__item" data-section="config"><svg class="ic"><use href="#i-settings"/></svg>Config</a>
   </nav>
 </div>
@@ -860,6 +862,7 @@ window.addEventListener('adminready', () => Store.init());
    PAGES · router de secciones del admin
    ========================================================= */
 const PAGES = {};
+window.PAGES = PAGES;
 window.navigateTo = function(section){
   document.querySelectorAll('.nav-item, .mobile-nav__item').forEach(n => n.classList.remove('is-active'));
   document.querySelectorAll(`[data-section="${section}"]`).forEach(n => n.classList.add('is-active'));
@@ -3119,5 +3122,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="assets/synova-admin-marketing.js?v=9"></script>
 <script src="assets/synova-referrals-admin.js"></script>
 <script src="assets/synova-credits-history-admin.js?v=1"></script>
+<script src="assets/synova-account-control.js?v=1"></script>
 </body>
 </html>
