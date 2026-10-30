@@ -29,7 +29,10 @@
   }
   function play(options){
     options=options||{};
-    if(window.SynovaGameSuite&&typeof window.SynovaGameSuite.playLesson==='function'){
+    var hasCustomAssessment=!!(options.session&&(options.session.ejercicio||options.session.exercise));
+    // Las preguntas editoriales de la clase tienen prioridad. Cuando no hay
+    // cuestionario propio se conserva el juego interactivo asignado al curso.
+    if(!hasCustomAssessment&&window.SynovaGameSuite&&typeof window.SynovaGameSuite.playLesson==='function'){
       return window.SynovaGameSuite.playLesson(options).then(function(won){
         if(won){try{localStorage.setItem(key(options.courseId,options.classNumber),'1');}catch(_){}if(window.SynovaLearningSync)window.SynovaLearningSync.schedule();}
         return !!won;
