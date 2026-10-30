@@ -6709,7 +6709,8 @@ function mountNutricion(c){
     } else {
       contenidoHtml =
         '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Aprendizaje</div><h2 class="course-section__title">Clases</h2></div><span class="course-section__count">' + vistasValidas + ' de ' + sesiones.length + ' vistas</span></div><div class="course-lesson-list">' + clasesHtml + '</div></section>' +
-        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + matsHtml + '</section>';
+        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + matsHtml + '</section>' +
+        '<div id="course-rating-panel"></div>';
     }
 
     const summaryHtml = '<aside class="course-summary"><div class="course-summary__label">Tu avance</div><div class="course-summary__value">' + pct + '%</div><div class="course-summary__caption">Progreso del curso</div><div class="course-summary__bar"><span style="width:' + pct + '%"></span></div><div class="course-summary__row"><span>Clases</span><strong>' + sesiones.length + '</strong></div><div class="course-summary__row"><span>Completadas</span><strong>' + vistasValidas + '</strong></div><div class="course-summary__row"><span>Materiales</span><strong>' + materiales.length + '</strong></div></aside>';
@@ -6730,6 +6731,13 @@ function mountNutricion(c){
       if (el.dataset.open !== 'true') { window.__showPaywallModal('Tu primer material es gratis. Activa tu membresía SYNOVA VIP para abrir los demás recursos del curso.'); return; }
       const m = materiales[i]; window.__abrirVisor(m.url, m.titulo || ('Material '+(i+1)), null, null);
     }));
+    if (desbloq && window.SynovaCourseRatings) {
+      window.SynovaCourseRatings.mount({
+        container:'#course-rating-panel',
+        courseId:String(id),
+        courseTitle:c.nombre || 'Curso SYNOVA'
+      });
+    }
   }
 
   async function resolverEmbedClase(sesion, cursoId, idx){
@@ -7605,5 +7613,6 @@ window.addEventListener('membership-tour:end', function(event){
   window.addEventListener('synova:navigation', function(event){ if (event.detail && event.detail.section === 'soporte') beginPoll(); });
 })();
 </script>
+<script src="assets/synova-course-ratings.js?v=1"></script>
 </body>
 </html>

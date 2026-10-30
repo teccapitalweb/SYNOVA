@@ -656,6 +656,7 @@ window.__tokenAdmin = tokenAdmin;
     <div class="nav-section">
       <div class="nav-label">Contenido</div>
       <a class="nav-item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Cursos<span class="nav-item__badge" id="badge-cursos">0</span></a>
+      <a class="nav-item" data-section="calificaciones"><svg class="ic"><use href="#i-chart-bar"/></svg>Calificaciones</a>
       <a class="nav-item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Clases en vivo<span class="nav-item__badge" id="badge-webinars">0</span></a>
       <a class="nav-item" data-section="materiales"><svg class="ic"><use href="#i-news"/></svg>PDFs y material<span class="nav-item__badge" id="badge-materiales">0</span></a>
       <a class="nav-item" data-section="certificados"><svg class="ic"><use href="#i-certificate"/></svg>Certificados<span class="nav-item__badge" id="badge-certificados">0</span></a>
@@ -716,6 +717,7 @@ window.__tokenAdmin = tokenAdmin;
   <nav class="mobile-nav">
     <a class="mobile-nav__item is-active" data-section="dashboard"><svg class="ic"><use href="#i-home"/></svg>Inicio</a>
     <a class="mobile-nav__item" data-section="cursos"><svg class="ic"><use href="#i-book"/></svg>Cursos</a>
+    <a class="mobile-nav__item" data-section="calificaciones"><svg class="ic"><use href="#i-chart-bar"/></svg>Opiniones</a>
     <a class="mobile-nav__item" data-section="webinars"><svg class="ic"><use href="#i-broadcast"/></svg>Vivo</a>
     <a class="mobile-nav__item" data-section="miembros"><svg class="ic"><use href="#i-users"/></svg>Miembros</a>
     <a class="mobile-nav__item" data-section="estado-pagos" data-control-hub="1"><svg class="ic"><use href="#i-clipboard-check"/></svg>Cuentas</a>
@@ -3329,6 +3331,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 })();
 </script>
+<script src="assets/synova-course-ratings-admin.js?v=1"></script>
 <style id="synova-admin-vip-shell-v2">
 /* SYNOVA Admin · lenguaje visual alineado al panel VIP. Solo presentación. */
 :root[data-theme="day"]{
@@ -3360,6 +3363,7 @@ body{background:radial-gradient(circle at 48% -12%,color-mix(in srgb,var(--prima
 :root[data-theme="night"] .brand::before{filter:brightness(0) invert(1) drop-shadow(0 5px 12px rgba(95,149,184,.18))}
 .sidebar .nav-section{margin-left:4px;margin-right:4px}.sidebar .nav-label{color:var(--text-3);font-size:8.5px;letter-spacing:1.55px}.sidebar .nav-item{border-radius:12px;color:var(--text-2)}
 .sidebar .nav-item:hover{background:color-mix(in srgb,var(--nav-accent,var(--primary)) 6%,var(--surface));color:var(--text)}
+:is(.nav-item,.mobile-nav__item)[data-section="calificaciones"]{--nav-accent:#d4a137}
 .main{background:radial-gradient(circle at 48% -12%,color-mix(in srgb,var(--primary) 6%,transparent),transparent 36rem),var(--bg)}
 .topbar{min-height:60px;height:60px;padding:0 24px;background:color-mix(in srgb,var(--bg) 92%,transparent);border-bottom:1px solid var(--border);backdrop-filter:blur(14px);box-shadow:none}
 .topbar__pill{padding:7px 12px;border:1px solid var(--border-2);border-radius:999px;background:var(--surface);color:var(--text-2);box-shadow:0 5px 16px rgba(11,42,74,.05);font-size:9px;letter-spacing:1.15px}
