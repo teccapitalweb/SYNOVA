@@ -548,7 +548,7 @@ import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12
 import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc,
-  query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp
+  query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -568,7 +568,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence).catch(()=>{});
 
-window.__fs = { doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc, query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp, db };
+window.__fs = { doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, collection, addDoc, query, orderBy, limit, where, onSnapshot, serverTimestamp, increment, Timestamp, writeBatch, db };
 window.__auth = auth;
 window.__synAdminBooted = true;
 
@@ -2213,9 +2213,31 @@ window.abrirModalWebinar = function(id){
     const fechaRaw = body.querySelector('#wb-fecha').value;
     const datos = { titulo, instructor: body.querySelector('#wb-instructor').value.trim(), area: body.querySelector('#wb-area').value.trim(), fecha: fechaRaw ? new Date(fechaRaw).toISOString() : null, duracion: parseInt(body.querySelector('#wb-duracion').value)||60, link: body.querySelector('#wb-link').value.trim() };
     try {
-      const { doc, updateDoc, addDoc, collection, db, serverTimestamp } = window.__fs;
+      const { doc, updateDoc, collection, db, serverTimestamp, writeBatch } = window.__fs;
       if (w) { await updateDoc(doc(db, 'webinars', w.id), datos); Toast.success('Clase actualizada'); }
-      else { await addDoc(collection(db, 'webinars'), { ...datos, registrados: 0, createdAt: serverTimestamp() }); Toast.success('Clase creada'); }
+      else {
+        const webinarRef = doc(collection(db, 'webinars'));
+        const notificationRef = doc(db, 'notificaciones', `webinar_${webinarRef.id}`);
+        const batch = writeBatch(db);
+        const fechaDate = fechaRaw ? new Date(fechaRaw) : null;
+        const fechaTexto = fechaDate && !Number.isNaN(fechaDate.getTime())
+          ? fechaDate.toLocaleString('es-MX', { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })
+          : 'Fecha por confirmar';
+        batch.set(webinarRef, { ...datos, registrados: 0, createdAt: serverTimestamp() });
+        batch.set(notificationRef, {
+          tipo: 'clase',
+          icono: 'i-broadcast',
+          color: '#1C6FB0',
+          titulo: `Nueva clase en vivo: ${titulo}`,
+          descripcion: `${fechaTexto}${datos.instructor ? ' · ' + datos.instructor : ''}`,
+          destino: 'webinars',
+          webinarId: webinarRef.id,
+          creadoPor: window.AdminUser?.email || 'admin',
+          createdAt: serverTimestamp()
+        });
+        await batch.commit();
+        Toast.success('Clase creada y notificada');
+      }
       Modal.close();
     } catch (e) { Toast.error('Error al guardar', e.message); }
   });

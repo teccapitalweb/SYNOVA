@@ -2617,9 +2617,10 @@ window.addEventListener('synova:credit-notices', (event) => {
   combinarNotificaciones();
 });
 function setupNotificaciones(uid){
+  if (window.__notifsState.unsubscribe) return;
   try {
     const q = query(collection(db, 'notificaciones'), orderBy('createdAt', 'desc'), limit(15));
-    onSnapshot(q, (snap) => {
+    window.__notifsState.unsubscribe = onSnapshot(q, (snap) => {
       const items = [];
       snap.forEach(d => {
         const data = d.data();
@@ -2664,9 +2665,16 @@ function formatNotifTime(ms){
   if (d < 30) return `Hace ${Math.floor(d/7)} semanas`;
   return `Hace ${Math.floor(d/30)} meses`;
 }
+function cerrarNotifDropdown(){
+  const dd = document.getElementById('notif-dropdown');
+  if (!dd) return;
+  if (typeof dd.__notifCleanup === 'function') dd.__notifCleanup();
+  dd.remove();
+  document.getElementById('btn-notif')?.setAttribute('aria-expanded', 'false');
+}
 window.__toggleNotifDropdown = function(){
   let dd = document.getElementById('notif-dropdown');
-  if (dd) { dd.remove(); return; }
+  if (dd) { cerrarNotifDropdown(); return; }
   const elim = new Set(getNotifsEliminadas());
   const notifs = (window.__notifsState.items || []).filter(n => !elim.has(n.id));
   const leidas = new Set(getNotifsLeidas());
@@ -2676,8 +2684,8 @@ window.__toggleNotifDropdown = function(){
   dd.id = 'notif-dropdown';
   dd.style.textAlign = 'left';
   dd.style.cssText += isMobile
-    ? 'position:fixed;top:64px;left:12px;right:12px;width:auto;background:var(--surface);border:0.5px solid var(--border-2);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.45);z-index:9999;padding:8px;animation:dropFade .18s ease;max-height:calc(100vh - 90px);overflow-y:auto;text-align:left;'
-    : 'position:absolute;top:calc(100% + 8px);right:0;width:360px;max-width:calc(100vw - 32px);background:var(--surface);border:0.5px solid var(--border-2);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.22);z-index:9999;padding:8px;animation:dropFade .18s ease;max-height:480px;overflow-y:auto;text-align:left;';
+    ? 'position:fixed;top:64px;left:12px;right:12px;width:auto;background:var(--surface);border:0.5px solid var(--border-2);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.45);z-index:2147483000;padding:8px;max-height:calc(100vh - 90px);overflow-y:auto;text-align:left;isolation:isolate;'
+    : 'position:fixed;top:0;left:0;right:auto;width:360px;max-width:calc(100vw - 24px);background:var(--surface);border:0.5px solid var(--border-2);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.22);z-index:2147483000;padding:8px;max-height:min(480px,calc(100vh - 96px));overflow-y:auto;text-align:left;isolation:isolate;';
   let bodyHTML;
   if (!notifs.length){
     bodyHTML = `<div style="padding:32px 16px;text-align:center"><div style="width:48px;height:48px;border-radius:50%;background:color-mix(in srgb,var(--text-3) 14%,transparent);color:var(--text-3);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px"><svg class="ic" style="width:24px;height:24px"><use href="#i-bell"/></svg></div><div style="font-size:13px;color:var(--text-2);font-weight:600;margin-bottom:4px">Sin notificaciones</div><div style="font-size:11.5px;color:var(--text-3);line-height:1.5">Te avisaremos cuando haya clases nuevas, certificados listos o novedades de SYNOVA.</div></div>`;
@@ -2696,7 +2704,7 @@ window.__toggleNotifDropdown = function(){
     }).join('');
   }
   dd.innerHTML = `<div style="padding:10px 12px 12px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center"><strong style="font-size:13px;font-weight:600">Notificaciones</strong><span style="font-size:10px;color:${nuevasCount>0?'var(--primary)':'var(--text-3)'};letter-spacing:.5px;text-transform:uppercase;font-weight:700">${nuevasCount>0?nuevasCount+' nuevas':'Al día'}</span></div>${bodyHTML}${notifs.length?`<div style="padding:9px 12px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:11px;color:var(--text-3)">Mostrando últimas ${notifs.length}</span>${notifs.length>1?`<button id="notif-del-all" style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--danger);background:transparent;border:0;cursor:pointer;font-weight:600;padding:2px 4px;font-family:inherit"><svg class="ic" style="width:13px;height:13px"><use href="#i-trash"/></svg>Eliminar todo</button>`:''}</div>`:''}`;
-  const repintar = () => { dd.remove(); window.__toggleNotifDropdown(); };
+  const repintar = () => { cerrarNotifDropdown(); window.__toggleNotifDropdown(); };
   dd.querySelectorAll('.notif-del-btn').forEach(btn => {
     btn.addEventListener('mouseenter', () => { btn.style.opacity = '1'; btn.style.color = 'var(--danger)'; });
     btn.addEventListener('mouseleave', () => { btn.style.opacity = '.65'; btn.style.color = 'var(--text-3)'; });
@@ -2705,12 +2713,45 @@ window.__toggleNotifDropdown = function(){
   const delAll = dd.querySelector('#notif-del-all');
   if (delAll) delAll.addEventListener('click', (e) => { e.stopPropagation(); marcarNotifsEliminadas(notifs.map(n => n.id)); actualizarBadgeNotif(); repintar(); });
   const btn = document.getElementById('btn-notif');
-  if (isMobile) { document.body.appendChild(dd); } else { btn.style.position = 'relative'; btn.appendChild(dd); }
+  document.body.appendChild(dd);
+  btn?.setAttribute('aria-expanded', 'true');
+  if (!isMobile && btn) {
+    let frame = 0;
+    const positionDropdown = () => {
+      frame = 0;
+      if (!btn.isConnected || !dd.isConnected) { cerrarNotifDropdown(); return; }
+      const rect = btn.getBoundingClientRect();
+      const width = Math.min(360, Math.max(260, window.innerWidth - 24));
+      const left = Math.max(12, Math.min(window.innerWidth - width - 12, rect.right - width));
+      const top = Math.min(window.innerHeight - 72, rect.bottom + 10);
+      dd.style.width = width + 'px';
+      dd.style.left = left + 'px';
+      dd.style.top = top + 'px';
+    };
+    const schedulePosition = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(positionDropdown);
+    };
+    positionDropdown();
+    window.addEventListener('resize', schedulePosition, {passive:true});
+    window.addEventListener('scroll', schedulePosition, {passive:true, capture:true});
+    dd.__notifCleanup = () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('resize', schedulePosition);
+      window.removeEventListener('scroll', schedulePosition, true);
+    };
+  }
   /* Marcar como leídas tras un momento (para que se vea el punto antes de bajarlo) */
   if (nuevasCount > 0) setTimeout(() => { marcarNotifsLeidas(notifs.map(n => n.id)); actualizarBadgeNotif(); }, 800);
   /* Cerrar al click fuera */
   setTimeout(() => {
-    const handler = (e) => { if (!dd.contains(e.target) && e.target.id !== 'btn-notif' && !e.target.closest('#btn-notif')) { dd.remove(); document.removeEventListener('click', handler); } };
+    if (!dd.isConnected) return;
+    const handler = (e) => { if (!dd.contains(e.target) && !document.getElementById('btn-notif')?.contains(e.target)) { cerrarNotifDropdown(); document.removeEventListener('click', handler); } };
+    const cleanupPosition = dd.__notifCleanup;
+    dd.__notifCleanup = () => {
+      if (typeof cleanupPosition === 'function') cleanupPosition();
+      document.removeEventListener('click', handler);
+    };
     document.addEventListener('click', handler);
   }, 50);
 };
