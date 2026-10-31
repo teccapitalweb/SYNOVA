@@ -2765,6 +2765,12 @@ function colorForArea(s){ return AREA_COLORS[hashCode(s) % AREA_COLORS.length]; 
 function fmtDateLong(d){ try { return new Date(d).toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { return '—'; } }
 function fmtMoney(n){ return '$' + Number(n || 0).toLocaleString('es-MX'); }
 function tsToDate(v){ if (!v) return null; if (v.toDate) return v.toDate(); const d = new Date(v); return isNaN(d.getTime()) ? null : d; }
+function webinarStartMs(w){ const d = tsToDate(w?.fecha); return d ? d.getTime() : 0; }
+function webinarDurationMs(w){ return Math.max(1, Number(w?.duracion) || 60) * 60000; }
+function webinarEndMs(w){ const start = webinarStartMs(w); return start ? start + webinarDurationMs(w) : 0; }
+function webinarIsLive(w, now = Date.now()){ const start = webinarStartMs(w), end = webinarEndMs(w); return Boolean(start && start <= now && now < end); }
+function webinarStillAvailable(w, now = Date.now()){ const end = webinarEndMs(w); return Boolean(end && now < end); }
+function webinarJoinUrl(w){ return String(w?.link || w?.url || w?.zoom || w?.enlace || '').trim(); }
 
 function iconoParaArea(){
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v6a4 4 0 0 0 8 0V4"/><path d="M10 10v3a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="9" r="1.6"/><circle cx="6" cy="4" r="1.4"/><circle cx="10" cy="4" r="1.4"/></svg>';
@@ -2982,15 +2988,19 @@ async function cargarWebinars(){
     const webs = []; snap.forEach(d => webs.push({ id: d.id, ...d.data() }));
     window.__webinarsCache = webs;
     const ahora = Date.now();
-    const conFecha = webs.filter(w => w.fecha).map(w => ({ ...w, _t: tsToDate(w.fecha)?.getTime() || 0 })).sort((a, b) => a._t - b._t);
-    const proximo = conFecha.find(w => w._t > ahora);
+    const conFecha = webs.filter(w => w.fecha).map(w => ({ ...w, _t: webinarStartMs(w), _end: webinarEndMs(w) })).sort((a, b) => a._t - b._t);
+    // Una clase sigue disponible desde antes de iniciar y durante toda su duración.
+    // Antes desaparecía exactamente al llegar la hora de inicio.
+    const proximo = conFecha.find(w => webinarStillAvailable(w, ahora));
 
     let heroHtml = '';
     if (proximo) {
       const fd = new Date(proximo._t);
+      const enVivo = webinarIsLive(proximo, ahora);
+      const joinUrl = webinarJoinUrl(proximo);
       heroHtml = `<section class="webinar-hero fade-up">
         <div class="webinar-hero__info">
-          <span class="sec-hero__eyebrow" style="margin:0"><span class="banner__eyebrow__dot" style="display:inline-block;margin-right:4px"></span>Próxima clase</span>
+          <span class="sec-hero__eyebrow" style="margin:0"><span class="banner__eyebrow__dot" style="display:inline-block;margin-right:4px"></span>${enVivo ? 'En vivo ahora' : 'Próxima clase'}</span>
           <h2 class="webinar-hero__title">${escHtml(proximo.titulo || 'Clase en vivo SYNOVA')}</h2>
           <div class="webinar-hero__meta">
             <span><svg class="ic"><use href="#i-user"/></svg>${escHtml(proximo.instructor || 'Equipo SYNOVA')}</span>
@@ -3000,7 +3010,7 @@ async function cargarWebinars(){
           ${proximo.descripcion ? `<p class="webinar-hero__desc">${escHtml(proximo.descripcion)}</p>` : ''}
           <div class="webinar-hero__actions">
             ${toolEsVIP()
-              ? (proximo.url ? `<a class="btn btn--accent" href="${escHtml(proximo.url)}" target="_blank" rel="noopener"><svg class="ic"><use href="#i-broadcast"/></svg>Unirme a la clase</a>` : `<span class="pill">Liga disponible el día del evento</span>`)
+              ? (joinUrl ? `<a class="btn btn--accent" href="${escHtml(joinUrl)}" target="_blank" rel="noopener noreferrer"><svg class="ic"><use href="#i-broadcast"/></svg>${enVivo ? 'Entrar a la transmisión' : 'Unirme a la clase'}</a>` : `<span class="pill">Liga pendiente de configurar</span>`)
               : `<button class="btn btn--accent" onclick="window.__showPaywallModal('Las clases en vivo son exclusivas para miembros VIP.')"><svg class="ic"><use href="#i-broadcast"/></svg>Unirme a la clase</button>`}
           </div>
         </div>
@@ -3016,7 +3026,7 @@ async function cargarWebinars(){
     const gridHtml = '<div class="webinars-grid">' + webs.map(w => {
       const color = colorForArea(w.titulo || w.id);
       const fd = w.fecha ? tsToDate(w.fecha) : null;
-      const isLive = fd && Math.abs(fd.getTime() - ahora) < 60 * 60 * 1000;
+      const isLive = fd && webinarIsLive(w, ahora);
       return `<div class="webinar-card" style="--area-color:${color}" data-wid="${w.id}">
         <div class="webinar-card__cover">
           ${fd ? `<div class="webinar-card__date"><div class="webinar-card__date-day">${fd.getDate()}</div><div class="webinar-card__date-month">${fd.toLocaleDateString('es-MX', { month: 'short' })}</div></div>` : `<div class="webinar-card__play"><svg viewBox="0 0 24 24" fill="#fff"><path d="M7 4v16l13-8z"/></svg></div>`}
@@ -3052,6 +3062,8 @@ function abrirWebinarDetalle(id){
   const w = (window.__webinarsCache || []).find(x => x.id === id);
   if (!w) return;
   const fd = w.fecha ? tsToDate(w.fecha) : null;
+  const joinUrl = webinarJoinUrl(w);
+  const enVivo = webinarIsLive(w);
   const body = `
     <div class="detail-hero" style="--area-color:${colorForArea(w.titulo || id)}">
       <div class="detail-hero__icon"><svg class="ic ic--lg"><use href="#i-broadcast"/></svg></div>
@@ -3062,7 +3074,7 @@ function abrirWebinarDetalle(id){
     <p style="font-size:13.5px;color:var(--text-2);line-height:1.6">${escHtml(w.descripcion || 'El equipo SYNOVA compartirá el temario y objetivos de esta sesión próximamente.')}</p>
   `;
   const footer = toolEsVIP()
-    ? (w.url ? `<button class="btn btn--ghost" onclick="Modal.close('webinar-detalle')">Cerrar</button><a class="btn btn--accent" href="${escHtml(w.url)}" target="_blank" rel="noopener">Unirme<svg class="ic"><use href="#i-broadcast"/></svg></a>` : `<button class="btn btn--ghost" onclick="Modal.close('webinar-detalle')">Cerrar</button>`)
+    ? (joinUrl ? `<button class="btn btn--ghost" onclick="Modal.close('webinar-detalle')">Cerrar</button><a class="btn btn--accent" href="${escHtml(joinUrl)}" target="_blank" rel="noopener noreferrer">${enVivo ? 'Entrar ahora' : 'Unirme'}<svg class="ic"><use href="#i-broadcast"/></svg></a>` : `<button class="btn btn--ghost" onclick="Modal.close('webinar-detalle')">Cerrar</button><span class="pill">Liga pendiente de configurar</span>`)
     : `<button class="btn btn--ghost" onclick="Modal.close('webinar-detalle')">Cerrar</button><button class="btn btn--accent" onclick="Modal.close('webinar-detalle');window.__showPaywallModal('Las clases en vivo son exclusivas para miembros VIP.')">Suscribirme</button>`;
   Modal.open({ id: 'webinar-detalle', title: escHtml(w.titulo || 'Clase en vivo'), icon: 'i-broadcast', size: 'sm', body, footer });
 }
@@ -5322,10 +5334,11 @@ window.__actualizarAside = async function(){
       const snap = await getDocs(collection(db, 'webinars'));
       const webs = []; snap.forEach(d => webs.push({ id: d.id, ...d.data() }));
       const ahora = Date.now();
-      const prox = webs.filter(w => w.fecha).map(w => ({ ...w, _t: tsToDate(w.fecha)?.getTime() || 0 })).filter(w => w._t > ahora).sort((a, b) => a._t - b._t)[0];
+      const prox = webs.filter(w => w.fecha).map(w => ({ ...w, _t: webinarStartMs(w), _end: webinarEndMs(w) })).filter(w => webinarStillAvailable(w, ahora)).sort((a, b) => a._t - b._t)[0];
       if (prox) {
         const fd = new Date(prox._t);
-        wNext.innerHTML = `<div class="widget__label">⏱ Próxima clase en vivo</div><div class="widget__title">${escHtml(prox.titulo || 'Clase SYNOVA')}</div><div class="widget__meta"><svg class="ic"><use href="#i-calendar"/></svg>${fmtDateLong(fd)}</div><button class="btn btn--accent btn--block btn--sm" data-section="webinars">Ver detalles</button>`;
+        const enVivo = webinarIsLive(prox, ahora);
+        wNext.innerHTML = `<div class="widget__label">${enVivo ? '● En vivo ahora' : '⏱ Próxima clase en vivo'}</div><div class="widget__title">${escHtml(prox.titulo || 'Clase SYNOVA')}</div><div class="widget__meta"><svg class="ic"><use href="#i-calendar"/></svg>${fmtDateLong(fd)}</div><button class="btn btn--accent btn--block btn--sm" data-section="webinars">${enVivo ? 'Entrar a la transmisión' : 'Ver detalles'}</button>`;
       } else {
         wNext.innerHTML = `<div class="widget__label">⏱ Próxima clase en vivo</div><div style="padding:10px 0 2px;text-align:center"><div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px">Sin clases programadas</div><div style="font-size:11.5px;color:var(--text-3);line-height:1.5">Te avisaremos cuando haya nuevas transmisiones.</div></div>`;
       }
