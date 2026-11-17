@@ -1874,7 +1874,7 @@ window.navigateTo = function(section){
   const esHerramienta = section === 'herramientas' || section.indexOf('tool-') === 0;
   const esRecursoFocus = esHerramienta || section === 'libros';
   document.querySelector('.app')?.classList.toggle('app--focus', section === 'retos' || section === 'logros' || section === 'curso' || esRecursoFocus);
-  marcarActivoNav(section === 'curso' ? 'cursos' : (esHerramienta ? 'herramientas' : section));
+  marcarActivoNav((section === 'curso' || section === 'ruta-aprendizaje') ? 'cursos' : (esHerramienta ? 'herramientas' : section));
   cerrarDrawer();
   const content = document.getElementById('content');
   content.innerHTML = '<div class="empty-state"><div class="sub-loading__spin" style="margin:0 auto 14px"></div></div>';
@@ -6079,34 +6079,91 @@ function mountNutricion(c){
 .drip-lock__ic svg{width:19px;height:19px}
 .drip-lock__t{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text);font-weight:700;letter-spacing:.5px}
 .drip-lock__d{font-size:11px;color:var(--text-2);max-width:220px;line-height:1.4}
-/* Mi ruta de desbloqueo */
 .drip-lock__btn{margin-top:4px;border:1px solid var(--primary);background:color-mix(in srgb,var(--primary) 14%,var(--surface));color:var(--primary);font:700 11px/1 inherit;padding:8px 12px;border-radius:999px;cursor:pointer;transition:background .2s,color .2s}
 .drip-lock__btn:hover{background:var(--primary);color:#fff}
-.ruta-banner{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:16px;border:1px solid color-mix(in srgb,var(--primary) 30%,var(--border));background:linear-gradient(120deg,color-mix(in srgb,var(--primary) 10%,var(--surface)),var(--surface));margin-bottom:4px}
-.ruta-banner.is-done{border-color:var(--border)}
-.ruta-banner__ic{flex:0 0 44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--primary) 16%,transparent);color:var(--primary)}
-.ruta-banner__ic svg{width:20px;height:20px}
-.ruta-banner__copy{flex:1;min-width:0}
-.ruta-banner__copy span{display:block;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--primary)}
-.ruta-banner__copy strong{display:block;font-size:15px;color:var(--text);margin:2px 0}
-.ruta-banner__copy p{font-size:12px;color:var(--text-2);margin:0;line-height:1.45}
-.ruta-banner__btn{flex:0 0 auto;border:0;background:var(--primary);color:#fff;font-weight:700;font-size:13px;padding:11px 16px;border-radius:12px;cursor:pointer}
-.ruta-banner__btn:hover{filter:brightness(1.08)}
-@media(max-width:640px){.ruta-banner{flex-wrap:wrap}.ruta-banner__btn{width:100%}}
-.ruta-modal__info{font-size:13px;color:var(--text-2);line-height:1.55;margin:0 0 14px}
-.ruta-lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:56vh;overflow:auto}
-.ruta-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
-.ruta-item.is-next{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
-.ruta-item__n{flex:0 0 26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 12px 'JetBrains Mono',monospace;background:color-mix(in srgb,var(--primary) 14%,transparent);color:var(--primary)}
-.ruta-item__cover{flex:0 0 48px;height:34px;border-radius:8px;background:var(--bg-deep) center/cover no-repeat}
-.ruta-item__copy{flex:1;min-width:0}
-.ruta-item__copy strong{display:block;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ruta-item__copy small{font-size:11px;color:var(--text-2)}
-.ruta-item__btns{display:flex;gap:4px}
-.ruta-item__btns button{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;font-size:14px}
-.ruta-item__btns button:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
-.ruta-item__btns button:disabled{opacity:.35;cursor:default}
-.ruta-vacia{font-size:13px;color:var(--text-2);text-align:center;padding:18px}
+.ruta-vacia{font-size:13px;color:var(--text-2);text-align:center;padding:18px;grid-column:1/-1}
+/* Mis desbloqueos (igual que ICADEM) */
+.mis-desbloqueos{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:16px 20px;border-radius:16px;border:1px solid var(--border);background:var(--surface);box-shadow:0 1px 2px rgba(5,30,49,.04)}
+.mis-desbloqueos__ic{flex:0 0 40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--primary) 10%,transparent);color:var(--primary)}
+.mis-desbloqueos__ic svg{width:19px;height:19px}
+.mis-desbloqueos__copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mis-desbloqueos__copy h2{font-size:15px;margin:0;color:var(--text)}
+.mis-desbloqueos__estado{font-size:13px;color:var(--text-2)}
+.mis-desbloqueos__estado.has-choices{color:var(--primary);font-weight:700}
+.mis-desbloqueos__primero{font-size:12px;color:var(--text-2)}
+.mis-desbloqueos__primero strong{color:var(--text)}
+.mis-desbloqueos__acciones{display:flex;gap:8px;flex-wrap:wrap}
+.md-btn{border-radius:10px;padding:10px 14px;font-weight:700;font-size:13px;cursor:pointer;border:1px solid transparent}
+.md-btn--primary{background:color-mix(in srgb,var(--primary) 12%,var(--surface));border-color:color-mix(in srgb,var(--primary) 30%,var(--border));color:var(--primary)}
+.md-btn--primary:hover{background:var(--primary);color:#fff}
+.md-btn--quiet{background:transparent;color:var(--primary)}
+.md-btn--quiet:hover{background:color-mix(in srgb,var(--primary) 8%,transparent)}
+@media(max-width:640px){.mis-desbloqueos{flex-wrap:wrap}.mis-desbloqueos__acciones{width:100%}.md-btn{flex:1}}
+/* Modal elegir cursos */
+.re-search{display:flex;align-items:center;gap:8px;border:1px solid var(--border);border-radius:12px;padding:0 12px;background:var(--surface);min-height:44px}
+.re-search svg{width:16px;height:16px;color:var(--text-3)}
+.re-search input{flex:1;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:14px;min-height:42px}
+.re-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:12px;max-height:52vh;overflow:auto}
+.re-op{display:flex;align-items:center;gap:10px;text-align:left;padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--surface);cursor:pointer;color:var(--text)}
+.re-op.is-on{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
+.re-op:disabled{opacity:.45;cursor:default}
+.re-op__check{flex:0 0 24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);font-weight:700;color:var(--primary)}
+.re-op.is-on .re-op__check{background:var(--primary);color:#fff;border-color:var(--primary)}
+.re-op__cover{flex:0 0 52px;height:40px;border-radius:8px;background:var(--bg-deep) center/cover no-repeat}
+.re-op__copy{min-width:0;display:flex;flex-direction:column}
+.re-op__copy small{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.3px}
+.re-op__copy strong{font-size:13px;line-height:1.3}
+.re-op__copy em{font-style:normal;font-size:11px;color:var(--text-2)}
+.re-resumen{flex:1;font-size:12px;color:var(--text-2)}
+/* Página Mi ruta de aprendizaje */
+.lr-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:14px 0 22px}
+.lr-eyebrow,.lr-kicker{display:block;font-size:10.5px;font-weight:700;letter-spacing:1.2px;color:var(--primary)}
+.lr-header h1{font-size:clamp(28px,4vw,38px);margin:6px 0 6px;color:var(--text);letter-spacing:-.5px}
+.lr-header p{margin:0;color:var(--text-2);font-size:14px}
+.lr-assurance{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--primary);border:1px solid color-mix(in srgb,var(--primary) 25%,var(--border));background:color-mix(in srgb,var(--primary) 6%,var(--surface));padding:8px 12px;border-radius:10px}
+.lr-assurance svg{width:14px;height:14px}
+.lr-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+@media(max-width:1000px){.lr-layout{grid-template-columns:1fr}}
+.lr-panel{border:1px solid var(--border);background:var(--surface);border-radius:18px;padding:20px}
+.lr-panel--list{position:sticky;top:16px}
+.lr-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+.lr-head h2{font-size:19px;margin:4px 0 0;color:var(--text);display:flex;align-items:center;gap:8px}
+.lr-count-txt{font-size:12px;color:var(--text-2)}
+.lr-badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--primary) 12%,transparent);color:var(--primary)}
+.lr-tools{display:grid;grid-template-columns:1fr 220px;gap:10px;margin-bottom:14px}
+@media(max-width:600px){.lr-tools{grid-template-columns:1fr}}
+.lr-cat{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:12px;padding:4px 12px;background:var(--surface)}
+.lr-cat span{font-size:10px;color:var(--text-3)}
+.lr-cat select{border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:13px;padding:2px 0}
+.lr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.lr-card{border:1px solid var(--border);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;background:var(--surface)}
+.lr-card__cover{display:block;aspect-ratio:16/9;background:var(--bg-deep) center/cover no-repeat}
+.lr-card__body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.lr-card__body small{font-size:11px;color:var(--text-3)}
+.lr-card__body strong{font-size:13.5px;color:var(--text);line-height:1.3;flex:1}
+.lr-add{margin-top:8px;border:1px solid var(--border);background:color-mix(in srgb,var(--primary) 5%,var(--surface));color:var(--primary);border-radius:10px;padding:9px;font-weight:700;font-size:13px;cursor:pointer}
+.lr-add:hover{border-color:var(--primary)}
+.lr-add.is-on{background:color-mix(in srgb,var(--ok,#16a34a) 10%,var(--surface));color:var(--ok,#16a34a);border-color:color-mix(in srgb,var(--ok,#16a34a) 30%,var(--border))}
+.lr-hint{font-size:12px;color:var(--text-2);margin:-6px 0 12px}
+.lr-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto}
+.lr-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:14px;background:var(--surface);transition:border-color .15s,background .15s}
+.lr-row.is-drag{opacity:.5}
+.lr-row.is-over{border-color:var(--primary);background:color-mix(in srgb,var(--primary) 6%,var(--surface))}
+.lr-grip{cursor:grab;color:var(--text-3);font-weight:700;letter-spacing:-2px;user-select:none}
+.lr-row__n{font:700 12px 'JetBrains Mono',monospace;color:var(--text-2);min-width:16px;text-align:center}
+.lr-row__cover{flex:0 0 58px;height:40px;border-radius:8px;background:var(--bg-deep) center/cover no-repeat}
+.lr-row__copy{flex:1;min-width:0;display:flex;flex-direction:column}
+.lr-row__copy small{font-size:11px;color:var(--text-3)}
+.lr-row__copy strong{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lr-row__btns{display:flex;gap:4px}
+.lr-row__btns button{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+.lr-row__btns button:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
+.lr-row__btns button:disabled{opacity:.3;cursor:default}
+.lr-save{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.lr-save-status{font-size:12px;color:var(--text-2);margin:0}
+.lr-save-btn{width:100%;justify-content:center;display:flex;align-items:center;gap:8px}
+.lr-save-btn:disabled{opacity:.5;cursor:default}
+.lr-note{font-size:11px;color:var(--text-3);margin:0;text-align:center}
 /* Visor embebido */
 .visor-ov{position:fixed;inset:0;z-index:99500;background:rgba(3,7,13,.9);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
 .visor-ov.is-open{display:flex}
@@ -6290,6 +6347,7 @@ function mountNutricion(c){
       const elegido = cursoGratisElegido();
       return !!elegido && String(c?.id) === String(elegido.id);
     }
+    if (enRuta(c)) return ruta.elegidos.includes(String(c.id));
     return diasMembresia() >= unlockDay(c);
   }
   function diasRestantes(c){ return Math.max(0, unlockDay(c) - diasMembresia()); }
@@ -6532,17 +6590,20 @@ function mountNutricion(c){
     return pool[i % pool.length] || PORTADA_DEFAULT;
   }
 
-  /* ── MI RUTA DE DESBLOQUEO (replicado de ICADEM) ──
-     Cada 6 días se gana un cupo. Los cursos ya desbloqueados quedan fijos para siempre
-     (rutaCursos.elegidos) y el VIP decide qué curso ocupa el siguiente cupo
-     (rutaCursos.prioridad). Lo que no esté en su lista sigue el orden del catálogo,
-     así que quien nunca organiza conserva el comportamiento anterior. */
-  const ruta = { activa:false, elegidos:[], prioridad:[], cola:[], cupos:0 };
-  let _rutaFirma = '';
+  /* ── MIS DESBLOQUEOS + MI RUTA DE APRENDIZAJE (misma lógica que ICADEM) ──
+     · Cada 6 días de membresía se gana un cupo de desbloqueo.
+     · El cupo NO se gasta solo: el alumno elige qué curso abrir ("Elegir cursos").
+       Los cursos elegidos quedan abiertos para siempre (rutaCursos.elegidos).
+     · "Mi lista de prioridad" (rutaCursos.prioridad) es su orden de interés; organizarla
+       no consume desbloqueos.
+     · Miembros actuales: la primera vez se conservan exactamente los cursos que ya tenían abiertos. */
+  const ruta = { activa:false, elegidos:[], prioridad:[], cupos:0, disponibles:0, proximoCupo:null, drip:[] };
   function rutaActiva(){
     const S = window.UserState;
     return !!S && esVip() && !esAdminReal() && !S.isTrial && PREVIEW_DIAS === null && cursoGratisEstado.cargado;
   }
+  function cursoPorId(id){ return (window.__cursosCache||[]).find(c=>String(c.id)===String(id)); }
+  function enRuta(c){ return ruta.activa && c && c.marcarProximamente!==true && !c.disponibleSiempre; }
   function asignarOrdenDesbloqueo(lista){
     const orden=(lista||[]).slice();
     const elegido=cursoGratisEstado.elegido;
@@ -6554,101 +6615,181 @@ function mountNutricion(c){
       orden.forEach(c=>{ if(c.marcarProximamente===true)c._unlockDay=Number.MAX_SAFE_INTEGER; else if(c.disponibleSiempre)c._unlockDay=0; else{c._unlockDay=rank*DRIP_DIAS;rank++;} });
       return;
     }
+    const dias=diasMembresia();
     const drip=orden.filter(c=>c.marcarProximamente!==true&&!c.disponibleSiempre).map(c=>String(c.id));
     const ids=new Set(drip);
-    const cupos=Math.min(drip.length, Math.floor(diasMembresia()/DRIP_DIAS)+1);
+    const cupos=Math.min(drip.length, Math.floor(dias/DRIP_DIAS)+1);
     const guardada=window.UserState.rutaCursos;
-    let elegidos, prioridad;
+    let elegidos, prioridad, migrar=false;
     if(guardada&&Array.isArray(guardada.elegidos)){
       elegidos=[...new Set(guardada.elegidos.map(String))].filter(id=>ids.has(id));
       prioridad=[...new Set((guardada.prioridad||[]).map(String))].filter(id=>ids.has(id)&&!elegidos.includes(id));
-    } else {
-      /* Primera vez: se conservan exactamente los cursos que ya tenía abiertos */
-      elegidos=drip.slice(0,cupos); prioridad=[];
-    }
-    const cola=prioridad.concat(drip.filter(id=>!elegidos.includes(id)&&!prioridad.includes(id)));
-    while(elegidos.length<cupos&&cola.length)elegidos.push(cola.shift());
-    prioridad=prioridad.filter(id=>!elegidos.includes(id));
-    Object.assign(ruta,{activa:true,elegidos,prioridad,cola,cupos});
-    const posCola=new Map(cola.map((id,i)=>[id,i]));
+    } else { elegidos=drip.slice(0,cupos); prioridad=[]; migrar=true; }
+    const restantes=drip.length-elegidos.length;
+    Object.assign(ruta,{activa:true,elegidos,prioridad,cupos,drip,
+      disponibles:Math.max(0,Math.min(restantes,cupos-elegidos.length)),
+      proximoCupo:cupos<drip.length?Math.max(1,cupos*DRIP_DIAS-dias):null});
     orden.forEach(c=>{
       const id=String(c.id);
       if(c.marcarProximamente===true)c._unlockDay=Number.MAX_SAFE_INTEGER;
       else if(c.disponibleSiempre||elegidos.includes(id))c._unlockDay=0;
-      else c._unlockDay=(elegidos.length+(posCola.get(id)||0))*DRIP_DIAS;
+      else c._unlockDay=dias+diasParaCurso(id);
     });
-    const firma=JSON.stringify([elegidos,prioridad]);
-    const firmaGuardada=guardada?JSON.stringify([guardada.elegidos||[],guardada.prioridad||[]]):'';
-    if(firma!==firmaGuardada&&firma!==_rutaFirma){ _rutaFirma=firma; guardarRuta().catch(()=>{}); }
+    if(migrar)guardarRuta().catch(e=>console.warn('[ruta]',e.message));
+  }
+  /* Días estimados para poder abrir un curso, según su lugar en la lista de prioridad */
+  function diasParaCurso(id){
+    if(ruta.disponibles>0||ruta.proximoCupo===null)return 0;
+    const cola=ruta.prioridad.concat(ruta.drip.filter(x=>!ruta.elegidos.includes(x)&&!ruta.prioridad.includes(x)));
+    const i=Math.max(0,cola.indexOf(String(id)));
+    return ruta.proximoCupo+i*DRIP_DIAS;
   }
   async function guardarRuta(){
     const S=window.UserState, user=window.__auth&&window.__auth.currentUser;
     if(!S||!user||!ruta.activa)return;
     const data={elegidos:ruta.elegidos.slice(),prioridad:ruta.prioridad.slice()};
-    S.rutaCursos=data;
     const { doc, setDoc, serverTimestamp, db } = window.__fs;
     await setDoc(doc(db,'miembros',user.uid),{rutaCursos:Object.assign({},data,{updatedAt:serverTimestamp()})},{merge:true});
+    S.rutaCursos=data;
   }
-  function posicionEnRuta(c){ const i=ruta.cola.indexOf(String(c&&c.id)); return i<0?0:i+1; }
-  function proximoEnRuta(){ const id=ruta.cola[0]; return id?(window.__cursosCache||[]).find(c=>String(c.id)===id):null; }
-  async function aplicarPrioridad(nuevaCola){
+  async function guardarCambiosRuta(cambio){
     const previa=window.UserState.rutaCursos;
-    window.UserState.rutaCursos={elegidos:ruta.elegidos.slice(),prioridad:nuevaCola.slice()};
+    window.UserState.rutaCursos=Object.assign({elegidos:ruta.elegidos.slice(),prioridad:ruta.prioridad.slice()},cambio);
     asignarOrdenDesbloqueo(window.__cursosCache||[]);
     try{ await guardarRuta(); }
     catch(e){ window.UserState.rutaCursos=previa; asignarOrdenDesbloqueo(window.__cursosCache||[]); throw e; }
   }
-  async function ponerPrimero(c){
-    const id=String(c.id);
-    try{
-      await aplicarPrioridad([id].concat(ruta.cola.filter(x=>x!==id)));
-      Toast.success('Listo, es tu siguiente curso',(c.nombre||'Curso')+' se desbloquea en '+diasRestantes(c)+(diasRestantes(c)===1?' día':' días')+'.');
-      refrescarVistasRuta();
-    }catch(e){ Toast.error('No se pudo guardar tu ruta',e.message||'Intenta nuevamente'); }
-  }
+  function prioridadDe(c){ const i=ruta.prioridad.indexOf(String(c&&c.id)); return i<0?0:i+1; }
   function refrescarVistasRuta(){
     try{ if(document.getElementById('cursos-grid'))renderCursos(); }catch(e){}
     try{ if(document.getElementById('pdfs-grid'))renderMateriales(); }catch(e){}
-    try{ if(document.querySelector('[data-ruta-detalle]'))window.Sections.curso(); }catch(e){}
+    try{ if(document.getElementById('curso-detalle-body'))window.Sections.curso(); }catch(e){}
   }
-  function abrirRutaCursos(focoId){
-    if(!ruta.activa)return;
-    const cache=window.__cursosCache||[], porId=id=>cache.find(c=>String(c.id)===id);
-    let cola=ruta.cola.filter(id=>porId(id)), guardando=false;
-    if(focoId&&cola.includes(String(focoId)))cola=[String(focoId)].concat(cola.filter(id=>id!==String(focoId)));
-    const base=ruta.elegidos.length, dias=diasMembresia();
-    const pintar=()=>{
-      const host=document.getElementById('ruta-cursos-lista'); if(!host)return;
-      host.innerHTML=cola.length?cola.map((id,i)=>{
-        const c=porId(id), d=Math.max(0,(base+i)*DRIP_DIAS-dias);
-        return '<li class="ruta-item'+(i===0?' is-next':'')+'"><span class="ruta-item__n">'+(i+1)+'</span><span class="ruta-item__cover" style="background-image:url(\''+String(portadaDe(c)||'').replace(/'/g,'%27')+'\')"></span><span class="ruta-item__copy"><strong>'+escHtml(c.nombre||'Curso SYNOVA')+'</strong><small>'+(i===0?'Siguiente · ':'')+(d===0?'se desbloquea hoy':'en '+d+(d===1?' día':' días'))+'</small></span><span class="ruta-item__btns"><button type="button" data-r-top="'+i+'" title="Poner primero" '+(i===0?'disabled':'')+'>⤒</button><button type="button" data-r-up="'+i+'" title="Subir" '+(i===0?'disabled':'')+'>↑</button><button type="button" data-r-down="'+i+'" title="Bajar" '+(i===cola.length-1?'disabled':'')+'>↓</button></span></li>';
-      }).join(''):'<p class="ruta-vacia">¡Ya tienes todos los cursos desbloqueados!</p>';
-      host.querySelectorAll('button').forEach(b=>b.onclick=()=>{
-        const i=+(b.dataset.rTop??b.dataset.rUp??b.dataset.rDown), t=b.dataset.rTop!==undefined?0:b.dataset.rUp!==undefined?i-1:i+1;
-        const [x]=cola.splice(i,1); cola.splice(t,0,x); pintar();
-      });
-    };
-    Modal.open({id:'ruta-cursos',title:'Mi ruta de desbloqueo',subtitle:'Ordena tus cursos: el primero de la lista es el siguiente en abrirse',icon:'i-book',size:'md',
-      body:'<div class="ruta-modal"><p class="ruta-modal__info">Cada <strong>'+DRIP_DIAS+' días</strong> se desbloquea un curso nuevo. Pon arriba los que más te interesan. Los cursos que ya tienes abiertos no cambian.</p><ol class="ruta-lista" id="ruta-cursos-lista"></ol></div>',
-      footer:'<button class="btn btn--ghost" onclick="Modal.close(\'ruta-cursos\')">Cancelar</button><button class="btn btn--accent" id="ruta-cursos-guardar">Guardar mi orden</button>'});
-    setTimeout(()=>{
-      pintar();
-      const b=document.getElementById('ruta-cursos-guardar'); if(!b)return;
-      b.onclick=async()=>{
-        if(guardando)return; guardando=true; b.disabled=true; b.textContent='Guardando…';
-        try{ await aplicarPrioridad(cola); Modal.close('ruta-cursos'); Toast.success('Ruta guardada','Tu siguiente curso: '+((proximoEnRuta()||{}).nombre||'—')); refrescarVistasRuta(); }
-        catch(e){ guardando=false; b.disabled=false; b.textContent='Guardar mi orden'; Toast.error('No se pudo guardar tu ruta',e.message||'Intenta nuevamente'); }
-      };
-    },0);
-  }
-  window.__abrirRutaCursos=abrirRutaCursos;
+  function fechaEnDias(n){ const d=new Date(Date.now()+n*86400000); return d.toLocaleDateString('es-MX',{day:'numeric',month:'short'}).replace(/\./g,''); }
+  const pluralCursos=n=>n+' curso'+(n===1?'':'s');
+
+  /* ── Tarjeta "Mis desbloqueos" ── */
   function rutaBannerHtml(){
     if(!ruta.activa)return '';
-    const sig=proximoEnRuta();
-    if(!sig)return '<section class="ruta-banner is-done"><span class="ruta-banner__ic"><svg class="ic"><use href="#i-check"/></svg></span><div class="ruta-banner__copy"><span>Mi ruta de desbloqueo</span><strong>Tienes todos los cursos desbloqueados</strong></div></section>';
-    const d=diasRestantes(sig);
-    return '<section class="ruta-banner"><span class="ruta-banner__ic"><svg class="ic"><use href="#i-clock"/></svg></span><div class="ruta-banner__copy"><span>Mi ruta de desbloqueo · tú eliges el orden</span><strong>Siguiente: '+escHtml(sig.nombre||'Curso')+'</strong><p>Se desbloquea '+(d===0?'hoy':'en '+d+(d===1?' día':' días'))+'. ¿Te interesa otro primero? Cambia el orden cuando quieras.</p></div><button type="button" class="ruta-banner__btn" id="ruta-organizar">Organizar mi orden</button></section>';
+    const disp=ruta.disponibles;
+    const estado=disp?pluralCursos(disp)+' por elegir':ruta.proximoCupo!==null?'Próximo desbloqueo: '+fechaEnDias(ruta.proximoCupo)+' · en '+ruta.proximoCupo+(ruta.proximoCupo===1?' día':' días'):'Tienes todos los cursos desbloqueados';
+    const primero=ruta.prioridad.map(cursoPorId).find(Boolean);
+    return '<section class="mis-desbloqueos"><span class="mis-desbloqueos__ic"><svg class="ic"><use href="#i-shield-check"/></svg></span>'+
+      '<div class="mis-desbloqueos__copy"><h2>Mis desbloqueos</h2><span class="mis-desbloqueos__estado'+(disp?' has-choices':'')+'">'+escHtml(estado)+'</span>'+
+      (primero?'<span class="mis-desbloqueos__primero"><strong>Primero en tu lista:</strong> '+escHtml(primero.nombre||'Curso')+'</span>':'<span class="mis-desbloqueos__primero">Cada '+DRIP_DIAS+' días ganas un desbloqueo y tú eliges qué curso abrir.</span>')+'</div>'+
+      '<div class="mis-desbloqueos__acciones">'+(disp?'<button type="button" class="md-btn md-btn--primary" data-ruta-elegir>Elegir cursos</button>':'')+'<button type="button" class="md-btn md-btn--quiet" data-ruta-organizar>Organizar lista</button></div></section>';
   }
+  function bindRutaAcciones(root){
+    root.querySelectorAll('[data-ruta-elegir]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();abrirElegirCursos(b.dataset.rutaElegir||'');}));
+    root.querySelectorAll('[data-ruta-organizar]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();abrirRutaAprendizaje(b.dataset.rutaOrganizar||'');}));
+  }
+  function lockRutaHtml(c){
+    const p=prioridadDe(c), id=escHtml(String(c.id));
+    if(ruta.disponibles>0)return '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-gift"/></svg></div><div class="drip-lock__t">Puedes desbloquearlo ya</div><div class="drip-lock__d">Tienes '+pluralCursos(ruta.disponibles)+' por elegir.</div><button type="button" class="drip-lock__btn" data-ruta-elegir="'+id+'">Elegir para desbloquear</button></div>';
+    const d=diasRestantes(c);
+    return '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">'+(p?'Prioridad #'+p:'Bloqueado')+' · en '+d+(d===1?' día':' días')+'</div><div class="drip-lock__d">'+(p?'Está en tu lista de prioridad.':'Agrégalo a tu lista para tenerlo presente.')+'</div><button type="button" class="drip-lock__btn" data-ruta-organizar="'+id+'">'+(p?'Organizar lista':'Agregar a mi lista')+'</button></div>';
+  }
+
+  /* ── Modal "Elige qué aprender primero" (consume desbloqueos) ── */
+  function abrirElegirCursos(inicialId){
+    if(!ruta.activa||!ruta.disponibles)return;
+    const max=ruta.disponibles;
+    const candidatos=ruta.prioridad.concat(ruta.drip.filter(id=>!ruta.elegidos.includes(id)&&!ruta.prioridad.includes(id))).map(cursoPorId).filter(Boolean);
+    const sel=[]; if(inicialId&&candidatos.some(c=>String(c.id)===String(inicialId)))sel.push(String(inicialId));
+    let q='', confirmar=false, ocupado=false;
+    Modal.open({id:'ruta-elegir',title:'Elige qué aprender primero',subtitle:'Puedes elegir ahora o volver después. Tus desbloqueos se conservan.',icon:'i-book',size:'lg',
+      body:'<div class="re-modal"><label class="re-search"><svg class="ic"><use href="#i-search"/></svg><input type="search" id="re-q" placeholder="Busca un curso" autocomplete="off"></label><div class="re-lista" id="re-lista"></div></div>',
+      footer:'<span class="re-resumen" id="re-resumen"></span><button class="btn btn--ghost" id="re-cancel">Elegir después</button><button class="btn btn--accent" id="re-ok">Continuar</button>'});
+    const pintar=()=>{
+      const lista=document.getElementById('re-lista'); if(!lista)return;
+      const norm=v=>String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+      const vis=candidatos.filter(c=>norm(c.nombre).includes(norm(q)));
+      lista.innerHTML=vis.length?vis.map(c=>{ const id=String(c.id), on=sel.includes(id), p=prioridadDe(c);
+        return '<button type="button" class="re-op'+(on?' is-on':'')+'" data-id="'+escHtml(id)+'" '+(!on&&sel.length>=max?'disabled':'')+'><span class="re-op__check">'+(on?'✓':'+')+'</span><span class="re-op__cover" style="background-image:url(\''+String(portadaDe(c)||'').replace(/'/g,'%27')+'\')"></span><span class="re-op__copy"><small>'+escHtml(c.area||'SYNOVA')+(p?' · Prioridad #'+p:'')+'</small><strong>'+escHtml(c.nombre||'Curso')+'</strong><em>'+((c.sesiones&&c.sesiones.length)||0)+' clases</em></span></button>';
+      }).join(''):'<p class="ruta-vacia">No hay cursos para esta búsqueda.</p>';
+      lista.querySelectorAll('.re-op').forEach(b=>b.onclick=()=>{ const id=b.dataset.id,i=sel.indexOf(id); if(i>=0)sel.splice(i,1); else if(sel.length<max)sel.push(id); confirmar=false; pintar(); });
+      document.getElementById('re-resumen').textContent=confirmar?'Vas a desbloquear '+pluralCursos(sel.length)+'. ¿Deseas continuar?':sel.length+' de '+max+' desbloqueos seleccionados';
+      const ok=document.getElementById('re-ok'); ok.disabled=!sel.length||ocupado; ok.textContent=ocupado?'Guardando…':confirmar?'Confirmar desbloqueo':'Continuar';
+      document.getElementById('re-cancel').textContent=confirmar?'Volver':'Elegir después';
+    };
+    setTimeout(()=>{
+      document.getElementById('re-q').oninput=e=>{q=e.target.value;pintar();};
+      document.getElementById('re-cancel').onclick=()=>{ if(confirmar){confirmar=false;pintar();} else Modal.close('ruta-elegir'); };
+      document.getElementById('re-ok').onclick=async()=>{
+        if(!confirmar){confirmar=true;pintar();return;}
+        ocupado=true;pintar();
+        try{
+          await guardarCambiosRuta({elegidos:ruta.elegidos.concat(sel.slice(0,ruta.disponibles)),prioridad:ruta.prioridad.filter(id=>!sel.includes(id))});
+          Modal.close('ruta-elegir'); Toast.success('Cursos desbloqueados','Ya puedes comenzar desde Mis cursos.'); refrescarVistasRuta();
+        }catch(e){ ocupado=false;confirmar=false;pintar(); Toast.error('No pudimos desbloquear',e.message||'Intenta nuevamente'); }
+      };
+      pintar();
+    },0);
+  }
+
+  /* ── Página "Mi ruta de aprendizaje" ── */
+  let rutaInicialId='';
+  function abrirRutaAprendizaje(id){ if(!ruta.activa)return; rutaInicialId=id?String(id):''; window.navigateTo('ruta-aprendizaje'); }
+  window.__abrirRutaAprendizaje=abrirRutaAprendizaje;
+  window.Sections['ruta-aprendizaje']=async function(){
+    const content=document.getElementById('content');
+    try{ await loadCursos(); }catch(e){}
+    if(!ruta.activa){ window.navigateTo('cursos'); return; }
+    let orden=ruta.prioridad.slice(), base=orden.slice(), q='', area='', ocupado=false, arrastrando=null;
+    if(rutaInicialId&&!orden.includes(rutaInicialId)&&!ruta.elegidos.includes(rutaInicialId))orden.push(rutaInicialId);
+    rutaInicialId='';
+    const elegibles=ruta.drip.filter(id=>!ruta.elegidos.includes(id)).map(cursoPorId).filter(Boolean);
+    const areas=[...new Set(elegibles.map(c=>c.area).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    const portada=c=>String(portadaDe(c)||'').replace(/'/g,'%27');
+    content.innerHTML='<div class="lr"><button class="course-page__back" data-section="cursos" id="lr-back"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-arrow-right"/></svg>Volver a Mis cursos</button>'+
+      '<header class="lr-header"><div><span class="lr-eyebrow">TU APRENDIZAJE, A TU RITMO</span><h1>Mi ruta de aprendizaje</h1><p>Organiza los cursos que quieres estudiar después.</p></div><span class="lr-assurance"><svg class="ic"><use href="#i-shield-check"/></svg>Organizar no consume desbloqueos</span></header>'+
+      '<div class="lr-layout"><section class="lr-panel"><div class="lr-head"><div><span class="lr-kicker">ENCUENTRA TU SIGUIENTE PASO</span><h2>Explorar cursos</h2></div><span class="lr-count-txt" id="lr-res"></span></div>'+
+      '<div class="lr-tools"><label class="re-search"><svg class="ic"><use href="#i-search"/></svg><input type="search" id="lr-q" placeholder="Busca un curso" autocomplete="off"></label><label class="lr-cat"><span>Categoría</span><select id="lr-area"><option value="">Todas las categorías</option>'+areas.map(a=>'<option value="'+escHtml(a)+'">'+escHtml(a)+'</option>').join('')+'</select></label></div><div class="lr-grid" id="lr-grid"></div></section>'+
+      '<section class="lr-panel lr-panel--list"><div class="lr-head"><div><span class="lr-kicker">EL ORDEN LO ELIGES TÚ</span><h2>Mi lista de prioridad <span class="lr-badge" id="lr-n">0</span></h2></div></div><p class="lr-hint">Arrastra desde los puntos o usa las flechas de cada curso.</p><ol class="lr-list" id="lr-list"></ol>'+
+      '<div class="lr-save"><p class="lr-save-status" id="lr-status"></p><button type="button" class="btn btn--accent lr-save-btn" id="lr-save"><svg class="ic"><use href="#i-check"/></svg>Guardar cambios</button><p class="lr-note">Tu lista se sincroniza con tu cuenta.</p></div></section></div></div>';
+    const sucio=()=>orden.length!==base.length||orden.some((id,i)=>id!==base[i]);
+    const pintarGrid=()=>{
+      const norm=v=>String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+      const vis=elegibles.filter(c=>(!area||c.area===area)&&norm(c.nombre).includes(norm(q)));
+      document.getElementById('lr-res').textContent=pluralCursos(vis.length);
+      const grid=document.getElementById('lr-grid');
+      grid.innerHTML=vis.length?vis.map(c=>{const id=String(c.id),on=orden.includes(id);return '<article class="lr-card"><span class="lr-card__cover" style="background-image:url(\''+portada(c)+'\')"></span><div class="lr-card__body"><small>'+escHtml(c.area||'SYNOVA')+'</small><strong>'+escHtml(c.nombre||'Curso')+'</strong><button type="button" class="lr-add'+(on?' is-on':'')+'" data-id="'+escHtml(id)+'">'+(on?'✓ Agregado':'+ Agregar')+'</button></div></article>';}).join(''):'<p class="ruta-vacia">'+(elegibles.length?'No hay cursos para esta búsqueda.':'¡Ya tienes todos los cursos desbloqueados!')+'</p>';
+      grid.querySelectorAll('.lr-add').forEach(b=>b.onclick=()=>{const id=b.dataset.id,i=orden.indexOf(id);if(i>=0)orden.splice(i,1);else orden.push(id);pintar();});
+    };
+    const pintarLista=()=>{
+      document.getElementById('lr-n').textContent=orden.length;
+      const list=document.getElementById('lr-list');
+      list.innerHTML=orden.length?orden.map((id,i)=>{const c=cursoPorId(id)||{};return '<li class="lr-row" draggable="true" data-i="'+i+'"><span class="lr-grip" title="Arrastrar">⋮⋮</span><span class="lr-row__n">'+(i+1)+'</span><span class="lr-row__cover" style="background-image:url(\''+portada(c)+'\')"></span><span class="lr-row__copy"><small>'+escHtml(c.area||'SYNOVA')+'</small><strong>'+escHtml(c.nombre||'Curso')+'</strong></span><span class="lr-row__btns"><button type="button" data-up="'+i+'" title="Subir" '+(i===0?'disabled':'')+'>↑</button><button type="button" data-down="'+i+'" title="Bajar" '+(i===orden.length-1?'disabled':'')+'>↓</button><button type="button" data-rm="'+i+'" title="Quitar de mi lista">×</button></span></li>';}).join(''):'<p class="ruta-vacia">Tu lista está vacía. Agrega los cursos que te interesen.</p>';
+      list.querySelectorAll('[data-up],[data-down],[data-rm]').forEach(b=>b.onclick=()=>{
+        if(b.dataset.rm!==undefined){orden.splice(+b.dataset.rm,1);}
+        else{const i=+(b.dataset.up??b.dataset.down),t=b.dataset.up!==undefined?i-1:i+1;[orden[i],orden[t]]=[orden[t],orden[i]];}
+        pintar();
+      });
+      list.querySelectorAll('.lr-row').forEach(row=>{
+        row.addEventListener('dragstart',e=>{arrastrando=+row.dataset.i;row.classList.add('is-drag');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',row.dataset.i);}catch(_){}});
+        row.addEventListener('dragend',()=>{arrastrando=null;row.classList.remove('is-drag');});
+        row.addEventListener('dragover',e=>{e.preventDefault();row.classList.add('is-over');});
+        row.addEventListener('dragleave',()=>row.classList.remove('is-over'));
+        row.addEventListener('drop',e=>{e.preventDefault();row.classList.remove('is-over');const t=+row.dataset.i;if(arrastrando===null||arrastrando===t)return;const [x]=orden.splice(arrastrando,1);orden.splice(t,0,x);arrastrando=null;pintar();});
+      });
+    };
+    const pintar=()=>{
+      pintarGrid(); pintarLista();
+      const b=document.getElementById('lr-save'); b.disabled=ocupado||!sucio();
+      b.lastChild.textContent=ocupado?'Guardando…':'Guardar cambios';
+      document.getElementById('lr-status').textContent=sucio()?'Tienes cambios sin guardar.':'Tu lista está guardada.';
+    };
+    document.getElementById('lr-q').oninput=e=>{q=e.target.value;pintarGrid();};
+    document.getElementById('lr-area').onchange=e=>{area=e.target.value;pintarGrid();};
+    document.getElementById('lr-back').onclick=()=>window.navigateTo('cursos');
+    document.getElementById('lr-save').onclick=async()=>{
+      if(ocupado||!sucio())return; ocupado=true; pintar();
+      try{ await guardarCambiosRuta({prioridad:orden.slice()}); base=orden.slice(); Toast.success('Lista guardada','Tú decides cuándo utilizar tus próximos desbloqueos.'); }
+      catch(e){ Toast.error('No pudimos guardar tu lista',e.message||'Intenta nuevamente'); }
+      ocupado=false; pintar();
+    };
+    pintar();
+  };
   async function cargarCursoGratisEstado(){
     const user=window.__auth&&window.__auth.currentUser;
     if(!user||esAdminReal()){cursoGratisEstado.cargado=true;return cursoGratisEstado;}
@@ -6743,7 +6884,7 @@ function mountNutricion(c){
   /* ── SECCIÓN CURSOS ── */
   window.Sections.cursos = function(){
     document.getElementById('content').innerHTML =
-      secHero('', 'Mis cursos', (esVip()&&!esAdminReal()?'Cada 6 días se desbloquea un curso nuevo y tú eliges en qué orden.':'Elige el curso que quieras probar gratis. Con VIP desbloqueas un curso completo cada 6 días en el orden que tú elijas.')) +
+      secHero('', 'Mis cursos', (esVip()&&!esAdminReal()?'Cada 6 días ganas un desbloqueo y tú eliges qué curso abrir.':'Elige el curso que quieras probar gratis. Con VIP desbloqueas un curso completo cada 6 días en el orden que tú elijas.')) +
       '<div id="cursos-grid" class="cursos-grid"></div>';
     renderCursos();
   };
@@ -6765,7 +6906,8 @@ function mountNutricion(c){
       let lock = '';
       if (vip && !desbloqueado){
         if (c.marcarProximamente === true) lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Próximamente</div><div class="drip-lock__d">Te avisaremos cuando este curso esté listo.</div></div>';
-        else { const d = diasRestantes(c), p = ruta.activa ? posicionEnRuta(c) : 0; lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div>' + (p ? '<div class="drip-lock__d">' + (p===1 ? 'Es el siguiente en tu ruta' : '#' + p + ' en tu ruta de desbloqueo') + '</div>' + (p>1 ? '<button type="button" class="drip-lock__btn" data-ruta-primero="' + escHtml(String(c.id)) + '">Desbloquear este primero</button>' : '') : '<div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div>') + '</div>'; }
+        else if (enRuta(c)) lock = lockRutaHtml(c);
+        else { const d = diasRestantes(c); lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div><div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div></div>'; }
       } else if (!vip && !desbloqueado && !eligiendo) {
         lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-shield-check"/></svg></div><div class="drip-lock__t">Disponible con VIP</div><div class="drip-lock__d">Tu curso gratuito ya quedó fijado a tu cuenta.</div></div>';
       }
@@ -6777,14 +6919,13 @@ function mountNutricion(c){
         '<div class="curso-card__meta"><span><svg class="ic"><use href="#i-book"/></svg>' + nClases + ' clase' + (nClases===1?'':'s') + pend + '</span></div></div>' +
         lock + '</div>';
     }).join('');
-    document.getElementById('ruta-organizar')?.addEventListener('click', () => abrirRutaCursos());
-    grid.querySelectorAll('[data-ruta-primero]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); const c = (window.__cursosCache||[]).find(x => String(x.id) === b.dataset.rutaPrimero); if (c) ponerPrimero(c); }));
+    bindRutaAcciones(grid);
     grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
       const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
       if(cursoGratisPendiente()&&cursoPuedeSerGratis(c)){confirmarCursoGratis(c);return;}
       if(card.dataset.ok!=='true'){
         if(cursoGratisEstado.error) Toast.error('No pudimos verificar tu acceso','Recarga la página antes de abrir un curso.');
-        else if(ruta.activa&&c.marcarProximamente!==true) abrirRutaCursos(c.id);
+        else if(enRuta(c)) { if (ruta.disponibles) abrirElegirCursos(c.id); else abrirRutaAprendizaje(c.id); }
         else window.__showPaywallModal('Tu curso gratuito ya está vinculado a tu cuenta. Activa SYNOVA VIP para abrir otro curso.');
         return;
       }
@@ -6897,9 +7038,9 @@ function mountNutricion(c){
       contenidoHtml =
         '<section class="course-section"><div class="empty-state" style="padding:32px 24px;text-align:center;">' +
           '<div class="empty-state__icon" style="margin:0 auto 12px"><svg class="ic ic--xl" style="color:var(--primary)"><use href="#i-shield-check"/></svg></div>' +
-          '<h3 style="color:var(--primary);margin-bottom:8px">🔒 Este curso se desbloquea pronto</h3>' +
-          '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Disponible en <strong style="color:var(--primary)">' + dFalta + ' día' + (dFalta!==1?'s':'') + '</strong>. Los cursos se desbloquean progresivamente para que aproveches cada uno a fondo.</p>' +
-          (ruta.activa ? (posicionEnRuta(c)===1 ? '<p style="font-size:12px;color:var(--text-3);margin-top:10px" data-ruta-detalle>Es el siguiente curso de tu ruta de desbloqueo.</p>' : '<p style="font-size:12px;color:var(--text-3);margin-top:10px" data-ruta-detalle>Está en el lugar #' + posicionEnRuta(c) + ' de tu ruta. Puedes adelantarlo para que sea el siguiente en abrirse.</p>') + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">' + (posicionEnRuta(c)>1 ? '<button type="button" class="btn btn--accent" id="ruta-detalle-primero">Desbloquear este primero</button>' : '') + '<button type="button" class="btn btn--ghost" id="ruta-detalle-organizar">Organizar mi ruta</button></div>' : '<p style="font-size:12px;color:var(--text-3);margin-top:10px">Si quieres acceso anticipado, contáctanos.</p>') +
+          '<h3 style="color:var(--primary);margin-bottom:8px">🔒 ' + (enRuta(c) && ruta.disponibles ? 'Este curso está listo para que lo elijas' : 'Este curso se desbloquea pronto') + '</h3>' +
+          (enRuta(c) && ruta.disponibles ? '' : '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Disponible en <strong style="color:var(--primary)">' + dFalta + ' día' + (dFalta!==1?'s':'') + '</strong>. ' + (enRuta(c) ? 'Cada ' + DRIP_DIAS + ' días ganas un desbloqueo y tú eliges qué curso abrir.' : 'Los cursos se desbloquean progresivamente para que aproveches cada uno a fondo.') + '</p>') +
+          (enRuta(c) ? (ruta.disponibles ? '<p style="font-size:12px;color:var(--text-3);margin-top:10px">Tienes ' + pluralCursos(ruta.disponibles) + ' por elegir: puedes abrir este ahora.</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px"><button type="button" class="btn btn--accent" data-ruta-elegir="' + escHtml(String(c.id)) + '">Elegir este curso</button></div>' : '<p style="font-size:12px;color:var(--text-3);margin-top:10px">' + (prioridadDe(c) ? 'Está en el lugar #' + prioridadDe(c) + ' de tu lista de prioridad.' : 'Agrégalo a tu lista de prioridad para elegirlo en tu próximo desbloqueo.') + '</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px"><button type="button" class="btn btn--ghost" data-ruta-organizar="' + escHtml(String(c.id)) + '">' + (prioridadDe(c) ? 'Organizar mi lista' : 'Agregar a mi lista') + '</button></div>') : '<p style="font-size:12px;color:var(--text-3);margin-top:10px">Si quieres acceso anticipado, contáctanos.</p>') +
         '</div></section>';
     } else {
       contenidoHtml =
@@ -6911,8 +7052,7 @@ function mountNutricion(c){
     const summaryHtml = '<aside class="course-summary"><div class="course-summary__label">Tu avance</div><div class="course-summary__value">' + pct + '%</div><div class="course-summary__caption">Progreso del curso</div><div class="course-summary__bar"><span style="width:' + pct + '%"></span></div><div class="course-summary__row"><span>Clases</span><strong>' + sesiones.length + '</strong></div><div class="course-summary__row"><span>Completadas</span><strong>' + vistasValidas + '</strong></div><div class="course-summary__row"><span>Materiales</span><strong>' + materiales.length + '</strong></div></aside>';
     document.getElementById('content').innerHTML = '<div class="course-page" id="curso-detalle-body"><button class="course-page__back" data-section="cursos"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-arrow-right"/></svg>Volver a Mis cursos</button>' + heroHtml + '<div class="course-page__layout"><main class="course-page__main">' + contenidoHtml + '</main>' + summaryHtml + '</div></div>';
     const cont = document.getElementById('curso-detalle-body');
-    document.getElementById('ruta-detalle-primero')?.addEventListener('click', () => ponerPrimero(c));
-    document.getElementById('ruta-detalle-organizar')?.addEventListener('click', () => abrirRutaCursos(c.id));
+    bindRutaAcciones(cont);
     cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => {
       const i = +el.dataset.clase;
       if (!claseDesbloqueada(id, i, sesiones.length)) {
@@ -7097,7 +7237,7 @@ function mountNutricion(c){
       if (!vip && card.dataset.free !== 'true'){ window.__showPaywallModal('Tu primer material es gratis. Activa tu membresía SYNOVA VIP para abrir las demás guías y presentaciones.'); return; }
       if (card.dataset.locked === 'true'){
         if (card.dataset.upcoming === 'true') Toast.info('Próximamente','Te avisaremos cuando este material esté listo.');
-        else { const d = +card.dataset.dias || 0; Toast.info(d===1?'Disponible mañana':'Disponible en ' + d + ' días','Este material se desbloquea junto con su curso.'); }
+        else { const d = +card.dataset.dias || 0; if (d===0) Toast.info('Elige su curso para abrirlo','Ve a Mis cursos › Mis desbloqueos › Elegir cursos.'); else Toast.info(d===1?'Disponible mañana':'Disponible en ' + d + ' días','Este material se desbloquea junto con su curso.'); }
         return;
       }
       const it = items[+card.dataset.k]; if (it) window.__abrirVisor(it.m.url, it.m.titulo || 'Material', null, null);
