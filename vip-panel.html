@@ -6216,7 +6216,13 @@ function mountNutricion(c){
 .cc__cover{aspect-ratio:2/1;background:var(--surface-2);overflow:hidden}
 .cc__cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
 .cc:hover .cc__cover img{transform:scale(1.035)}
-.cc__body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.cc__body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1;container-type:inline-size}
+.cc__state{white-space:nowrap}
+@container (max-width:300px){
+  .cc__footer{flex-direction:column;align-items:stretch;gap:8px}
+  .cc__action{width:100%}
+  .cc__state{align-self:flex-start;justify-content:flex-start;text-align:left}
+}
 .cc__tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;min-height:22px}
 .cc-tag{display:inline-flex;align-items:center;min-height:22px;padding:3px 7px;border-radius:6px;font-size:10px;line-height:1.25;font-weight:500;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border)}
 .cc-tag--area{color:var(--primary);border-color:transparent;background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
