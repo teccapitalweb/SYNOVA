@@ -2112,6 +2112,7 @@ onAuthStateChanged(auth, async (user) => {
     cursoGratisIntroVista: datosMiembro.cursoGratisIntroVista === true,
     bienvenidaVipVista: datosMiembro.bienvenidaVipVista === true,
     rutaCursos: (datosMiembro.rutaCursos && typeof datosMiembro.rutaCursos === 'object') ? datosMiembro.rutaCursos : null,
+    catalogoOrden: typeof datosMiembro.catalogoOrden === 'string' ? datosMiembro.catalogoOrden : '',
     isAdmin, modo, plan, membership, cancelacionProgramada, fechaFinAcceso, memberSince,
     isTrial:membership?.accessType === 'trial',
     trial:membership?.trial || { state:'none', active:false, canActivate:false },
@@ -6197,7 +6198,7 @@ function mountNutricion(c){
 .cat-tab.is-active{color:var(--primary);font-weight:650}
 .cat-tab.is-active::after{content:'';position:absolute;height:3px;left:10px;right:10px;bottom:0;background:var(--primary);border-radius:3px 3px 0 0}
 .cat-count{font-size:11px;font-weight:500;color:var(--text-2);margin-bottom:14px;white-space:nowrap}
-.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
 .cat-empty{text-align:center;padding:48px 18px;border:1px dashed var(--border-strong);border-radius:16px;background:var(--surface)}
 .cat-empty__ic{display:inline-flex;width:48px;height:48px;border-radius:14px;align-items:center;justify-content:center;background:var(--surface-2);color:var(--primary);margin-bottom:10px}
 .cat-empty h3{margin:0 0 6px;color:var(--text)}.cat-empty p{margin:0;color:var(--text-2);font-size:13px}
@@ -6212,28 +6213,28 @@ function mountNutricion(c){
 .cc:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
 .cc--gift,.cc--free-choice{border-color:color-mix(in srgb,#c9a45c 55%,var(--border))}
 .cc--completed{border-color:color-mix(in srgb,var(--success) 40%,var(--border))}
-.cc__cover{aspect-ratio:16/9;background:var(--surface-2);overflow:hidden}
+.cc__cover{aspect-ratio:2/1;background:var(--surface-2);overflow:hidden}
 .cc__cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
 .cc:hover .cc__cover img{transform:scale(1.035)}
-.cc__body{padding:20px 21px;display:flex;flex-direction:column;flex:1}
-.cc__tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:24px}
-.cc-tag{display:inline-flex;align-items:center;min-height:24px;padding:4px 8px;border-radius:6px;font-size:10px;line-height:1.25;font-weight:500;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border)}
+.cc__body{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.cc__tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;min-height:22px}
+.cc-tag{display:inline-flex;align-items:center;min-height:22px;padding:3px 7px;border-radius:6px;font-size:10px;line-height:1.25;font-weight:500;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border)}
 .cc-tag--area{color:var(--primary);border-color:transparent;background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
 .cc-tag--gift{color:#805c21;background:#faf2df;border-color:#e8d6ae}
 :root[data-theme="night"] .cc-tag--gift{background:#3b3424;color:#e5cb96;border-color:#615136}
-.cc__copy{flex:1;padding-bottom:14px}
+.cc__copy{padding-bottom:10px}
 .cd-desc{margin:0 0 20px;max-width:520px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2)}
 .cd-desc summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;font-size:13px;font-weight:650;color:var(--text);user-select:none}
 .cd-desc summary::-webkit-details-marker{display:none}
 .cd-desc summary .ic{width:14px;height:14px;color:var(--text-2);transform:rotate(90deg);transition:transform .2s}
 .cd-desc[open] summary .ic{transform:rotate(-90deg)}
 .cd-desc p{margin:0;padding:0 14px 14px;font-size:13.5px;line-height:1.75;color:var(--text-2)}
-.cc__title{font-size:18px;font-weight:650;line-height:1.35;letter-spacing:-.4px;margin:0 0 9px;color:var(--text)}
+.cc__title{font-size:15.5px;font-weight:650;line-height:1.35;letter-spacing:-.3px;margin:0;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
 .cc__desc{font-size:13px;line-height:1.6;color:var(--text-2);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.cc__meta{display:flex;flex-wrap:wrap;gap:9px 14px;padding:13px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);color:var(--text-2);font-size:11px;font-weight:500;line-height:1.4}
+.cc__meta{display:flex;flex-wrap:wrap;gap:6px 12px;padding:9px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);color:var(--text-2);font-size:11px;font-weight:500;line-height:1.4}
 .cc__meta span{display:inline-flex;align-items:center;gap:5px}
 .cc__meta .ic{width:14px;height:14px;color:var(--text-2)}
-.cc-rating{display:flex;flex-wrap:wrap;align-content:center;gap:4px 8px;min-height:42px;color:var(--text-2);font-size:11px}
+.cc-rating{display:flex;flex-wrap:wrap;align-content:center;gap:2px 8px;min-height:34px;padding:4px 0;color:var(--text-2);font-size:11px}
 .cc-rating.is-empty{color:var(--text-3)}
 .cc-rating__summary{display:inline-flex;align-items:center;gap:7px}
 .cc-rating__mine{flex-basis:100%;color:var(--success);font-size:10px;font-weight:600}
@@ -6241,7 +6242,7 @@ function mountNutricion(c){
 .cc-stars__base{color:color-mix(in srgb,var(--text-3) 45%,transparent)}
 .cc-stars__fill{position:absolute;left:0;top:0;width:var(--fill,0%);overflow:hidden;white-space:nowrap;color:#d99a1e}
 .cc-stars--empty{color:var(--text-3)}
-.cc__progress{display:flex;align-items:center;gap:10px;padding-bottom:14px}
+.cc__progress{display:flex;align-items:center;gap:10px;padding-bottom:10px}
 .cc__bar{flex:1;height:4px;border-radius:4px;background:var(--surface-3);overflow:hidden}
 .cc__bar div{height:100%;background:var(--primary);border-radius:4px}
 .cc__progress span{color:var(--primary);font-size:11px;font-weight:600}
@@ -6251,15 +6252,15 @@ function mountNutricion(c){
 .cc__state--bloqueado,.cc__state--proximamente{color:var(--text-2)}
 .cc__state--completado{color:var(--success)}
 .cc__state--regalo{color:#8a6420}
-.cc__action{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:9px 13px;border:1px solid var(--border-strong);border-radius:8px;color:var(--primary);background:var(--surface);font:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s;white-space:nowrap}
+.cc__action{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:34px;padding:7px 12px;border:1px solid var(--border-strong);border-radius:8px;color:var(--primary);background:var(--surface);font:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s;white-space:nowrap}
 .cc__action .ic{width:14px;height:14px}
 .cc:not(.cc--locked) .cc__action{background:var(--primary-deep);border-color:var(--primary-deep);color:#fff}
 .cc__action:hover{background:var(--primary-deep);border-color:var(--primary-deep);color:#fff}
-.cc__free-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;margin-top:13px;border:1px solid #e0c995;background:#f7efdf;color:#684a16;border-radius:9px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.cc__free-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:36px;margin-top:10px;border:1px solid #e0c995;background:#f7efdf;color:#684a16;border-radius:9px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .cc__free-cta:hover{background:#ead5ac;border-color:#d0b47c}
 .cc__free-cta .ic{width:14px;height:14px}
 /* Fila de prioridad en la tarjeta (como ICADEM) */
-.cc-ruta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.cc-ruta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
 .cc-ruta__prio{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;padding:0;cursor:pointer;font:inherit}
 .cc-ruta__badge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:6px;border:1px solid color-mix(in srgb,var(--primary) 25%,var(--border));background:color-mix(in srgb,var(--primary) 6%,var(--surface));color:var(--primary);font-size:11px;font-weight:600}
 .cc-ruta__badge.is-first{background:var(--primary);color:#fff;border-color:var(--primary)}
@@ -7090,7 +7091,8 @@ function mountNutricion(c){
 
   /* ── SECCIÓN CURSOS · catálogo con el diseño y la lógica de ICADEM ── */
   const catState = { estado:'todos', area:'todas', nivel:'todos', search:'', orden:'proximos' };
-  try { const o = localStorage.getItem('synova:catalog-sort:v1'); if (['proximos','prioridades','nombre','progreso','recientes'].includes(o)) catState.orden = o; } catch(_){}
+  const ORDENES_CAT=['proximos','prioridades','nombre','progreso','recientes'];
+  function ordenDeCuenta(){ const o=window.UserState&&window.UserState.catalogoOrden; return ORDENES_CAT.includes(o)?o:'proximos'; }
   const normCat = v => String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
 
   /* Valoraciones para las tarjetas: lista completa si el servidor la ofrece; si no, curso por curso */
@@ -7103,7 +7105,7 @@ function mountNutricion(c){
   }
   function catRatingsRefresh(force){
     if(catRatings.flight)return catRatings.flight;
-    if(!force&&catRatings.status==='ready'&&Date.now()-catRatings.at<45000)return Promise.resolve();
+    if(!force&&catRatings.status==='ready'&&Date.now()-catRatings.at<15000)return Promise.resolve();
     const ids=(window.__cursosCache||[]).map(c=>String(c.id));
     if(catRatings.status!=='ready')catRatings.status='loading';
     catRatings.flight=(async()=>{
@@ -7179,6 +7181,43 @@ function mountNutricion(c){
     }).map(x=>x.c);
   }
 
+  /* Todo lo de la cuenta vive en el servidor: al volver al panel se vuelve a leer,
+     así lo hecho en el teléfono aparece en la tableta o la PC sin depender del navegador. */
+  let _cuentaAt=0, _cuentaFlight=null;
+  async function refrescarEstadoCuenta(force){
+    const user=window.__auth&&window.__auth.currentUser, S=window.UserState;
+    if(!user||!S||!window.__fs)return false;
+    if(_cuentaFlight)return _cuentaFlight;
+    if(!force&&Date.now()-_cuentaAt<10000)return false;
+    _cuentaFlight=(async()=>{
+      const antes=JSON.stringify([S.rutaCursos,S.catalogoOrden,cursoGratisEstado.elegido,cursoGratisEstado.elegible]);
+      try{
+        const {doc,getDoc,db}=window.__fs; const snap=await getDoc(doc(db,'miembros',user.uid)); const d=snap.exists()?snap.data():{};
+        if(d.rutaCursos&&typeof d.rutaCursos==='object')S.rutaCursos=d.rutaCursos;
+        if(typeof d.catalogoOrden==='string')S.catalogoOrden=d.catalogoOrden;
+      }catch(e){console.warn('[cuenta]',e.message);}
+      if(!esAdminReal()){ cursoGratisEstado.cargado=false; await cargarCursoGratisEstado(); }
+      _cuentaAt=Date.now();
+      asignarOrdenDesbloqueo(window.__cursosCache||[]);
+      return antes!==JSON.stringify([S.rutaCursos,S.catalogoOrden,cursoGratisEstado.elegido,cursoGratisEstado.elegible]);
+    })().finally(()=>{_cuentaFlight=null;});
+    return _cuentaFlight;
+  }
+  function seccionActual(){ return new URLSearchParams(location.search).get('seccion')||''; }
+  async function alVolverAlPanel(){
+    if(document.visibilityState!=='visible')return;
+    const sec=seccionActual(); if(!['cursos','curso','ruta-aprendizaje'].includes(sec))return;
+    const cambio=await refrescarEstadoCuenta(true);
+    if(sec==='cursos'&&document.getElementById('cursos-grid')){
+      if(cambio){ const o=document.getElementById('cat-orden'); catState.orden=ordenDeCuenta(); if(o)o.value=catState.orden; pintarCatalogo(); }
+      catRatingsRefresh(true);
+    } else if(cambio&&sec==='curso'&&document.getElementById('curso-detalle-body')&&!document.querySelector('#course-rating-panel textarea:focus')) window.Sections.curso();
+    else if(cambio&&sec==='ruta-aprendizaje'){ const b=document.getElementById('lr-save'); if(!b||b.disabled) window.Sections['ruta-aprendizaje'](); }
+  }
+  document.addEventListener('visibilitychange',alVolverAlPanel);
+  window.addEventListener('focus',alVolverAlPanel);
+  window.addEventListener('online',()=>{_cuentaAt=0;alVolverAlPanel();});
+
   window.Sections.cursos = function(){
     document.getElementById('content').innerHTML='<div class="cat-page"><header class="cat-head"><h1>Mis cursos</h1><div class="cat-head__count"><strong id="cat-total">—</strong><span>programas</span></div></header><div id="cat-desbloqueos"></div><section class="cat-controls" aria-label="Buscar y filtrar cursos"><div class="cat-controls__top"><label class="cat-search"><svg class="ic"><use href="#i-search"/></svg><input id="cat-search" type="search" placeholder="Buscar un curso…" autocomplete="off" aria-label="Buscar cursos"><button type="button" id="cat-search-clear" aria-label="Limpiar búsqueda" hidden>×</button></label><div class="cat-selects"><label class="cat-select"><span>Categoría</span><select id="cat-area"></select></label><label class="cat-select"><span>Nivel</span><select id="cat-nivel"></select></label><label class="cat-select"><span>Ordenar</span><select id="cat-orden"><option value="proximos">Próximos a desbloquear</option><option value="prioridades">Mi orden de prioridad</option><option value="nombre">Nombre</option><option value="progreso">Progreso</option><option value="recientes">Más recientes</option></select></label></div></div><div class="cat-controls__bottom"><div class="cat-tabs" id="cat-tabs" role="group" aria-label="Estado del curso"></div><span class="cat-count" id="cat-count"></span></div></section><div id="cursos-grid"></div></div>';
     renderCursos();
@@ -7204,15 +7243,21 @@ function mountNutricion(c){
       if(catState.nivel!=='todos'&&!niveles.includes(catState.nivel))catState.nivel='todos';
       area.innerHTML='<option value="todas">Todas</option>'+areas.map(a=>'<option value="'+escHtml(a)+'">'+escHtml(a)+'</option>').join('');
       nivel.innerHTML='<option value="todos">Todos</option>'+niveles.map(a=>'<option value="'+escHtml(a)+'">'+escHtml(a)+'</option>').join('');
+      catState.orden=ordenDeCuenta();
       area.value=catState.area; nivel.value=catState.nivel; orden.value=catState.orden; search.value=catState.search; clear.hidden=!catState.search;
       area.onchange=()=>{catState.area=area.value;pintarCatalogo();};
       nivel.onchange=()=>{catState.nivel=nivel.value;pintarCatalogo();};
-      orden.onchange=()=>{catState.orden=orden.value;try{localStorage.setItem('synova:catalog-sort:v1',catState.orden);}catch(_){}pintarCatalogo();};
+      orden.onchange=()=>{
+        catState.orden=orden.value; if(window.UserState)window.UserState.catalogoOrden=catState.orden; pintarCatalogo();
+        const user=window.__auth&&window.__auth.currentUser;
+        if(user&&window.__fs){const {doc,setDoc,db}=window.__fs;setDoc(doc(db,'miembros',user.uid),{catalogoOrden:catState.orden},{merge:true}).catch(()=>{});}
+      };
       search.oninput=()=>{catState.search=search.value;clear.hidden=!search.value;clearTimeout(_catSearchTimer);_catSearchTimer=setTimeout(pintarCatalogo,90);};
       clear.onclick=()=>{catState.search='';search.value='';clear.hidden=true;pintarCatalogo();search.focus();};
     }
     pintarCatalogo();
     catRatingsRefresh(false);
+    refrescarEstadoCuenta(false).then(cambio=>{ if(cambio&&document.getElementById('cursos-grid')){ const o=document.getElementById('cat-orden'); catState.orden=ordenDeCuenta(); if(o)o.value=catState.orden; pintarCatalogo(); } });
   }
   function pintarCatalogo(){
     const grid=document.getElementById('cursos-grid'); if(!grid)return;
