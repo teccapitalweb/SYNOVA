@@ -6221,7 +6221,13 @@ function mountNutricion(c){
 .cc-tag--area{color:var(--primary);border-color:transparent;background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
 .cc-tag--gift{color:#805c21;background:#faf2df;border-color:#e8d6ae}
 :root[data-theme="night"] .cc-tag--gift{background:#3b3424;color:#e5cb96;border-color:#615136}
-.cc__copy{flex:1;padding-bottom:18px}
+.cc__copy{flex:1;padding-bottom:14px}
+.cd-desc{margin:0 0 20px;max-width:520px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2)}
+.cd-desc summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;font-size:13px;font-weight:650;color:var(--text);user-select:none}
+.cd-desc summary::-webkit-details-marker{display:none}
+.cd-desc summary .ic{width:14px;height:14px;color:var(--text-2);transform:rotate(90deg);transition:transform .2s}
+.cd-desc[open] summary .ic{transform:rotate(-90deg)}
+.cd-desc p{margin:0;padding:0 14px 14px;font-size:13.5px;line-height:1.75;color:var(--text-2)}
 .cc__title{font-size:18px;font-weight:650;line-height:1.35;letter-spacing:-.4px;margin:0 0 9px;color:var(--text)}
 .cc__desc{font-size:13px;line-height:1.6;color:var(--text-2);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .cc__meta{display:flex;flex-wrap:wrap;gap:9px 14px;padding:13px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);color:var(--text-2);font-size:11px;font-weight:500;line-height:1.4}
@@ -7246,7 +7252,7 @@ function mountNutricion(c){
       return '<article class="cc'+(!info.desbloqueado?' cc--locked':'')+(info.clave==='completado'?' cc--completed':'')+(info.regalo?' cc--gift':'')+(puedeElegirGratis?' cc--free-choice':'')+'" data-cid="'+escHtml(id)+'" tabindex="0" role="button" aria-label="Abrir '+escHtml(c.nombre||'curso')+'">'+
         '<div class="cc__cover">'+(portadaDe(c)?'<img src="'+escHtml(portadaDe(c))+'" alt="" loading="'+(idx<4?'eager':'lazy')+'" decoding="async">':'')+'</div>'+
         '<div class="cc__body"><div class="cc__tags">'+(c.area?'<span class="cc-tag cc-tag--area">'+escHtml(c.area)+'</span>':'')+(c.nivel?'<span class="cc-tag">'+escHtml(c.nivel)+'</span>':'')+(info.regalo?'<span class="cc-tag cc-tag--gift">Curso de regalo</span>':'')+(puedeElegirGratis?'<span class="cc-tag cc-tag--gift">Gratis · '+cantidadClasesGratis(nClases)+' clases</span>':'')+'</div>'+
-        '<div class="cc__copy"><h3 class="cc__title">'+escHtml(c.nombre||'Curso SYNOVA')+'</h3><p class="cc__desc">'+escHtml(c.descripcion||'')+'</p></div>'+
+        '<div class="cc__copy"><h3 class="cc__title">'+escHtml(c.nombre||'Curso SYNOVA')+'</h3></div>'+
         '<div class="cc__meta"><span><svg class="ic"><use href="#i-user"/></svg>'+escHtml(autor)+'</span>'+(c.horas?'<span><svg class="ic"><use href="#i-clock"/></svg>'+escHtml(String(c.horas))+' h</span>':'')+'<span><svg class="ic"><use href="#i-book"/></svg>'+(nClases?nClases+' clase'+(nClases!==1?'s':''):'En preparación')+'</span>'+(nMat?'<span><svg class="ic"><use href="#i-file-text"/></svg>'+nMat+' recurso'+(nMat!==1?'s':'')+'</span>':'')+'</div>'+
         catRatingMarkup(id)+
         (pct>0&&info.desbloqueado?'<div class="cc__progress" aria-label="'+pct+'% completado"><div class="cc__bar"><div style="width:'+pct+'%"></div></div><span>'+pct+'%</span></div>':'')+
@@ -7337,7 +7343,7 @@ function mountNutricion(c){
     const heroHtml =
       '<section class="cd-hero"><div class="cd-hero__media">' + (port ? '<img src="' + escHtml(port) + '" alt="">' : '') + '<span class="cd-hero__brand"><b>SYNOVA</b><i></i>Formación clínica</span></div>' +
       '<div class="cd-hero__copy"><div class="cc__tags">' + (c.area ? '<span class="cc-tag cc-tag--area">' + escHtml(c.area) + '</span>' : '') + (c.nivel ? '<span class="cc-tag">' + escHtml(c.nivel) + '</span>' : '') + (esCursoRegalo(c) ? '<span class="cc-tag cc-tag--gift">Curso de regalo</span>' : '') + '</div>' +
-      '<h1>' + escHtml(c.nombre || 'Curso SYNOVA') + '</h1>' + (c.descripcion ? '<p>' + escHtml(c.descripcion) + '</p>' : '') +
+      '<h1>' + escHtml(c.nombre || 'Curso SYNOVA') + '</h1>' + (c.descripcion ? '<details class="cd-desc"><summary><span>Descripción</span><svg class="ic"><use href="#i-arrow-right"/></svg></summary><p>' + escHtml(c.descripcion) + '</p></details>' : '') +
       '<div class="cd-hero__author"><span><svg class="ic"><use href="#i-user"/></svg></span><div><small>Impartido por</small><strong>' + escHtml(autor) + '</strong></div></div>' + botonHero + '</div>' +
       '<div class="cd-stats"><div><span><svg class="ic"><use href="#i-clock"/></svg></span><div><small>Duración</small><strong>' + (c.horas ? escHtml(String(c.horas)) + ' horas' : '—') + '</strong></div></div><div><span><svg class="ic"><use href="#i-book"/></svg></span><div><small>Contenido</small><strong>' + sesiones.length + ' clase' + (sesiones.length !== 1 ? 's' : '') + '</strong></div></div><div><span><svg class="ic"><use href="#i-file-text"/></svg></span><div><small>Material de apoyo</small><strong>' + materiales.length + ' recurso' + (materiales.length !== 1 ? 's' : '') + '</strong></div></div></div></section>';
 
