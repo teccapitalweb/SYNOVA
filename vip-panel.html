@@ -6355,7 +6355,14 @@ function mountNutricion(c){
 .cd-lockcard h3{margin:2px 0 6px;font-size:16px;color:var(--text)}
 .cd-lockcard p{margin:0;font-size:12.5px;color:var(--text-2);line-height:1.6}
 .cd-lockcard p strong{color:var(--text)}
-.cd-lockcard__btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.cd-lockcard{align-items:center}
+.cd-lockcard__copy{flex:1;min-width:0}
+.cd-lockcard__btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.cd-lockcard__vip{border:0;background:var(--primary-deep);color:#fff;border-radius:9px;padding:13px 20px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.cd-lockcard__vip:hover{filter:brightness(1.15)}
+.cd-lockcard__gift{border:1px solid #e0c995;background:#f0d9a4;color:#3d2b0c;border-radius:9px;padding:12px 20px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.cd-lockcard__gift:hover{filter:brightness(1.04)}
+@media(max-width:700px){.cd-lockcard{flex-wrap:wrap}.cd-lockcard__btns{width:100%;justify-content:flex-start}}
 .cd-empty{font-size:13px;color:var(--text-2);line-height:1.6;padding:18px 22px;margin:0}
 
 /* Visor embebido */
@@ -7258,12 +7265,6 @@ function mountNutricion(c){
     });
   }
   function abrirDesdeCatalogo(c){
-    if(cursoGratisPendiente()&&cursoPuedeSerGratis(c)){confirmarCursoGratis(c);return;}
-    if(!cursoDesbloqueado(c)&&!esVip()){
-      if(cursoGratisEstado.error)Toast.error('No pudimos verificar tu acceso','Recarga la página antes de abrir un curso.');
-      else window.__showPaywallModal('Tu curso gratuito ya está vinculado a tu cuenta. Activa SYNOVA VIP para abrir otro curso.');
-      return;
-    }
     window.__cursoActualId=String(c.id); window.__claseActualIndex=null; window.navigateTo('curso');
   }
 
@@ -7280,13 +7281,7 @@ function mountNutricion(c){
         return;
       }
       const curso = cursos.find(function(c){ return String(c.id) === id; });
-      if (!cursoDesbloqueado(curso) && esVip()) { window.__claseActualIndex = null; abrirCurso(id, true); return; }
-      if (!cursoDesbloqueado(curso)) {
-        document.getElementById('content').innerHTML = '<div class="course-legacy-note"><h2>Este curso requiere membresía VIP</h2><p style="color:var(--text-2);margin:10px 0 20px">Tu curso gratuito está vinculado a tu cuenta y no cambia al recargar la página.</p><button class="btn btn--accent" data-section="cursos">Volver a mis cursos</button></div>';
-        document.getElementById('content').querySelector('[data-section="cursos"]')?.addEventListener('click',function(){window.navigateTo('cursos');});
-        if (!cursoGratisEstado.error) setTimeout(function(){window.__showPaywallModal('Activa SYNOVA VIP para abrir este curso y el resto del catálogo.');},180);
-        return;
-      }
+      if (!cursoDesbloqueado(curso) || cursoGratisPendiente()) { window.__claseActualIndex = null; abrirCurso(id, true); return; }
       if (Number.isInteger(claseParam) && claseParam >= 0 && claseParam < ((curso.sesiones || []).length)) {
         window.__claseActualIndex = claseParam;
         abrirClaseEnCurso(id, claseParam);
@@ -7313,7 +7308,8 @@ function mountNutricion(c){
     const sesiones = Array.isArray(c.sesiones) ? c.sesiones : [];
     const materiales = Array.isArray(c.materiales) ? c.materiales : [];
     const port = portadaDe(c);
-    const desbloq = cursoDesbloqueado(c);
+    const eligiendoGratis = cursoGratisPendiente();
+    const desbloq = !eligiendoGratis && cursoDesbloqueado(c);
     const dFalta = diasRestantes(c);
     const vistasValidas = sesiones.reduce(function(total,_,i){ return total + (prog.vistas.includes(i) ? 1 : 0); }, 0);
     const pct = sesiones.length ? Math.min(100, Math.round((vistasValidas / sesiones.length) * 100)) : 0;
@@ -7348,11 +7344,14 @@ function mountNutricion(c){
     let contenidoHtml;
     if (!desbloq){
       let titulo, texto, botones = '';
+      const nGratis = cantidadClasesGratis(sesiones.length);
       if (c.marcarProximamente === true){ titulo = 'Próximamente'; texto = 'Este curso está en preparación. Te avisaremos cuando esté disponible.'; }
+      else if (eligiendoGratis && cursoPuedeSerGratis(c)){ titulo = 'Elige este curso como tu regalo de bienvenida'; texto = 'Puedes probar gratis hasta <strong>' + nGratis + ' clases iniciales</strong> y el primer material de este curso. Solo puedes elegir un curso y después no se puede cambiar.'; botones = '<button type="button" class="cd-lockcard__gift" data-elegir-gratis>Elegir gratis</button><button type="button" class="cd-lockcard__vip" data-ver-membresia>Ver membresía</button>'; }
+      else if (!esVip()){ titulo = 'Activa tu membresía para abrir este curso'; texto = (cursoGratisEstado.elegido ? 'Tu curso gratuito ya está vinculado a tu cuenta. ' : '') + 'Con SYNOVA VIP desbloqueas un curso completo cada ' + DRIP_DIAS + ' días y tú eliges el orden en tu ruta de aprendizaje.'; botones = '<button type="button" class="cd-lockcard__vip" data-ver-membresia>Ver membresía</button>'; }
       else if (enRuta(c) && ruta.disponibles){ titulo = 'Este curso está listo para que lo elijas'; texto = 'Tienes ' + pluralCursos(ruta.disponibles) + ' por elegir. Puedes desbloquear este curso ahora.'; botones = '<button type="button" class="btn btn--accent" data-ruta-elegir="' + escHtml(String(c.id)) + '">Elegir este curso</button>'; }
       else if (enRuta(c)){ const p = prioridadDe(c); titulo = 'Tu siguiente curso está en camino'; texto = 'Disponible en <strong>' + dFalta + ' día' + (dFalta !== 1 ? 's' : '') + '</strong>, de acuerdo con tu lista de prioridad. ' + (p ? 'Está en el lugar #' + p + ' de tu lista.' : 'Agrégalo a tu lista para tenerlo presente.'); botones = '<button type="button" class="btn btn--ghost" data-ruta-organizar="' + escHtml(String(c.id)) + '">' + (p ? 'Organizar mi lista' : 'Agregar a mi lista') + '</button>'; }
       else { titulo = 'Tu siguiente curso está en camino'; texto = 'Disponible en <strong>' + dFalta + ' día' + (dFalta !== 1 ? 's' : '') + '</strong>, de acuerdo con la secuencia de tu membresía.'; }
-      contenidoHtml = '<section class="cd-lockcard"><span class="cd-lockcard__ic"><svg class="ic"><use href="#' + (c.marcarProximamente === true ? 'i-clock' : 'i-shield-check') + '"/></svg></span><div><h3>' + titulo + '</h3><p>' + texto + '</p>' + (botones ? '<div class="cd-lockcard__btns">' + botones + '</div>' : '') + '</div></section>';
+      contenidoHtml = '<section class="cd-lockcard"><span class="cd-lockcard__ic"><svg class="ic"><use href="#' + (c.marcarProximamente === true ? 'i-clock' : 'i-shield-check') + '"/></svg></span><div class="cd-lockcard__copy"><h3>' + titulo + '</h3><p>' + texto + '</p></div>' + (botones ? '<div class="cd-lockcard__btns">' + botones + '</div>' : '') + '</section>';
     } else {
       const headline = pct >= 100 ? '¡Curso completado!' : pct > 0 ? 'Vas muy bien' : 'Todo empieza aquí';
       const ring = '<div class="cd-ring" style="--pct:' + pct + '"><span>' + pct + '%</span></div>';
@@ -7365,6 +7364,8 @@ function mountNutricion(c){
     document.getElementById('content').innerHTML = '<div class="course-page cd-page" id="curso-detalle-body"><button class="cd-back" data-section="cursos"><span><svg class="ic"><use href="#i-arrow-left"/></svg></span>Catálogo de cursos</button>' + heroHtml + contenidoHtml + '</div>';
     const cont = document.getElementById('curso-detalle-body');
     bindRutaAcciones(cont);
+    cont.querySelectorAll('[data-ver-membresia]').forEach(b => b.addEventListener('click', () => window.navigateTo('suscripcion')));
+    cont.querySelector('[data-elegir-gratis]')?.addEventListener('click', () => confirmarCursoGratis(c));
     cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => {
       const i = +el.dataset.clase;
       if (!claseDesbloqueada(id, i, sesiones.length)) {
