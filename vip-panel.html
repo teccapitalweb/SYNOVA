@@ -1427,6 +1427,9 @@ textarea.dir-form__in{resize:vertical;min-height:54px}
 <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3 8l4 -16l3 8h4"/></symbol>
 <symbol id="i-alert-triangle" viewBox="0 0 24 24"><path d="M12 9v4"/><path d="M10.24 3.957l-8.422 14.06a1.989 1.989 0 0 0 1.7 2.983h16.845a1.989 1.989 0 0 0 1.7 -2.983l-8.423 -14.06a1.989 1.989 0 0 0 -3.4 0z"/><path d="M12 16h.01"/></symbol>
 <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+<symbol id="i-gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></symbol>
+<symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></symbol>
 </defs>
 </svg>
 
@@ -6164,6 +6167,197 @@ function mountNutricion(c){
 .lr-save-btn{width:100%;justify-content:center;display:flex;align-items:center;gap:8px}
 .lr-save-btn:disabled{opacity:.5;cursor:default}
 .lr-note{font-size:11px;color:var(--text-3);margin:0;text-align:center}
+/* ═══ Catálogo Mis cursos · diseño ICADEM ═══ */
+.cat-page{max-width:1500px;margin:0 auto;padding-bottom:24px;container-type:inline-size}
+.cat-head{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:6px 0 26px}
+.cat-head h1{font-size:32px;font-weight:700;letter-spacing:-1px;line-height:1.2;margin:0;color:var(--text)}
+.cat-head__count{display:flex;align-items:center;gap:10px;border-radius:12px;padding:14px 22px;background:var(--primary-deep);color:#fff}
+.cat-head__count strong{font-size:30px;font-weight:700;line-height:1}
+.cat-head__count span{font-size:12px;font-weight:600;align-self:flex-start;opacity:.92}
+#cat-desbloqueos:not(:empty){margin-bottom:16px}
+#cat-desbloqueos .free-course-banner{margin:0}
+.cat-controls{padding:18px 18px 0;border:1px solid var(--border);border-radius:16px;background:var(--surface);margin-bottom:24px}
+.cat-controls__top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:12px}
+@media(max-width:900px){.cat-controls__top{grid-template-columns:1fr}}
+.cat-search{position:relative;display:block}
+.cat-search>svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text-2);pointer-events:none}
+.cat-search input{width:100%;height:44px;padding:0 44px 0 40px;font:inherit;font-size:13px;border:1px solid var(--border-strong);border-radius:9px;background:var(--surface);color:var(--text);outline:0}
+.cat-search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 12%,transparent)}
+.cat-search button{position:absolute;right:0;top:0;width:44px;height:44px;border:0;background:transparent;color:var(--text-2);font-size:18px;cursor:pointer}
+.cat-selects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media(max-width:600px){.cat-selects{grid-template-columns:1fr 1fr}.cat-selects .cat-select:last-child{grid-column:1/-1}}
+.cat-select{position:relative;display:block;min-width:0}
+.cat-select>span{position:absolute;top:6px;left:12px;font-size:11px;color:var(--text-2);pointer-events:none}
+.cat-select select{width:100%;height:44px;border:1px solid var(--border);border-radius:8px;background-color:var(--surface-2);padding:19px 27px 4px 11px;font:inherit;font-size:12px;font-weight:500;color:var(--text);appearance:none;-webkit-appearance:none;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,var(--text-2) 50%),linear-gradient(135deg,var(--text-2) 50%,transparent 50%);background-position:calc(100% - 15px) 21px,calc(100% - 11px) 21px;background-size:4px 4px;background-repeat:no-repeat}
+.cat-controls__bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:0 12px;border-top:1px solid var(--border);margin-top:14px}
+.cat-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;flex:1 1 auto}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{position:relative;min-height:44px;padding:10px 10px 12px;border:0;background:transparent;white-space:nowrap;font:inherit;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer}
+.cat-tab:hover{color:var(--primary)}
+.cat-tab.is-active{color:var(--primary);font-weight:650}
+.cat-tab.is-active::after{content:'';position:absolute;height:3px;left:10px;right:10px;bottom:0;background:var(--primary);border-radius:3px 3px 0 0}
+.cat-count{font-size:11px;font-weight:500;color:var(--text-2);margin-bottom:14px;white-space:nowrap}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:22px}
+.cat-empty{text-align:center;padding:48px 18px;border:1px dashed var(--border-strong);border-radius:16px;background:var(--surface)}
+.cat-empty__ic{display:inline-flex;width:48px;height:48px;border-radius:14px;align-items:center;justify-content:center;background:var(--surface-2);color:var(--primary);margin-bottom:10px}
+.cat-empty h3{margin:0 0 6px;color:var(--text)}.cat-empty p{margin:0;color:var(--text-2);font-size:13px}
+.cat-empty button{margin-top:14px;border:1px solid var(--border-strong);background:var(--surface);color:var(--primary);border-radius:9px;padding:9px 14px;font-weight:600;cursor:pointer}
+.cc-skeleton{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:var(--surface);padding-bottom:18px}
+.cc-skeleton div{aspect-ratio:16/9;background:var(--surface-2)}
+.cc-skeleton span{display:block;height:12px;margin:14px 18px 0;border-radius:6px;background:var(--surface-2)}
+.cc-skeleton span:nth-child(3){width:60%}
+/* Tarjeta */
+.cc{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:18px;background:var(--surface);color:var(--text);box-shadow:0 3px 12px #102d4005;overflow:hidden;cursor:pointer;transition:transform .22s,border-color .22s,box-shadow .22s}
+.cc:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--primary) 40%,var(--border));box-shadow:0 12px 26px #102d4010}
+.cc:focus-visible{outline:3px solid var(--primary);outline-offset:3px}
+.cc--gift,.cc--free-choice{border-color:color-mix(in srgb,#c9a45c 55%,var(--border))}
+.cc--completed{border-color:color-mix(in srgb,var(--success) 40%,var(--border))}
+.cc__cover{aspect-ratio:16/9;background:var(--surface-2);overflow:hidden}
+.cc__cover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s ease}
+.cc:hover .cc__cover img{transform:scale(1.035)}
+.cc__body{padding:20px 21px;display:flex;flex-direction:column;flex:1}
+.cc__tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:24px}
+.cc-tag{display:inline-flex;align-items:center;min-height:24px;padding:4px 8px;border-radius:6px;font-size:10px;line-height:1.25;font-weight:500;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border)}
+.cc-tag--area{color:var(--primary);border-color:transparent;background:color-mix(in srgb,var(--primary) 8%,var(--surface))}
+.cc-tag--gift{color:#805c21;background:#faf2df;border-color:#e8d6ae}
+:root[data-theme="night"] .cc-tag--gift{background:#3b3424;color:#e5cb96;border-color:#615136}
+.cc__copy{flex:1;padding-bottom:18px}
+.cc__title{font-size:18px;font-weight:650;line-height:1.35;letter-spacing:-.4px;margin:0 0 9px;color:var(--text)}
+.cc__desc{font-size:13px;line-height:1.6;color:var(--text-2);margin:0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cc__meta{display:flex;flex-wrap:wrap;gap:9px 14px;padding:13px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);color:var(--text-2);font-size:11px;font-weight:500;line-height:1.4}
+.cc__meta span{display:inline-flex;align-items:center;gap:5px}
+.cc__meta .ic{width:14px;height:14px;color:var(--text-2)}
+.cc-rating{display:flex;flex-wrap:wrap;align-content:center;gap:4px 8px;min-height:42px;color:var(--text-2);font-size:11px}
+.cc-rating.is-empty{color:var(--text-3)}
+.cc-rating__summary{display:inline-flex;align-items:center;gap:7px}
+.cc-rating__mine{flex-basis:100%;color:var(--success);font-size:10px;font-weight:600}
+.cc-stars{position:relative;display:inline-block;font-size:13px;letter-spacing:1px;line-height:1}
+.cc-stars__base{color:color-mix(in srgb,var(--text-3) 45%,transparent)}
+.cc-stars__fill{position:absolute;left:0;top:0;width:var(--fill,0%);overflow:hidden;white-space:nowrap;color:#d99a1e}
+.cc-stars--empty{color:var(--text-3)}
+.cc__progress{display:flex;align-items:center;gap:10px;padding-bottom:14px}
+.cc__bar{flex:1;height:4px;border-radius:4px;background:var(--surface-3);overflow:hidden}
+.cc__bar div{height:100%;background:var(--primary);border-radius:4px}
+.cc__progress span{color:var(--primary);font-size:11px;font-weight:600}
+.cc__footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto}
+.cc__state{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:550;line-height:1.4;color:var(--primary)}
+.cc__state .ic{width:14px;height:14px}
+.cc__state--bloqueado,.cc__state--proximamente{color:var(--text-2)}
+.cc__state--completado{color:var(--success)}
+.cc__state--regalo{color:#8a6420}
+.cc__action{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:9px 13px;border:1px solid var(--border-strong);border-radius:8px;color:var(--primary);background:var(--surface);font:inherit;font-size:11px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s;white-space:nowrap}
+.cc__action .ic{width:14px;height:14px}
+.cc:not(.cc--locked) .cc__action{background:var(--primary-deep);border-color:var(--primary-deep);color:#fff}
+.cc__action:hover{background:var(--primary-deep);border-color:var(--primary-deep);color:#fff}
+.cc__free-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:42px;margin-top:13px;border:1px solid #e0c995;background:#f7efdf;color:#684a16;border-radius:9px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.cc__free-cta:hover{background:#ead5ac;border-color:#d0b47c}
+.cc__free-cta .ic{width:14px;height:14px}
+/* Fila de prioridad en la tarjeta (como ICADEM) */
+.cc-ruta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.cc-ruta__prio{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;padding:0;cursor:pointer;font:inherit}
+.cc-ruta__badge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:6px;border:1px solid color-mix(in srgb,var(--primary) 25%,var(--border));background:color-mix(in srgb,var(--primary) 6%,var(--surface));color:var(--primary);font-size:11px;font-weight:600}
+.cc-ruta__badge.is-first{background:var(--primary);color:#fff;border-color:var(--primary)}
+.cc-ruta__badge .ic{width:12px;height:12px}
+.cc-ruta__link{font-size:11px;color:var(--text-2)}
+.cc-ruta__prio:hover .cc-ruta__link{color:var(--primary)}
+.cc-ruta__elegir{border:0;background:transparent;color:var(--primary);font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.cc-ruta__cta{width:100%;min-height:36px;border:1px dashed color-mix(in srgb,var(--primary) 35%,var(--border));background:transparent;color:var(--primary);border-radius:8px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.cc-ruta__cta:hover{background:color-mix(in srgb,var(--primary) 6%,transparent)}
+/* Mis desbloqueos (ICADEM) */
+.mis-desbloqueos{grid-column:auto;padding:16px 20px;box-shadow:none}
+.mis-desbloqueos__primero strong{color:var(--text)}
+.mis-desbloqueos__primero{color:var(--primary)}
+/* ═══ Detalle del curso · diseño ICADEM ═══ */
+.cd-page{max-width:1180px;margin:0 auto;padding-bottom:30px}
+.cd-back{display:inline-flex;align-items:center;gap:12px;border:0;background:transparent;color:var(--text);font:inherit;font-size:13px;font-weight:600;cursor:pointer;margin:8px 0 26px;padding:0}
+.cd-back span{width:36px;height:36px;border-radius:50%;border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;background:var(--surface)}
+.cd-back .ic{width:15px;height:15px}
+.cd-hero{border:1px solid var(--border);border-radius:24px;background:var(--surface);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:34px;padding:16px;margin-bottom:26px}
+.cd-hero__media{position:relative;border-radius:16px;overflow:hidden;min-height:300px;background:var(--surface-2)}
+.cd-hero__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cd-hero__brand{position:absolute;left:16px;top:16px;display:inline-flex;align-items:center;gap:10px;background:#fff;color:#0b2a4a;border-radius:8px;padding:9px 14px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.cd-hero__brand b{font-size:12px;letter-spacing:.6px}
+.cd-hero__brand i{width:1px;height:14px;background:rgba(11,42,74,.25)}
+.cd-hero__copy{display:flex;flex-direction:column;justify-content:center;padding:20px 22px 20px 0}
+.cd-hero__copy h1{font-size:clamp(28px,3.6vw,44px);line-height:1.08;letter-spacing:-1.2px;margin:10px 0 14px;color:var(--text);font-weight:750}
+.cd-hero__copy>p{font-size:13.5px;line-height:1.75;color:var(--text-2);margin:0 0 20px;max-width:520px}
+.cd-hero__author{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.cd-hero__author>span{width:38px;height:38px;border-radius:50%;border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.cd-hero__author .ic{width:16px;height:16px}
+.cd-hero__author small{display:block;font-size:10px;color:var(--text-2)}
+.cd-hero__author strong{font-size:13px;color:var(--text)}
+.cd-hero__cta{align-self:flex-start;display:inline-flex;align-items:center;gap:14px;border:1px solid #e0c995;background:#f0d9a4;color:#3d2b0c;border-radius:10px;padding:12px 16px 12px 20px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:filter .2s}
+.cd-hero__cta:hover{filter:brightness(1.04)}
+.cd-hero__cta span{width:24px;height:24px;border-radius:50%;background:var(--primary-deep);color:#fff;display:flex;align-items:center;justify-content:center}
+.cd-hero__cta .ic{width:11px;height:11px}
+.cd-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border);margin:0 -16px -16px;padding:22px 16px}
+.cd-stats>div{display:flex;align-items:center;gap:14px;padding:0 20px}
+.cd-stats>div+div{border-left:1px solid var(--border)}
+.cd-stats>div>span{width:40px;height:40px;border-radius:50%;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-2)}
+.cd-stats .ic{width:17px;height:17px}
+.cd-stats small{display:block;font-size:10.5px;color:var(--text-2)}
+.cd-stats strong{font-size:16px;color:var(--text)}
+@media(max-width:860px){.cd-hero{grid-template-columns:1fr}.cd-hero__copy{padding:6px 6px 12px}.cd-hero__media{min-height:220px}.cd-stats{grid-template-columns:1fr;gap:14px}.cd-stats>div+div{border-left:0}}
+.cd-kicker{display:block;font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text-2)}
+.cd-sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:16px}
+.cd-sec-head h2{font-size:24px;letter-spacing:-.6px;margin:6px 0 0;color:var(--text)}
+.cd-pill{font-size:10.5px;font-weight:600;border:1px solid var(--border-strong);border-radius:999px;padding:5px 10px;color:var(--text-2);background:var(--surface)}
+.cd-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:24px;align-items:start;margin-bottom:34px}
+@media(max-width:960px){.cd-layout{grid-template-columns:1fr}}
+.cd-lessons{border:1px solid var(--border);border-radius:18px;background:var(--surface);overflow:hidden}
+.cd-lesson{width:100%;display:flex;align-items:center;gap:18px;padding:22px 22px;border:0;border-bottom:1px solid var(--border);background:transparent;text-align:left;font:inherit;color:var(--text);cursor:pointer;transition:background .15s}
+.cd-lesson:last-child{border-bottom:0}
+.cd-lesson:hover{background:var(--surface-2)}
+.cd-lesson.is-next{background:color-mix(in srgb,#f0d9a4 22%,var(--surface));box-shadow:inset 3px 0 0 #c9a45c}
+.cd-lesson__n{flex:0 0 46px;height:46px;border-radius:10px;border:1px solid var(--border-strong);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:var(--text-2);background:var(--surface-2)}
+.cd-lesson.is-next .cd-lesson__n{background:#f6e7c5;border-color:#e3c98d;color:#6d4f18}
+.cd-lesson.is-done .cd-lesson__n{background:color-mix(in srgb,var(--success) 12%,var(--surface));border-color:color-mix(in srgb,var(--success) 35%,var(--border));color:var(--success)}
+.cd-lesson__copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.cd-lesson__copy small{font-size:10px;font-weight:600;color:var(--text-2)}
+.cd-lesson__copy strong{font-size:15px;color:var(--text)}
+.cd-lesson__copy em{font-style:normal;font-size:11.5px;color:var(--text-2)}
+.cd-lesson__btn{display:inline-flex;align-items:center;gap:7px;border:1px solid #e0c995;background:#f0d9a4;color:#3d2b0c;border-radius:8px;padding:9px 13px;font-size:11px;font-weight:700;white-space:nowrap}
+.cd-lesson:not(.is-next) .cd-lesson__btn{background:var(--surface);border-color:var(--border-strong);color:var(--primary)}
+.cd-lesson__btn .ic{width:11px;height:11px}
+.cd-lesson__lock{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--text-2);white-space:nowrap}
+.cd-lesson__lock .ic{width:13px;height:13px}
+.cd-progress{border:1px solid var(--border);border-radius:18px;background:var(--surface);padding:22px;position:sticky;top:16px}
+.cd-ring{--pct:0;width:96px;height:96px;border-radius:50%;margin:18px 0 18px;background:conic-gradient(var(--primary) calc(var(--pct)*1%),var(--surface-3) 0);display:flex;align-items:center;justify-content:center;position:relative}
+.cd-ring::before{content:'';position:absolute;inset:7px;border-radius:50%;background:var(--surface)}
+.cd-ring span{position:relative;font-size:22px;font-weight:700;color:var(--text)}
+.cd-progress h3{font-size:20px;margin:0 0 6px;color:var(--text);letter-spacing:-.4px}
+.cd-progress>p{font-size:11.5px;color:var(--text-2);margin:0 0 14px}
+.cd-progress>p strong{color:var(--primary)}
+.cd-progress__bar{height:4px;border-radius:4px;background:var(--surface-3);overflow:hidden}
+.cd-progress__bar span{display:block;height:100%;background:var(--primary)}
+.cd-progress__legend{display:flex;justify-content:space-between;font-size:9.5px;color:var(--text-2);margin:8px 0 18px}
+.cd-progress__legend i{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--primary);margin-right:5px;vertical-align:middle}
+.cd-progress ul{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:14px}
+.cd-progress li{display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--text-2)}
+.cd-progress li .ic{width:15px;height:15px;color:var(--text-2)}
+.cd-materials{margin-bottom:28px}
+.cd-materials__hint{font-size:12.5px;color:var(--text-2);margin:-6px 0 16px}
+.cd-mats{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.cd-mat{border:1px solid var(--border);border-radius:16px;background:var(--surface);padding:20px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:border-color .2s}
+.cd-mat:hover{border-color:color-mix(in srgb,var(--primary) 40%,var(--border))}
+.cd-mat__top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.cd-mat__ic{width:38px;height:38px;border-radius:10px;background:#f6e7c5;color:#6d4f18;display:flex;align-items:center;justify-content:center}
+.cd-mat__ic .ic{width:16px;height:16px}
+.cd-mat__type{font-size:10.5px;font-weight:600;color:var(--text-2)}
+.cd-mat strong{font-size:15px;color:var(--text)}
+.cd-mat small{font-size:11.5px;color:var(--text-2)}
+.cd-mat__open{display:flex;align-items:center;justify-content:space-between;margin-top:12px;border:1px solid var(--border);border-radius:9px;padding:10px 12px;font-size:12px;font-weight:600;color:var(--text)}
+.cd-mat__open .ic{width:14px;height:14px}
+.cd-mat.is-locked{opacity:.75}
+.cd-lockcard{display:flex;gap:18px;align-items:flex-start;border:1px solid var(--border);border-left:3px solid #c9a45c;border-radius:16px;background:var(--surface);padding:26px 26px}
+.cd-lockcard__ic{flex:0 0 46px;height:46px;border-radius:12px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--primary)}
+.cd-lockcard__ic .ic{width:20px;height:20px}
+.cd-lockcard h3{margin:2px 0 6px;font-size:16px;color:var(--text)}
+.cd-lockcard p{margin:0;font-size:12.5px;color:var(--text-2);line-height:1.6}
+.cd-lockcard p strong{color:var(--text)}
+.cd-lockcard__btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.cd-empty{font-size:13px;color:var(--text-2);line-height:1.6;padding:18px 22px;margin:0}
+
 /* Visor embebido */
 .visor-ov{position:fixed;inset:0;z-index:99500;background:rgba(3,7,13,.9);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:20px}
 .visor-ov.is-open{display:flex}
@@ -6881,58 +7075,196 @@ function mountNutricion(c){
 
   function portadaDe(c){ return c && c.portada ? String(c.portada) : ''; }
 
-  /* ── SECCIÓN CURSOS ── */
+  /* ── SECCIÓN CURSOS · catálogo con el diseño y la lógica de ICADEM ── */
+  const catState = { estado:'todos', area:'todas', nivel:'todos', search:'', orden:'proximos' };
+  try { const o = localStorage.getItem('synova:catalog-sort:v1'); if (['proximos','prioridades','nombre','progreso','recientes'].includes(o)) catState.orden = o; } catch(_){}
+  const normCat = v => String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();
+
+  /* Valoraciones para las tarjetas: lista completa si el servidor la ofrece; si no, curso por curso */
+  const catRatings = { summaries:new Map(), mine:new Map(), status:'idle', at:0, flight:null };
+  async function catRatingsRequest(path){
+    const user=window.__auth&&window.__auth.currentUser; if(!user)throw new Error('sin sesión');
+    const token=await user.getIdToken();
+    const r=await fetch(window.__WEBHOOK_URL+path,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+    const d=await r.json().catch(()=>({})); if(!r.ok)throw Object.assign(new Error(d.error||'error'),{status:r.status}); return d;
+  }
+  function catRatingsRefresh(force){
+    if(catRatings.flight)return catRatings.flight;
+    if(!force&&catRatings.status==='ready'&&Date.now()-catRatings.at<45000)return Promise.resolve();
+    const ids=(window.__cursosCache||[]).map(c=>String(c.id));
+    if(catRatings.status!=='ready')catRatings.status='loading';
+    catRatings.flight=(async()=>{
+      const summaries=new Map(), mine=new Map();
+      try{
+        const d=await catRatingsRequest('/api/course-ratings');
+        if(!Array.isArray(d.courses))throw new Error('sin lista');
+        d.courses.forEach(x=>summaries.set(String(x.courseId),{count:Number(x.ratingCount)||0,avg:Number(x.average)||0}));
+        (d.mine||[]).forEach(x=>mine.set(String(x.courseId),Number(x.rating)||0));
+      }catch(_){
+        let i=0; const worker=async()=>{ while(i<ids.length){ const id=ids[i++]; try{ const d=await catRatingsRequest('/api/course-ratings/'+encodeURIComponent(id)); const s=d.summary||{}; summaries.set(id,{count:Number(s.ratingCount)||0,avg:Number(s.average)||0}); if(d.mine&&d.mine.rating)mine.set(id,Number(d.mine.rating)); }catch(e){} } };
+        await Promise.all([worker(),worker(),worker(),worker()]);
+      }
+      catRatings.summaries=summaries; catRatings.mine=mine; catRatings.status=summaries.size?'ready':'error'; catRatings.at=Date.now();
+    })().finally(()=>{ catRatings.flight=null; document.querySelectorAll('[data-rating-for]').forEach(n=>{ n.outerHTML=catRatingMarkup(n.dataset.ratingFor); }); });
+    return catRatings.flight;
+  }
+  window.__synovaInvalidarValoraciones=function(){ catRatings.at=0; };
+  function catRatingMarkup(id){
+    const s=catRatings.summaries.get(String(id)), mine=catRatings.mine.get(String(id));
+    if(!s)return '<div class="cc-rating is-empty" data-rating-for="'+escHtml(String(id))+'">'+(catRatings.status==='loading'||catRatings.status==='idle'?'Cargando valoraciones…':'<span class="cc-rating__summary"><span class="cc-stars cc-stars--empty" aria-hidden="true">☆☆☆☆☆</span><span>Sin valoraciones</span></span>')+'</div>';
+    const fill=Math.max(0,Math.min(100,s.avg/5*100));
+    const score=s.count>0?'<span class="cc-stars" style="--fill:'+fill+'%" aria-hidden="true"><span class="cc-stars__base">★★★★★</span><span class="cc-stars__fill">★★★★★</span></span><span>'+s.avg.toFixed(1)+' ('+s.count+' '+(s.count===1?'valoración':'valoraciones')+')</span>':'<span class="cc-stars cc-stars--empty" aria-hidden="true">☆☆☆☆☆</span><span>Sin valoraciones</span>';
+    return '<div class="cc-rating'+(s.count?'':' is-empty')+'" data-rating-for="'+escHtml(String(id))+'"><span class="cc-rating__summary">'+score+'</span>'+(mine?'<span class="cc-rating__mine">✓ Tu valoración: '+mine+'/5</span>':'')+'</div>';
+  }
+
+  function progresoCurso(c){
+    const n=(c.sesiones||[]).length; if(!n)return 0;
+    const v=cursoProg(String(c.id)).vistas||[]; const ok=new Set(v.filter(i=>i>=0&&i<n));
+    return Math.min(100,Math.round(ok.size/n*100));
+  }
+  function esCursoRegalo(c){ const e=cursoGratisEstado.elegido; return !!e&&coleccionCurso(c)===e; }
+  function resumenCurso(c){
+    const eligiendo=cursoGratisPendiente();
+    const desbloqueado=!eligiendo&&cursoDesbloqueado(c), progreso=progresoCurso(c), regalo=esCursoRegalo(c);
+    const dias=(!desbloqueado&&c.marcarProximamente!==true&&esVip())?diasRestantes(c):null;
+    let clave='disponible',etiqueta='Disponible',icono='i-play';
+    if(desbloqueado&&(progreso>=100||cursoProg(String(c.id)).cert)){clave='completado';etiqueta='Completado';icono='i-check';}
+    else if(desbloqueado&&progreso>0){clave='progreso';etiqueta='En progreso';icono='i-play';}
+    else if(regalo&&desbloqueado){clave='regalo';etiqueta='Curso de regalo';icono='i-gift';}
+    else if(c.marcarProximamente===true){clave='proximamente';etiqueta='Próximamente';icono='i-clock';}
+    else if(eligiendo&&cursoPuedeSerGratis(c)){clave='bloqueado';etiqueta='Elígelo gratis';icono='i-gift';}
+    else if(!desbloqueado){clave='bloqueado';icono='i-shield-check';etiqueta=enRuta(c)&&ruta.disponibles?'Listo para elegir':(dias?'Se desbloquea en '+dias+' día'+(dias===1?'':'s'):'Bloqueado');}
+    return {clave,etiqueta,icono,desbloqueado,progreso,regalo,dias};
+  }
+  function cursoEnEstado(c,estado){
+    if(estado==='todos')return true;
+    const i=resumenCurso(c);
+    if(estado==='disponibles')return i.desbloqueado&&!['progreso','completado'].includes(i.clave);
+    if(estado==='progreso')return i.clave==='progreso';
+    if(estado==='completados')return i.clave==='completado';
+    if(estado==='bloqueados')return !i.desbloqueado&&c.marcarProximamente!==true;
+    if(estado==='proximamente')return c.marcarProximamente===true||(!i.desbloqueado&&i.dias!==null);
+    if(estado==='regalo')return i.regalo;
+    return true;
+  }
+  /* Orden "Próximos a desbloquear" / "Mi orden de prioridad":
+     1) curso de regalo  2) cursos abiertos (en progreso primero)  3) bloqueados según la lista de prioridad
+     4) el resto de bloqueados en orden de catálogo  5) próximamente */
+  function ordenarCatalogo(items){
+    const pri=new Map(ruta.activa?ruta.prioridad.map((id,i)=>[id,i]):[]);
+    const base=new Map((window.__cursosCache||[]).map((c,i)=>[String(c.id),i]));
+    const grupo=(c,i)=>i.regalo?0:i.desbloqueado?(i.clave==='progreso'?1:2):c.marcarProximamente===true?5:pri.has(String(c.id))?3:4;
+    return items.map(c=>({c,i:resumenCurso(c)})).sort((A,B)=>{
+      const a=A.c,b=B.c,ia=A.i,ib=B.i;
+      if(catState.orden==='nombre')return String(a.nombre||'').localeCompare(String(b.nombre||''),'es',{sensitivity:'base'});
+      if(catState.orden==='progreso')return (ib.progreso-ia.progreso)||(base.get(String(a.id))-base.get(String(b.id)));
+      if(catState.orden==='recientes')return base.get(String(b.id))-base.get(String(a.id));
+      const ga=grupo(a,ia),gb=grupo(b,ib); if(ga!==gb)return ga-gb;
+      if(ga===3)return pri.get(String(a.id))-pri.get(String(b.id));
+      if(ga===4&&ia.dias!==null&&ib.dias!==null&&ia.dias!==ib.dias)return ia.dias-ib.dias;
+      return base.get(String(a.id))-base.get(String(b.id));
+    }).map(x=>x.c);
+  }
+
   window.Sections.cursos = function(){
-    document.getElementById('content').innerHTML =
-      secHero('', 'Mis cursos', (esVip()&&!esAdminReal()?'Cada 6 días ganas un desbloqueo y tú eliges qué curso abrir.':'Elige el curso que quieras probar gratis. Con VIP desbloqueas un curso completo cada 6 días en el orden que tú elijas.')) +
-      '<div id="cursos-grid" class="cursos-grid"></div>';
+    document.getElementById('content').innerHTML='<div class="cat-page"><header class="cat-head"><h1>Mis cursos</h1><div class="cat-head__count"><strong id="cat-total">—</strong><span>programas</span></div></header><div id="cat-desbloqueos"></div><section class="cat-controls" aria-label="Buscar y filtrar cursos"><div class="cat-controls__top"><label class="cat-search"><svg class="ic"><use href="#i-search"/></svg><input id="cat-search" type="search" placeholder="Buscar un curso…" autocomplete="off" aria-label="Buscar cursos"><button type="button" id="cat-search-clear" aria-label="Limpiar búsqueda" hidden>×</button></label><div class="cat-selects"><label class="cat-select"><span>Categoría</span><select id="cat-area"></select></label><label class="cat-select"><span>Nivel</span><select id="cat-nivel"></select></label><label class="cat-select"><span>Ordenar</span><select id="cat-orden"><option value="proximos">Próximos a desbloquear</option><option value="prioridades">Mi orden de prioridad</option><option value="nombre">Nombre</option><option value="progreso">Progreso</option><option value="recientes">Más recientes</option></select></label></div></div><div class="cat-controls__bottom"><div class="cat-tabs" id="cat-tabs" role="group" aria-label="Estado del curso"></div><span class="cat-count" id="cat-count"></span></div></section><div id="cursos-grid"></div></div>';
     renderCursos();
   };
+  let _catSearchTimer=null;
   async function renderCursos(){
-    const grid = document.getElementById('cursos-grid'); if (!grid) return;
+    const grid=document.getElementById('cursos-grid'); if(!grid)return;
+    const page=grid.closest('.cat-page');
+    if(!page){ window.Sections.cursos(); return; }
     let cursos;
-    try { cursos = await loadCursos(); } catch(e){ grid.outerHTML = '<div id="cursos-grid">' + emptyState('i-book','No se pudo cargar el catálogo', e.message) + '</div>'; return; }
-    if (!cursos.length){ grid.outerHTML = '<div id="cursos-grid">' + emptyState('i-book','Aún no hay cursos cargados','El equipo SYNOVA está subiendo el catálogo.') + '</div>'; return; }
-    const vip = esVip();
-    const eligiendo=cursoGratisPendiente();
+    if(!window.__cursosCache)grid.innerHTML='<div class="cat-grid">'+Array.from({length:8},()=>'<div class="cc-skeleton"><div></div><span></span><span></span><span></span></div>').join('')+'</div>';
+    try{ cursos=await loadCursos(); }catch(e){ grid.innerHTML=emptyState('i-book','No se pudo cargar el catálogo',e.message); return; }
+    if(!document.body.contains(grid))return;
+    document.getElementById('cat-total').textContent=cursos.length||'—';
+    if(!cursos.length){ grid.innerHTML=emptyState('i-book','Aún no hay cursos cargados','El equipo SYNOVA está subiendo el catálogo.'); return; }
+    /* selects (una sola vez) */
+    const area=document.getElementById('cat-area'), nivel=document.getElementById('cat-nivel'), orden=document.getElementById('cat-orden'), search=document.getElementById('cat-search'), clear=document.getElementById('cat-search-clear');
+    if(!area.dataset.ready){
+      area.dataset.ready='1';
+      const areas=[...new Set(cursos.map(c=>c.area).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+      const niveles=[...new Set(cursos.map(c=>c.nivel).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+      if(catState.area!=='todas'&&!areas.includes(catState.area))catState.area='todas';
+      if(catState.nivel!=='todos'&&!niveles.includes(catState.nivel))catState.nivel='todos';
+      area.innerHTML='<option value="todas">Todas</option>'+areas.map(a=>'<option value="'+escHtml(a)+'">'+escHtml(a)+'</option>').join('');
+      nivel.innerHTML='<option value="todos">Todos</option>'+niveles.map(a=>'<option value="'+escHtml(a)+'">'+escHtml(a)+'</option>').join('');
+      area.value=catState.area; nivel.value=catState.nivel; orden.value=catState.orden; search.value=catState.search; clear.hidden=!catState.search;
+      area.onchange=()=>{catState.area=area.value;pintarCatalogo();};
+      nivel.onchange=()=>{catState.nivel=nivel.value;pintarCatalogo();};
+      orden.onchange=()=>{catState.orden=orden.value;try{localStorage.setItem('synova:catalog-sort:v1',catState.orden);}catch(_){}pintarCatalogo();};
+      search.oninput=()=>{catState.search=search.value;clear.hidden=!search.value;clearTimeout(_catSearchTimer);_catSearchTimer=setTimeout(pintarCatalogo,90);};
+      clear.onclick=()=>{catState.search='';search.value='';clear.hidden=true;pintarCatalogo();search.focus();};
+    }
+    pintarCatalogo();
+    catRatingsRefresh(false);
+  }
+  function pintarCatalogo(){
+    const grid=document.getElementById('cursos-grid'); if(!grid)return;
+    const cursos=window.__cursosCache||[], vip=esVip(), eligiendo=cursoGratisPendiente();
+    /* Mis desbloqueos / regalo de bienvenida */
+    const top=document.getElementById('cat-desbloqueos');
     const maxGratis=Math.max(0,...cursos.filter(cursoPuedeSerGratis).map(c=>cantidadClasesGratis(c.sesiones.length)));
-    const banner=eligiendo?'<section class="free-course-banner"><span class="free-course-banner__icon"><svg class="ic"><use href="#i-gift"/></svg></span><div class="free-course-banner__copy"><span>Tu regalo de bienvenida</span><strong>Elige tu curso gratis</strong><p>Toca el curso que más te interese. Verás gratis hasta '+maxGratis+' clases y ganarás créditos con sus ejercicios.</p></div><span class="free-course-banner__hint">Elige abajo ↓</span></section>':'';
-    grid.innerHTML = banner+rutaBannerHtml()+cursos.map(c => {
-      const color = c.color || colorForArea(c.area || c.nombre);
-      const nClases = (c.sesiones && c.sesiones.length) || 0;
-      const desbloqueado = cursoDesbloqueado(c);
-      const pend = c.sesiones && c.sesiones.length ? '' : '<span style="color:var(--warn)"> · En preparación</span>';
-      const cover = portadaDe(c) ? ' style="background-image:url(\'' + portadaDe(c).replace(/'/g,'%27') + '\')"' : '';
-      let lock = '';
-      if (vip && !desbloqueado){
-        if (c.marcarProximamente === true) lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Próximamente</div><div class="drip-lock__d">Te avisaremos cuando este curso esté listo.</div></div>';
-        else if (enRuta(c)) lock = lockRutaHtml(c);
-        else { const d = diasRestantes(c); lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-clock"/></svg></div><div class="drip-lock__t">Disponible en ' + d + (d===1?' día':' días') + '</div><div class="drip-lock__d">Se habilita automáticamente conforme avanza tu membresía.</div></div>'; }
-      } else if (!vip && !desbloqueado && !eligiendo) {
-        lock = '<div class="drip-lock"><div class="drip-lock__ic"><svg class="ic"><use href="#i-shield-check"/></svg></div><div class="drip-lock__t">Disponible con VIP</div><div class="drip-lock__d">Tu curso gratuito ya quedó fijado a tu cuenta.</div></div>';
+    top.innerHTML=eligiendo?'<section class="free-course-banner"><span class="free-course-banner__icon"><svg class="ic"><use href="#i-gift"/></svg></span><div class="free-course-banner__copy"><span>Tu regalo de bienvenida</span><strong>Elige tu curso gratis</strong><p>Toca «Elegir gratis» en el curso que más te interese. Verás gratis hasta '+maxGratis+' clases y ganarás créditos con sus ejercicios. Solo puedes elegir uno.</p></div><span class="free-course-banner__hint">Elige abajo ↓</span></section>':rutaBannerHtml();
+    bindRutaAcciones(top);
+    /* pestañas */
+    const hayRegalo=cursos.some(esCursoRegalo);
+    if(catState.estado==='regalo'&&!hayRegalo)catState.estado='todos';
+    const tabs=[['todos','Todos'],['disponibles','Disponibles'],['progreso','En progreso'],['completados','Completados'],['bloqueados','Bloqueados'],['proximamente','Próximamente']].concat(hayRegalo?[['regalo','Curso de regalo']]:[]);
+    const tabsHost=document.getElementById('cat-tabs');
+    tabsHost.innerHTML=tabs.map(([v,l])=>'<button type="button" class="cat-tab'+(catState.estado===v?' is-active':'')+'" data-estado="'+v+'" aria-pressed="'+(catState.estado===v)+'">'+l+'</button>').join('');
+    tabsHost.querySelectorAll('[data-estado]').forEach(b=>b.onclick=()=>{catState.estado=b.dataset.estado;pintarCatalogo();});
+    /* filtrar + ordenar */
+    const q=normCat(catState.search);
+    const items=ordenarCatalogo(cursos.filter(c=>cursoEnEstado(c,catState.estado)&&(catState.area==='todas'||c.area===catState.area)&&(catState.nivel==='todos'||c.nivel===catState.nivel)&&(!q||normCat([c.nombre,c.descripcion,c.area,c.nivel,c.instructor].join(' ')).includes(q))));
+    document.getElementById('cat-count').textContent=catState.estado==='todos'?items.length+' de '+cursos.length+' curso'+(cursos.length===1?'':'s'):items.length+' curso'+(items.length===1?'':'s');
+    if(!items.length){
+      const filtrado=!!(catState.search||catState.area!=='todas'||catState.nivel!=='todos');
+      grid.innerHTML='<div class="cat-empty"><span class="cat-empty__ic"><svg class="ic"><use href="#i-search"/></svg></span><h3>No encontramos cursos</h3><p>'+(filtrado?'Prueba con otro término o restablece los filtros.':'No hay cursos en esta categoría por ahora.')+'</p>'+(filtrado?'<button type="button" id="cat-reset">Restablecer filtros</button>':'')+'</div>';
+      const r=document.getElementById('cat-reset'); if(r)r.onclick=()=>{catState.search='';catState.area='todas';catState.nivel='todos';const s=document.getElementById('cat-search');s.value='';document.getElementById('cat-search-clear').hidden=true;document.getElementById('cat-area').value='todas';document.getElementById('cat-nivel').value='todos';pintarCatalogo();};
+      return;
+    }
+    grid.innerHTML='<div class="cat-grid">'+items.map((c,idx)=>{
+      const info=resumenCurso(c), id=String(c.id), pct=info.progreso, nClases=(c.sesiones||[]).length, nMat=(c.materiales||[]).length;
+      const autor=c.instructor?(/synova/i.test(c.instructor)?'SYNOVA':c.instructor):'SYNOVA';
+      const accion=info.clave==='progreso'?'Continuar':info.clave==='completado'?'Revisar curso':info.desbloqueado?'Iniciar curso':'Ver detalles';
+      const puedeElegirGratis=eligiendo&&cursoPuedeSerGratis(c);
+      let rutaHtml='';
+      if(enRuta(c)&&!info.desbloqueado){
+        const p=prioridadDe(c), puedeElegir=ruta.disponibles>0;
+        rutaHtml='<div class="cc-ruta">'+(p?'<button type="button" class="cc-ruta__prio" data-ruta-organizar="'+escHtml(id)+'" title="Organizar prioridades"><span class="cc-ruta__badge'+(p===1?' is-first':'')+'"><svg class="ic"><use href="#i-bookmark"/></svg>Prioridad #'+p+'</span><span class="cc-ruta__link">Organizar</span></button>'+(puedeElegir?'<button type="button" class="cc-ruta__elegir" data-ruta-elegir="'+escHtml(id)+'">Elegir</button>':''):(puedeElegir?'<button type="button" class="cc-ruta__cta" data-ruta-elegir="'+escHtml(id)+'">Elegir para desbloquear</button>':'<button type="button" class="cc-ruta__cta" data-ruta-organizar="'+escHtml(id)+'">Agregar a mi lista</button>'))+'</div>';
       }
-      const elegible=eligiendo&&cursoPuedeSerGratis(c);
-      return '<div class="curso-card' + (elegible?' is-free-choice':'') + '" style="--area-color:' + color + '" data-locked="' + (!desbloqueado&&!elegible) + '" data-cid="' + c.id + '" data-ok="' + desbloqueado + '">' +
-        '<div class="curso-card__cover"' + cover + '>' + (portadaDe(c) ? '' : iconoParaArea()) + '<div class="curso-card__cover-badge">' + escHtml(c.area || 'SYNOVA') + '</div>'+(elegible?'<span class="curso-card__free-badge">ELÍGELO GRATIS · '+cantidadClasesGratis(nClases)+' CLASES</span>':(!vip&&String(c.id)===primerCursoGratisId()?'<span class="curso-card__free-badge">TU CURSO GRATIS · '+cantidadClasesGratis(nClases)+' CLASES</span>':''))+'</div>' +
-        '<div class="curso-card__body"><div class="curso-card__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</div>' +
-        '<div class="curso-card__desc">' + escHtml(c.descripcion || 'Contenido clínico incluido en tu membresía VIP.') + '</div>' +
-        '<div class="curso-card__meta"><span><svg class="ic"><use href="#i-book"/></svg>' + nClases + ' clase' + (nClases===1?'':'s') + pend + '</span></div></div>' +
-        lock + '</div>';
-    }).join('');
+      return '<article class="cc'+(!info.desbloqueado?' cc--locked':'')+(info.clave==='completado'?' cc--completed':'')+(info.regalo?' cc--gift':'')+(puedeElegirGratis?' cc--free-choice':'')+'" data-cid="'+escHtml(id)+'" tabindex="0" role="button" aria-label="Abrir '+escHtml(c.nombre||'curso')+'">'+
+        '<div class="cc__cover">'+(portadaDe(c)?'<img src="'+escHtml(portadaDe(c))+'" alt="" loading="'+(idx<4?'eager':'lazy')+'" decoding="async">':'')+'</div>'+
+        '<div class="cc__body"><div class="cc__tags">'+(c.area?'<span class="cc-tag cc-tag--area">'+escHtml(c.area)+'</span>':'')+(c.nivel?'<span class="cc-tag">'+escHtml(c.nivel)+'</span>':'')+(info.regalo?'<span class="cc-tag cc-tag--gift">Curso de regalo</span>':'')+(puedeElegirGratis?'<span class="cc-tag cc-tag--gift">Gratis · '+cantidadClasesGratis(nClases)+' clases</span>':'')+'</div>'+
+        '<div class="cc__copy"><h3 class="cc__title">'+escHtml(c.nombre||'Curso SYNOVA')+'</h3><p class="cc__desc">'+escHtml(c.descripcion||'')+'</p></div>'+
+        '<div class="cc__meta"><span><svg class="ic"><use href="#i-user"/></svg>'+escHtml(autor)+'</span>'+(c.horas?'<span><svg class="ic"><use href="#i-clock"/></svg>'+escHtml(String(c.horas))+' h</span>':'')+'<span><svg class="ic"><use href="#i-book"/></svg>'+(nClases?nClases+' clase'+(nClases!==1?'s':''):'En preparación')+'</span>'+(nMat?'<span><svg class="ic"><use href="#i-file-text"/></svg>'+nMat+' recurso'+(nMat!==1?'s':'')+'</span>':'')+'</div>'+
+        catRatingMarkup(id)+
+        (pct>0&&info.desbloqueado?'<div class="cc__progress" aria-label="'+pct+'% completado"><div class="cc__bar"><div style="width:'+pct+'%"></div></div><span>'+pct+'%</span></div>':'')+
+        '<div class="cc__footer"><span class="cc__state cc__state--'+info.clave+'"><svg class="ic"><use href="#'+info.icono+'"/></svg>'+escHtml(info.etiqueta)+'</span><button type="button" class="cc__action" data-cc-open>'+accion+'<svg class="ic"><use href="#i-arrow-right"/></svg></button></div>'+
+        (puedeElegirGratis?'<button type="button" class="cc__free-cta" data-free-cta><svg class="ic"><use href="#i-play"/></svg>Elegir gratis</button>':'')+
+        rutaHtml+'</div></article>';
+    }).join('')+'</div>';
     bindRutaAcciones(grid);
-    grid.querySelectorAll('.curso-card').forEach(card => card.addEventListener('click', () => {
-      const c = (window.__cursosCache||[]).find(x => x.id === card.dataset.cid); if (!c) return;
-      if(cursoGratisPendiente()&&cursoPuedeSerGratis(c)){confirmarCursoGratis(c);return;}
-      if(card.dataset.ok!=='true'){
-        if(cursoGratisEstado.error) Toast.error('No pudimos verificar tu acceso','Recarga la página antes de abrir un curso.');
-        else if(enRuta(c)) { if (ruta.disponibles) abrirElegirCursos(c.id); else abrirRutaAprendizaje(c.id); }
-        else window.__showPaywallModal('Tu curso gratuito ya está vinculado a tu cuenta. Activa SYNOVA VIP para abrir otro curso.');
-        return;
-      }
-      window.__cursoActualId = String(c.id);
-      window.__claseActualIndex = null;
-      window.navigateTo('curso');
-    }));
+    grid.querySelectorAll('.cc').forEach(card=>{
+      const c=cursos.find(x=>String(x.id)===card.dataset.cid); if(!c)return;
+      const abrir=()=>abrirDesdeCatalogo(c);
+      card.querySelector('[data-free-cta]')?.addEventListener('click',e=>{e.stopPropagation();confirmarCursoGratis(c);});
+      card.querySelector('[data-cc-open]').addEventListener('click',e=>{e.stopPropagation();abrir();});
+      card.addEventListener('click',e=>{if(!e.target.closest('button,a'))abrir();});
+      card.addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)&&!e.target.closest('button,a')){e.preventDefault();abrir();}});
+    });
+  }
+  function abrirDesdeCatalogo(c){
+    if(cursoGratisPendiente()&&cursoPuedeSerGratis(c)){confirmarCursoGratis(c);return;}
+    if(!cursoDesbloqueado(c)&&!esVip()){
+      if(cursoGratisEstado.error)Toast.error('No pudimos verificar tu acceso','Recarga la página antes de abrir un curso.');
+      else window.__showPaywallModal('Tu curso gratuito ya está vinculado a tu cuenta. Activa SYNOVA VIP para abrir otro curso.');
+      return;
+    }
+    window.__cursoActualId=String(c.id); window.__claseActualIndex=null; window.navigateTo('curso');
   }
 
   /* ── DETALLE DE CURSO COMO PÁGINA INDEPENDIENTE ── */
@@ -6948,6 +7280,7 @@ function mountNutricion(c){
         return;
       }
       const curso = cursos.find(function(c){ return String(c.id) === id; });
+      if (!cursoDesbloqueado(curso) && esVip()) { window.__claseActualIndex = null; abrirCurso(id, true); return; }
       if (!cursoDesbloqueado(curso)) {
         document.getElementById('content').innerHTML = '<div class="course-legacy-note"><h2>Este curso requiere membresía VIP</h2><p style="color:var(--text-2);margin:10px 0 20px">Tu curso gratuito está vinculado a tu cuenta y no cambia al recargar la página.</p><button class="btn btn--accent" data-section="cursos">Volver a mis cursos</button></div>';
         document.getElementById('content').querySelector('[data-section="cursos"]')?.addEventListener('click',function(){window.navigateTo('cursos');});
@@ -6976,81 +7309,60 @@ function mountNutricion(c){
   };
   function abrirCurso(id, reabrir){
     const c = (window.__cursosCache||[]).find(x => String(x.id) === String(id)); if (!c) return;
-    const color = c.color || colorForArea(c.area || c.nombre);
     const prog = cursoProg(id);
     const sesiones = Array.isArray(c.sesiones) ? c.sesiones : [];
     const materiales = Array.isArray(c.materiales) ? c.materiales : [];
     const port = portadaDe(c);
-
-    let clasesHtml = sesiones.length
-      ? sesiones.map((s,i) => {
-          const vista = prog.vistas.includes(i);
-          const desblok = claseDesbloqueada(id, i, sesiones.length);
-          const motivo = motivoBloqueoClase(id, i);
-          const thumb = port ? ' style="background-image:url(\'' + port.replace(/'/g,'%27') + '\')"' : '';
-          return '<button class="course-lesson-card' + (vista && desblok?' is-done':'') + (desblok?'':' is-locked') + '" data-clase="' + i + '">' +
-            '<span class="course-lesson-card__thumb"' + thumb + '><span class="course-lesson-card__number">' + String(i+1).padStart(2,'0') + '</span><span class="course-lesson-card__thumb-play">' + (desblok?'▶':'•') + '</span></span>' +
-            '<span class="course-lesson-card__content"><span class="course-lesson-card__eyebrow">' + (vista?'Clase completada':(desblok?'Disponible ahora':(motivo==='juego'?'Bloqueada por progreso':'Contenido VIP'))) + '</span><span class="course-lesson-card__title">' + escHtml(s.titulo || ('Clase ' + (i+1))) + '</span><span class="course-lesson-card__meta">' + (vista?'Lista para repasar':(desblok?'Abrir clase y comenzar':(motivo==='juego'?'Supera el mini juego de la clase anterior':'Activa tu membresía para abrir'))) + '</span></span>' +
-            '<span class="course-lesson-card__action">' + (vista?'✓':(desblok?'▶':'•')) + '</span></button>';
-        }).join('')
-      : '<p style="font-size:13px;color:var(--text-2);line-height:1.6;margin-top:8px">Este curso está en preparación. En cuanto el equipo SYNOVA suba las clases las verás aquí.</p>';
-
-    const materialesConAcceso = materiales.map((m,i) => ({m,i,abierto:esVip() || esMaterialGratisGlobal(id, i)}));
-    let matsHtml = materialesConAcceso.length
-      ? materialesConAcceso.map(({m,i,abierto}) => {
-          const mp = (m.portada || port);
-          return '<div class="leccion' + (abierto ? '' : ' is-locked') + '" data-mat="' + i + '" data-open="' + abierto + '" style="cursor:pointer">' +
-            '<div class="leccion__thumb leccion__thumb--play"' + (mp?(' style="background-image:url(\'' + String(mp).replace(/'/g,'%27') + '\')"'):'') + '><div class="lp"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/></svg></div></div>' +
-            '<div class="leccion__body"><div class="leccion__title">' + escHtml(m.titulo || ('Material ' + (i+1))) + '</div><div class="leccion__meta">' + (abierto ? 'PDF · Abrir material' : 'PDF · Disponible con tu membresía') + '</div></div>' +
-            '<div class="leccion__go"><svg class="ic"><use href="' + (abierto ? '#i-arrow-right' : '#i-shield-check') + '"/></svg></div></div>';
-        }).join('')
-      : '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Este curso todavía no tiene documentos publicados.</p>';
-
-    /* Cabecera académica con portada propia del curso. */
     const desbloq = cursoDesbloqueado(c);
     const dFalta = diasRestantes(c);
-    const heroBg = port ? ' style="background-image:url(\'' + port.replace(/'/g,'%27') + '\')"' : '';
-    const heroHtml =
-      '<div class="course-page__hero"' + heroBg + '><div class="course-page__hero-content">' +
-        '<div class="course-page__eyebrow">' + escHtml(c.area || 'Formación SYNOVA') + '</div>' +
-        '<h1 class="course-page__title">' + escHtml(c.nombre || 'Curso SYNOVA') + '</h1>' +
-        (c.descripcion ? '<p class="course-page__description">' + escHtml(c.descripcion) + '</p>' : '') +
-        '<div class="course-page__meta">' +
-          (c.nivel ? '<span class="course-page__pill"><svg class="ic"><use href="#i-certificate"/></svg>' + escHtml(c.nivel) + '</span>' : '') +
-          (c.instructor ? '<span class="course-page__pill"><svg class="ic"><use href="#i-users"/></svg>' + escHtml(c.instructor) + '</span>' : '') +
-          (c.horas ? '<span class="course-page__pill"><svg class="ic"><use href="#i-clock"/></svg>' + c.horas + ' h</span>' : '') +
-          '<span class="course-page__pill"><svg class="ic"><use href="#i-book"/></svg>' + sesiones.length + ' clase' + (sesiones.length!==1?'s':'') + '</span>' +
-        '</div></div>' +
-      '</div>';
-
     const vistasValidas = sesiones.reduce(function(total,_,i){ return total + (prog.vistas.includes(i) ? 1 : 0); }, 0);
     const pct = sesiones.length ? Math.min(100, Math.round((vistasValidas / sesiones.length) * 100)) : 0;
+    const siguiente = sesiones.findIndex(function(_,i){ return !prog.vistas.includes(i) && claseDesbloqueada(id, i, sesiones.length); });
+    const autor = c.instructor || 'Equipo SYNOVA';
+
+    /* Temario */
+    const clasesHtml = sesiones.length ? sesiones.map(function(s,i){
+      const vista = prog.vistas.includes(i), abierta = claseDesbloqueada(id, i, sesiones.length), motivo = motivoBloqueoClase(id, i), esSig = i === siguiente;
+      const eyebrow = vista ? 'Completada' : esSig ? 'Tu siguiente clase' : abierta ? 'Disponible' : 'En secuencia';
+      const meta = vista ? 'Lista para repasar' : abierta ? 'Disponible ahora' : (motivo === 'juego' ? 'Supera el mini juego anterior para desbloquearla' : 'Disponible con tu membresía VIP');
+      const accion = abierta ? '<span class="cd-lesson__btn"><svg class="ic"><use href="#i-play"/></svg>' + (vista ? 'Repasar' : 'Ver clase') + '</span>' : '<span class="cd-lesson__lock"><svg class="ic"><use href="#i-shield-check"/></svg>Bloqueada</span>';
+      return '<button type="button" class="cd-lesson' + (esSig ? ' is-next' : '') + (vista ? ' is-done' : '') + (abierta ? '' : ' is-locked') + '" data-clase="' + i + '"><span class="cd-lesson__n">' + (vista ? '✓' : String(i+1).padStart(2,'0')) + '</span><span class="cd-lesson__copy"><small>' + eyebrow + '</small><strong>' + escHtml(s.titulo || ('Clase ' + (i+1))) + '</strong><em>' + meta + '</em></span>' + accion + '</button>';
+    }).join('') : '<p class="cd-empty">Este curso está en preparación. En cuanto el equipo SYNOVA suba las clases las verás aquí.</p>';
+
+    /* Material del curso */
+    const tipoMat = function(m){ const u = String(m.url||'') + ' ' + String(m.tipo||'') + ' ' + String(m.titulo||''); return /present|ppt|slides/i.test(u) ? 'Presentación' : /xls|sheet|excel/i.test(u) ? 'Hoja de cálculo' : /doc|word/i.test(u) ? 'Documento' : 'PDF'; };
+    const matsHtml = materiales.length ? '<div class="cd-mats">' + materiales.map(function(m,i){
+      const abierto = esVip() || esMaterialGratisGlobal(id, i);
+      return '<div class="cd-mat' + (abierto ? '' : ' is-locked') + '" data-mat="' + i + '" data-open="' + abierto + '" role="button" tabindex="0"><div class="cd-mat__top"><span class="cd-mat__ic"><svg class="ic"><use href="#i-file-text"/></svg></span><span class="cd-mat__type">' + tipoMat(m) + '</span></div><strong>' + escHtml(m.titulo || ('Material ' + (i+1))) + '</strong><small>' + (abierto ? 'Disponible con este curso' : 'Disponible con tu membresía') + '</small><span class="cd-mat__open">' + (abierto ? 'Abrir recurso' : 'Activar VIP') + '<svg class="ic"><use href="#' + (abierto ? 'i-arrow-right' : 'i-shield-check') + '"/></svg></span></div>';
+    }).join('') + '</div>' : '<p class="cd-empty">Este curso todavía no tiene documentos publicados.</p>';
+
+    /* Hero */
+    const botonHero = desbloq && sesiones.length ? '<button type="button" class="cd-hero__cta" data-clase="' + (siguiente >= 0 ? siguiente : 0) + '">' + (pct >= 100 ? 'Repasar curso' : pct > 0 ? 'Continuar curso' : 'Empezar curso') + '<span><svg class="ic"><use href="#i-play"/></svg></span></button>' : '';
+    const heroHtml =
+      '<section class="cd-hero"><div class="cd-hero__media">' + (port ? '<img src="' + escHtml(port) + '" alt="">' : '') + '<span class="cd-hero__brand"><b>SYNOVA</b><i></i>Formación clínica</span></div>' +
+      '<div class="cd-hero__copy"><div class="cc__tags">' + (c.area ? '<span class="cc-tag cc-tag--area">' + escHtml(c.area) + '</span>' : '') + (c.nivel ? '<span class="cc-tag">' + escHtml(c.nivel) + '</span>' : '') + (esCursoRegalo(c) ? '<span class="cc-tag cc-tag--gift">Curso de regalo</span>' : '') + '</div>' +
+      '<h1>' + escHtml(c.nombre || 'Curso SYNOVA') + '</h1>' + (c.descripcion ? '<p>' + escHtml(c.descripcion) + '</p>' : '') +
+      '<div class="cd-hero__author"><span><svg class="ic"><use href="#i-user"/></svg></span><div><small>Impartido por</small><strong>' + escHtml(autor) + '</strong></div></div>' + botonHero + '</div>' +
+      '<div class="cd-stats"><div><span><svg class="ic"><use href="#i-clock"/></svg></span><div><small>Duración</small><strong>' + (c.horas ? escHtml(String(c.horas)) + ' horas' : '—') + '</strong></div></div><div><span><svg class="ic"><use href="#i-book"/></svg></span><div><small>Contenido</small><strong>' + sesiones.length + ' clase' + (sesiones.length !== 1 ? 's' : '') + '</strong></div></div><div><span><svg class="ic"><use href="#i-file-text"/></svg></span><div><small>Material de apoyo</small><strong>' + materiales.length + ' recurso' + (materiales.length !== 1 ? 's' : '') + '</strong></div></div></div></section>';
+
     let contenidoHtml;
-    if (!desbloq && c.marcarProximamente === true){
-      contenidoHtml =
-        '<section class="course-section"><div class="empty-state" style="padding:32px 24px;text-align:center;">' +
-          '<div class="empty-state__icon" style="margin:0 auto 12px"><svg class="ic ic--xl" style="color:var(--primary)"><use href="#i-clock"/></svg></div>' +
-          '<h3 style="color:var(--primary);margin-bottom:8px">Próximamente</h3>' +
-          '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Este curso está en preparación. Te avisaremos cuando esté disponible.</p>' +
-        '</div></section>';
-    } else if (!desbloq){
-      /* Aviso elegante de desbloqueo próximo (estilo OdonTeck) */
-      contenidoHtml =
-        '<section class="course-section"><div class="empty-state" style="padding:32px 24px;text-align:center;">' +
-          '<div class="empty-state__icon" style="margin:0 auto 12px"><svg class="ic ic--xl" style="color:var(--primary)"><use href="#i-shield-check"/></svg></div>' +
-          '<h3 style="color:var(--primary);margin-bottom:8px">🔒 ' + (enRuta(c) && ruta.disponibles ? 'Este curso está listo para que lo elijas' : 'Este curso se desbloquea pronto') + '</h3>' +
-          (enRuta(c) && ruta.disponibles ? '' : '<p style="font-size:13px;color:var(--text-2);line-height:1.6">Disponible en <strong style="color:var(--primary)">' + dFalta + ' día' + (dFalta!==1?'s':'') + '</strong>. ' + (enRuta(c) ? 'Cada ' + DRIP_DIAS + ' días ganas un desbloqueo y tú eliges qué curso abrir.' : 'Los cursos se desbloquean progresivamente para que aproveches cada uno a fondo.') + '</p>') +
-          (enRuta(c) ? (ruta.disponibles ? '<p style="font-size:12px;color:var(--text-3);margin-top:10px">Tienes ' + pluralCursos(ruta.disponibles) + ' por elegir: puedes abrir este ahora.</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px"><button type="button" class="btn btn--accent" data-ruta-elegir="' + escHtml(String(c.id)) + '">Elegir este curso</button></div>' : '<p style="font-size:12px;color:var(--text-3);margin-top:10px">' + (prioridadDe(c) ? 'Está en el lugar #' + prioridadDe(c) + ' de tu lista de prioridad.' : 'Agrégalo a tu lista de prioridad para elegirlo en tu próximo desbloqueo.') + '</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px"><button type="button" class="btn btn--ghost" data-ruta-organizar="' + escHtml(String(c.id)) + '">' + (prioridadDe(c) ? 'Organizar mi lista' : 'Agregar a mi lista') + '</button></div>') : '<p style="font-size:12px;color:var(--text-3);margin-top:10px">Si quieres acceso anticipado, contáctanos.</p>') +
-        '</div></section>';
+    if (!desbloq){
+      let titulo, texto, botones = '';
+      if (c.marcarProximamente === true){ titulo = 'Próximamente'; texto = 'Este curso está en preparación. Te avisaremos cuando esté disponible.'; }
+      else if (enRuta(c) && ruta.disponibles){ titulo = 'Este curso está listo para que lo elijas'; texto = 'Tienes ' + pluralCursos(ruta.disponibles) + ' por elegir. Puedes desbloquear este curso ahora.'; botones = '<button type="button" class="btn btn--accent" data-ruta-elegir="' + escHtml(String(c.id)) + '">Elegir este curso</button>'; }
+      else if (enRuta(c)){ const p = prioridadDe(c); titulo = 'Tu siguiente curso está en camino'; texto = 'Disponible en <strong>' + dFalta + ' día' + (dFalta !== 1 ? 's' : '') + '</strong>, de acuerdo con tu lista de prioridad. ' + (p ? 'Está en el lugar #' + p + ' de tu lista.' : 'Agrégalo a tu lista para tenerlo presente.'); botones = '<button type="button" class="btn btn--ghost" data-ruta-organizar="' + escHtml(String(c.id)) + '">' + (p ? 'Organizar mi lista' : 'Agregar a mi lista') + '</button>'; }
+      else { titulo = 'Tu siguiente curso está en camino'; texto = 'Disponible en <strong>' + dFalta + ' día' + (dFalta !== 1 ? 's' : '') + '</strong>, de acuerdo con la secuencia de tu membresía.'; }
+      contenidoHtml = '<section class="cd-lockcard"><span class="cd-lockcard__ic"><svg class="ic"><use href="#' + (c.marcarProximamente === true ? 'i-clock' : 'i-shield-check') + '"/></svg></span><div><h3>' + titulo + '</h3><p>' + texto + '</p>' + (botones ? '<div class="cd-lockcard__btns">' + botones + '</div>' : '') + '</div></section>';
     } else {
+      const headline = pct >= 100 ? '¡Curso completado!' : pct > 0 ? 'Vas muy bien' : 'Todo empieza aquí';
+      const ring = '<div class="cd-ring" style="--pct:' + pct + '"><span>' + pct + '%</span></div>';
       contenidoHtml =
-        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Aprendizaje</div><h2 class="course-section__title">Clases</h2></div><span class="course-section__count">' + vistasValidas + ' de ' + sesiones.length + ' vistas</span></div><div class="course-lesson-list">' + clasesHtml + '</div></section>' +
-        '<section class="course-section"><div class="course-section__head"><div><div class="course-section__kicker">Recursos</div><h2 class="course-section__title">Materiales del curso</h2></div><span class="course-section__count">' + materiales.length + ' archivo' + (materiales.length===1?'':'s') + '</span></div>' + matsHtml + '</section>' +
+        '<div class="cd-layout"><section><div class="cd-sec-head"><div><span class="cd-kicker">RUTA DE APRENDIZAJE</span><h2>Temario del curso</h2></div><span class="cd-pill">' + sesiones.length + ' clase' + (sesiones.length !== 1 ? 's' : '') + '</span></div><div class="cd-lessons">' + clasesHtml + '</div></section>' +
+        '<aside class="cd-progress"><span class="cd-kicker">TU APRENDIZAJE</span>' + ring + '<h3>' + headline + '</h3><p><strong>' + vistasValidas + '</strong> de ' + sesiones.length + ' clases completadas</p><div class="cd-progress__bar"><span style="width:' + pct + '%"></span></div><div class="cd-progress__legend"><span><i></i>Completadas</span><span>' + (sesiones.length - vistasValidas) + ' pendientes</span></div><ul><li><svg class="ic"><use href="#i-certificate"/></svg>Certificado verificable al concluir</li><li><svg class="ic"><use href="#i-book"/></svg>' + materiales.length + ' material' + (materiales.length !== 1 ? 'es' : '') + ' dentro del curso</li><li><svg class="ic"><use href="#i-clock"/></svg>Avanza a tu propio ritmo</li></ul></aside></div>' +
+        '<section class="cd-materials"><div class="cd-sec-head"><div><span class="cd-kicker">RECURSOS INCLUIDOS</span><h2>Material del curso</h2></div><span class="cd-pill">' + materiales.length + ' recurso' + (materiales.length !== 1 ? 's' : '') + '</span></div><p class="cd-materials__hint">Abre cada archivo para verlo en pantalla.' + (esVip() ? '' : ' Los materiales adicionales se habilitan con la membresía.') + '</p>' + matsHtml + '</section>' +
         '<div id="course-rating-panel"></div>';
     }
-
-    const summaryHtml = '<aside class="course-summary"><div class="course-summary__label">Tu avance</div><div class="course-summary__value">' + pct + '%</div><div class="course-summary__caption">Progreso del curso</div><div class="course-summary__bar"><span style="width:' + pct + '%"></span></div><div class="course-summary__row"><span>Clases</span><strong>' + sesiones.length + '</strong></div><div class="course-summary__row"><span>Completadas</span><strong>' + vistasValidas + '</strong></div><div class="course-summary__row"><span>Materiales</span><strong>' + materiales.length + '</strong></div></aside>';
-    document.getElementById('content').innerHTML = '<div class="course-page" id="curso-detalle-body"><button class="course-page__back" data-section="cursos"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-arrow-right"/></svg>Volver a Mis cursos</button>' + heroHtml + '<div class="course-page__layout"><main class="course-page__main">' + contenidoHtml + '</main>' + summaryHtml + '</div></div>';
+    document.getElementById('content').innerHTML = '<div class="course-page cd-page" id="curso-detalle-body"><button class="cd-back" data-section="cursos"><span><svg class="ic"><use href="#i-arrow-left"/></svg></span>Catálogo de cursos</button>' + heroHtml + contenidoHtml + '</div>';
     const cont = document.getElementById('curso-detalle-body');
     bindRutaAcciones(cont);
     cont.querySelectorAll('[data-clase]').forEach(el => el.addEventListener('click', () => {
@@ -7069,6 +7381,7 @@ function mountNutricion(c){
       const m = materiales[i]; window.__abrirVisor(m.url, m.titulo || ('Material '+(i+1)), null, null);
     }));
     if (desbloq && window.SynovaCourseRatings) {
+      catRatings.at = 0; /* al volver al catálogo se refrescan las estrellas */
       window.SynovaCourseRatings.mount({
         container:'#course-rating-panel',
         courseId:String(id),
