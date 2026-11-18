@@ -7109,9 +7109,11 @@ function mountNutricion(c){
     const r=await fetch(window.__WEBHOOK_URL+path,{headers:{Authorization:'Bearer '+token},cache:'no-store'});
     const d=await r.json().catch(()=>({})); if(!r.ok)throw Object.assign(new Error(d.error||'error'),{status:r.status}); return d;
   }
+  try{ if(sessionStorage.getItem('synova:ratings-list-404')==='1'){ catRatings.noList=true; catRatings.status='unavailable'; } }catch(_){}
   function catRatingsRefresh(force){
+    if(catRatings.noList){ catRatings.status='unavailable'; return Promise.resolve(); }
     if(catRatings.flight)return catRatings.flight;
-    if(!force&&catRatings.status==='ready'&&Date.now()-catRatings.at<15000)return Promise.resolve();
+    if(!force&&catRatings.status==='ready'&&Date.now()-catRatings.at<120000)return Promise.resolve();
     const ids=(window.__cursosCache||[]).map(c=>String(c.id));
     if(catRatings.status!=='ready')catRatings.status='loading';
     catRatings.flight=(async()=>{
@@ -7121,16 +7123,17 @@ function mountNutricion(c){
         if(!Array.isArray(d.courses))throw new Error('sin lista');
         d.courses.forEach(x=>summaries.set(String(x.courseId),{count:Number(x.ratingCount)||0,avg:Number(x.average)||0}));
         (d.mine||[]).forEach(x=>mine.set(String(x.courseId),Number(x.rating)||0));
-      }catch(_){
-        let i=0; const worker=async()=>{ while(i<ids.length){ const id=ids[i++]; try{ const d=await catRatingsRequest('/api/course-ratings/'+encodeURIComponent(id)); const s=d.summary||{}; summaries.set(id,{count:Number(s.ratingCount)||0,avg:Number(s.average)||0}); if(d.mine&&d.mine.rating)mine.set(id,Number(d.mine.rating)); }catch(e){} } };
-        await Promise.all([worker(),worker(),worker(),worker()]);
+      }catch(e){
+        /* El servidor no ofrece la lista: NO se piden curso por curso (eso multiplica lecturas de Firebase). */
+        if(e&&e.status===404){ catRatings.noList=true; try{sessionStorage.setItem('synova:ratings-list-404','1');}catch(_){} }
       }
-      catRatings.summaries=summaries; catRatings.mine=mine; catRatings.status=summaries.size?'ready':'error'; catRatings.at=Date.now();
+      catRatings.summaries=summaries; catRatings.mine=mine; catRatings.status=catRatings.noList?'unavailable':(summaries.size?'ready':'error'); catRatings.at=Date.now();
     })().finally(()=>{ catRatings.flight=null; document.querySelectorAll('[data-rating-for]').forEach(n=>{ n.outerHTML=catRatingMarkup(n.dataset.ratingFor); }); });
     return catRatings.flight;
   }
   window.__synovaInvalidarValoraciones=function(){ catRatings.at=0; };
   function catRatingMarkup(id){
+    if(catRatings.status==='unavailable')return '<div data-rating-for="'+escHtml(String(id))+'" hidden></div>';
     const s=catRatings.summaries.get(String(id)), mine=catRatings.mine.get(String(id));
     if(!s)return '<div class="cc-rating is-empty" data-rating-for="'+escHtml(String(id))+'">'+(catRatings.status==='loading'||catRatings.status==='idle'?'Cargando valoraciones…':'<span class="cc-rating__summary"><span class="cc-stars cc-stars--empty" aria-hidden="true">☆☆☆☆☆</span><span>Sin valoraciones</span></span>')+'</div>';
     const fill=Math.max(0,Math.min(100,s.avg/5*100));
@@ -7194,7 +7197,7 @@ function mountNutricion(c){
     const user=window.__auth&&window.__auth.currentUser, S=window.UserState;
     if(!user||!S||!window.__fs)return false;
     if(_cuentaFlight)return _cuentaFlight;
-    if(!force&&Date.now()-_cuentaAt<10000)return false;
+    if(!force&&Date.now()-_cuentaAt<60000)return false;
     _cuentaFlight=(async()=>{
       const antes=JSON.stringify([S.rutaCursos,S.catalogoOrden,cursoGratisEstado.elegido,cursoGratisEstado.elegible]);
       try{
@@ -7213,10 +7216,10 @@ function mountNutricion(c){
   async function alVolverAlPanel(){
     if(document.visibilityState!=='visible')return;
     const sec=seccionActual(); if(!['cursos','curso','ruta-aprendizaje'].includes(sec))return;
-    const cambio=await refrescarEstadoCuenta(true);
+    const cambio=await refrescarEstadoCuenta(Date.now()-_cuentaAt>60000);
     if(sec==='cursos'&&document.getElementById('cursos-grid')){
       if(cambio){ const o=document.getElementById('cat-orden'); catState.orden=ordenDeCuenta(); if(o)o.value=catState.orden; pintarCatalogo(); }
-      catRatingsRefresh(true);
+      catRatingsRefresh(false);
     } else if(cambio&&sec==='curso'&&document.getElementById('curso-detalle-body')&&!document.querySelector('#course-rating-panel textarea:focus')) window.Sections.curso();
     else if(cambio&&sec==='ruta-aprendizaje'){ const b=document.getElementById('lr-save'); if(!b||b.disabled) window.Sections['ruta-aprendizaje'](); }
   }
